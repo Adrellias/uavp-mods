@@ -1,4 +1,0 @@
-Formular Version.cs -> Pull Down Menü
-Formular FormMain.cs -> Funktion ChangeVersion ergänzen
-                     -> Main Form Pull Down Menü ergänzen
-Formular Configuration.cs -> Pull Down Menü ergänzen
