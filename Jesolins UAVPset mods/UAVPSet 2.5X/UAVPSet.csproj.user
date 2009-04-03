@@ -1,0 +1,17 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PublishUrlHistory>C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\7\|C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\6\|C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\5\|C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\3\|C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\2\</PublishUrlHistory>
+    <InstallUrlHistory>
+    </InstallUrlHistory>
+    <SupportUrlHistory>http://www.uavp.de</SupportUrlHistory>
+    <UpdateUrlHistory>
+    </UpdateUrlHistory>
+    <BootstrapperUrlHistory>
+    </BootstrapperUrlHistory>
+    <FallbackCulture>de-DE</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+    <ProjectView>ProjectFiles</ProjectView>
+    <ErrorReportUrlHistory>
+    </ErrorReportUrlHistory>
+  </PropertyGroup>
+</Project>
