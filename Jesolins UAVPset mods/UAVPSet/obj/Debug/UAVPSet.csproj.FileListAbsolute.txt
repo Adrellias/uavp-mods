@@ -1,0 +1,51 @@
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Configuration.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Debug.DebugSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Debug.mapping.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Receiver.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.FormMain.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Info.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Neutral.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Properties.Resources.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.error.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.hilfe.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.language.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Splash.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.TestSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Version.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.ViewParameter.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Configuration.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Configuration.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.FormMain.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.FormMain.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Neutral.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Neutral.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Receiver.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Receiver.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Info.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.error.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.error.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.hilfe.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.hilfe.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.language.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Resources.language.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.TestSoftware.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Version.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.ViewParameter.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVPSet.csproj.GenerateResource.Cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\UAVPSet 2.5X.exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\UAVPSet 2.5X.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\UAVPSet 2.5X.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\UAVPSet 2.5X.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\UAVPSet 2.5X.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\de\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\fr\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\de\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\fr\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVPSet 2.5X.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVPSet 2.5X.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVPSet 2.5X.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVPSet 2.5X.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Debug\en-US\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\UAVP.UAVPSet.Receiver.en-US.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Debug\en-US\UAVPSet 2.5X.resources.dll
