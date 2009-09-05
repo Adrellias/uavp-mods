@@ -1,0 +1,170 @@
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\UAVPSet.exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\UAVPSet.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\UAVPSet.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\UAVPSet.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\UAVPSet.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\de\UAVPSet.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\bin\Release\fr\UAVPSet.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.DebugSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.mapping.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Info.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Properties.Resources.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Splash.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Version.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Info.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Version.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVPSet.csproj.GenerateResource.Cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\UAVPSet.exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\UAVPSet.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\UAVPSet.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\UAVPSet.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\UAVPSet.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\de\UAVPSet.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\fr\UAVPSet.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\UAVPSet 2.5X.exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\UAVPSet 2.5X.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\UAVPSet 2.5X.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\UAVPSet 2.5X.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\UAVPSet 2.5X.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\de\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\fr\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\de\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\fr\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVPSet 2.5X.exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVPSet 2.5X.application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVPSet 2.5X.exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVPSet 2.5X.pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.en-US.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\UAVPset source builds\4\en-US\UAVPSet 2.5X.resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\trunk\UAVPSet\obj\Release\en-US\UAVPSet 2.5X.resources.dll
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\ResolveAssemblyReference.cache
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.DebugSoftware.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.mapping.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Properties.Resources.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Splash.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Version.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.en-US.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.fr.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Version.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.de.resources
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVPSet.csproj.GenerateResource.Cache
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\UAVPSet 3.0 (UAVX).exe.config
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\UAVPSet 3.0 (UAVX).exe.manifest
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\UAVPSet 3.0 (UAVX).application
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\UAVPSet 3.0 (UAVX).exe
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\UAVPSet 3.0 (UAVX).pdb
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\de\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\fr\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\UAVPset source builds\4\en-US\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\de\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\fr\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\en-US\UAVPSet 3.0 (UAVX).resources.dll
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVPSet 3.0 (UAVX).exe.manifest
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVPSet 3.0 (UAVX).application
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVPSet 3.0 (UAVX).exe
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVPSet 3.0 (UAVX).pdb
+C:\Flight\Other Code\UAVPSet\Application Files\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4\UAVPSet 3.0 (UAVX).exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\UAVPSet 3.01 (UAVX).exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\UAVPSet 3.01 (UAVX).exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\UAVPSet 3.01 (UAVX).application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\UAVPSet 3.01 (UAVX).exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\UAVPSet 3.01 (UAVX).pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\de\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\fr\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4p\en-US\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.DebugSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Debug.mapping.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Properties.Resources.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Splash.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Version.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Configuration.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.FormMain.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Neutral.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.en-US.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Receiver.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Info.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.error.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.hilfe.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Resources.language.fr.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.TestSoftware.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.Version.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVP.UAVPSet.ViewParameter.de.resources
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVPSet.csproj.GenerateResource.Cache
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\de\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\fr\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\en-US\UAVPSet 3.01 (UAVX).resources.dll
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVPSet 3.01 (UAVX).exe.manifest
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVPSet 3.01 (UAVX).application
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVPSet 3.01 (UAVX).exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2p\Sources2\UAVPSet\obj\Release\UAVPSet 3.01 (UAVX).pdb

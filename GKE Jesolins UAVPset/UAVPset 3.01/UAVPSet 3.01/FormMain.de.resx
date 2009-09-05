@@ -1,0 +1,1263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="listViewJobs.Items" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAAlWZXJiaW5kZW4FAAAA
+        Bfv///8UU3lzdGVtLkRyYXdpbmcuQ29sb3IEAAAABG5hbWUFdmFsdWUKa25vd25Db2xvcgVzdGF0ZQEA
+        AAAJBwcDAAAACgAAAAAAAAAAGAABAAAJBgAAAAH5////+////woAAAAAAAAAABoAAQABBQYAAAATU3lz
+        dGVtLkRyYXdpbmcuRm9udAQAAAAETmFtZQRTaXplBVN0eWxlBFVuaXQBAAQECxhTeXN0ZW0uRHJhd2lu
+        Zy5Gb250U3R5bGUDAAAAG1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAMAAAADAAAABggAAAAUTWlj
+        cm9zb2Z0IFNhbnMgU2VyaWYAAARBBff///8YU3lzdGVtLkRyYXdpbmcuRm9udFN0eWxlAQAAAAd2YWx1
+        ZV9fAAgDAAAAAAAAAAX2////G1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAEAAAAHdmFsdWVfXwAI
+        AwAAAAMAAAAL
+</value>
+  </data>
+  <data name="listViewJobs.Items1" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAAlQYXJhbWV0ZXIAAAAA
+        Bfv///8UU3lzdGVtLkRyYXdpbmcuQ29sb3IEAAAABG5hbWUFdmFsdWUKa25vd25Db2xvcgVzdGF0ZQEA
+        AAAJBwcDAAAACgAAAAAAAAAAGAABAAAJBgAAAAH5////+////woAAAAAAAAAABoAAQABBQYAAAATU3lz
+        dGVtLkRyYXdpbmcuRm9udAQAAAAETmFtZQRTaXplBVN0eWxlBFVuaXQBAAQECxhTeXN0ZW0uRHJhd2lu
+        Zy5Gb250U3R5bGUDAAAAG1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAMAAAADAAAABggAAAAUTWlj
+        cm9zb2Z0IFNhbnMgU2VyaWYAAARBBff///8YU3lzdGVtLkRyYXdpbmcuRm9udFN0eWxlAQAAAAd2YWx1
+        ZV9fAAgDAAAAAAAAAAX2////G1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAEAAAAHdmFsdWVfXwAI
+        AwAAAAMAAAAL
+</value>
+  </data>
+  <data name="listViewJobs.Items2" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAAtsZXNlIENvbmZpZwMA
+        AAAF+////xRTeXN0ZW0uRHJhd2luZy5Db2xvcgQAAAAEbmFtZQV2YWx1ZQprbm93bkNvbG9yBXN0YXRl
+        AQAAAAkHBwMAAAAKAAAAAAAAAAAYAAEAAAkGAAAAAfn////7////CgAAAAAAAAAAGgABAAEFBgAAABNT
+        eXN0ZW0uRHJhd2luZy5Gb250BAAAAAROYW1lBFNpemUFU3R5bGUEVW5pdAEABAQLGFN5c3RlbS5EcmF3
+        aW5nLkZvbnRTdHlsZQMAAAAbU3lzdGVtLkRyYXdpbmcuR3JhcGhpY3NVbml0AwAAAAMAAAAGCAAAABRN
+        aWNyb3NvZnQgU2FucyBTZXJpZgAABEEF9////xhTeXN0ZW0uRHJhd2luZy5Gb250U3R5bGUBAAAAB3Zh
+        bHVlX18ACAMAAAAAAAAABfb///8bU3lzdGVtLkRyYXdpbmcuR3JhcGhpY3NVbml0AQAAAAd2YWx1ZV9f
+        AAgDAAAAAwAAAAs=
+</value>
+  </data>
+  <data name="listViewJobs.Items3" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAA9zY2hyZWliZSBDb25m
+        aWcEAAAABfv///8UU3lzdGVtLkRyYXdpbmcuQ29sb3IEAAAABG5hbWUFdmFsdWUKa25vd25Db2xvcgVz
+        dGF0ZQEAAAAJBwcDAAAACgAAAAAAAAAAGAABAAAJBgAAAAH5////+////woAAAAAAAAAABoAAQABBQYA
+        AAATU3lzdGVtLkRyYXdpbmcuRm9udAQAAAAETmFtZQRTaXplBVN0eWxlBFVuaXQBAAQECxhTeXN0ZW0u
+        RHJhd2luZy5Gb250U3R5bGUDAAAAG1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAMAAAADAAAABggA
+        AAAUTWljcm9zb2Z0IFNhbnMgU2VyaWYAAARBBff///8YU3lzdGVtLkRyYXdpbmcuRm9udFN0eWxlAQAA
+        AAd2YWx1ZV9fAAgDAAAAAAAAAAX2////G1N5c3RlbS5EcmF3aW5nLkdyYXBoaWNzVW5pdAEAAAAHdmFs
+        dWVfXwAIAwAAAAMAAAAL
+</value>
+  </data>
+  <data name="listViewJobs.Items4" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAAdOZXV0cmFsAgAAAAX7
+        ////FFN5c3RlbS5EcmF3aW5nLkNvbG9yBAAAAARuYW1lBXZhbHVlCmtub3duQ29sb3IFc3RhdGUBAAAA
+        CQcHAwAAAAoAAAAAAAAAABgAAQAACQYAAAAB+f////v///8KAAAAAAAAAAAaAAEAAQUGAAAAE1N5c3Rl
+        bS5EcmF3aW5nLkZvbnQEAAAABE5hbWUEU2l6ZQVTdHlsZQRVbml0AQAEBAsYU3lzdGVtLkRyYXdpbmcu
+        Rm9udFN0eWxlAwAAABtTeXN0ZW0uRHJhd2luZy5HcmFwaGljc1VuaXQDAAAAAwAAAAYIAAAAFE1pY3Jv
+        c29mdCBTYW5zIFNlcmlmAAAEQQX3////GFN5c3RlbS5EcmF3aW5nLkZvbnRTdHlsZQEAAAAHdmFsdWVf
+        XwAIAwAAAAAAAAAF9v///xtTeXN0ZW0uRHJhd2luZy5HcmFwaGljc1VuaXQBAAAAB3ZhbHVlX18ACAMA
+        AAADAAAACw==
+</value>
+  </data>
+  <data name="listViewJobs.Items5" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACFTeXN0ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0l0ZW0HAAAA
+        BFRleHQKSW1hZ2VJbmRleAlCYWNrQ29sb3IHQ2hlY2tlZARGb250CUZvcmVDb2xvchdVc2VJdGVtU3R5
+        bGVGb3JTdWJJdGVtcwEABAAEBAAIFFN5c3RlbS5EcmF3aW5nLkNvbG9YawAAAAETU3lzdGVtLkRyYXdp
+        bmcuRm9udAMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAAQIAAAAGBAAAAApFbXBmw6RuZ2VyAQAA
+        AAX7////FFN5c3RlbS5EcmF3aW5nLkNvbG9yBAAAAARuYW1lBXZhbHVlCmtub3duQ29sb3IFc3RhdGUB
+        AAAACQcHAwAAAAoAAAAAAAAAABgAAQAACQYAAAAB+f////v///8KAAAAAAAAAAAaAAEAAQUGAAAAE1N5
+        c3RlbS5EcmF3aW5nLkZvbnQEAAAABE5hbWUEU2l6ZQVTdHlsZQRVbml0AQAEBAsYU3lzdGVtLkRyYXdp
+        bmcuRm9udFN0eWxlAwAAABtTeXN0ZW0uRHJhd2luZy5HcmFwaGljc1VuaXQDAAAAAwAAAAYIAAAAFE1p
+        Y3Jvc29mdCBTYW5zIFNlcmlmAAAEQQX3////GFN5c3RlbS5EcmF3aW5nLkZvbnRTdHlsZQEAAAAHdmFs
+        dWVfXwAIAwAAAAAAAAAF9v///xtTeXN0ZW0uRHJhd2luZy5HcmFwaGljc1VuaXQBAAAAB3ZhbHVlX18A
+        CAMAAAADAAAACw==
+</value>
+  </data>
+  <data name="imageListJobs.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADI
+        KgAAAk1TRnQBSQFMAgEBBgEAAQkBAAEEAQABMAEAATABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+        AwABwAMAAWADAAEBAQABCAYAAUgYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
+        AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
+        AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
+        AWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFm
+        AZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgACmQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHM
+        AWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEA
+        ATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEz
+        AWYCAAEzAWYBMwEAATMCZgEAATMBZgGZAQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZ
+        AWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLM
+        AQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEA
+        AWYBAAFmAQABZgEAAZkBAAFmAQABzAEAAWYBAAH/AQABZgEzAgABZgIzAQABZgEzAWYBAAFmATMBmQEA
+        AWYBMwHMAQABZgEzAf8BAAJmAgACZgEzAQADZgEAAmYBmQEAAmYBzAEAAWYBmQIAAWYBmQEzAQABZgGZ
+        AWYBAAFmApkBAAFmAZkBzAEAAWYBmQH/AQABZgHMAgABZgHMATMBAAFmAcwBmQEAAWYCzAEAAWYBzAH/
+        AQABZgH/AgABZgH/ATMBAAFmAf8BmQEAAWYB/wHMAQABzAEAAf8BAAH/AQABzAEAApkCAAGZATMBmQEA
+        AZkBAAGZAQABmQEAAcwBAAGZAwABmQIzAQABmQEAAWYBAAGZATMBzAEAAZkBAAH/AQABmQFmAgABmQFm
+        ATMBAAGZATMBZgEAAZkBZgGZAQABmQFmAcwBAAGZATMB/wEAApkBMwEAApkBZgEAA5kBAAKZAcwBAAKZ
+        Af8BAAGZAcwCAAGZAcwBMwEAAWYBzAFmAQABmQHMAZkBAAGZAswBAAGZAcwB/wEAAZkB/wIAAZkB/wEz
+        AQABmQHMAWYBAAGZAf8BmQEAAZkB/wHMAQABmQL/AQABzAMAAZkBAAEzAQABzAEAAWYBAAHMAQABmQEA
+        AcwBAAHMAQABmQEzAgABzAIzAQABzAEzAWYBAAHMATMBmQEAAcwBMwHMAQABzAEzAf8BAAHMAWYCAAHM
+        AWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHM
+        ApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHM
+        Af8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwBAAEzAQAB/wEAAWYBAAH/AQABmQEA
+        AcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHM
+        AmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZ
+        AcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHMAWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEz
+        AQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFm
+        AQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHw
+        AfsB/wEAAaQCoAEAA4ADAAH/AgAB/wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD/wEAYP9gABH/AfIv/wHy
+        Hv9gABH/Afcv/wH3Hv9gABH/AewD/wETK/8B7AP/ARMa/2AAEf8B7AP/AREr/wHsA/8BERr/YAAR/wHr
+        A/8BFSv/AesD/wEVGv9gAA3/AfQC/wHrAewBvAL/ARUC/wL0I/8B9AL/AesB7AG8Av8BFQL/AvQW/2AA
+        Dv8BBwH/ARUB9wHvAv8B6gL/Afcl/wEHAf8BFQH3Ae8C/wHqAv8B9xf/YAAN/wIOARIBEwH3AfAC/wFt
+        Av8B6yT/Ag4BEgETAfcB8AL/AW0C/wHrF/9gAAv/AewCAAIOAfQCBwH/AW0B6wL/ARAD/wHwHv8B7AIA
+        Ag4B9AIHAf8BbQHrAv8BEAP/AfAT/2AABP8B7wT/AfMBDwEOAwAB6wH0Af8B8AH/AewB7QL/ARED/wET
+        F/8B7wT/AfMBDwEOAwAB6wH0Af8B8AH/AewB7QL/ARED/wETE/9gAAT/Ae0D/wHwAg4EAAEQARMB9AEP
+        AfQB6wHtAv8BEQP/ARQX/wHtA/8B8AIOBAABEAETAfQBDwH0AesB7QL/ARED/wEUE/9gAAT/ARIB9AHz
+        ARAHAAEOAg8BQwEQAfQB7AH/AfMB6wHzAv8BFAL/Ae8U/wESAfQB8wEQBwABDgIPAUMBEAH0AewB/wHz
+        AesB8wL/ARQC/wHvEP9gAAT/AUMB8gEAAQ4GAAEOAQ8DDgHxAv8B9AHtAfcB6wL/AeoC/wEVFP8BQwHy
+        AQABDgYAAQ4BDwMOAfEC/wH0Ae0B9wHrAv8B6gL/ARUQ/2AABP8BEAIOBgACDgEPARABDgEPAUMB9AHy
+        ARUBEQHtAewC/wHrAv8BFRT/ARACDgYAAg4BDwEQAQ4BDwFDAfQB8gEVAREB7QHsAv8B6wL/ARUQ/2AA
+        A/8BQwEPBAABDgEAAw4CAAEOAQ8BDgEPAQ4BQwEAAe8B9wHtAf8B7QHsAv8BFAL/AfAQ/wFDAQ8EAAEO
+        AQADDgIAAQ4BDwEOAQ8BDgFDAQAB7wH3Ae0B/wHtAewC/wEUAv8B8A3/YAAD/wHrBwAGDgEAARADDgEV
+        Av8B7wH/Au0C/wEUAv8B9xD/AesHAAYOAQABEAMOARUC/wHvAf8C7QL/ARQC/wH3Df9gAAT/AQ4DAAsO
+        AQ8CDgERAesB8wHqAfQC7QL/ARMC/wHtEf8BDgMACw4BDwIOAREB6wHzAeoB9ALtAv8BEwL/Ae0N/2AA
+        BP8B9AIAAw4BAAcOAQABDgEPBQ4BDwG8AfcB/wHvAewC/wHsAv8B8Q7/AfQCAAMOAQAHDgEAAQ4BDwUO
+        AQ8BvAH3Af8B7wHsAv8B7AL/AfEK/2AABf8BDwEACg4BAAQOAQ8BDgEAAQ8BvAH/AfEB/wEVAZIC/wHs
+        A/8B9A7/AQ8BAAoOAQAEDgEPAQ4BAAEPAbwB/wHxAf8BFQGSAv8B7AP/AfQJ/2AABf8B9AFDBA4BAAMO
+        AQABDgIAAg4BAAEOARABDgEPARUB8wH0AfEBFAHtAf8B9AHrAfQC/wHyDv8B9AFDBA4BAAMOAQABDgIA
+        Ag4BAAEOARABDgEPARUB8wH0AfEBFAHtAf8B9AHrAfQC/wHyCf9gAAb/AfMB7AMOAQ8DDgIAAQ4BbQFm
+        Ae0DDgEQAg4BDwEUAQ4B7wHtAv8BEgH0Av8B8QH/AvQM/wHzAewDDgEPAw4CAAEOAW0BZgHtAw4BEAIO
+        AQ8BFAEOAe8B7QL/ARIB9AL/AfEB/wL0Bv9gAAj/AfECDgEAAw4BAAIOAa4BiwGuAesBDgEAAQ4BEQMO
+        ARQD/wG8AuwC/wHxAv8B8w7/AfECDgEAAw4BAAIOAa4B6gGuAesBDgEAAQ4BEQMOARQD/wG8AuwC/wHx
+        Av8B8wb/YAAJ/wHzAQAFDgERAQ4BQwFtARIBAAEOAgABDgEQAg4BEQH3AfIBEgH3Au0C/wHyAv8BBwH/
+        AfQN/wHzAQAFDgERAQ4BQwFtARIBAAEOAgABDgEQAg4BEQH3AfIBEgH3Au0C/wHyAv8BBwH/AfQE/2AA
+        C/8BDwQOAUMBDgFDAQABDgESARQBDwEOAgABDwIOAhABDgERAfcB7QH/AW0BBwL/Ae8B/wH0D/8BDwQO
+        AUMBDgFDAQABDgFtAeoBDwEOAgABDwIOAhABDgERAfcB7QH/AW0BBwL/Ae8B/wH0BP9gAAr/AvQBFQYO
+        ARQBEAEOAhIBDgIABQ4BDwEbAf8BkgH/Ae0B6wL/AQcQ/wL0ARUGDgEUAW4BaAEVARIBDgIABQ4BDwEb
+        Af8BkgH/Ae0B6wL/AQcG/2AADf8BkgUOAQ8BDgEQAQ4BEQFDAg4BAAEOAQACDgEPARQBvAETAfQB9wHt
+        Av8B7wL/AfEQ/wGSBQ4BbQFEARMB7QEAAUMCDgEAAQ4BAAIOAQ8BFAG8ARMB9AH3Ae0C/wHvAv8B8QP/
+        YAAM/wH0Af8B8QIOAgABDgERAUQBAQIeARAEDgEAAQ8DDgEVAQAB8AHsAfYB6gHsAv8Bkg//AfQB9gHx
+        Aw4B6gFEAesBQwETAg4BDwIOAwABDwMOARUBAAHwAewB9gHqAewC/wGSA/9gAA//AfQBDgEAAQsBRQUB
+        ASMCDgMAAQ4BDwEAAg4B8QH0AfEB/wHrAewC/wGSEv8B9AGSAuoB7QEOAREBDgEPAgADDgIAAQ4BDwEA
+        Ag4B8QH0AfEB/wHrAewC/wGSA/9gAA//AfYBbwEeAwEBHwEgAvkBAQEeAeoBQwEPAQABDgEAAQ8CDgER
+        AbwD7AHtAf8B8wGSEv8B8AESAeoB9wIOAQABEwEOARQBAAEOAeoBQwEPAQABDgEAAQ8CDgERAbwD7AHt
+        Af8B8wGSA/9gAAz/AZkBIwEeBAEBIAX5ASABAQFLARUBEwEAAQ4CAAMOAQABQwEOAf8B7AH/ARMB7BH/
+        AZIB6gESAewBEgEAAg4BAAEPAQABQwEAAQ4CFAEAAg4BAAMOAQABQwEOAf8B7AH/ARMB7AP/YAAL/wH0
+        BAEBIAn5ASABAQEeAQABDgQABA4B7QH0Af8B9gESAe0Q/wHrAZIB6gFtAfQB/wHvAQ4CAAIOAQABDwEA
+        AQ4DAAEOAgAEDgHtAfQB/wH2ARIB7QP/YAAL/wH0AekBIA35ASACAQIAAQ4DAAMOAQ8BbQEVAQABbQHt
+        Bv8B8gj/AesBvAHqAUQE/wH0Bg4BFAETAwABDgMAAw4BDwFtARUBAAFtAe0D/2AADv8B9AEbAkYL+QIB
+        AQsEAAcOAf8B7wH2BP8CBwHwBf8B9AHrAfAB7AFEB/8CDgEAAQ4BAAEPAREBFAEOAgACDgEABw4B/wHv
+        AfYC/2AAEf8BSwEfC/kBIAIBASMEAAQOAREB8gX/AfABvAHvAQcB8gIHAfIB7QHqAfAB7wFEAfQI/wFD
+        Aw4BAAIOAQ8CAAIOAwAEDgERAfIE/2AAEP8B9gEBCPkBIAELAiQC+QEgAQECAAQOAQ8BDgEPAREF/wG8
+        Au8BBwG8AQcB7wFtAQcB8AG8AUQBkwn/AfQBbQEAAQ4CAAIOAQ8BDgEAAQ4BAAQOAQ8BDgEPAREE/2AA
+        D/8B9gEBASAI+QIAAQ4BAAEOAwAHDgEPAg4F/wEHAbwCBwG8ARwBkgEcAe8BBwEVAWkM/wEHAQ4BAAEO
+        AQACDgIABw4BDwIOBP9gAA//AR4BAQj5ARoB9AEACQ4CAAMOAQ8BDgb/AQcB7AHzAe8BvALvAZIBEQFp
+        ARoN/wH0AQAJDgIAAw4BDwEOBP9gAAz/AfYB/wFuAQEI+QEaA/8CDgEABg4CAAQOARAG/wEcAe8BbgMH
+        Ae8B7QFvAbYQ/wIOAQAGDgIABA4BEAT/YAAN/wFuAQEI+QHDBP8B9AFDAQAEDgEABg4BkgH0Bv8BHAFK
+        AZkBSgGTAwcBkwEHAfAP/wH0AUMBAAQOAQAGDgGSAfQE/2AADP8BmQEBB/kBJQH2B/8B7AUOAQABDgEA
+        AQ4BEQn/Ae8BSwFuAZkBSgGTAbwCBwG8AfER/wHsBQ4BAAEOAQABDgERB/9gAAv/AW4BAQf5AXQB9gn/
+        AfAHDgz/AewBbgHsAZkBSwHvAfABvAHvAfMS/wHwBw4J/2AACf8B9gEeAQEG+QElAfQN/wEAAg4BDwHz
+        Dv8B7AEcAW4BHAFLAQcDvBT/AQACDgEPAfMK/2AACP8BGgEBASAF+QElARsP/wH0AQ4B6xH/AewCbgEc
+        AUoCBwHxFP8B9AEOAesM/2AABf8B9gFFAQEBHwX5ASUBGib/AewBHAGSARsB8AH0JP9gAAP/ARoBHgEB
+        AR8F+QEgARor/wHtAfYB9CT/YAABbgIBASAF+QEgAZkB9i7/Ae8l/2AAAXkF+QGaAfQE/wH2U/9gAGD/
+        FwACoRcAQf8B8j//AfQB7QGSAW0L/xEAAaELWQF0AaERABH/AfIv/wH3Ov8C9APvAQcB/wEHAfAB8QHv
+        Cf8PABFZAVIPABH/Afcv/wHsA/8BEy3/AvQB8QEHArwC7wG8AQcB9wH0AfMBBwH0AfIBBwH/Ae8B/wHt
+        CP8NABVZAVMNABH/AewD/wETK/8B7AP/AREi/wEHAfcB6wHqAfMC7wG8AQcB9wEHAfABkgHsAusDbQEH
+        Av8B8gL/Ae8BkgHzAQcC8gEHAfMH/wsAAaEYWQwAEf8B7AP/AREr/wHrA/8BFSD/AewB8AHzAfIB8wEH
+        AewB6wRtAZIE/wHxAfMB/wH0AfMB8QHzBP8B6gH/Ae8B9AHvAbwB8wf/CgABrhpZAacKABH/AesD/wEV
+        J/8B9AL/AesB7AG8Av8BFQL/AvQK/wLmAs4N/wLyAQcC7AFtA/8B9AP/AfQB/wHzAf8B9ALxAu8BvAH/
+        AW0B9AP/ARMB/wHzAf8B7wHzAfEH/wkAHVkBrgkADf8B9AL/AesB7AG8Av8BFQL/AvQk/wEHAf8BFQH3
+        Ae8C/wHqAv8B9wv/AacBQgKtDP8B7QHxAQcG/wH0AvAC7wHyAv8C9AT/Ae0E/wH0Af8B9AH/AfMB/wH0
+        Af8B7wf/CAAfWQFSCAAO/wEHAf8BFQH3Ae8C/wHqAv8B9yT/Ag4BEgETAZIBvAL/AW0C/wHrDP8BQgHV
+        Df8B8QH0Ae8C/wH0Af8B7AH/AfcBBwz/AQcD/wH3AZID/wHzA/QBvAHsBv8HAAGMIFkBdAcADf8CDgES
+        ARMBkgG8Av8BbQL/Aesi/wHsAgACDgH0AgcB/wJtAv8BEAP/AfAJ/wFCAd0M/wHyAfMBBwL/AfQD/wH0
+        Ae8M/wHxAfQB8wHsAfIB7AL/A/QC/wLwBv8GAAF0IlkBhgYAC/8B7AIAAg4B9AIHAf8CbQL/ARAD/wHw
+        F/8B7wT/AfMBDwEOAwAB6wH0Af8B8AH/AuwC/wERA/8BEwf/AfYC/wFCDP8C8gG8Av8BBwHsAv8B9AH3
+        DP8B8wL/AewB8AP/AfMB/wH0AbwBBwHxB/8GACRZBgAE/wHvBP8B8wEPAQ4DAAHrAfQB/wHwAf8C7AL/
+        ARED/wETF/8B7QP/AfACDgQAARABEwH0AQ8B9AHrAe0C/wERA/8BFAf/AccBGQH/AUIM/wHxAfIB8QL/
+        Ae8B8gFtAv8B7Az/AfMB/wLxAfID/wEHAfMBvAH0AfEB8wEHBv8FACZZBQAE/wHtA/8B8AIOBAABEAET
+        AfQBDwH0AesB7QL/ARED/wEUF/8BEgH0AfMBEAcAAQ4CDwFDARAB9AHsAf8B8wHrAfQC/wEUAv8B7wX/
+        AkIB1gz/AfEB8gH0A/8BvAHsAv8B7Qf/AfMBvAL3AQcB7wb/AZIB8gG8Av8B9AHzAQcB9AX/BAABdBhZ
+        AcMBmgxZAXQEAAT/ARIB9AHzARAHAAEOAg8BQwEQAfQB7AH/AfMB6wH0Av8BFAL/Ae8U/wFDAfIBAAEO
+        BgABDgEPAw4B8QL/AfQB7QH3AesC/wHqAv8BFRT/AfAC8gHtAv8B8AHtAv8BbQHsAZICBwX/AfQB7wGS
+        A+wBkgEHAbwC8QHvAeoBbQHvAewB9AHwAQcF/wQADFkBegFZAnoBmgHDAfYD/wH2AZoBWQKaDVkEAAT/
+        AUMB8gEAAQ4GAAEOAQ8DDgHxAv8B9AHtAfcB6wL/AeoC/wEVFP8BEAIOBgACDgEPARABDgEPAUMB9AHy
+        ARUBQwHtAewC/wHrAv8BFRT/AbwC/wHvCP8BBwLsAe0B8QHvAbwB8wESAfQBBwLsAu8BvAH/AbwB7AH/
+        AfQB8gL/AfQB9wHvBf8DAAF0C1kBwwV6F1kBrgMABP8BEAIOBgACDgEPARABDgEPAUMB9AHyARUBQwHt
+        AewC/wHrAv8BFRP/AUMBDwQAAQ4BAAMOAgABDgEPAQ4BDwEOAUMBAAHvAfcB7QH/Ae0B7AL/ARQC/wHw
+        Ef8BvAH0AfEB9AH3AuwB9wLvAwcBkgHsBf8B9AHsAbwB/wHvBf8B8gESAe8B8QL/AfMB7AHyBf8DABNZ
+        AnoBmgHDE1kDAAP/AUMBDwQAAQ4BAAMOAgABDgEPAQ4BDwEOAUMBAAHvAfcB7QH/Ae0B7AL/ARQC/wHw
+        EP8B6wcABg4BAAEQAw4BFQL/Ae8B/wLtAv8BFAL/AfcR/wEHAewBbQH3Ae8B6gFtAgcP/wHyAf8B6gEU
+        AfcB7wHzAv8B9AL/AgcG/wIAAacRWQHDAZoCehVZAacCAAP/AesHAAYOAQABEAMOARUC/wHvAf8C7QL/
+        ARQC/wH3Ef8BDgMACw4BDwIOAREB6wHzAeoB9ALtAv8BEwL/Ae0R/wGSAfMB/wEHAfEB8gT/AewC/wHx
+        Av8B8gHsAW0D/wHzAf8B9AH/AQcD8gEHAvMB9AL/Ae0B/wHxBf8CAAF0G1kBegHDDVkBjAIABP8BDgMA
+        Cw4BDwIOAREB6wHzAeoB9ALtAv8BEwL/Ae0R/wH0AgADDgEABw4BAAEOAQ8GDgG8AfcB/wHvAewC/wHs
+        Av8B8Q7/AewC/wFDAfQB7AGSARIBQwHwA/8B8wL/AZIB9AHxAbwC/wHzAv8BBwHyBf8BBwHzAfQB/wHs
+        Af8B7wX/AgARWQF6AZoBwwL2A/8BwwGaAlkBeg5ZAgAE/wH0AgADDgEABw4BAAEOAQ8GDgG8AfcB/wHv
+        AewC/wHsAv8B8Q//AQ8BAAoOAQACDgEAAQ4BDwEOAQABDwG8Af8B8QH/ARUBkgL/AewD/wH0Df8B7wb/
+        AfAB8gH0Av8B8gH/AfQB/wHsAbwBBwHxAv8BbQH/ArwB7ALvAQcB7wLyAZIC/wHyAfEBBwHzBP8CAA1Z
+        ARoBwwEaAZoBehpZAgAF/wEPAQAKDgEABA4BDwEOAQABDwG8Af8B8QH/ARUBkgL/AewD/wH0Dv8B9AFD
+        BA4BAAMOAQABDgIAAg4BAAEOARABDgEPARUB8wH0AfEBFAHtAf8B9AHrAfQC/wHyDf8B8QP/AfEB8AT/
+        AfQBBwH/AfMB9wH/AvQB/wEHAv8B7QH/AfQB8QHtAbwB9AH/AfIB9AHzAf8BvAH/AfQB8AHvAfIE/wIA
+        FlkBmgEaAfYSWQF6AgAF/wH0AUMEDgEAAw4BAAEOAgACDgEAAQ4BEAEOAQ8BFQHzAfQB8QEUAe0B/wH0
+        AesB9AL/AfIP/wHzAewDDgEPAw4CAAEOAW0BZgGRAw4BEAIOAQ8BFAEOAe8B7QL/ARIB9AL/AfEB/wL0
+        Df8BkgHzAe8C9wG8AfEBBwGSAfcB/wHsAv8B8QH0Ae8C/wHwAf8B7wHwAf8BBwHvAfMBkgH/Ae0B9AHv
+        A/8BkgH3BP8BAAHEElkBegHDAZoBeg1ZAZoBwwH2A/8B9AEJAdwCAAb/AfMB7AMOAQ8DDgIAAQ4BbQFm
+        AewDDgEQAg4BDwEUAQ4B7wHtAv8BEgH0Av8B8QH/AvQO/wHxAg4BAAMOAQACDgGuAYsBrgHrAQ4BAAEO
+        AREDDgEUA/8BvALsAv8B8QL/AfMN/wEHAe8CBwH0Av8BvAHyAbwB8gHsA/8B8wHyAv8B8gFtAe8B8gH/
+        AeoB8QP/AeoB/wHvA/8C7wT/AQABxBVZAXQBIANZAXoBmgX/ARkBCQncAacBAAj/AfECDgEAAw4BAAIO
+        Aa4BiwGXAQIBIQEAAQ4BEAMOARQD/wG8AuwC/wHxAv8B8w//AfMBAAUOAREBDgFDAW0BEgEAAQ4CAAEO
+        ARACDgERAfcB8gESAfcC7QL/AfIC/wEHC/8B6wH/AewB7wH/Ae8B7QHvAQcB/wHxAvQBBwH0B/8B7AH0
+        AfIBBwH0Af8B8wHvAQcB7AHtAfcB/wHxAfQB/wHvBP8BAAHEClkBUwggAZoB/wIgAUcB9gggAbUK3AGn
+        AQAJ/wHzAQAFDgERAQ4BQwFtAfcBAgFaAgABDgEQAg4BEQH3AfIBEgH3Au0C/wHyAv8BBxH/AQ8EDgFD
+        AQ4BQwEAAQ4BEgEUAQ8BDgIAAQ8CDgIQAQ4BEQH3Ae0B/wFtAQcC/wHvAf8B9An/AewB/wHsAfIB9AEV
+        Af8B9AL/AbwB/wHyAW0G/wEQAf8B9AH/AewCBwLvAe0B9wEHAfIB8QL/AewB9AH3BP8BAAHEClkBegEa
+        BP8B9AEZAQkC3AG1ASAV3AGnAQAL/wEPBA4BQwEOAUMBAAERAQIBMwEhAQ4CAAEPAg4CEAEOAREB9wHt
+        Af8BbQEHAv8B7wH/AfQO/wL0ARUGDgEUARABDgISAQ4CAAUOAQ8B8gH/AZIB/wHtAesC/wEHC/8B8QH/
+        AfIB9AHtAv8BbQHyAfMB7wFtAgcB/wEHAf8B9wG8Af8B9AG8AW0B/wHzAewBvAT/AfQB8AH/AfMB/wEH
+        AZIBBwT/AQABxAJZAXoBwwT/AfQBCQrcAQkBGQP/ARkS3AIACv8C9AEVBg4BFAEQAgIB+gEOAgAFDgEP
+        AfIB/wGSAf8B7QHrAv8BBxP/Ae0HDgEQAQ4BAAFDAg4BAAEOAQACDgEPARQBvAETAfQB9wHtAv8B7wL/
+        AfEL/wIHAfcB7AH3Au8B9wLxAf8BbQH/AfIC/wHzAv8B6gP/AQcB7wLsAW0B8QP/Ae0B9wHsAfEE/wEA
+        AacBGQEJEdwBCRjcAgAN/wHtBw4BcgECAfoBVQQOAQACDgEPARQBvAETAfQB9wHtAv8B7wL/AfEP/wH0
+        Af8B8gMOAQABDgERAUMBEwIOAQ8CDgMAAQ8DDgEVAQAB8AHsAf8B6gHsAv8Bkgn/AfQC/wHvAfME/wHy
+        AfQG/wHzA/8BBwT/AfQCBwX/AfMB7QLyBP8CABjcAQkCGQH/AdwB/wEJDdwCAAz/AfQB/wHyAw4BAAEO
+        AREBQwECATMB+gF3Ag4DAAEPAw4BFQEAAfAB7AH/AeoB7AL/AZIS/wH0AQ4DAAEOAREBDgEPAgADDgIA
+        AQ4BDwEAAg4B8QH0AfEB/wHrAewC/wGSCf8BEgL/AfMB7AGSAuwB6wX/AvAB8QH3Af8B8QG8Ae8B8wH0
+        Af8B8gG8AfcBBwP/AfAD/wHvAfEE/wIAENwB9AHcBP8B9AEZAQkT3AIAD/8B9AEOBAABFAFPAQIC+gEn
+        Ag4CAAEOAQ8BAAIOAfEB9AHxAf8B6wHsAv8BkhT/AQ8BAAIOAQABEwEOARQBAAEOAeoBQwEPAQABDgEA
+        AQ8CDgERAbwD7AHtAf8B8wGSCf8BBwH/AfIC/wEHAf8B8gT/AfQD/wHzAQcB8QH/AfQC/wH0A/8B9AH/
+        AfQC/wEHAe0C/wH3Bf8CAA7cAQkB3AH0GtwBuwIAEf8BDwEAAg4BAAETAQIBLQL6AeQBQwEPAwABDwIO
+        AREBvAHsAZgBcQHtAf8B8wGSFf8B6gEAAg4BAAEPAQABQwEAAQ4BFAETAQACDgEAAw4BAAFDAQ4B/wHs
+        Af8BEwHsCf8B9AHzAfAC8wHxAbwBBwHyAv8BvAL/AfMBkgHzAv8B8QLvAv8B7AHwAQ4C/wHvAQcB/wG8
+        AfMB8gHwAfcF/wIAAacT3AEJARkB8wP/DdwBCQPcAacCABL/AeoBAAIOAQABIQECA/oBWgEUAgABDgEA
+        Aw4BAAERAgIBlwH/ARMB7Bb/Ae8BDgIAAg4BAAEPAQABDgMAAQ4CAAQOAe0B9AH/AfYBEgHtCv8B9AL/
+        AfQB8AH/AfQB8QH/AfIB/wHvAf8B8gL/AbwB7wHxAf8C7wHxAfcBBwHqBv8B7AHtAfEB9wX/AwAT3AEJ
+        CtwBCQfcAQkB/wH0AdwDABP/Ae8BDgEAARABDgFPAQIE+gFaAQABDgIABA4CAgH6AcIBEwHtF/8B9AYO
+        ARQBEwMAAQ4DAAMOAQ8BbQEVAQABbQHtCv8BFAL/AfQB9wL/AewB/wHrAf8B7wG8Ae0B/wG8AQcB8wHx
+        Bf8BkgL/AfQBBwHrAQcF/wHzBP8DABbcAgkBGQHzAf8BGQIJAf8J3AEJAbQDABT/AfQCDgIAAgIF+gFV
+        AwADDgICAfoBWgHrAewN/wH0AfkK/wEAAQ4BAAEOAQABDwERARQBDgIAAg4BAAcOAf8B7wH2Cv8BbQH/
+        AbwC/wGSAfID/wEHAv8B9AHyAe8BBwL/AfEB7AG8Af8B7AG8AfAO/wQADdwB/wH0ARkD/wH0AhkBCRHc
+        BAAW/wEAAQ4CAAICBvoBVgEAAw4CAgL6AZ4B7wH2DP8B9AH5C/8BQwMOAQACDgEPAgACDgMABA4BEQHy
+        Dv8BBwH3AewB6wLsAfcC7wH/AfcB7AHtA+8C8AH/AfcB9AEHEP8EAAXcAQkH3AHzARkBCRfcAbsEABf/
+        AUMBDgIAAUkBAgf6AVUBIQEAAgID+gHzDf8B9AH5DP8BbQEAAQ4CAAIOAQ8BDgEAAQ4BAAQOAQ8BDgEP
+        AREN/wHzCP8B8QHwBP8B8gH0Af8B7wG8Af8BBwHyEP8FAAPcAf8i3AUAGP8BbQEAAQ4BAAICCfoBMwEt
+        A/oBWgH0DP8B9AH5Df8BBwEOAQABDgEAAg4CAAcOAQ8CDhf/ArwBkgEHAfEE9AH3AQcS/wUAAbQBGQH/
+        ItwGABn/AQcBDgEAAQ4BTwECDvoBWgv/ASABvQH5D/8BAAkOAgADDgEPAQ4b/wHzAfQBBwG8AesBkhP/
+        BgAC3AEJINwBtQYAG/8BAAIOAeoBAgEzDfoBWgr/AfYBIAH5EP8CDgEABg4CAAQOARAc/wHzAe8BvAFt
+        AeoT/wcAA9wB9BjcAf8F3AcAHP8CDgIAAgIN+gFVCv8B9gFGEP8B9AFDAQAEDgEABg4Bkh3/AfMBFQFt
+        Ae8B8BP/CAAB3AH0GdwBCQEZA9wIABz/AfQBFQEAAQ4BAAFPAQIBMwv6AfMe/wHsBQ4BAAEOAQABDgER
+        If8B8QEUFP8JAALcAQkB3AEZAtwBCRPcAfQBCQHcCQAe/wHsAw4BAAICCfoB9CD/AfAHDiT/AZIU/woA
+        AtwB9AHcARkB3AH/ENwB/wHcAfQB3AG7CgAf/wHwAw4CAAICATMF+gH0I/8BAAIOAQ8B8yT/AfAB8xT/
+        CwAD3AEZAdwB9AncAf8G3AEJAtwBuwsAIf8BAAIOAQ8B8wH/AgID+gHCJP8B9AEOAesm/wHxAfMU/wwA
+        AccC3AH/AdwBCQHcAQkG3AH/CNwBoQwAIf8B9AEOAesD/wFIAQIC+gFaT/8B9BT/DgABtALcAQkB3AH0
+        AdwBGQTcAf8B3AEZAdwBCQLcAccOACf/AUkBAgL6UP8B7QH0E/8QAAGhBtwBRgEgAdwBCQPcAacBoRAA
+        J/8BTwECATMBnmX/FAADoQL3A6EUACf/AZcBAgEzZv8wACj/AsIB9gX/AUIBTQE+BwABPgMAASgDAAHA
+        AwABYAMAAQEBAAEBBgABCRYAA///AP8A/wD/AJEAAv8B/gF/Av8SAAL/AYABAQL/EgAB/wH+AgABfwH/
+        EgAB/wH4AgABHwH/EgAB/wHgAgABDwH/EgAB/wHAAgABAwH/EgAB/wGAAgABAQH/EgAB/wQAAf8SAAH+
+        BAABfxIAAfwEAAE/EgAB/AQAAT8SAAH4BAABHxIAAfAEAAEPEgAB8AQAAQ8SAAHgBAABBxIAAeAEAAEH
+        EgABwAQAAQMSAAHABAABAxIAAcAEAAEDEgABwAQAAQMSAAHABAABAxIAAYAEAAEDEgABgAQAAQESAAGA
+        BAABARIAAYAEAAEBEgABgAQAAQMSAAGABAABAxIAAcAEAAEDEgABwAQAAQMSAAHABAABAxIAAcAEAAED
+        EgAB4AQAAQcSAAHgBAABBxIAAfAEAAEPEgAB8AQAAQ8SAAH4BAABHxIAAfgEAAE/EgAB/AQAAT8SAAH+
+        BAABfxIAAf8EAAH/EgAB/wGAAgABAQH/EgAB/wHAAgABAwH/EgAB/wHgAgABBwH/EgAB/wHwAgABDwH/
+        EgAB/wH8AgABPwH/EgAC/wIAAv8SAAL/AfABDwL/EgAG/wYACw==
+</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="listViewJobs.Size" type="System.Drawing.Size, System.Drawing">
+    <value>135, 654</value>
+  </data>
+  <data name="tabControlInfo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>645, 124</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 654</value>
+  </data>
+  <data name="toolStripContainerMainWindow.ContentPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 654</value>
+  </data>
+  <data name="toolStripMain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 25</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="toolStripMain.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="configToolStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="configToolStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 25</value>
+  </data>
+  <data name="tabPageInfo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>637, 98</value>
+  </data>
+  <data name="infoTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>631, 92</value>
+  </data>
+  <data name="tabPageLog.Size" type="System.Drawing.Size, System.Drawing">
+    <value>637, 98</value>
+  </data>
+  <data name="logTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>631, 92</value>
+  </data>
+  <data name="labelGPSSmooth1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 13</value>
+  </data>
+  <data name="labelGPSSmooth1.Text" xml:space="preserve">
+    <value>GPS Glättung</value>
+  </data>
+  <data name="sonst1GroupBox.Text" xml:space="preserve">
+    <value>sonstige Konfiguration</value>
+  </data>
+  <data name="CameraRoll1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroInt1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 129</value>
+  </data>
+  <data name="BaroInt1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="Baro1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 103</value>
+  </data>
+  <data name="Baro1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroTemp1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 77</value>
+  </data>
+  <data name="BaroTemp1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroTemp1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 13</value>
+  </data>
+  <data name="BaroTemp1Label.Text" xml:space="preserve">
+    <value>Baro Temp.comp.</value>
+  </data>
+  <data name="Compass1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="Compass1Label.Text" xml:space="preserve">
+    <value>Compass</value>
+  </data>
+  <data name="Camera1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="CameraLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 13</value>
+  </data>
+  <data name="CameraLabel.Text" xml:space="preserve">
+    <value>CameraGain</value>
+  </data>
+  <data name="LowMotorRun1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="LowMotorRunLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 13</value>
+  </data>
+  <data name="LowMotorRunLabel.Text" xml:space="preserve">
+    <value>LowMotorRun</value>
+  </data>
+  <data name="ImpulseTime1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>175, 99</value>
+  </data>
+  <data name="ImpulseTime1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="impulse1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 13</value>
+  </data>
+  <data name="impulse1Label.Text" xml:space="preserve">
+    <value>ImpulseTimegeschwindigkeit</value>
+  </data>
+  <data name="bit4Header1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 13</value>
+  </data>
+  <data name="bit4Header1Label.Text" xml:space="preserve">
+    <value>Bit 4 Empfängerimpulse</value>
+  </data>
+  <data name="bit3Header1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>119, 13</value>
+  </data>
+  <data name="bit3Header1Label.Text" xml:space="preserve">
+    <value>Bit 3 Roll / Pitch halbiert</value>
+  </data>
+  <data name="bit21CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>134, 17</value>
+  </data>
+  <data name="bit21CheckBox.Text" xml:space="preserve">
+    <value>normaler Modus (0)</value>
+  </data>
+  <data name="bit2Header1Label.Text" xml:space="preserve">
+    <value>Bit 2 Integrierzustand</value>
+  </data>
+  <data name="bit11CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 17</value>
+  </data>
+  <data name="bit11CheckBox.Text" xml:space="preserve">
+    <value>ThrottleChannel auf 1 (0)</value>
+  </data>
+  <data name="bit01CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>114, 17</value>
+  </data>
+  <data name="bit01CheckBox.Text" xml:space="preserve">
+    <value>als + fliegen (0)</value>
+  </data>
+  <data name="bit0Header1Label.Text" xml:space="preserve">
+    <value>Bit 0 Flugmodus</value>
+  </data>
+  <data name="Battery1GroupBox.Text" xml:space="preserve">
+    <value>Battery Unterspannungserkennung</value>
+  </data>
+  <data name="Battery1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 13</value>
+  </data>
+  <data name="Battery1Label.Text" xml:space="preserve">
+    <value>Wert / 4,6 = Volt:</value>
+  </data>
+  <data name="linear1GroupBox.Text" xml:space="preserve">
+    <value>Linearsensor</value>
+  </data>
+  <data name="VertAcc1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 40</value>
+  </data>
+  <data name="VertAcc1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="VertAcc1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 13</value>
+  </data>
+  <data name="VertAcc1Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Yaw-Achse</value>
+  </data>
+  <data name="VertDamping1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 14</value>
+  </data>
+  <data name="VertDamping1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="VertDamping1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>103, 13</value>
+  </data>
+  <data name="VertDamping1Label.Text" xml:space="preserve">
+    <value>Auf / Ab Mischanteil</value>
+  </data>
+  <data name="PitchAcc1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 40</value>
+  </data>
+  <data name="PitchAcc1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchAcc1Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 42</value>
+  </data>
+  <data name="PitchAcc1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>142, 13</value>
+  </data>
+  <data name="PitchAcc1Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Pitch-Achse</value>
+  </data>
+  <data name="PitchMa1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 14</value>
+  </data>
+  <data name="PitchMa1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchMa1Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 16</value>
+  </data>
+  <data name="PitchMa1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 13</value>
+  </data>
+  <data name="PitchMa1Label.Text" xml:space="preserve">
+    <value>Vor / Zurück Mischanteil</value>
+  </data>
+  <data name="RollAcc1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 40</value>
+  </data>
+  <data name="RollAcc1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollAcc1Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 13</value>
+  </data>
+  <data name="RollAcc1Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Roll-Achse</value>
+  </data>
+  <data name="RollMa1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 14</value>
+  </data>
+  <data name="RollMa1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollMa1label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 13</value>
+  </data>
+  <data name="RollMa1label.Text" xml:space="preserve">
+    <value>Links / Rechts Mischanteil</value>
+  </data>
+  <data name="Yaw1GroupBox.Text" xml:space="preserve">
+    <value>Yaw</value>
+  </data>
+  <data name="YawIntLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 116</value>
+  </data>
+  <data name="YawIntLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 90</value>
+  </data>
+  <data name="YawLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawDiff1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 64</value>
+  </data>
+  <data name="YawDiff1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawInt1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 38</value>
+  </data>
+  <data name="YawInt1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawProp1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 12</value>
+  </data>
+  <data name="YawProp1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchIntLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 118</value>
+  </data>
+  <data name="PitchIntLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 92</value>
+  </data>
+  <data name="PitchLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchDiff1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 66</value>
+  </data>
+  <data name="PitchDiff1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchInt1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 40</value>
+  </data>
+  <data name="PitchInt1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchProp1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 14</value>
+  </data>
+  <data name="PitchProp1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollIntLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 116</value>
+  </data>
+  <data name="RollIntLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollLimit1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 90</value>
+  </data>
+  <data name="RollLimit1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollDiff1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 64</value>
+  </data>
+  <data name="RollDiff1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollInt1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 40</value>
+  </data>
+  <data name="RollInt1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollProp1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 14</value>
+  </data>
+  <data name="RollProp1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="labelGPSSmooth2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 13</value>
+  </data>
+  <data name="labelGPSSmooth2.Text" xml:space="preserve">
+    <value>GPS Glättung</value>
+  </data>
+  <data name="sonst2GroupBox.Text" xml:space="preserve">
+    <value>sonstige Konfiguration</value>
+  </data>
+  <data name="CameraRoll2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroInt2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 129</value>
+  </data>
+  <data name="BaroInt2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="Baro2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 103</value>
+  </data>
+  <data name="Baro2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroTemp2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 77</value>
+  </data>
+  <data name="BaroTemp2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="BaroTemp2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 13</value>
+  </data>
+  <data name="BaroTemp2Label.Text" xml:space="preserve">
+    <value>Baro Temp.comp.</value>
+  </data>
+  <data name="Compass2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="Compass2label.Text" xml:space="preserve">
+    <value>Compass</value>
+  </data>
+  <data name="Camera2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="Camera2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 13</value>
+  </data>
+  <data name="Camera2Label.Text" xml:space="preserve">
+    <value>CameraGain</value>
+  </data>
+  <data name="LowMotorRun2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="LowMotorRun2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 13</value>
+  </data>
+  <data name="LowMotorRun2Label.Text" xml:space="preserve">
+    <value>LowMotorRun</value>
+  </data>
+  <data name="ImpulseTime2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>175, 99</value>
+  </data>
+  <data name="ImpulseTime2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="impulse2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 13</value>
+  </data>
+  <data name="impulse2Label.Text" xml:space="preserve">
+    <value>ImpulseTimegeschwindigkeit</value>
+  </data>
+  <data name="bit4Header2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 13</value>
+  </data>
+  <data name="bit4Header2Label.Text" xml:space="preserve">
+    <value>Bit 4 Empfängerimpulse</value>
+  </data>
+  <data name="bit3Header2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>119, 13</value>
+  </data>
+  <data name="bit3Header2Label.Text" xml:space="preserve">
+    <value>Bit 3 Roll / Pitch halbiert</value>
+  </data>
+  <data name="bit22CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>134, 17</value>
+  </data>
+  <data name="bit22CheckBox.Text" xml:space="preserve">
+    <value>normaler Modus (0)</value>
+  </data>
+  <data name="bit2Header2Label.Text" xml:space="preserve">
+    <value>Bit 2 Integrierzustand</value>
+  </data>
+  <data name="bit12CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 17</value>
+  </data>
+  <data name="bit12CheckBox.Text" xml:space="preserve">
+    <value>ThrottleChannel auf 1 (0)</value>
+  </data>
+  <data name="bit02CheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>114, 17</value>
+  </data>
+  <data name="bit02CheckBox.Text" xml:space="preserve">
+    <value>als + fliegen (0)</value>
+  </data>
+  <data name="bit0Header2Label.Text" xml:space="preserve">
+    <value>Bit 0 Flugmodus</value>
+  </data>
+  <data name="Battery2GroupBox.Text" xml:space="preserve">
+    <value>Battery Unterspannungserkennung</value>
+  </data>
+  <data name="BatteryValue2Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>198, 21</value>
+  </data>
+  <data name="Battery2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 13</value>
+  </data>
+  <data name="Battery2Label.Text" xml:space="preserve">
+    <value>Wert / 4,6 = Volt:</value>
+  </data>
+  <data name="linear2GroupBox.Text" xml:space="preserve">
+    <value>Linearsensor</value>
+  </data>
+  <data name="VertAcc2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 40</value>
+  </data>
+  <data name="VertAcc2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="VertAcc2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 13</value>
+  </data>
+  <data name="VertAcc2Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Yaw-Achse</value>
+  </data>
+  <data name="VertDamping2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>571, 14</value>
+  </data>
+  <data name="VertDamping2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="VertDamping2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>103, 13</value>
+  </data>
+  <data name="VertDamping2Label.Text" xml:space="preserve">
+    <value>Auf / Ab Mischanteil</value>
+  </data>
+  <data name="PitchAcc2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 40</value>
+  </data>
+  <data name="PitchAcc2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchAcc2Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 42</value>
+  </data>
+  <data name="PitchAcc2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>142, 13</value>
+  </data>
+  <data name="PitchAcc2Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Pitch-Achse</value>
+  </data>
+  <data name="PitchMa2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 14</value>
+  </data>
+  <data name="PitchMa2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchMa2Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 16</value>
+  </data>
+  <data name="PitchMa2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 13</value>
+  </data>
+  <data name="PitchMa2Label.Text" xml:space="preserve">
+    <value>Vor / Zurück Mischanteil</value>
+  </data>
+  <data name="RollAcc2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 40</value>
+  </data>
+  <data name="RollAcc2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollAcc2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 13</value>
+  </data>
+  <data name="RollAcc2Label.Text" xml:space="preserve">
+    <value>Ebenen-Position Roll-Achse</value>
+  </data>
+  <data name="RollMa2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 14</value>
+  </data>
+  <data name="RollMa2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollMa2Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 13</value>
+  </data>
+  <data name="RollMa2Label.Text" xml:space="preserve">
+    <value>Links / Rechts Mischanteil</value>
+  </data>
+  <data name="Yaw2GroupBox.Text" xml:space="preserve">
+    <value>Yaw</value>
+  </data>
+  <data name="YawIntLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 116</value>
+  </data>
+  <data name="YawIntLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 90</value>
+  </data>
+  <data name="YawLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawDiff2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 64</value>
+  </data>
+  <data name="YawDiff2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawInt2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 38</value>
+  </data>
+  <data name="YawInt2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="YawProp2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 12</value>
+  </data>
+  <data name="YawProp2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchIntLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 118</value>
+  </data>
+  <data name="PitchIntLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 92</value>
+  </data>
+  <data name="PitchLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchDiff2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 66</value>
+  </data>
+  <data name="PitchDiff2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchInt2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 40</value>
+  </data>
+  <data name="PitchInt2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="PitchProp2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 14</value>
+  </data>
+  <data name="PitchProp2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollIntLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 116</value>
+  </data>
+  <data name="RollIntLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollLimit2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 90</value>
+  </data>
+  <data name="RollLimit2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollDiff2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 64</value>
+  </data>
+  <data name="RollDiff2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollInt2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 40</value>
+  </data>
+  <data name="RollInt2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="RollProp2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 14</value>
+  </data>
+  <data name="RollProp2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="toolStripSplitButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAWFJREFUOE/FUy1P
+        A0EU7E+5n9CfUFlZiTyJXIk8iVxZubJyDaRyRSFHMGva1JBsUCSYNdAP0hve7ELbuyYtjkkml1zuzcyb
+        l+v1/h3WBWT6zKmHsR7zxSsYbrdr0DQN+CRPAnO4C2Mdysrg8XmxH1ittlitt9hsvvDxuTkI0bULPXFw
+        tUepNGZP81PX4xiMTLglIMnhQ4Q2FraOslKmmco7mznz721Bxt1jDcQIhDcZFIEuqklE/9rh/iH3k2Ak
+        LmFqQItTZQOUCTDi3IUaZ+H+lcWde8ki3JeIyT0md65hprlcbTP9MqLUIQ2Txcj8CMi+HP51prsae+hJ
+        +zr8huLOi7iU1RaQtHT1yyAfCOuASoQI7q3GIbmPKp+YBIZHCfrDEl0qfTgvi6UB3dNVpPhiqM+ft7zN
+        AsfO+wTS20WB0Y1L3TDugQ68GosvBhcSDJRrNc7S6Joow8WgOr/CX//ybyD+BZH/kupmAAAAAElFTkSu
+        QmCC
+</value>
+  </data>
+  <data name="comPortToolStripComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 25</value>
+  </data>
+  <data name="versionToolStripComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 25</value>
+  </data>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 20</value>
+  </data>
+  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="configLadenToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 22</value>
+  </data>
+  <data name="configLadenToolStripMenuItem.Text" xml:space="preserve">
+    <value>Parameter öffnen</value>
+  </data>
+  <data name="configSpeichernToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 22</value>
+  </data>
+  <data name="configSpeichernToolStripMenuItem.Text" xml:space="preserve">
+    <value>Parameter speichern</value>
+  </data>
+  <data name="cOMPortToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 22</value>
+  </data>
+  <data name="logLevelToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 22</value>
+  </data>
+  <data name="miscellaneousToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 22</value>
+  </data>
+  <data name="miscellaneousToolStripMenuItem.Text" xml:space="preserve">
+    <value>Diverses</value>
+  </data>
+  <data name="befehleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 20</value>
+  </data>
+  <data name="befehleToolStripMenuItem.Text" xml:space="preserve">
+    <value>Befehle</value>
+  </data>
+  <data name="connectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="connectToolStripMenuItem.Text" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="parameterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="readConfigToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="readConfigToolStripMenuItem.Text" xml:space="preserve">
+    <value>lese Config</value>
+  </data>
+  <data name="writeConfigToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="writeConfigToolStripMenuItem.Text" xml:space="preserve">
+    <value>schreibe Config</value>
+  </data>
+  <data name="neutralToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="peceiverToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="peceiverToolStripMenuItem.Text" xml:space="preserve">
+    <value>Empfänger</value>
+  </data>
+  <data name="BurnPICToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="BurnPICToolStripMenuItem.Text" xml:space="preserve">
+    <value>brenne Pic</value>
+  </data>
+  <data name="debugToolStripMenuItem.Text" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAMAMDAAAAEACACoDgAANgAAABAQAAABAAgAaAUAAN4OAAAgIAAAAQAIAKgIAABGFAAAKAAAADAA
+        AABgAAAAAQAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/w/wD80vwA+bT5APaW9gDzePMA8FrwAO08
+        7QDqHuoA5wDnAM8AzwC3ALcAnwCfAIcAhwBvAG8AVwBXAEAAQAD06/8A6M78ANyx+QDQlPYAxHfzALha
+        8ACsPe0AoCDqAJEA5wCCAM8AcwC3AGQAnwBVAIcARgBvADcAVwAoAEAA4OD/AMTE/ACoqPkAjIz2AHBw
+        8wBUVPAAODjtABwc6gAAAOcAAADPAAAAtwAAAJ8AAACHAAAAbwAAAFcAAABAAOD1/wDE6PwAqNz5AIzQ
+        9gBwxPMAVLjwADis7QAcoOoAAJHnAACCzwAAc7cAAGSfAABVhwAARm8AADdXAAAoQADg//8AxPz8AKj5
+        +QCM9vYAcPPzAFTw8AA47e0AHOrqAADn5wAAz88AALe3AACfnwAAh4cAAG9vAABXVwAAQEAA4P/wAMT8
+        6wCo+eYAjPbhAHDz3ABU8NcAOO3SABzqzQAA58kAAM+yAAC3mwAAn4QAAIdtAABvVgAAVz8AAEAoAOD/
+        4ADE/MQAqPmoAIz2jABw83AAVPBUADjtOAAc6hwAAOcAAADPAAAAtwAAAJ8AAACHAAAAbwAAAFcAAABA
+        AADw/+AA6/zEAOb5qADh9owA3PNwANfwVADS7TgAzeocAMnnAACyzwAAm7cAAISfAABthwAAVm8AAD9X
+        AAAoQAAA///gAPz8xAD5+agA9vaMAPPzcADw8FQA7e04AOrqHADn5wAAz88AALe3AACfnwAAh4cAAG9v
+        AABXVwAAQEAAAP/44AD88sQA+eyoAPbmjADz4HAA8NpUAO3UOADqzhwA58sAAM+2AAC3oQAAn4wAAId3
+        AABvYgAAV00AAEA3AAD/8OAA/OjEAPngqAD22IwA89BwAPDIVADtwDgA6rgcAOeuAADPnAAAt4oAAJ94
+        AACHZgAAb1QAAFdCAABAMAAA/+jgAPzaxAD5zKgA9r6MAPOwcADwolQA7ZQ4AOqGHADndAAAz2gAALdc
+        AACfUAAAh0QAAG84AABXLAAAQBwAAP/g4AD8xMQA+aioAPaMjADzcHAA8FRUAO04OADqHBwA5wAAAM8A
+        AAC3AAAAnwAAAIcAAABvAAAAVwAAAEAAAAD/6PAA/MvkAPmu2AD2kcwA83TAAPBXtADtOqgA6h2cAOcA
+        kQDPAIIAtwBzAJ8AZACHAFUAbwBGAFcANwBAACgA////APDw8ADo6OgA4ODgANjY2ADQ0NAAyMjIAMDA
+        wAC4uLgAsLCwAKioqACgoKAAmJiYAJCQkACIiIgAgICAAICAgABwcHAAaGhoAGBgYABYWFgAUFBQAEhI
+        SABAQEAAODg4ADAwMAAoKCgAICAgABgYGAAQEBAACAgIAAAAAACMjP7+/v7+/v7+/v7+jIz+/v6M/v7+
+        /v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/oz+/v7+/v7+4eXp5+H+/v7+/v7+/v7o8ej+jIz+/v7+4eXp
+        6eP+/v7+/v7+/oz+/v7+/v7+/v6M5fT38ub+/oz+/v7+/un4+/Xn/v7+/v7+4vL39ej+jIz+/v7+/v7+
+        /oz+/oz+/v6M6/n59urh/v7+/v7+/vH9+vnp/v7+/v7+5Pb69uj+/oyM/v7+/v7+/oz+/v7+/ozh8fj3
+        9+7i/v7+/v7+/un5/PPj/v6MjP7+5Pb49en+/v7+/v7+/v7+/v7+/v7+/v7j9Pf3+PHk/v7+/v7+/v7q
+        7uP+/v7+jP7+4/X49un+/v7+/oz+/v7+jP7+/v7+/v7o9/f3+PPn/v7+/v6M/v6MjIz+/v7+/oz+4/b5
+        9uf+4eLh4f7+/v7+/v7+/v7+/v7s+ff3+Pbr4YyM/v7+/v7+/v7+/oz+/oz+4/X59ufj7fHt5+P+/v7+
+        /v7+/v7+/uHz+Pf39/jx4uCMjIyMjIyMjIz+/oz+/v7+4/b59ufk9Pn39O3m/v7+/v7+/v7+/uT2+ff2
+        +Pjx5OCMjIyMjIyMjIz+/oz+jP7+4/b49ufi8/r4+Pjx6P7+/v7+/v7+jOn4+fXy+Pj15+HgjIyMjIyM
+        jIz+/oz+jP7+4/f49uj+6fP4+Pn28ufh/v7+/v7+/vH4+PHr9/j26+HgjIyMjIyMjIz+/oz+/v7+4/b4
+        9uiMjOHp9fj49+7j/v7+/v7+/vT4+O3k9fj38eLgjIyMjIyMjIz+/oz+/v7+4/b59uj+/oz+6PT5+PXp
+        /v7+/v7+5vf49+nh8fj38+XgjIyMjIyMjIz+/oz+/v7+4/b49uj+/v6MjOr2+fju4f7+/v7+7Pj49OX+
+        6vj39ejhjIyMjIyMjIz+/oz+/v7+4/b49+n+jP7+jOHx+fjx4/7+/v7h8fn38uL+5ff49+vhjIyMjIyM
+        jIz+/oz+/v7+4/b49uf+/v7+/v7x+Pny4/7+jP7i9vj47eH+4fT49/Hj/v7+/v7+jIyM/oz+/v7+4/b5
+        9uj+/v6MjP7t+fjy4/7+jIzn9/j26OH+4fH5+PLl/v7+/v7+jIyMjIz+/v7+4/b49uj+/v7+/v7x+Pnx
+        4v7+jODu+Pjz5P7+/ur4+PXo/v7+jP7+/oyMjIz+jP7+4/X49uj+/v7+jOb2+Pjt4f7+jOHz+Pjx4f6M
+        /uT3+Pfs4f7+/oz+/oyMjIz+jP7+4/b49uj+/v6M4fH4+Pbo4f7+jOT2+Pfr/v7+/v7z+Pjx4v6M/oz+
+        /v6MjIz+jP7+4/b49un+/v7j8fb3+PHijP7+jOn4+Pbn/oz+/v7u+Pjy5eGM/v7+jP6MjIz+jP7+4/b4
+        9u3n6Ovx+Pj59OX+/v6M4PH4+PLk/oz+/v7p+Pj16eGM/v7+jP7+/oz+jP7+4/f49vX19vb4+Pj16f7+
+        /v7+4fT59+3h/v7+/v7l9/j37OGM/v7+jP7+/v7+jP7+4/b49/j4+Pj5+PTojP6M/v7+5fT49uYA/v7+
+        /v7i8fj46+GM/v7+/v7+/v7+/v7+4/X39/f39/bz7OKM/v7+/v7+4efm5lD+/v7+/v7+5Obm4uCM/v7+
+        /v7+/v7+/v7+/uXn5ubm5uTi/oz+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+
+        /v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v6M/v7+
+        /oz+/v7+/v7+/v7+/v7+/v7+/oz+/v7+/v7+/v7+/v7+jP7+/v7+/v7+/v7+/v7+/oz+/v7+/v7+/v7+
+        /v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v6MjP7+/v7+4ePl5jLk/v7+/v7+/v7h5eGM
+        jP7+0OLi4ePk5OTk4+Pj4+Tj/v7+/ozi5P7+/v4yNTY3ODY26uX+/v7+/uHx+uzh/v5BMzU1NTY3Nzc3
+        Nzc3Nzc2/v6M/uLz+ej+/jQ4ODg3Nzc4ODblgP7+jOH3/e3h/v7+Mjc4Nzc4ODg4ODg3ODgi/v6M/uT7
+        /On+Mzc4NTMyMjI1Nzc25eD+/ozo7OKM/v7+/jY4NjMyMjIhMjI1Nzb+/oyMjP7q6v4yNzg2Mf7+/v5B
+        NDc4NaD+/v7+/oyM/v7+/jI4N+b+/v7+/hA2ODT+/v7+/oz+/v40ODcy/v7+/v7+MTQ4N+aM/v7+/v7+
+        /v7+/v43OOuQ/v7+/jI4OP7+/v6M/v7+jP42ODXh/v7+/v7+/jE3OCL+/v7+/v7+jP7+/v40ODnl/v7+
+        4TU4Nf7+/v6M/v7+jP43NzT+/v7+/v7+/jA3OOf+/v7+/v7+jP7+/v7+NzjqgP7+MTc4Iv7+/v7+/oz+
+        jP43NzP+/v7+/v7+/jA2OOf+/v7+/v7+jP7+/v7+NDg35P4wNTg2/v7+/v7+/oz+jP44NyH+/v7+/v7+
+        /hA3OOb+/v6M/v7+/v7+/v7+MTg46YAgODg0/v7+/oyM/v7+/v43N+X+/v7+/v7+/jA3OOj+/v6M/v7+
+        /v7+/v7+/jQ4NrE0ODf+/v7+/v7+/v7+/v43N+X+/v7+/v7+/jA3N+f+/v6M/oz+jIz+/v7+/jM3N+o2
+        ODX+/v7+jIyMjIyMjIw3N+X+/v7+/v7+/jA3N+f+/oyMjIyMjIz+/v7+/v41ODc4NyH+/v7+jIyMjIyM
+        jIw4OOb+/v7+/v7+/jA3OOf+/oyMjIyMjIz+/v7+/v4zODg4Nf7+/v7+jIyMjIyMjIw3OOf+/v7+/v7+
+        /kE3OOf+/oyMjIyMjIz+/v7+/v7+Nzg3Mv7+/v7+jIyMjIyMjIw3N+f+/v7+/v7+/kE2N+b+/oyMjIyM
+        jIz+/v7+/v7+NDg2IP7+/v7+jIyMjIyMjIw0NOP+/v7+/v7+/lAzNOP+/v7+/v6MjIz+/v7+/v7+MTUz
+        /v7+/v7+jIyMjIyMjIz+/v7+/v7+/v7+/v7+/v7+/oyMjP7+/v7+/v7+/v7+/jIQ/v7+/v7+jIyMjIyM
+        jIw/+d////4AAP4P+J4P9wAA/A3wfgn+AADcB/B+DP4AAPgH8GYP/wAA/Af49g+9AAD8B9j6CH8AAPwA
+        /9oAPwAA+AAA3gAfAAD4AADWAA8AAPAAANYIAwAA+AAA3gADAAD4AADeDQMAAPAAAN4OAQAA8EAA3gsB
+        AADgQADeD8EAAKBA/F4OQQAAgED8Hg/BAACA4O4WDwEAAICgdhYOAQAAgfBXFg4BAACBcB0WAAcAAAFw
+        HdYADwAAgfAd9gALAACB8B/+AB8AAIP4H/8AvwAA////////AAD//////94AAP//v/7//gAA///////5
+        AADwP8GAAPEAAOAPgwAA0AAAwAMDgADQAACAAYPAAYkAAAeB88Ph9wAAD8D/4ePdAAAP4f3hw90AAB/h
+        /fDD9QAAH+H98If1AAAf4d/wB58AAB/h3/gP/wAAH+HU+A8AAAAf4YD8DwAAAB/hgPwfAAAAH+GA/h8A
+        AAAf4YD+HwAAAB/h+P4/AAAA//+P/z8AAAAoAAAAEAAAACAAAAABAAgAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAIAAAAAAgAAAgIAAAAAAgACAAIAAAICAAMDAwAAzAAAAZgAAAJkAAADMAAAAADMAADMz
+        AABmMwAAmTMAAMwzAAD/MwAAAGYAADNmAABmZgAAmWYAAMxmAAD/ZgAAAJkAADOZAABmmQAAmZkAAMyZ
+        AAD/mQAAAMwAADPMAABmzAAAmcwAAMzMAAD/zAAAM/8AAGb/AACZ/wAAzP8AAAAAMwAzADMAZgAzAJkA
+        MwDMADMA/wAzAAAzMwAzMzMAZjMzAJkzMwDMMzMA/zMzAABmMwAzZjMAZmYzAJlmMwDMZjMA/2YzAACZ
+        MwAzmTMAZpkzAJmZMwDMmTMA/5kzAADMMwAzzDMAZswzAJnMMwDMzDMA/8wzAAD/MwAz/zMAZv8zAJn/
+        MwDM/zMA//8zAAAAZgAzAGYAZgBmAJkAZgDMAGYA/wBmAAAzZgAzM2YAZjNmAJkzZgDMM2YA/zNmAABm
+        ZgAzZmYAZmZmAJlmZgDMZmYA/2ZmAACZZgAzmWYAZplmAJmZZgDMmWYA/5lmAADMZgAzzGYAZsxmAJnM
+        ZgDMzGYA/8xmAAD/ZgAz/2YAZv9mAJn/ZgDM/2YA//9mAAAAmQAzAJkAZgCZAJkAmQDMAJkA/wCZAAAz
+        mQAzM5kAZjOZAJkzmQDMM5kA/zOZAABmmQAzZpkAZmaZAJlmmQDMZpkA/2aZAACZmQAzmZkAZpmZAJmZ
+        mQDMmZkA/5mZAADMmQAzzJkAZsyZAJnMmQDMzJkA/8yZAAD/mQAz/5kAZv+ZAJn/mQDM/5kA//+ZAAAA
+        zAAzAMwAZgDMAJkAzADMAMwA/wDMAAAzzAAzM8wAZjPMAJkzzADMM8wA/zPMAABmzAAzZswAZmbMAJlm
+        zADMZswA/2bMAACZzAAzmcwAZpnMAJmZzADMmcwA/5nMAADMzAAzzMwAZszMAJnMzADMzMwA/8zMAAD/
+        zAAz/8wAZv/MAJn/zADM/8wA///MADMA/wBmAP8AmQD/AMwA/wAAM/8AMzP/AGYz/wCZM/8AzDP/AP8z
+        /wAAZv8AM2b/AGZm/wCZZv8AzGb/AP9m/wAAmf8AM5n/AGaZ/wCZmf8AzJn/AP+Z/wAAzP8AM8z/AGbM
+        /wCZzP8AzMz/AP/M/wAz//8AZv//AJn//wD4+PgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAgAD/AAAAAP8AAP//AAAAAP8A/wD/AAD/
+        /wD///8AAAAAAAAAsAcAAACFAACwBwAAAAAAAPcv/gCwWgAAhS8AAAAAAAAvL7AAAAAAAIVahYUAAACw
+        Ly+FAAAAAACFWoUv9wAAhVr3WgAAAAAAhVoAsC+wAFr3By/+AAAAAIVaAAAvBwAvBwAvsAAAAACFWgCF
+        L7AHLwAAL/cAAAAAhS9aL4UAsAcAALCwAAAAALCFhbAAAAAAAAAAAAAAAAAAAAAAAAAA0KivAACFANKu
+        rq6o0gCF0NHS0K4AAADSp9LSyQAAsMkAAACnAAAAANCw0dEAAADQAAAAygAAAADSqMkAAAAApwAAAKcA
+        AAAAAMnQAAAAANEAAADRAAAAAADS0gAAAADOzwAAxM8AAMfDAACHwQAAh8gAAIPMAACTyAAAM8EAADPD
+        AAD//wAAjQIAAAcGAAB3hwAAd48AAHfPAAB3zwAAKAAAACAAAABAAAAAAQAIAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAACAAAAAAIAAAICAAAAAAIAAgACAAACAgADAwMAAMwAAAGYAAACZAAAAzAAAAAAz
+        AAAzMwAAZjMAAJkzAADMMwAA/zMAAABmAAAzZgAAZmYAAJlmAADMZgAA/2YAAACZAAAzmQAAZpkAAJmZ
+        AADMmQAA/5kAAADMAAAzzAAAZswAAJnMAADMzAAA/8wAADP/AABm/wAAmf8AAMz/AAAAADMAMwAzAGYA
+        MwCZADMAzAAzAP8AMwAAMzMAMzMzAGYzMwCZMzMAzDMzAP8zMwAAZjMAM2YzAGZmMwCZZjMAzGYzAP9m
+        MwAAmTMAM5kzAGaZMwCZmTMAzJkzAP+ZMwAAzDMAM8wzAGbMMwCZzDMAzMwzAP/MMwAA/zMAM/8zAGb/
+        MwCZ/zMAzP8zAP//MwAAAGYAMwBmAGYAZgCZAGYAzABmAP8AZgAAM2YAMzNmAGYzZgCZM2YAzDNmAP8z
+        ZgAAZmYAM2ZmAGZmZgCZZmYAzGZmAP9mZgAAmWYAM5lmAGaZZgCZmWYAzJlmAP+ZZgAAzGYAM8xmAGbM
+        ZgCZzGYAzMxmAP/MZgAA/2YAM/9mAGb/ZgCZ/2YAzP9mAP//ZgAAAJkAMwCZAGYAmQCZAJkAzACZAP8A
+        mQAAM5kAMzOZAGYzmQCZM5kAzDOZAP8zmQAAZpkAM2aZAGZmmQCZZpkAzGaZAP9mmQAAmZkAM5mZAGaZ
+        mQCZmZkAzJmZAP+ZmQAAzJkAM8yZAGbMmQCZzJkAzMyZAP/MmQAA/5kAM/+ZAGb/mQCZ/5kAzP+ZAP//
+        mQAAAMwAMwDMAGYAzACZAMwAzADMAP8AzAAAM8wAMzPMAGYzzACZM8wAzDPMAP8zzAAAZswAM2bMAGZm
+        zACZZswAzGbMAP9mzAAAmcwAM5nMAGaZzACZmcwAzJnMAP+ZzAAAzMwAM8zMAGbMzACZzMwAzMzMAP/M
+        zAAA/8wAM//MAGb/zACZ/8wAzP/MAP//zAAzAP8AZgD/AJkA/wDMAP8AADP/ADMz/wBmM/8AmTP/AMwz
+        /wD/M/8AAGb/ADNm/wBmZv8AmWb/AMxm/wD/Zv8AAJn/ADOZ/wBmmf8AmZn/AMyZ/wD/mf8AAMz/ADPM
+        /wBmzP8Amcz/AMzM/wD/zP8AM///AGb//wCZ//8A+Pj4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgIAA/wAAAAD/AAD//wAAAAD/AP8A
+        /wAA//8A////AAAAAAAAAAAAAAAAAAAAAAAAAP6wAAAAAAAAAAAAAAAAAAAAAAAAAAAA91qFAAAAAACw
+        Ly+wAAAAAIUvhQAAAAAAAAAAAAAAALAvL/cAAAAAAIUALwcAAAAAWgD3AAAAAAAAAAAAAAAABy8vWgAA
+        AAAAAFqFAAAAAABaL/cAAAAAAAAAAAAAAAD3Ly8vBwAAAAAAAAAAAAAAAFov9wAHsAAAAAAAAAAAAFov
+        Ly+FAAAAAAAAAAAAAAAAWi+FhS8v97AAAAAAAACwLy8vL/cAAAAAAAAAAAAAAABaL4UHLy8vWrAAAAAA
+        AIUvWlovWrAAAAAAAAAAAAAAAFov9wCwWi8v9wAAAAAA9y/3By8vBwAAAAAAAAAAAAAAWi/3AAAA9y8v
+        BwAAAAAvL4UALy+FAAAAAAAAAAAAAABaL/cAAAAALy/3AAAABy8vBwBaL1oAAAAAAAAAAAAAAFov9wAA
+        AABaL/cAAACFL1oAAPcvL7AAAAAAAAAAAAAAWi/3AAAAAFov9wAAAFov9wAABy8vBwAAAAAAAAAAAABa
+        L/cAAAAHLy+FAACwLy+FAAAALy+FAAAAAAAAAAAAAFov9wAAsFovLwAAAAcvL7AAAABaL1oAAAAAAAAA
+        AAAAWi9ahfcvLy8HAAAA9wBaAAAAAIUAL7AAAAAAAAAAAABaLy8vLy8vhQAAAAD3L4UAAAAAsFpasAAA
+        AAAAAAAAAPdaWlpa97AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsK+v
+        sAAAAAAABwcAAACvsLCvr6+vr6+wAAAAhQcA0snIyMimqLAAAAAvNgAAAMmnycjIyMjIyK8AALAA99LJ
+        ydHS0tDIpwAAAAewAAAA0ciu0tLS0snJAAAAAAew0MiwAAAAANDIrwAAAAAAAAAAyKgAAADSyK4AAAAA
+        AADIpwAAAAAAAMioAAAAAAAAAADQprAAANDIsAAAAAAAAMiuAAAAAAAAyKgAAAAAAAAAANLIqAAAyKgA
+        AAAAAAAAyK8AAAAAAADIqAAAAAAAAAAAAM+nsdHIsAAAAAAAAADIrwAAAAAAAMioAAAAAAAAAAAA0sip
+        yacAAAAAAAAAAMivAAAAAAAAyKgAAAAAAAAAAAAAycjIrwAAAAAAAAAAyKgAAAAAAADIqAAAAAAAAAAA
+        AADRyMkAAAAAAAAAAADJrwAAAAAAAMmuAAAAAAAAAAAAAADJrgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAANL+AAAAAAAAAAAA//z///j4eP/w+Hj/8Pz4//B/+J/wf/gH4H/4A+A/+IPgP/jh4j/48cI/
+        +PHGH/jxxh/44Ycf+MOHH/gDjw/4B48P+A/////////////////h84AcgHOAGABzgDweP84/Pz/GPz8/
+        xn8/P+B/Pz/g/z8/8P8/P/H/Pz/5////+f8=
+</value>
+  </data>
+</root>

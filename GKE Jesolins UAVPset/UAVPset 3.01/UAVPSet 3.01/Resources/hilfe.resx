@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Baro" xml:space="preserve">
+    <value>Influence of the Baro sensor on the throttle (proportional use 0-1) Zero is off.</value>
+  </data>
+  <data name="HoverThrottle" xml:space="preserve">
+    <value>Estimated throttle setting (%) for hover. Updated by actual hover throttle after flight.</value>
+  </data>
+  <data name="GPSAltitude" xml:space="preserve">
+    <value>Enables the use of GPS altitude values for RTH altitude hold.</value>
+  </data>
+  <data name="RTHDescend" xml:space="preserve">
+    <value>Enables automatic descend after a short delay upon reaching the Origin when using RTH.</value>
+  </data>
+  <data name="BaroDif" xml:space="preserve">
+    <value>Influence of the Baro sensor on the throttle (differential use 1-4)</value>
+  </data>
+  <data name="BaroTemp" xml:space="preserve">
+    <value>Temperature compensation for Baro sensor (use 0)  It is always best to allow the quad to aclimate to a temperature change for 5-10 minutes before flying.</value>
+  </data>
+  <data name="Differential" xml:space="preserve">
+    <value>Corrects oscillations.  The differential value is always an opposite  set sign to proportional value.
+The value is too high or too low, when the quad bounces or oscillates. Possible values of -99 to 99. Typical values of -20 to +20, but values of up to -/+70 are effective.
+For Yaw use 0.</value>
+    <comment>Direkt aus der Anleitung entnommen (Test)</comment>
+  </data>
+  <data name="VerticalDamping" xml:space="preserve">
+    <value>Vertical velocity damping correction value.  Minimises a rapid climb/sink quad response to turbulence.  Recommended values 0 to -4. </value>
+  </data>
+  <data name="RxPulsePolarity" xml:space="preserve">
+    <value>Rx pulse polarity. Usually positive for Futaba and Hitech and negative for Graupne/Robbe/JR.
+Chooses which receiver pulse is being used by your Rx/Tx (positive or negative).</value>
+  </data>
+  <data name="ThrottleChannel" xml:space="preserve">
+    <value>Graupner/JR modes (K1=Throttle, K2=Roll, K3=Pitch, K4=Yaw)
+Futaba/Robbe/Spek modes (K1=Roll, K2=Pitch, K3=Throttle, K4=Yaw)  Setting will follow both parameter sets.</value>
+  </data>
+  <data name="RxFormat" xml:space="preserve">
+    <value>The Rx input to the quadrocopter may be odd numbered channels or a serial PPM signal by connecting directly into the Rx circuit.</value>
+  </data>
+  <data name="TxMode" xml:space="preserve">
+    <value>Tx stick configuration:
+ Mode 1 - Left Stick Elevator and Rudder, Right Stick Throttle and Ailerons
+ Mode 2 - Left Stick Throttle and Rudder, Right Stick Elevator and Ailerons</value>
+  </data>
+  <data name="Impuls" xml:space="preserve">
+    <value>Update rate of contRollers
+Minimum recommended value is +2.  Normal value is +4 to+6.  Values will vary depending on your model of Tx and Rx and ESC's.
+Note how motors start and the stick responsiveness and flight performance.  Usually the higher the value, the slower the stick response will feel.  Oacillations might occur with too high or too low a setting.  Adjust if necessary for the best overall performance!</value>
+  </data>
+  <data name="Integral" xml:space="preserve">
+    <value> *Always the same sign as proportional!
+Affects the total gyro/acc value over time.  Important for the Heading Lock of the yaw channel.  The higher the value, the more accelerometer self-leveling emphasis there will be.  A value too high causes the quad to osciillate, a value that is too small causes a poor return to  level.   Recommended Pitch and Roll "I" values of 0 to 15.  For CCW front prop rotation the yaw "I and P" values are negative!  For CW front prop rotation the yaw "I and P" values are  positive!  Recommended yaw "I" values 5 to 40.  Be sure to use the correct sign!</value>
+    <comment>Direkt aus der Anleitung entnommen (Test)</comment>
+  </data>
+  <data name="IntegralLimiter" xml:space="preserve">
+    <value>Integral Limiter 
+Always positive! 
+Low value causes slow return to level.  Too high a value can cause flips.  Recommended values for pitch and roll of +4 to +15. Recommended values for yaw of +1 to +2.  Upper value is automatically limitied by the your integral setting.</value>
+  </data>
+  <data name="PPMDSM2" xml:space="preserve">
+    <value>Currently the traditional PPM/PCM format is supported along with DSM2. DSM2 must use the ACTRO model with no mixing.</value>
+  </data>
+  <data name="CameraGain" xml:space="preserve">
+    <value>Affects how strong the pitch/rolling motions at the camera servos will be. Connect to K5=pitch servo. K6=roll servo. A setting of 0=no gyro control. Start with a setting of 1 and increase if necessary.</value>
+  </data>
+  <data name="Compass" xml:space="preserve">
+    <value>Affects how strong the deviation from target heading direction corrects back to heading after moving the yaw stick. Values of  -99 to +99.  Normal is 6-8.</value>
+  </data>
+  <data name="LowMotorRun" xml:space="preserve">
+    <value>Allows motors to have a minimum throttle to prevent them from stopping in the air and also to have them all spinning for initial launch. Values of 5% to 20% recommended.  Too high a value will cause fluttering in a fast descent.</value>
+  </data>
+  <data name="Limiter" xml:space="preserve">
+    <value>Yaw Limiter (always positive!)
+Recommended values 25 to 45.  Typically 35.</value>
+  </data>
+  <data name="Neutral" xml:space="preserve">
+    <value>Neutral values of the accelerometer are captured when the quad is initially powered on.  It is important that the quad is not jiggled if neutral values are taken and input into the data windows.  These values will vary by accelerometer and breakout board installation, but should remain fairly constant over time. They should be re-checked especially after a very "hard landing", or a board re-mount.  You can also use the "Get values" button to automatically copy the data to the windows.  As a suggestion to get better accelerometer values, load and use the testfirmware to check the values and get a good average.  The testfirmware allows you to check the accelerometer values repeatedly by clicking on the Tools/Testsoftware/Liinear Sensor check line.</value>
+  </data>
+  <data name="Proportional" xml:space="preserve">
+    <value>Affects gyro control strength corresponding to stick input.
+The value is too low, when the quad reacts poorly or uncontrollably to stick inputs. The value is too high if the quad is oscillating. The value will be positive for the yaw if the props on the front are CW rotatiing.  
+ Recommended values for pitch and roll 10 to 25.  Recommended values for yaw 15 to 35. For CCW front prop rotation the yaw "I and P" values are negative!  For CW front prop rotation the yaw "I and P" values are  positive!  Be sure to use the correct sign!!</value>
+    <comment>Direkt aus der Anleitung entnommen (Test)</comment>
+  </data>
+  <data name="Unterspannung" xml:space="preserve">
+    <value>Alarm setting for the red LED and buzzer if installed for the LiPo voltage.
+Recommended values for 3s Lipos from 43 to 48.</value>
+  </data>
+  <data name="XModus" xml:space="preserve">
+    <value>Quad flight orientation.
++ = an arm forward into flight direction
+X = 2 arms forward in flight direction (45° staggered to + modes)
+Note: X mode may require changes to Proportional, Integral and Differential parameters.</value>
+  </data>
+  <data name="NavRadius" xml:space="preserve">
+    <value>Maximum control action is applied when the quadrocopter is greater than this distance
+from the desired GPS position. Below this distance proportionately less control is exerted. Recommended value is 20.</value>
+  </data> 
+  <data name="NavIntLimit" xml:space="preserve">
+    <value>Assists in achieving and maintaining the desired GPS position in wind. Recommended values are 0 to 2.</value>
+  </data>
+  <data name="NavAltProportional" xml:space="preserve">
+    <value>TBD</value>
+  </data>
+  <data name="NavAltIntegral" xml:space="preserve">
+    <value>TBD</value>
+  </data>
+  <data name="NavRTHAltitude" xml:space="preserve">
+    <value>The GPS altitude desired when executing a return to home(RTH).</value>
+  </data>
+  <data name="NavMagVar" xml:space="preserve">
+    <value>The magnetic variation of True from Magnetic North in positive degrees East.</value>
+  </data>
+  <data name="GyroType" xml:space="preserve">
+    <value>The type of gyro used for the roll/pitch axes.</value>
+  </data>
+  <data name="ESCType" xml:space="preserve">
+    <value>The type of ESCs used to control the motors.</value>
+  </data>
+  <data name="TxRxType" xml:space="preserve">
+    <value>Connect the following channels to the Quadrocopter: 
+ * Futaba Ch3 Throttle - Aileron, Elevator, Gear, Aux2
+ * Futaba Ch2 Throttle - Aileron, Rudder, Gear, Aux2
+ * Futaba DM8/AR7000 - Throttle, Aileron, Rudder, Aux2
+ * JR XP8103/PPM - Throttle, Elevator, Gear, Aux2
+ * JR 9XII DM9/AR7000 - Aileron, Rudder, Gear, Aux2
+ * JR DXS12/AR7000 - Aileron, Rudder, Gear, Aux2
+ * Spektrum DX7/AR7000 - Aileron, Rudder, Gear, Aux2  
+ * Spektrum DX7/AR6200 - Throttle, Elevator, Gear (Mix Rudder to Aux1)
+ * Custom user defined from non-overlapping channel time sequence.
+ The order in which they are connected does not matter.</value>
+  </data>
+  <data name="NavNeutralRadius" xml:space="preserve">
+    <value>The quadrocopter relies only on its gyroscopes and accelerometer if it is less than this radius from the desired GPS position. 
+While inside this radius no GPS corrections are applied. Recommended value is 2.</value>
+  </data>
+  
+</root>

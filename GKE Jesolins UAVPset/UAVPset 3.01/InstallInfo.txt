@@ -1,0 +1,17 @@
+1. Install Dot.Net 2.0 Redistributable!
+
+http://www.microsoft.com/downloads/details.aspx?FamilyID=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=de
+
+INFO:
+=====
+Beim PIC brennen nicht das LOG-TAB sichtbar schalten das bremst den Vorgang ziemlich!
+
+Sollte beim brennen ein Fehler (Timeout) auftreten in den Einstellungen den Write Sleep Wert erhöhen.
+
+Bei Fehlermeldungen bitte den genauen Ablauf beschreiben und dabei den LogLevel auf 1 setzen. Dann die Datei DebugLog.txt aus dem Programmverzeichnis mitsenden! 
+
+Softwarefehler können als Ticket unter http://dev.uavp.de angelegt werden.
+
+Hier steht auch ein Developer Forum zur Verfügung (hier bitte keine Bedienungs fragen stellen!)
+
+Der Sourcecode steht über http://dev.uavp.de zur Verfügung.
