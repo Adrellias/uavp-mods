@@ -1,8 +1,0 @@
-Parameter im FormMain in ParameterSet 1 und 2 hinzufügen
-TAG im Feld auf Parameter setzen
-Event:  ValueChanged: feldUpdaten_Click_KeyDown
-        Enter: infoGetFocus
-        KeyDown: feldUpdaten_KeyDown
-        
-ParameterSetsArray für Parameter erweitern
-bei updateForm die Cases erweitern
