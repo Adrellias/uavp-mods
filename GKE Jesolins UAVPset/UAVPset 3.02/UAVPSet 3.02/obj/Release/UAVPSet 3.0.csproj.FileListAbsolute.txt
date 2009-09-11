@@ -1,0 +1,5 @@
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\UAVPset source builds\4s\UAVPSet 3.02 (UAVX).exe.config
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2s\Sources2\UAVPSet\obj\Release\UAVPSet 3.02 (UAVX).exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2s\Sources2\UAVPSet\obj\Release\UAVPSet 3.02 (UAVX).pdb
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2s\UAVPset 3.02\UAVPSet\obj\Release\UAVPSet 3.02 (UAVX).exe
+C:\Documents and Settings\Karaoke\My Documents\UAVP\uavpset\GKE UAVPset\Sources2s\UAVPset 3.02\UAVPSet\obj\Release\UAVPSet 3.02 (UAVX).pdb

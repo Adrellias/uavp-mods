@@ -1,0 +1,69 @@
+Version 3.02:
+=============
+- Added GPS neutral radius
+- Added support info
+- Added 6 channel Tx GPS ch6 GPS influence adjustment 
+
+Version 3.01:
+=============
+- Added support for accelerometer Horiz damping
+============
+Version 3.0:
+============
+- Added support for UAVX
+- Added support for GPS
+- vertical damping
+============
+Version 2.5:
+- Reworked English info
+- Reworked Graphics and layout
+============
+Version 2.4:
+============
+- auto disconnect
+- Kamera ausgleich Rollachse
+- Ebenen-Werte entfernt bei v3.15
+- Parameter speichern - Endung automatisch anfügen (.auv)
+- Französiche Version *** many thanks to Philippe ***
+- Configuration Read Sleep for USB-Serial Converter *** many thanks to Tony ***
+- Fehler bei Ebenenwert Gier
+- Fehler bei Baro-Grenzwerte bei 3.15
+
+Version 2.3:
+============
+- Integration der Debuganzeige
+- Erweiterung des Logs bei Testsoftware
+- I2C und Kompass Kalibrierung in Testsoftware
+- Dateieindung auv öffnet UAVPSet
+- Kopieren der Parameter-Sets von 1->2 und 2->1
+- Umschalten von 3.12, 3.13 und 3.14 für Parameter Werte
+- Startabfrage für Version
+- Roll/Nick/Gier-Limiter werden auf 127/Integral begrenzt
+- Gier wird bei Ebenen übertragen
+- Integration Baro-Werte
+- div. Infos angepasst
+
+Version 2.2:
+============
+- Neues Farbkonzept der Parameterwerte
+- Fehlerbehebung flashen nach Testsoftware
+- Anzeigefehler (Info-Meldungen)
+- COM Ports dynamisch ermitteln
+- COM über Config einstellbar
+- Sprache über Config einstellbar
+
+Version 2.1:
+============
+- Parameterset für Firmware 3.13 angepasst
+- wiederholtes Brennen nach fehlerhaftem Brennen mglich
+- Diverse Fehlerkorrekturen
+- Anzeige wenn Verbindung geschlossen
+- Kompass auf -16 / +16 begrenzt
+- Parameterwerte mit Kürzel anzeigen
+- Größenänderung der Form anpassen
+- Einstellungen Layout speichern
+- Englische Hilfetexte
+
+Version 2.0:
+============
+- Neuprogrammierung auf Basis von Dot.Net 2.0 in C# 
