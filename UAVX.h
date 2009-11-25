@@ -99,9 +99,9 @@
 #define BARO_LOW_THR_COMP		-7L
 #define BARO_HIGH_THR_COMP		30L
 
-#define BARO_SCALE				108L	//((438L*256L)/1043L)		// Baro*256/GPSAlt
+#define BARO_SCALE				108L			//((438L*256L)/1043L)// Baro*256/GPSAlt
 
-#define BARO_MAX_DESCENT_DMPS		5L //10L	// Decimetres/Sec
+#define BARO_MAX_DESCENT_DMPS		5L 			// *10L Decimetres/Sec
 #define BARO_FINAL_DESCENT_DMPS		2L //5L		// Decimetres/Sec
 #define BARO_DESCENT_TRANS_DM		150L		// Decimetres Altitude at final descent starts 
 #define BARO_FAILSAFE_MIN_ALT_DM	50L			// Decimetres above the origin the motors cut on failsafe descent
@@ -114,6 +114,9 @@
 #define GPS_ALT_BAND_DM			50L				// Decimetres
 
 // Navigation
+
+#define NAV_MAX_NEUTRAL_RADIUS	3L				// Metres also minimum closing radius
+#define NAV_MAX_RADIUS			40L				// Metres
 
 // reads $GPGGA and $GPRMC sentences - all others discarded
 
