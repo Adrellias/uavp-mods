@@ -25,6 +25,8 @@
 
 // Prototypes
 
+int16 ConvertGPSToM(int16);
+int16 ConvertMToGPS(int16);
 void UpdateField(void);
 int16 ConvertInt(uint8, uint8);
 int32 ConvertLatLonM(uint8, uint8);
@@ -36,6 +38,9 @@ void ParseGPSSentence(void);
 void ResetGPSOrigin(void);
 void InitGPS(void);
 void UpdateGPS(void);
+
+// Defines
+#define GPSFilter SoftFilter
 
 // Variables
 
@@ -61,6 +66,17 @@ int16 ValidGPSSentences;
 uint8 nll, cc, lo, hi;
 boolean EmptyField;
 #pragma udata
+
+int16 ConvertGPSToM(int16 c)
+{	// approximately 0.18553257183 Metres per LSB at the Equator
+	// only for converting difference in coordinates to 32K
+	return ( ((int32)c * (int32)18553)/((int32)100000) );
+} // ConvertGPSToM
+
+int16 ConvertMToGPS(int16 c)
+{
+	return ( ((int32)c * (int32)100000)/((int32)18553) );
+} // ConvertMToGPS
 
 int16 ConvertInt(uint8 lo, uint8 hi)
 {
@@ -167,12 +183,12 @@ void ParseGPGGASentence(void)
     //UpdateField();   // GHeight 
     //UpdateField();   // GHeightUnit 
  
-    _GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );  
+    F[GPSValid] = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );  
 
-	if ( _GPSTestActive )
+	if ( F[GPSTestActive] )
 	{
 		TxString("$GPGGA ");
-		if ( !_GPSValid )
+		if ( !F[GPSValid] )
 		{
 			TxString(" fx=");
 			TxVal32(GPSFix, 0, ' ');
@@ -209,7 +225,7 @@ void SetGPSOrigin(void)
 
 void ParseGPSSentence(void)
 {
-	static int16 EastDiff, NorthDiff, GPSVelP;
+	static int16 EastDiff, NorthDiff, GPSVelP, Temp;
 	static int24 GPSInterval;
 
 	cc = 0;
@@ -219,18 +235,18 @@ void ParseGPSSentence(void)
 
 	if ( State == InFlight ) Stats[GPSSentencesS].i16++;
 
-	if ( _GPSValid )
+	if ( F[GPSValid] )
 	{
 	    if ( ValidGPSSentences <=  GPS_INITIAL_SENTENCES )
 		{   // repetition to ensure GPGGA altitude is captured
 
-			if ( _GPSTestActive )
+			if ( F[GPSTestActive] )
 			{
 				TxVal32( GPS_INITIAL_SENTENCES - ValidGPSSentences, 0, 0);
 				TxNextLine();
 			}
 
-			_GPSValid = false;
+			F[GPSValid] = false;
 
 			if (GPSHDilute <= GPS_MIN_HDILUTE )
 			{
@@ -249,10 +265,11 @@ void ParseGPSSentence(void)
 			GPSInterval = mS[Clock] - mS[LastGPS];
 			mS[LastGPS] = mS[Clock];
 
+
 			// all coordinates in 0.0001 Minutes or ~0.185M units relative to Origin
-			GPSNorth = GPSLatitude - GPSOriginLatitude;
-			GPSEast = GPSLongitude - GPSOriginLongitude;
-			GPSEast = SRS32((int32)GPSEast * GPSLongitudeCorrection, 8); 
+			GPSNorth = GPSFilter(GPSNorth, GPSLatitude - GPSOriginLatitude);
+			Temp = GPSLongitude - GPSOriginLongitude;
+			GPSEast = GPSFilter(GPSEast, SRS32((int32)GPSEast * GPSLongitudeCorrection, 8)); 
 
 			EastDiff = GPSEast - GPSEastP;
 			NorthDiff = GPSNorth - GPSNorthP;
@@ -304,32 +321,32 @@ void InitGPS(void)
 
 	ValidGPSSentences = 0;
 
-	_GPSValid = false; 
-	GPSSentenceReceived = false;
+	F[GPSValid] = false; 
+	F[GPSSentenceReceived] = false;
   	GPSRxState = WaitGPSSentinel; 
   	
 } // InitGPS
 
 void UpdateGPS(void)
 {
-	if ( GPSSentenceReceived )
+	if ( F[GPSSentenceReceived] )
 	{
 		LEDBlue_ON;
 		LEDRed_OFF;
-		GPSSentenceReceived = false;  
+		F[GPSSentenceReceived] = false;  
 		ParseGPSSentence(); // 7.5mS 18f2520 @ 16MHz
-		if ( _GPSValid )
+		if ( F[GPSValid] )
 		{
-			_NavComputed = false;
+			F[NavComputed] = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )
-			_GPSValid = false;
+			F[GPSValid] = false;
 
 	LEDBlue_OFF;
-	if ( _GPSValid )
+	if ( F[GPSValid] )
 		LEDRed_OFF;
 	else
 		LEDRed_ON;	

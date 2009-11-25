@@ -1,7 +1,7 @@
 // EXPERIMENTAL
 
 //#define FAKE_FLIGHT						// For testing Nav on the GROUND!
-//#define SIMPLE_POS_HOLD					// Proportional control ONLY 
+//#define NAV_ON_NEUTRAL_ONLY
 
 #define NAV_ACQUIRE_BEEPER
 
@@ -10,9 +10,9 @@
 #define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
 #define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
 
-#define NAV_MAX_ROLL_PITCH 		18L		// Rx stick units ~= degrees max pitch/roll angle
-#define NAV_INT_LIMIT			3L		// Suggest similar to DAMP_HORIZ_LIMIT 
-#define NAV_DIFF_LIMIT			3L		// Less than half NAV_MAX_ROLL_PITCH 
+#define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units ~= degrees max pitch/roll angle
+#define NAV_INT_LIMIT			8L		// *3 Suggest similar to DAMP_HORIZ_LIMIT 
+#define NAV_DIFF_LIMIT			8L		// *3 Less than half NAV_MAX_ROLL_PITCH 
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
@@ -184,6 +184,7 @@
 #define MILLIPI 			3142 
 #define CENTIPI 			314 
 #define HALFMILLIPI 		1571 
+#define QUARTERMILLIPI		785
 #define TWOMILLIPI 			6284
 
 #define MILLIRAD 			18 
@@ -289,42 +290,7 @@ typedef union {
 #define TMR2_5MS			78				// 1x 5ms + 
 #define TMR2_TICK			2				// uSec
 
-// Status 
-#define	_Signal				Flags[0]
 
-#define	_BeeperInUse		Flags[1]	
-#define	_NewValues			Flags[2]	
-#define _FirstTimeout		Flags[3]
-
-#define _LowBatt			Flags[4]	
-#define _AccelerationsValid Flags[5]
-#define	_CompassValid		Flags[6]	
-#define _CompassMissRead 	Flags[7]
-#define _BaroAltitudeValid	Flags[8]
-	
-#define _BaroRestart		Flags[10] 	
-#define _OutToggle			Flags[11]									
-#define _Failsafe			Flags[12]
-#define _GyrosErected		Flags[13]
-#define _NewBaroValue		Flags[14]
-
-#define _ReceivingGPS 		Flags[16]
-#define _GPSValid 			Flags[17]
-#define _LostModel			Flags[18]
-#define _ThrottleMoving		Flags[19]
-#define _Hovering			Flags[20]
-#define _NavComputed 		Flags[21]
-#define _AttitudeHold		Flags[22]
-#define _HoldBeeperArmed	Flags[23]
-
-#define _RTHAltitudeHold	Flags[24]
-#define _ReturnHome			Flags[25]
-#define _TurnToHome			Flags[26]
-#define _Proximity			Flags[27]
-#define _CloseProximity		Flags[28]
-
-#define _ParametersValid	Flags[30]
-#define _GPSTestActive		Flags[31]
 
 // LEDs
 #define AUX2M				0x01
@@ -486,6 +452,8 @@ extern int16 ADC(uint8, uint8);
 extern void InitADC(void);
 
 // autonomous.c
+extern int16 Make2Pi(int16);
+extern int16 MakePi(int16);
 extern void Navigate(int16, int16);
 extern void AltitudeHold(int16);
 extern void Descend(void);
@@ -525,6 +493,10 @@ extern void StopMotors(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
+// eeprom.c
+extern int8 ReadEE(uint8);
+extern void WriteEE(uint8, int8);
+
 // irq.c
 extern void ReceivingGPSOnly(uint8);
 void DoRxPolarity(void);
@@ -533,6 +505,8 @@ extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 
 // gps.c
+extern int16 ConvertGPSToM(int16);
+extern int16 ConvertMToGPS(int16);
 extern void UpdateField(void);
 extern int16 ConvertInt(uint8, uint8);
 extern int32 ConvertLatLonM(uint8, uint8);
@@ -557,6 +531,22 @@ extern void ESCI2CStart(void);
 extern void ESCI2CStop(void);
 extern uint8 SendESCI2CByte(uint8);
 
+// leds.c
+extern void SendLEDs(void);
+extern void LEDsOn(uint8);
+extern void LEDsOff(uint8);
+extern void LEDGame(void);
+
+// math.c
+extern int16 SRS16(int16, uint8);
+extern int32 SRS32(int32, uint8);
+extern int16 Table16(int16, const int16 *);
+extern int16 int16sin(int16);
+extern int16 int16cos(int16);
+extern int16 int16atan2(int16, int16);
+extern int16 int16sqrt(int16);
+extern int32 int32sqrt(int32);
+
 // menu.c
 extern void ShowPrompt(void);
 extern void ShowRxSetup(void);
@@ -572,6 +562,13 @@ extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void InitI2CESCs(void);
 
+// params.c
+extern void ReadParametersEE(void);
+extern void WriteParametersEE(uint8);
+extern void UseDefaultParameters(void);
+extern void UpdateParamSetChoice(void);
+extern void InitParameters(void);
+
 // serial.c
 extern void TxString(const rom uint8 *);
 extern void TxChar(uint8);
@@ -586,50 +583,26 @@ extern uint8 RxNumU(void);
 extern int8 RxNumS(void);
 extern void TxVal32(int32, int8, uint8);
 
-// utils.c
-extern void Delay1mS(int16);
-extern void Delay100mSWithOutput(int16);
-extern int16 ProcLimit(int16, int16, int16);
-extern int16 DecayX(int16, int16);
-extern int16 SRS16(int16, uint8);
-extern int32 SRS32(int32, uint8);
-extern void InitPorts(void);
-extern void InitMisc(void);
-
-extern int16 ConvertGPSToM(int16);
-extern int16 ConvertMToGPS(int16);
-extern int16 SlewLimit(int16, int16, int16);
-
-extern int8 ReadEE(uint8);
-extern void ReadParametersEE(void);
-extern void WriteEE(uint8, int8);
-extern void WriteParametersEE(uint8);
-extern void UseDefaultParameters(void);
-extern void UpdateParamSetChoice(void);
-extern void InitParameters(void);
-
-extern int16 Make2Pi(int16);
-extern int16 MakePi(int16);
-extern int16 Table16(int16, const int16 *);
-extern int16 int16sin(int16);
-extern int16 int16cos(int16);
-extern int16 int16atan2(int16, int16);
-extern int16 int16sqrt(int16);
-extern int32 int32sqrt(int32);
-
-extern void SendLEDs(void);
-extern void LEDsOn(uint8);
-extern void LEDsOff(uint8);
-extern void LEDGame(void);
-extern void CheckAlarms(void);
-
-extern void DoBeep100mSWithOutput(uint8, uint8);
-extern void DoStartingBeepsWithOutput(uint8);
-
+// stats.c
 extern void ZeroStats(void);
 extern void ReadStatsEE(void);
 extern void WriteStatsEE(void);
 extern void ShowStats(void);
+
+// utils.c
+extern void InitPorts(void);
+extern void InitMisc(void);
+
+extern void Delay1mS(int16);
+extern void Delay100mSWithOutput(int16);
+extern void DoBeep100mSWithOutput(uint8, uint8);
+extern void DoStartingBeepsWithOutput(uint8);
+
+extern int16 SlewLimit(int16, int16, int16);
+extern int16 ProcLimit(int16, int16, int16);
+extern int16 DecayX(int16, int16);
+
+extern void CheckAlarms(void);
 
 extern void DumpTrace(void);
 
@@ -696,7 +669,6 @@ extern uint24 mS[];
 extern uint8	State, FailState;
 extern uint8 	SHADOWB, MF, MB, ML, MR, MT, ME; // motor and servo outputs
 extern i16u 	PPM[];
-extern boolean	RCFrameOK, GPSSentenceReceived;
 extern int8 	PPM_Index;
 extern int24 	PrevEdge, CurrEdge;
 extern i16u 	Width;
@@ -734,6 +706,7 @@ extern int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 extern int16	HoverThrottle, DesiredThrottle, IdleThrottle;
 extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+extern int16	CurrMaxRollPitch;
 extern i16u		Ax, Ay, Az;
 extern int8		LRIntKorr, FBIntKorr;
 extern int8		NeutralLR, NeutralFB, NeutralDU;
@@ -779,7 +752,42 @@ extern int16	Motor[NoOfMotors];
 extern boolean	ESCI2CFail[NoOfMotors];
 extern int16	Rl,Pl,Yl;		// PID output values
 
-extern boolean	Flags[32];
+enum Flags {
+	Signal,
+	BeeperInUse,
+	NewValues,
+	FirstTimeout,
+	LowBatt,
+	AccelerationsValid,
+	CompassValid,
+	CompassMissRead,
+	BaroAltitudeValid,
+	BaroRestart,	
+	OutToggle,									
+	Failsafe,
+	GyrosErected,
+	NewBaroValue,
+	ReceivingGPS,
+	GPSValid,
+	LostModel,
+	ThrottleMoving,
+	Hovering,
+	NavComputed,
+	AttitudeHold,
+	HoldBeeperArmed,
+	RTHAltitudeHold,
+	ReturnHome,
+	TurnToHome,
+	Proximity,
+	CloseProximity,
+	ParametersValid,
+	GPSTestActive,
+	RCFrameOK, 
+	GPSSentenceReceived,
+	LastFlag
+	};
+extern boolean	F[LastFlag];
+
 extern uint8	LEDCycles;		// for hover light display
 extern int16	AttitudeHoldResetCount;	
 extern int8		BatteryVolts; 

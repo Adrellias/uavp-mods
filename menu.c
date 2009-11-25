@@ -84,13 +84,13 @@ void ShowSetup(uint8 h)
 
 	TxString("\r\nUAVX V" Version " ready.\r\nAccelerometers ");
 
-	if( _AccelerationsValid )
+	if( F[AccelerationsValid] )
 		TxString("ONLINE\r\n");
 	else
 		TxString("not available\r\n");
 
 	TxString("Compass ");
-	if( _CompassValid )
+	if( F[CompassValid] )
 	{
 		TxString("ONLINE (");
 		TxVal32(COMPASS_OFFSET_DEG,0,0);
@@ -100,7 +100,7 @@ void ShowSetup(uint8 h)
 		TxString("not available\r\n");
 
 	TxString("Baro ");
-	if ( _BaroAltitudeValid )
+	if ( F[BaroAltitudeValid] )
 		if ( BaroType == BARO_ID_BMP085 )
 			TxString("BMP085 ONLINE\r\n");
 		else
@@ -257,10 +257,10 @@ void ProcessCommand(void)
 					// Attempts to block use of old versions of UAVPSet not compatible with UAVX
 					// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
 					if ( p < (MAX_PARAMETERS-1) )
-						_ParametersValid = false;
+						F[ParametersValid] = false;
 					else
 						if ( p == (MAX_PARAMETERS-1) )
-							_ParametersValid = true; 	// ALL parameters must be written 
+							F[ParametersValid] = true; 	// ALL parameters must be written 
 					TxString(" = ");
 					d = RxNumS();
 					if ( p < MAX_PARAMETERS )

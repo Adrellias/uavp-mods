@@ -42,11 +42,11 @@ void high_isr_handler(void);
 void ReceivingGPSOnly(boolean r)
 {
 	#ifndef DEBUG_SENSORS
-	if ( r != _ReceivingGPS )
+	if ( r != F[ReceivingGPS] )
 	{
 		PIE1bits.RCIE = false;
-		_ReceivingGPS = r;
-		if ( _ReceivingGPS )
+		F[ReceivingGPS] = r;
+		if ( F[ReceivingGPS] )
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
 		else
@@ -105,7 +105,7 @@ void InitTimersAndInterrupts(void)
 
 	PPM_Index = PrevEdge = RCGlitches = RxCheckSum =  0;
 	SignalCount = -RC_GOOD_BUCKET_MAX;
-	_Signal = _NewValues = false;
+	F[Signal] = F[NewValues] = false;
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
@@ -131,8 +131,8 @@ void high_isr_handler(void)
 		if ( Width.i16 > MIN_PPM_SYNC_PAUSE ) 	// A pause in 2us ticks > 5ms 
 		{
 			PPM_Index = 0;						// Sync pulse detected - next CH is CH1
-			RCFrameOK = true;
-			_NewValues = false; 
+			F[RCFrameOK] = true;
+			F[NewValues] = false; 
 			PauseTime = Width.i16;
 		}
 		else 
@@ -150,28 +150,28 @@ void high_isr_handler(void)
 				{
 					// preserve old value i.e. default hold
 					RCGlitches++;
-					RCFrameOK = false;
+					F[RCFrameOK] = false;
 				}
 				PPM_Index++;
 				// MUST demand rock solid RC frames for autonomous functions not
 				// to be cancelled by noise-generated partially correct frames
 				if ( PPM_Index == RC_CONTROLS )
 				{
-					if ( RCFrameOK )
+					if ( F[RCFrameOK] )
 					{
-						_NewValues = true;
+						F[NewValues] = true;
  						SignalCount++;
 					}
 					else
 					{
-						_NewValues = false;
+						F[NewValues] = false;
 						SignalCount -= RC_GOOD_RATIO;
 					}
 
 					SignalCount = Limit(SignalCount, -RC_GOOD_BUCKET_MAX, RC_GOOD_BUCKET_MAX);
-					_Signal = SignalCount > 0;
+					F[Signal] = SignalCount > 0;
 
-					if ( _Signal)
+					if ( F[Signal])
 						mS[LastValidRx] = mS[Clock];
 					mS[RCSignalTimeout] = mS[Clock] + RC_SIGNAL_TIMEOUT_MS;
 				}
@@ -209,7 +209,7 @@ void high_isr_handler(void)
 				else
 				{
 					NMEA.length = ll;	
-					GPSSentenceReceived = GPSTxCheckSum == RxCheckSum;
+					F[GPSSentenceReceived] = GPSTxCheckSum == RxCheckSum;
 					GPSRxState = WaitGPSSentinel;
 				}
 				break;
@@ -259,9 +259,9 @@ void high_isr_handler(void)
 	if ( INTCONbits.T0IF )  // MilliSec clock with some "leaks" in output.c etc.
 	{ 
 		mS[Clock]++;
-		if ( _Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
+		if ( F[Signal] && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{
-			_Signal = false;
+			F[Signal] = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
 		INTCONbits.TMR0IF = false;	

@@ -228,7 +228,7 @@ void OutSignals(void)
 		while( !INTCONbits.TMR0IF ) ;	// wait for first overflow
 		INTCONbits.TMR0IF=0;			// quit TMR0 interrupt
 		
-		if( _OutToggle )	// driver cam servos only every 2nd pulse
+		if( F[OutToggle] )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -237,7 +237,7 @@ void OutSignals(void)
 			_endasm	
 			PORTB |= 0x3f;
 		}
-		_OutToggle ^= 1;
+		F[OutToggle] ^= 1;
 		
 		// This loop is exactly 16 cycles 
 		// under no circumstances should the loop cycle time be changed
@@ -287,7 +287,7 @@ OS006:
 	} 
 	else
 	{
-		if( _OutToggle )	// driver cam servos only every 2nd pulse
+		if( F[OutToggle] )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -296,7 +296,7 @@ OS006:
 			_endasm	
 			PORTB |= 0x3f;
 		}
-		_OutToggle ^= 1;
+		F[OutToggle] ^= 1;
 		
 		// in X3D- and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL
 		// Ack (r) not checked as no recovery is possible

@@ -44,7 +44,6 @@ int24 	PrevEdge, CurrEdge;
 i16u 	Width;
 int16 	PauseTime;
 uint8 	GPSRxState;
-boolean RCFrameOK, GPSSentenceReceived;
 uint8 	ll, tt, gps_ch;
 uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 uint8	ESCMin, ESCMax;
@@ -81,6 +80,7 @@ int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	HoverThrottle, DesiredThrottle, IdleThrottle;
 int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+int16	CurrMaxRollPitch;
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
@@ -118,7 +118,7 @@ i16u Stats[MaxStats];
 #pragma udata
 
 int16	Trace[TopTrace+1];
-boolean	Flags[32];
+boolean	F[LastFlag];
 uint8	LEDCycles;
 int16	AttitudeHoldResetCount;	
 int8	BatteryVolts;
@@ -311,7 +311,7 @@ void main(void)
 
 		#else
 
-		while ( Armed && _ParametersValid )
+		while ( Armed && F[ParametersValid] )
 		{ // no command processing while the Quadrocopter is armed
 	
 			ReceivingGPSOnly(true); 
@@ -319,7 +319,7 @@ void main(void)
 			UpdateGPS();
 			UpdateControls();
 
-			if ( _Signal && ( FailState != Terminated ) && ( FailState != Returning ) )
+			if ( F[Signal] && ( FailState != Terminated ) && ( FailState != Returning ) )
 			{
 				switch ( State  ) {
 				case Starting:	// this state executed once only after arming
@@ -375,7 +375,7 @@ void main(void)
 					break;
 
 				} // Switch State
-				_LostModel = false;
+				F[LostModel] = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 				FailState = Waiting;
 			}

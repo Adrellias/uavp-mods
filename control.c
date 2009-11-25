@@ -45,7 +45,7 @@ void GetGyroValues(void)
 {
 	static int16 NewRollRate, NewPitchRate;
 
-	if ( P[GyroType] == IDG300 )
+	if ( P[GyroType] == IDG300 ) // 500 Deg/Sec
 	{
 		NewRollRate = (int16)ADC(IDGADCRollChan, ADCVREF3V3);
 		NewPitchRate = (int16)ADC(IDGADCPitchChan, ADCVREF3V3);
@@ -90,7 +90,7 @@ void ErectGyros(void)
 		YawAv += ADC(ADCYawChan, ADCVREF5V);
 	}
 	
-	if( !_AccelerationsValid )
+	if( !F[AccelerationsValid] )
 	{
 		RollAv += P[MiddleLR] * 2;
 		PitchAv += P[MiddleFB] * 2;
@@ -108,7 +108,7 @@ void ErectGyros(void)
 	REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
-	_GyrosErected = true;
+	F[GyrosErected] = true;
 
 } // ErectGyros
 
@@ -119,7 +119,7 @@ void GyroCompensation(void)
 
 	#define GYRO_COMP_STEP 1
 
-	if( _AccelerationsValid )
+	if( F[AccelerationsValid] )
 	{
 		if ( P[GyroType] == IDG300 )
 			GravComp = 8; 		// -1/6 of reference
@@ -135,11 +135,11 @@ void GyroCompensation(void)
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
-		LRAcc -= P[MiddleLR];
-		FBAcc -= P[MiddleFB];
-		DUAcc -= P[MiddleDU];
+		LRAcc -= (int16)P[MiddleLR];
+		FBAcc -= (int16)P[MiddleFB];
+		DUAcc -= (int16)P[MiddleDU];
 
-		DUAcc -= 1024;	// subtract 1g - not corrrect for other than level
+		DUAcc -= 1024L;	// subtract 1g - not corrrect for other than level
 						// ??? could check for large negative Acc => upside down?
 
 		if ( State == InFlight )
@@ -201,7 +201,7 @@ void InertialDamping(void)
 	static int16 Temp;
 	
 
-	if ( _Hovering && _AttitudeHold ) 
+	if ( F[Hovering] && F[AttitudeHold] ) 
 	{
 		// Down - Up
 		// Empirical - acceleration changes at ~approx Sum/8
@@ -214,9 +214,9 @@ void InertialDamping(void)
 			if( Temp < DUComp )
 				DUComp--;			
 		DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH);  // -20, 20
-		DUVel = DecayX(DUVel, P[VertDampDecay]);
+		DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
 
- 		if ( _CloseProximity )
+ 		if ( F[CloseProximity] )
 		{
 			// Left - Right
 			LRVel += LRAcc;
@@ -283,7 +283,7 @@ void LimitYawSum(void)
 {
 	static int16 Temp;
 
-	if ( _CompassValid )
+	if ( F[CompassValid] )
 	{
 		// + CCW
 		Temp = DesiredYaw - YawTrim;
@@ -314,7 +314,7 @@ void CalcGyroRates(void)
 {
 	static int16 Temp;
 
-	// RollRate & Pitchsamples hold the sum of 2 consecutive conversions
+	// RollRate & PitchRate hold the sum of 2 consecutive conversions
 	// 300 Deg/Sec is the "reference" gyro full scale rate
 
 	if ( P[GyroType] == IDG300 )
@@ -341,8 +341,8 @@ void CalcGyroRates(void)
 		// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
 		Temp = RollRate + PitchRate;	
 		PitchRate -= RollRate;	
-		RollRate = (Temp * 7)/10;
-		PitchRate = (PitchRate * 7)/10; 
+		RollRate = (Temp * 7L)/10L;
+		PitchRate = (PitchRate * 7L)/10L; 
 	}
 	
 	// Yaw is sampled only once every frame, 8 bit A/D resolution
@@ -363,7 +363,7 @@ void DoControl(void)
 	RE = SRS16(RollRate, 2);
 	LimitRollSum();
  
-	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * P[RollKd], 4);
+	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
 	Rl -= DesiredRoll;
 	Rl -= LRComp;
@@ -373,7 +373,7 @@ void DoControl(void)
 	PE = SRS16(PitchRate, 2);
 	LimitPitchSum();
 
-	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * P[PitchKd], 4);
+	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
 	Pl -= DesiredPitch;
 	Pl -= FBComp;
@@ -384,9 +384,9 @@ void DoControl(void)
 	YE += DesiredYaw;
 	LimitYawSum();
 
-	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * P[YawKd], 4);
+	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
-	Yl = Limit(Yl, -P[YawLimit], P[YawLimit]);		// effective slew limit
+	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);		// effective slew limit
 
 	#ifdef DEBUG_SENSORS
 	Trace[THE] = HE;
@@ -411,9 +411,9 @@ void UpdateControls(void)
 {
 	static int16 HoldRoll, HoldPitch;
 
-	if ( _NewValues )
+	if ( F[NewValues] )
 	{
-		_NewValues = false;
+		F[NewValues] = false;
 
 		MapRC();								// remap channel order for specific Tx/Rx
 
@@ -434,24 +434,25 @@ void UpdateControls(void)
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
 
-		_ReturnHome = RC[RTHC] > RC_NEUTRAL;
+		F[ReturnHome] = RC[RTHC] > RC_NEUTRAL;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
 		HoldPitch = DesiredPitch - PitchTrim;
 		HoldPitch = Abs(HoldPitch);
+		CurrMaxRollPitch = Max(HoldRoll, HoldPitch);
 
-		if ( ( HoldRoll > ATTITUDE_HOLD_LIMIT )||( HoldPitch > ATTITUDE_HOLD_LIMIT ) )
+		if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
 			if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
-				_AttitudeHold = false;
+				F[AttitudeHold] = false;
 			else
 			{
 				AttitudeHoldResetCount++;
-				_AttitudeHold = true;
+				F[AttitudeHold] = true;
 			}
 		else
 		{
-			_AttitudeHold = true;	
+			F[AttitudeHold] = true;	
 			if ( AttitudeHoldResetCount > 1 )
 				AttitudeHoldResetCount -= 2;		// Faster decay
 		}
@@ -483,7 +484,7 @@ void LightsAndSirens(void)
 	static int16 CurrentThrottle;
 
 	LEDYellow_TOG;
-	if ( _Signal ) LEDGreen_ON; else LEDGreen_OFF;
+	if ( F[Signal] ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF; 
 	CurrentThrottle = RC_MAXIMUM;
@@ -491,10 +492,10 @@ void LightsAndSirens(void)
 	do
 	{
 		ProcessCommand();
-		if( _Signal )
+		if( F[Signal] )
 		{
 			LEDGreen_ON;
-			if( _NewValues )
+			if( F[NewValues] )
 			{
 				UpdateControls();
 				UpdateParamSetChoice();
@@ -503,7 +504,7 @@ void LightsAndSirens(void)
 				OutSignals();
 				if( mS[Clock] > Timeout )
 				{
-					if ( _ReturnHome )
+					if ( F[ReturnHome] )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;
@@ -523,7 +524,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!_Signal) || (Armed && FirstPass) || _ReturnHome || ( CurrentThrottle >= RC_THRES_START) );
+	while( (!F[Signal]) || (Armed && FirstPass) || F[ReturnHome] || ( CurrentThrottle >= RC_THRES_START) );
 
 	FirstPass = false;
 
@@ -531,7 +532,7 @@ void LightsAndSirens(void)
 	LEDRed_OFF;
 	LEDGreen_ON;
 
-	_LostModel = false;
+	F[LostModel] = false;
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 	mS[UpdateTimeout] = mS[Clock] + P[TimeSlots];
 	FailState = Waiting;

@@ -54,10 +54,11 @@ void TxChar(uint8 ch)
 
 void TxValU(uint8 v)
 {	
-	TxChar((v/100) + '0');
+	// UAVPSet requires 3 digits exactly ( 000 to 999 )
+	TxChar((v / 100) + '0');
 	v %= 100;	
 
-	TxChar((v/10) + '0');
+	TxChar((v / 10) + '0');
 	v %= 10;
 
 	TxChar(v + '0');
@@ -65,6 +66,7 @@ void TxValU(uint8 v)
 
 void TxValS(int8 v)
 {
+	// UAVPSet requires sign and 3 digits exactly (-999 to 999)
 	if( v < 0 )
 	{
 		TxChar('-');	// send sign
@@ -98,7 +100,7 @@ void TxValH(uint8 v)
 
 void TxValH16(uint16 v)
 {
-	TxValH(v>>8);
+	TxValH(v >> 8);
 	TxValH(v);
 } // TxValH16
 
@@ -125,9 +127,9 @@ uint8 PollRxChar(void)
 
 } // PollRxChar
 
-// enter an uintigned number 00 to 99
 uint8 RxNumU(void)
 {
+	// UAVPSet sends 2 digits
 	uint8 ch;
 	uint8 n;
 
@@ -144,9 +146,9 @@ uint8 RxNumU(void)
 } // RxNumU
 
 
-// enter a signed number -99 to 99 (always 2 digits)!
 int8 RxNumS(void)
 {
+	// UAVPSet sends sign and 2 digits
 	uint8 ch;
 	int8 n;
 	boolean Neg;
