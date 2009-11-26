@@ -1,7 +1,17 @@
 // EXPERIMENTAL
 
 //#define FAKE_FLIGHT						// For testing Nav on the GROUND!
-//#define NAV_ON_NEUTRAL_ONLY
+
+// Jim - you may wish to try these?
+#define NAV_NEUTRAL_HOLD					// Only hold position when sticks in neutral
+//#define NAV_NEUTRAL_NO_PIC				// No manual stick influence (made zero) when in neutral
+
+// Moving average of coordinates - Kalman Estimator maybe needed
+//#define GPSFilter NoFilter
+#define GPSFilter SoftFilter				
+//#define GPSFilter MediumFilter
+
+// DO NOT USE - INCOMPLETE #define NAV_ALT_HOLD	// Direct correction of East and North errors
 
 #define NAV_ACQUIRE_BEEPER
 

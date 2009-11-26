@@ -42,6 +42,11 @@ int16 NavRCorr, NavRCorrP, SumNavRCorr, NavPCorr, NavPCorrP, SumNavPCorr, NavYCo
 int16 NavKp, NavVel, Range, RangeToNeutral;  
 int16 RWeight, PWeight, RollP, RollI, RollD, PitchP, PitchI, PitchD; 
 
+#ifdef NAV_ALT_HOLD
+static int16 EastP, SumEastP, EastI, EastD, EastDP, EastCorr, NorthP, SumNorthP, NorthI, NorthD, NorthDP, NorthCorr;
+
+#endif // NAV_ALT_HOLD
+
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
 int16 Make2Pi(int16 A)
@@ -128,8 +133,12 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
 
-	static int16 Temp, Correction, XP, XD;
-	static int16 EastDiff, NorthDiff, WayHeading, RelHeading, DiffHeading;
+#ifdef NAV_ALT_HOLD
+	static int16 SinHeading, CosHeading;
+#else
+	static int16 Correction, XP, XD;
+#endif // NAV_ALT_HOLD
+	static int16 Temp, EastDiff, NorthDiff, WayHeading, RelHeading, DiffHeading;
 
 	if ( F[NavComputed] ) // maintain previous corrections
 	{
@@ -147,17 +156,58 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 
 		if ( (Abs(EastDiff) >= NavNeutralRadius ) || (Abs(NorthDiff) >= NavNeutralRadius )) 
 		{
-		//	Temp = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 2 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 2);
-			Temp = SRS16(NavSensitivity * ( 16 - CurrMaxRollPitch ), 4);
-			Temp = Limit(Temp, 0, NavSensitivity);
-			NavKp = ( Temp * NAV_MAX_ROLL_PITCH ) / NavCloseToNeutralRadius;
+			Range = int32sqrt( (int32)NorthDiff*(int32)NorthDiff + (int32)EastDiff*(int32)EastDiff );
 			WayHeading = int16atan2(EastDiff, NorthDiff);
 			DiffHeading = WayHeading - Heading;
 			RelHeading = Make2Pi(DiffHeading);
 
-			// Expectation is ~4Hz GPS
+			#ifdef NAV_ALT_HOLD	// direct solution make North and East coordinate errors zero
 
-			Range = int32sqrt( (int32)NorthDiff*(int32)NorthDiff + (int32)EastDiff*(int32)EastDiff );
+			SinHeading = int16sin(Heading);
+			CosHeading = int16cos(Heading);
+			
+			// East
+			EastP = EastDiff * (int16)1;
+			EastP = Limit(EastP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+
+			SumEastP += EastP;
+			SumEastP = Limit(SumEastP, -NAV_INT_LIMIT, NAV_INT_LIMIT);
+			EastI = SRS16(SumEastP * (int16)P[NavKi], 4);
+			SumEastP = DecayX(SumEastP, 1);
+
+			EastD = (EastD - EastDP) * (int16)P[NavKd];
+			EastDP = EastD;
+			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+	
+			EastCorr = EastP + EastI + EastD;
+
+			// North
+			NorthP = NorthDiff * (int16)1;
+			NorthP = Limit(NorthP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+
+			SumNorthP += NorthP;
+			SumNorthP = Limit(SumNorthP, -NAV_INT_LIMIT, NAV_INT_LIMIT);
+			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 4);
+			SumNorthP = DecayX(SumNorthP, 1);
+
+			NorthD = (NorthD - NorthDP) * (int16)P[NavKd]; // check order
+			NorthDP = NorthD;
+			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+
+			NorthCorr = NorthP + NorthI + NorthD; 
+			
+			// Roll & Pitch
+			NavRCorr = SRS32(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
+			NavPCorr = SRS32(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
+			
+			#else		// solution adjusting Roll and Pitch in direction of travel
+
+		//	Temp = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 2 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 2);
+			Temp = SRS16(NavSensitivity * ( 16 - CurrMaxRollPitch ), 4);
+			Temp = Limit(Temp, 0, NavSensitivity);
+			NavKp = ( Temp * NAV_MAX_ROLL_PITCH ) / NavCloseToNeutralRadius;
+
+			// Expectation is ~4Hz GPS
 
 			if ( RangeP == MAXINT16 )
 				RangeP = Range;
@@ -191,12 +241,6 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 
 			NavRCorr = RollP + RollI + RollD;
 
-			NavRCorr = Limit(NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH );
-			NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
-			NavRCorrP = NavRCorr;
-
-			DesiredRoll += NavRCorr;
-
 			// Pitch
 			PWeight = -(int32)int16cos(RelHeading);	
 
@@ -212,10 +256,16 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 
 			NavPCorr = PitchP + PitchI + PitchD;
 
+			#endif // NAV_ALT_HOLD
+
+			NavRCorr = Limit(NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH );
+			NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
+			NavRCorrP = NavRCorr;
+			DesiredRoll += NavRCorr;
+
 			NavPCorr = Limit(NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH );
 			NavPCorr = SlewLimit(NavPCorrP, NavPCorr, NAV_CORR_SLEW_LIMIT);
 			NavPCorrP = NavPCorr;
-
 			DesiredPitch += NavPCorr;
 
 			// Yaw
@@ -304,7 +354,6 @@ void DoNavigation(void)
 {
 	if ( F[GPSValid] && F[CompassValid]  && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
 	{
-		#ifdef NAV_ON_NEUTRAL_ONLY
 		switch ( NavState ) {
 		case HoldingStation:
 			if ( F[AttitudeHold] )
@@ -318,87 +367,25 @@ void DoNavigation(void)
 				} 
 				#endif // NAV_ACQUIRE_BEEPER
 
+				#ifdef NAV_NEUTRAL_NO_PIC
+				DesiredPitch = DesiredRoll = 0;
+				#endif // NAV_NEUTRAL_NO_PIC
+				#ifdef NAV_NEUTRAL_HOLD
 				NavState = HoldingStation;			// Keep GPS hold active regardless
 				Navigate(GPSNorthHold, GPSEastHold);
+				#endif // NAV_NEUTRAL_HOLD
+				
 			}
 			else
 			{
 				F[HoldBeeperArmed] = true;
 				AcquireHoldPosition();
 			}
-			
-			if ( F[ReturnHome] )
-			{
-				AltSum = 0; 
-				NavState = ReturningHome;
-			}
 
-			CheckForHover();
-
-			break;
-		case ReturningHome:
-			if ( F[ReturnHome] && F[AttitudeHold] )
-			{
-				Navigate(WP[0].N, WP[0].E);
-				AltitudeHold(WP[0].A);
-				if ( F[Proximity] )
-				{
-					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
-					NavState = AtHome;
-				}
-			}
-			else
-				AcquireHoldPosition();					
-			break;
-		case AtHome:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F[ReturnHome] )
-				if ( (( P[ConfigBits] & UseRTHDescendMask ) != 0 ) && ( mS[Clock] > mS[RTHTimeout] ) )
-				{
-					mS[AltHoldUpdate] = mS[Clock];
-					NavState = Descending;
-				}
-				else
-					AltitudeHold(WP[0].A);
-			else
-				AcquireHoldPosition();
-			break;
-		case Descending:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F[ReturnHome] )
-				Descend();
-			else
-				AcquireHoldPosition();
-			break;
-		case Navigating:
-			// not implemented yet
-			break;
-		} // switch NavState
-
-
-		#else
-
-		switch ( NavState ) {
-		case HoldingStation:
-			if ( F[AttitudeHold] )
-			{
-				#ifdef NAV_ACQUIRE_BEEPER
-				if ( F[HoldBeeperArmed] && !F[BeeperInUse] )
-				{
-					mS[BeeperTimeout] = mS[Clock] + 500;
-					Beeper_ON;
-					F[HoldBeeperArmed] = false;
-				} 
-				#endif // NAV_ACQUIRE_BEEPER
-			}
-			else
-			{
-				F[HoldBeeperArmed] = true;
-				AcquireHoldPosition();
-			}
-			
-			NavState = HoldingStation;			// Keep GPS hold active regardless
+			#ifndef NAV_NEUTRAL_HOLD
+			NavState = HoldingStation;				// Keep GPS hold active regardless
 			Navigate(GPSNorthHold, GPSEastHold);
+			#endif // !NAV_NEUTRAL_HOLD
 
 			if ( F[ReturnHome] )
 			{
@@ -412,6 +399,10 @@ void DoNavigation(void)
 		case ReturningHome:
 			if ( F[ReturnHome] )
 			{
+				#ifdef NAV_NEUTRAL_NO_PIC
+				DesiredPitch = DesiredRoll = 0;
+				#endif // NAV_NEUTRAL_NO_PIC
+
 				Navigate(WP[0].N, WP[0].E);
 				AltitudeHold(WP[0].A);
 				if ( F[Proximity] )
@@ -447,7 +438,6 @@ void DoNavigation(void)
 			// not implemented yet
 			break;
 		} // switch NavState
-		#endif // NAV_ON_NEUTRAL_ONLY
 	}
 	else // no Navigation
 	{
@@ -564,6 +554,10 @@ void InitNavigation(void)
 
 	GPSNorthHold = GPSEastHold = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = SumNavRCorr = SumNavPCorr = NavYCorr = 0;
+
+	#ifdef NAV_ALT_HOLD
+	EastDP, NorthDP = 0;
+	#endif // NAV_ALT_HOLD
 
 	RollP, RollI = RollD = PitchP = PitchI = PitchD = 0;
 	RangeP = MAXINT16;

@@ -40,7 +40,8 @@ void InitGPS(void);
 void UpdateGPS(void);
 
 // Defines
-#define GPSFilter SoftFilter
+#define GPSFilter SoftFilter				// probably need Kalman Estimator?
+#define GPSVelocityFilter SoftFilterU		// done after position filter
 
 // Variables
 
@@ -265,8 +266,8 @@ void ParseGPSSentence(void)
 			GPSInterval = mS[Clock] - mS[LastGPS];
 			mS[LastGPS] = mS[Clock];
 
-
 			// all coordinates in 0.0001 Minutes or ~0.185M units relative to Origin
+			// There is a lot of jitter in position - could use Kalman Estimator?
 			GPSNorth = GPSFilter(GPSNorth, GPSLatitude - GPSOriginLatitude);
 			Temp = GPSLongitude - GPSOriginLongitude;
 			GPSEast = GPSFilter(GPSEast, SRS32((int32)GPSEast * GPSLongitudeCorrection, 8)); 
@@ -276,7 +277,7 @@ void ParseGPSSentence(void)
 			GPSVelP = GPSVel;
 			GPSVel = int16sqrt(EastDiff*EastDiff + NorthDiff*NorthDiff);
 			GPSVel = ((int24)GPSVel * 1000L)/GPSInterval;
-			GPSVel = SoftFilter(GPSVelP, GPSVel);
+			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
 			GPSNorthP = GPSNorth;
 			GPSEastP = GPSEast;			
