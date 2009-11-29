@@ -41,9 +41,10 @@ void InitNavigation(void);
 int16 NavRCorr, NavRCorrP, SumNavRCorr, NavPCorr, NavPCorrP, SumNavPCorr, NavYCorr, SumNavYCorr;
 int16 NavKp, NavVel, Range, RangeToNeutral;  
 int16 RWeight, PWeight, RollP, RollI, RollD, PitchP, PitchI, PitchD; 
+int16 EffNavSensitivity;
 
 #ifdef NAV_ALT_HOLD
-static int16 EastP, SumEastP, EastI, EastD, EastDP, EastCorr, NorthP, SumNorthP, NorthI, NorthD, NorthDP, NorthCorr;
+static int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, NorthI, NorthD, NorthDiffP, NorthCorr;
 
 #endif // NAV_ALT_HOLD
 
@@ -161,13 +162,17 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			DiffHeading = WayHeading - Heading;
 			RelHeading = Make2Pi(DiffHeading);
 
+		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 2 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 2);
+			EffNavSensitivity = SRS16(NavSensitivity * ( 16 - CurrMaxRollPitch ), 4);
+			EffNavSensitivity = Limit(EffNavSensitivity, 0, NavSensitivity);
+
 			#ifdef NAV_ALT_HOLD	// direct solution make North and East coordinate errors zero
 
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
 			
 			// East
-			EastP = EastDiff * (int16)1;
+			EastP = ((int32)EastDiff * NAV_MAX_ROLL_PITCH)/ NavCloseToNeutralRadius;
 			EastP = Limit(EastP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
 			SumEastP += EastP;
@@ -175,14 +180,14 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			EastI = SRS16(SumEastP * (int16)P[NavKi], 4);
 			SumEastP = DecayX(SumEastP, 1);
 
-			EastD = (EastD - EastDP) * (int16)P[NavKd];
-			EastDP = EastD;
+			EastD = SRS16((EastDiffP - EastDiff) * (int16)P[NavKd], 7);
+			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 	
-			EastCorr = EastP + EastI + EastD;
+			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
 
 			// North
-			NorthP = NorthDiff * (int16)1;
+			NorthP = ((int32)NorthDiff * NAV_MAX_ROLL_PITCH)/ NavCloseToNeutralRadius;
 			NorthP = Limit(NorthP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
 			SumNorthP += NorthP;
@@ -190,11 +195,11 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 4);
 			SumNorthP = DecayX(SumNorthP, 1);
 
-			NorthD = (NorthD - NorthDP) * (int16)P[NavKd]; // check order
-			NorthDP = NorthD;
+			NorthD = SRS16((NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
+			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 
-			NorthCorr = NorthP + NorthI + NorthD; 
+			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 			
 			// Roll & Pitch
 			NavRCorr = SRS32(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
@@ -202,10 +207,7 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			
 			#else		// solution adjusting Roll and Pitch in direction of travel
 
-		//	Temp = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 2 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 2);
-			Temp = SRS16(NavSensitivity * ( 16 - CurrMaxRollPitch ), 4);
-			Temp = Limit(Temp, 0, NavSensitivity);
-			NavKp = ( Temp * NAV_MAX_ROLL_PITCH ) / NavCloseToNeutralRadius;
+			NavKp = ( EffNavSensitivity * NAV_MAX_ROLL_PITCH ) / NavCloseToNeutralRadius;
 
 			// Expectation is ~4Hz GPS
 
@@ -231,8 +233,8 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 
 			RollP = SRS16(RWeight * XP, 8);
 
-			Temp = SumNavRCorr + RollP;
-			SumNavRCorr = Limit (Temp, -NAV_INT_LIMIT, NAV_INT_LIMIT);
+			SumNavRCorr += RollP;
+			SumNavRCorr = Limit (SumNavRCorr, -NAV_INT_LIMIT, NAV_INT_LIMIT);
 			RollI = SRS16(SumNavRCorr * (int16)P[NavKi], 4);
 			SumNavRCorr = DecayX(SumNavRCorr, 1);
 
@@ -246,8 +248,8 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 
 			PitchP = SRS16(PWeight * XP, 8);
 
-			Temp = SumNavPCorr + PitchP;
-			SumNavPCorr = Limit (Temp, -NAV_INT_LIMIT, NAV_INT_LIMIT);
+			SumNavPCorr += PitchP;
+			SumNavPCorr = Limit (SumNavPCorr, -NAV_INT_LIMIT, NAV_INT_LIMIT);
 			PitchI = SRS16(SumNavPCorr * (int16)P[NavKi], 4);
 			SumNavPCorr = DecayX(SumNavPCorr, 1);
 
@@ -302,20 +304,25 @@ void FakeFlight()
 
 	if ( Armed )
 	{
-		Heading = 0;
+		Heading = HALFMILLIPI;
 
 		RangeP = MAXINT16;	
-		GPSEast = 200L; GPSNorth = 200L;
+		GPSEast = 0; GPSNorth = 200L;
 		InitNavigation();
-	
-		TxString("\r\n Sens Kp East North DRoll DPitch Range Vel ");
+
+		#ifdef NAV_ALT_HOLD
+		TxString("\r\n Sens MRP Eff East North DRoll DPitch Range ");
+		TxString("EP EI ED EC | NP NI ND NC \r\n");
+		#else	
+		TxString("\r\n Sens East North DRoll DPitch Range Vel ");
 		TxString("RP RI RD RWt | PP PI PD PWt\r\n");
+		#endif // NAV_ALT_HOLD
 	
 		while ( Armed )
 		{
 			UpdateControls();
 
-			DesiredRoll = DesiredPitch = 0;
+		//	DesiredRoll = DesiredPitch = 0;
 
 			F[NavComputed] = false;
 			Navigate(0,0);
@@ -334,17 +341,29 @@ void FakeFlight()
 			GPSNorth += ((int32)DesiredRoll * CosH) / SCALE_VEL;
 			GPSNorth += FAKE_NORTH_WIND; // wind
 		
-			TxVal32((int32)NavSensitivity,0,' ');TxVal32((int32)NavKp,0,' ');
+			TxVal32((int32)NavSensitivity,0,' ');
+			TxVal32((int32)CurrMaxRollPitch,0,' ');
+			TxVal32((int32)EffNavSensitivity,0,' ');
 			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); 
 			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' ');
 			TxVal32((int32)Range, 0, ' '); 
+			#ifdef NAV_ALT_HOLD
+			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
+			TxVal32((int32)EastCorr, 0, ' ');
+			TxString("| ");
+			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
+			TxVal32((int32)NorthCorr, 0, ' '); 
+			#else
 			TxVal32((int32)NavVel, 0, ' ');
 			TxVal32((int32)RollP, 0, ' '); TxVal32((int32)RollI, 0, ' '); TxVal32((int32)RollD, 0, ' '); 
 			TxVal32((int32)RWeight, 0, ' ');
 			TxString("| ");
 			TxVal32((int32)PitchP, 0, ' '); TxVal32((int32)PitchI, 0, ' '); TxVal32((int32)PitchD, 0, ' '); 
 			TxVal32((int32)PWeight, 0, ' ');
+			#endif // NAV_ALT_HOLD
 			TxNextLine();
+
+			Heading += 10;
 		}
 	}
 	#endif // FAKE_FLIGHT
@@ -556,7 +575,7 @@ void InitNavigation(void)
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = SumNavRCorr = SumNavPCorr = NavYCorr = 0;
 
 	#ifdef NAV_ALT_HOLD
-	EastDP, NorthDP = 0;
+	EastDiffP, NorthDiffP = 0;
 	#endif // NAV_ALT_HOLD
 
 	RollP, RollI = RollD = PitchP = PitchI = PitchD = 0;

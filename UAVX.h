@@ -1,17 +1,17 @@
 // EXPERIMENTAL
 
-//#define FAKE_FLIGHT						// For testing Nav on the GROUND!
+//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 // Jim - you may wish to try these?
-#define NAV_NEUTRAL_HOLD					// Only hold position when sticks in neutral
-//#define NAV_NEUTRAL_NO_PIC				// No manual stick influence (made zero) when in neutral
+#define NAV_NEUTRAL_HOLD				// Only attempt to hold position when sticks in neutral
+//#define NAV_NEUTRAL_NO_PIC			// No manual stick influence (made zero) when in neutral
 
 // Moving average of coordinates - Kalman Estimator maybe needed
 //#define GPSFilter NoFilter
 #define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
 
-// DO NOT USE - INCOMPLETE #define NAV_ALT_HOLD	// Direct correction of East and North errors
+#define NAV_ALT_HOLD					// Direct correction of East and North errors
 
 #define NAV_ACQUIRE_BEEPER
 
@@ -22,7 +22,7 @@
 
 #define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units ~= degrees max pitch/roll angle
 #define NAV_INT_LIMIT			8L		// *3 Suggest similar to DAMP_HORIZ_LIMIT 
-#define NAV_DIFF_LIMIT			8L		// *3 Less than half NAV_MAX_ROLL_PITCH 
+#define NAV_DIFF_LIMIT			16L		// *8,3 Less than NAV_MAX_ROLL_PITCH? 
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
@@ -148,7 +148,7 @@
 	
 #define	NAV_YAW_LIMIT			10L		// yaw slew rate for RTH
 #define NAV_MAX_TRIM			20L		// max trim offset for hover hold
-#define NAV_CORR_SLEW_LIMIT		2L		// maximum change in roll or pitch correction per GPS update
+#define NAV_CORR_SLEW_LIMIT		5L		// *2L maximum change in roll or pitch correction per GPS update
 
 #define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
 #define ATTITUDE_HOLD_RESET_INTERVAL	25L		// number of impulse cycles before GPS position is re-acquired

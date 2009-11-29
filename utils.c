@@ -76,6 +76,8 @@ void InitMisc(void)
 
 	GyroMidRoll = GyroMidPitch = GyroMidYaw = RollRate = PitchRate = YawRate = 0;
 
+	RollTrim = PitchTrim = YawTrim = 0;	
+
 	LEDShadow = 0;
     ALL_LEDS_OFF;
 	LEDRed_ON;
