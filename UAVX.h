@@ -3,15 +3,13 @@
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 // Jim - you may wish to try these?
-#define NAV_NEUTRAL_HOLD				// Only attempt to hold position when sticks in neutral
-//#define NAV_NEUTRAL_NO_PIC			// No manual stick influence (made zero) when in neutral
+#define NAV_HOLD_WHEN_NEUTRAL				// Only attempt to hold position when sticks in neutral
+// #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
 
-// Moving average of coordinates - Kalman Estimator maybe needed
+// Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
 #define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
-
-#define NAV_ALT_HOLD					// Direct correction of East and North errors
 
 #define NAV_ACQUIRE_BEEPER
 
@@ -768,7 +766,8 @@ extern int16	Rl,Pl,Yl;		// PID output values
 enum Flags {
 	Signal,
 	BeeperInUse,
-	NewValues,
+	RCNewValues,
+	NewCommands,
 	FirstTimeout,
 	LowBatt,
 	AccelerationsValid,

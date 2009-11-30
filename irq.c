@@ -105,7 +105,7 @@ void InitTimersAndInterrupts(void)
 
 	PPM_Index = PrevEdge = RCGlitches = RxCheckSum =  0;
 	SignalCount = -RC_GOOD_BUCKET_MAX;
-	F[Signal] = F[NewValues] = false;
+	F[Signal] = F[RCNewValues] = false;
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
@@ -132,7 +132,7 @@ void high_isr_handler(void)
 		{
 			PPM_Index = 0;						// Sync pulse detected - next CH is CH1
 			F[RCFrameOK] = true;
-			F[NewValues] = false; 
+			F[RCNewValues] = false; 
 			PauseTime = Width.i16;
 		}
 		else 
@@ -159,12 +159,12 @@ void high_isr_handler(void)
 				{
 					if ( F[RCFrameOK] )
 					{
-						F[NewValues] = true;
+						F[RCNewValues] = true;
  						SignalCount++;
 					}
 					else
 					{
-						F[NewValues] = false;
+						F[RCNewValues] = false;
 						SignalCount -= RC_GOOD_RATIO;
 					}
 

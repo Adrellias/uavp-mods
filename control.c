@@ -411,9 +411,9 @@ void UpdateControls(void)
 {
 	static int16 HoldRoll, HoldPitch;
 
-	if ( F[NewValues] )
+	if ( F[RCNewValues] )
 	{
-		F[NewValues] = false;
+		F[RCNewValues] = false;
 
 		MapRC();								// remap channel order for specific Tx/Rx
 
@@ -456,6 +456,8 @@ void UpdateControls(void)
 			if ( AttitudeHoldResetCount > 1 )
 				AttitudeHoldResetCount -= 2;		// Faster decay
 		}
+
+		F[NewCommands] = true;
 	}
 } // UpdateControls
 
@@ -495,7 +497,7 @@ void LightsAndSirens(void)
 		if( F[Signal] )
 		{
 			LEDGreen_ON;
-			if( F[NewValues] )
+			if( F[RCNewValues] )
 			{
 				UpdateControls();
 				UpdateParamSetChoice();
