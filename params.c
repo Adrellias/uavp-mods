@@ -206,8 +206,15 @@ void InitParameters(void)
 {
 	ALL_LEDS_ON;
 	CurrentParamSet = 1;
+
+	#ifdef AUTO_LOAD_DEFAULTS
+	if ( ReadEE(TxRxType) == -1 )
+		UseDefaultParameters();
+	#else
 	while ( ReadEE(TxRxType) == -1 ) 
-		ProcessCommand();	
+		ProcessCommand();
+	#endif // AUTO_LOAD_DEFAULTS
+	
 	CurrentParamSet = 1;
 	ParametersChanged = true;
 	ReadParametersEE();

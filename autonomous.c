@@ -317,7 +317,7 @@ void DoNavigation(void)
 				} 
 				#endif // NAV_ACQUIRE_BEEPER
 
-				#ifdef NAV_HOLD_WHEN_NEUTRALD
+				#ifdef NAV_HOLD_WHEN_NEUTRAL
 				NavState = HoldingStation;
 				Navigate(GPSNorthHold, GPSEastHold);
 				#endif // NAV_HOLD_WHEN_NEUTRAL

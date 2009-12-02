@@ -2,6 +2,8 @@
 
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
+#define AUTO_LOAD_DEFAULTS					// Automatically load default paramters if EEPROM is empty
+
 // Jim - you may wish to try these?
 #define NAV_HOLD_WHEN_NEUTRAL				// Only attempt to hold position when sticks in neutral
 // #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
