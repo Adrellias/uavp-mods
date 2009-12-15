@@ -90,7 +90,7 @@ void ErectGyros(void)
 		YawAv += ADC(ADCYawChan, ADCVREF5V);
 	}
 	
-	if( !F[AccelerationsValid] )
+	if( !F.AccelerationsValid )
 	{
 		RollAv += P[MiddleLR] * 2;
 		PitchAv += P[MiddleFB] * 2;
@@ -108,7 +108,7 @@ void ErectGyros(void)
 	REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
-	F[GyrosErected] = true;
+	F.GyrosErected = true;
 
 } // ErectGyros
 
@@ -119,7 +119,7 @@ void GyroCompensation(void)
 
 	#define GYRO_COMP_STEP 1
 
-	if( F[AccelerationsValid] )
+	if( F.AccelerationsValid )
 	{
 		if ( P[GyroType] == IDG300 )
 			GravComp = 8; 		// -1/6 of reference
@@ -199,24 +199,24 @@ void InertialDamping(void)
 { // Uses accelerometer to damp disturbances while hovering
 
 	static int16 Temp;
-	
 
-	if ( F[Hovering] && F[AttitudeHold] ) 
+	// Down - Up
+	// Empirical - acceleration changes at ~approx Sum/8 for small angles
+	DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
+	DUVel = Limit(DUVel , -16384, 16383); 			
+	Temp = SRS16(SRS16(DUVel, 4) * (int16) P[VertDampKp], 13);
+	if( Temp > DUComp ) 
+		DUComp++;
+	else
+		if( Temp < DUComp )
+			DUComp--;			
+	DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
+	DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
+
+	// Lateral compensation only when hovering?	
+	if ( F.Hovering && F.AttitudeHold ) 
 	{
-		// Down - Up
-		// Empirical - acceleration changes at ~approx Sum/8
-		DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
-		DUVel = Limit(DUVel , -16384, 16383); 			
-		Temp = SRS16(SRS16(DUVel, 4) * (int16) P[VertDampKp], 13);
-		if( Temp > DUComp ) 
-			DUComp++;
-		else
-			if( Temp < DUComp )
-				DUComp--;			
-		DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH);  // -20, 20
-		DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
-
- 		if ( F[CloseProximity] )
+ 		if ( F.CloseProximity )
 		{
 			// Left - Right
 			LRVel += LRAcc;
@@ -251,9 +251,8 @@ void InertialDamping(void)
 	}
 	else
 	{
-		DUVel = LRVel = FBVel = 0;
+		LRVel = FBVel = 0;
 
-		DUComp = Decay1(DUComp);
 		LRComp = Decay1(LRComp);
 		FBComp = Decay1(FBComp);
 	}
@@ -283,7 +282,7 @@ void LimitYawSum(void)
 {
 	static int16 Temp;
 
-	if ( F[CompassValid] )
+	if ( F.CompassValid )
 	{
 		// + CCW
 		Temp = DesiredYaw - YawTrim;
@@ -331,12 +330,12 @@ void CalcGyroRates(void)
 
 		if ( P[GyroType] == ADXRS150 )	// 150 deg/sec (0.5)
 		{ // 150 Deg/Sec or 0.5
-			RollRate /= 2; 
-			PitchRate /= 2;
+			RollRate = SRS16(RollRate, 1); 
+			PitchRate = SRS16(PitchRate, 1);
 		}
 	}
 
-	if ( P[ConfigBits] & FlyXModeMask )
+	if ( F.UsingXMode )
 	{
 		// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
 		Temp = RollRate + PitchRate;	
@@ -411,9 +410,9 @@ void UpdateControls(void)
 {
 	static int16 HoldRoll, HoldPitch;
 
-	if ( F[RCNewValues] )
+	if ( F.RCNewValues )
 	{
-		F[RCNewValues] = false;
+		F.RCNewValues = false;
 
 		MapRC();								// remap channel order for specific Tx/Rx
 
@@ -434,7 +433,7 @@ void UpdateControls(void)
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
 
-		F[ReturnHome] = RC[RTHC] > RC_NEUTRAL;
+		F.ReturnHome = RC[RTHC] > RC_NEUTRAL;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
@@ -444,20 +443,20 @@ void UpdateControls(void)
 
 		if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
 			if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
-				F[AttitudeHold] = false;
+				F.AttitudeHold = false;
 			else
 			{
 				AttitudeHoldResetCount++;
-				F[AttitudeHold] = true;
+				F.AttitudeHold = true;
 			}
 		else
 		{
-			F[AttitudeHold] = true;	
+			F.AttitudeHold = true;	
 			if ( AttitudeHoldResetCount > 1 )
 				AttitudeHoldResetCount -= 2;		// Faster decay
 		}
 
-		F[NewCommands] = true;
+		F.NewCommands = true;
 	}
 } // UpdateControls
 
@@ -483,30 +482,28 @@ void StopMotors(void)
 void LightsAndSirens(void)
 {
 	static uint24 Timeout;
-	static int16 CurrentThrottle;
 
 	LEDYellow_TOG;
-	if ( F[Signal] ) LEDGreen_ON; else LEDGreen_OFF;
+	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF; 
-	CurrentThrottle = RC_MAXIMUM;
 	Timeout = mS[Clock] + 500; 					// mS.
 	do
 	{
 		ProcessCommand();
-		if( F[Signal] )
+		if( F.Signal )
 		{
 			LEDGreen_ON;
-			if( F[RCNewValues] )
+			if( F.RCNewValues )
 			{
 				UpdateControls();
 				UpdateParamSetChoice();
-				CurrentThrottle = DesiredThrottle;
+				InitialThrottle = DesiredThrottle;
 				DesiredThrottle = 0; 			// prevent motors from starting
 				OutSignals();
 				if( mS[Clock] > Timeout )
 				{
-					if ( F[ReturnHome] )
+					if ( F.ReturnHome )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;
@@ -526,7 +523,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F[Signal]) || (Armed && FirstPass) || F[ReturnHome] || ( CurrentThrottle >= RC_THRES_START) );
+	while( (!F.Signal) || (Armed && FirstPass) || F.ReturnHome || ( InitialThrottle >= RC_THRES_START) );
 
 	FirstPass = false;
 
@@ -534,7 +531,7 @@ void LightsAndSirens(void)
 	LEDRed_OFF;
 	LEDGreen_ON;
 
-	F[LostModel] = false;
+	F.LostModel = false;
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 	mS[UpdateTimeout] = mS[Clock] + P[TimeSlots];
 	FailState = Waiting;

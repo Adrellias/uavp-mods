@@ -42,9 +42,9 @@ void ConfigureESCs(void);
 
 void DoLEDs(void)
 {
-	if ( F[AccelerationsValid]  ) LEDYellow_ON; else LEDYellow_OFF;
+	if ( F.AccelerationsValid  ) LEDYellow_ON; else LEDYellow_OFF;
 
-	if( F[Signal] )
+	if( F.Signal )
 	{
 		LEDRed_OFF;
 		LEDGreen_ON;
@@ -60,7 +60,7 @@ void LinearTest(void)
 {
 	TxString("\r\nAccelerometer test:\r\n");
 	TxString("Read once - no averaging\r\n");
-	if( F[AccelerationsValid] )
+	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
 	
@@ -155,7 +155,7 @@ void ReceiverTest(void)
 	for ( s = 0; s < RC_CONTROLS; s++)
 		TxChar(RxChMnem[RMap[s]-1]);
 
-	if ( F[Signal] )
+	if ( F.Signal )
 		TxString("\r\nSignal OK ");
 	else
 		TxString("\r\nSignal FAIL ");	
@@ -327,7 +327,7 @@ void DoCompassTest(void)
 	TxString(" deg \tCorrected ");
 
 	Temp = Compass.u16 - (COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*10;
-	if ( (P[ConfigBits] & FlyXModeMask) != 0 )
+	if ( F.UsingXMode )
 		Temp -= 450;
 	while (Temp < 0) Temp +=3600;
 	while (Temp >= 3600) Temp -=3600;
@@ -341,6 +341,7 @@ CTerror:
 
 } // DoCompassTest
 
+/*
 void CompassRun(void)
 {
 	int16 i, r, Temp;
@@ -349,7 +350,7 @@ void CompassRun(void)
 	for (i = 0; i < 32000; i++)
 	{
 		I2CStart();
-		F[CompassMissRead] |= SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
+		F.CompassMissRead |= SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
 		Compass.high8 = RecvI2CByte(I2C_ACK);
 		Compass.low8 = RecvI2CByte(I2C_NACK);
 		I2CStop();
@@ -360,6 +361,7 @@ void CompassRun(void)
 		TxNextLine();
 	}
 } // CompassRun
+*/
 
 void CalibrateCompass(void)
 {	// calibrate the compass by rotating the ufo through 720 deg smoothly
@@ -404,7 +406,7 @@ CCerror:
 void BaroTest(void)
 {
 	TxString("\r\nBarometer test\r\n");
-	if ( !F[BaroAltitudeValid] ) goto BAerror;
+	if ( !F.BaroAltitudeValid ) goto BAerror;
 
 	if ( BaroType == BARO_ID_BMP085 )
 		TxString("Type:\tBMP085\r\n");
@@ -500,22 +502,22 @@ void GPSTest(void)
 		TxChar('.');
 	}
 
-	F[GPSTestActive] = true;
+	F.GPSTestActive = true;
 
 	while ( Armed )
 	{
 		DoLEDs();
 
 		UpdateGPS();	
-		if ( F[GPSValid] )
+		if ( F.GPSValid )
 		{
 			GetHeading();
 
-			if ( F[CompassValid] )
+			if ( F.CompassValid )
 				TxVal32((int32)ConvertMPiToDDeg(Heading), 1, 'D');
 			else
 				TxString("___");
-			if ( F[CompassMissRead] )
+			if ( F.CompassMissRead )
 				TxChar('?');
 			else
 				TxChar(' ');
@@ -540,13 +542,13 @@ void GPSTest(void)
 
 			TxNextLine();
 		}	
-		F[GPSValid] = false;	
+		F.GPSValid = false;	
 	}
 
 	TxString("GPS Test TERMINATED \r\n");
 	TxString("Set Baud Rate to 38.4Kb \r\n");
 	ReceivingGPSOnly(false);
- 	F[GPSTestActive] = false;
+ 	F.GPSTestActive = false;
 	
 } // GPSTest
 

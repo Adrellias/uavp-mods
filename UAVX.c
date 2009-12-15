@@ -78,7 +78,7 @@ int16	RollTrim, PitchTrim, YawTrim;
 int16	HoldYaw;
 int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
-int16	HoverThrottle, DesiredThrottle, IdleThrottle;
+int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 int16	CurrMaxRollPitch;
 
@@ -101,7 +101,7 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure;
 int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
-int16	BE, BEp;
+int16	BaroROC, BE, BEp;
 i16u	BaroVal;
 int8	BaroSample;
 int16	BaroComp;
@@ -118,10 +118,18 @@ i16u Stats[MaxStats];
 #pragma udata
 
 int16	Trace[TopTrace+1];
-boolean	F[LastFlag];
+Flags 	F;
 uint8	LEDCycles;
 int16	AttitudeHoldResetCount;	
 int8	BatteryVolts;
+
+#pragma udata txbuffer
+uint8 TxHead, TxTail;
+uint8 TxCheckSum;
+uint8 TxBuf[TX_BUFF_MASK+1];
+#pragma udata
+
+uint8 UAVXCurrPacketTag;
 
 #pragma udata params
 int8 P[MAX_PARAMETERS];
@@ -311,7 +319,7 @@ void main(void)
 
 		#else
 
-		while ( Armed && F[ParametersValid] )
+		while ( Armed && F.ParametersValid )
 		{ // no command processing while the Quadrocopter is armed
 	
 			ReceivingGPSOnly(true); 
@@ -319,7 +327,7 @@ void main(void)
 			UpdateGPS();
 			UpdateControls();
 
-			if ( F[Signal] && ( FailState != Terminated ) && ( FailState != Returning ) )
+			if ( F.Signal && ( FailState != Terminated ) && ( FailState != Returning ) )
 			{
 				switch ( State  ) {
 				case Starting:	// this state executed once only after arming
@@ -331,7 +339,7 @@ void main(void)
 
 					InitHeading();
 					InitBarometer();
-				InitGPS();
+					InitGPS();
 					InitNavigation();
 				//	ResetGPSOrigin();
 
@@ -375,7 +383,7 @@ void main(void)
 					break;
 
 				} // Switch State
-				F[LostModel] = false;
+				F.LostModel = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 				FailState = Waiting;
 			}

@@ -46,6 +46,8 @@ void InitI2CESCs(void);
 #define ALL_OUTPUTS_OFF	(PORTB &= 0b11110000)
 #define ALL_OUTPUTS		(PORTB & 0b00001111)
 
+boolean OutToggle;
+
 void DoMix(int16 CurrThrottle)
 {
 	static int16 Temp;
@@ -56,7 +58,7 @@ void DoMix(int16 CurrThrottle)
 	#endif // !TRICOPTER
 
 	#ifndef TRICOPTER
-	if( P[ConfigBits] & FlyXModeMask )
+	if( F.UsingXMode )
 	{	// "Cross" Mode
 		Motor[Left] +=   Pl - Rl - Yl;
 		Motor[Right] += -Pl + Rl - Yl;
@@ -228,7 +230,7 @@ void OutSignals(void)
 		while( !INTCONbits.TMR0IF ) ;	// wait for first overflow
 		INTCONbits.TMR0IF=0;			// quit TMR0 interrupt
 		
-		if( F[OutToggle] )	// driver cam servos only every 2nd pulse
+		if( OutToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -237,7 +239,7 @@ void OutSignals(void)
 			_endasm	
 			PORTB |= 0x3f;
 		}
-		F[OutToggle] ^= 1;
+		OutToggle ^= 1;
 		
 		// This loop is exactly 16 cycles 
 		// under no circumstances should the loop cycle time be changed
@@ -287,7 +289,7 @@ OS006:
 	} 
 	else
 	{
-		if( F[OutToggle] )	// driver cam servos only every 2nd pulse
+		if( OutToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -296,7 +298,7 @@ OS006:
 			_endasm	
 			PORTB |= 0x3f;
 		}
-		F[OutToggle] ^= 1;
+		OutToggle ^= 1;
 		
 		// in X3D- and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL
 		// Ack (r) not checked as no recovery is possible

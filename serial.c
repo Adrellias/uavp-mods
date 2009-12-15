@@ -39,6 +39,11 @@ uint8 PollRxChar(void);
 uint8 RxNumU(void);
 int8 RxNumS(void);
 void TxVal32(int32, int8, uint8);
+void SendByte(uint8);
+void SendESCByte(uint8);
+void SendWord(int16);
+void SendESCWord(int16);
+void SendPacket(uint8, uint8, uint8 *, boolean);
 
 void TxString(const rom uint8 *pch)
 {
@@ -225,5 +230,37 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 		TxChar(Separator);
 } // TxVal32
 
+#ifdef TELEMETRY
 
+void SendByte(uint8 ch)
+{
+	uint8 NewTail;
 
+	TxCheckSum ^= ch;
+	NewTail=(TxTail+1) & TX_BUFF_MASK;
+  	TxBuf[NewTail]=ch;
+	TxTail = NewTail;
+} // SendByte
+
+void SendESCByte(uint8 ch)
+{
+  #ifndef SUPRESSBYTESTUFFING
+  if ((ch==SOH)||(ch==EOT)||(ch==ESC))
+	SendByte(ESC);
+  #endif
+  SendByte(ch);
+} // 
+
+void SendWord(int16 v)
+{
+	SendByte(v >> 8);
+	SendByte(v);
+} // SendWord
+
+void SendESCWord(int16 v)
+{
+	SendESCByte(v >> 8);
+	SendESCByte(v);
+} // SendWord
+
+#endif // TELEMETRY

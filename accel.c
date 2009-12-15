@@ -147,7 +147,7 @@ void IsLISLActive(void)
 {
 	static int8 r;
 
-	F[AccelerationsValid] = false;
+	F.AccelerationsValid = false;
 	SPI_CS = DSEL_LISL;
 	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
 
@@ -161,7 +161,7 @@ void IsLISLActive(void)
 		WriteLISL(0b11111100, LISL_FF_THS_H); // -0,5g threshold
 		WriteLISL(255, LISL_FF_DUR);
 		WriteLISL(0b00000000, LISL_DD_CFG);
-		F[AccelerationsValid] = true;
+		F.AccelerationsValid = true;
 	}
 } // IsLISLActive
 
@@ -174,7 +174,7 @@ void InitLISL(void)
 	NeutralDU = 0;
 	#ifdef USE_ACCELEROMETER
 	IsLISLActive();	
-	if( F[AccelerationsValid] )
+	if( F.AccelerationsValid )
 	{
 		LEDYellow_ON;
 		GetNeutralAccelerations();
@@ -197,7 +197,11 @@ void ReadAccelerations()
 	Az.high8 = ReadLISLNext();
 	SPI_CS = DSEL_LISL;	// end transmission
 
-	if ( ((r & 0xf0) != 0) && (State == InFlight) ) Stats[AccFailS].i16++;	// data over run - acc out of range
+	if ( ((r & 0xf0) != 0) && (State == InFlight) ) 
+	{
+		Stats[AccFailS].i16++;	// data over run - acc out of range
+		F.AccFailure = true;
+	}
 
 } // ReadAccelerations
 

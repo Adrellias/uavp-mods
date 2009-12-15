@@ -65,12 +65,14 @@ void InitMisc(void)
 	for ( i = 0; i <= TopTrace; i++)
 		Trace[i] = 0;
 	
-	for ( i = 0; i < LastFlag ; i++ )
-		F[i] = false; 
-	F[RTHAltitudeHold] = F[ParametersValid] = true;
+	for ( i = 0; i < FLAG_BYTES ; i++ )
+		F.AllFlags[i] = 0;
+	F.BeeperInUse = F.HoldBeeperArmed = F.GPSTestActive = false; 
+	F.RTHAltitudeHold = F.ParametersValid = true;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
 	IdleThrottle = RC_THRES_STOP;
+	InitialThrottle = RC_MAXIMUM;
 	ESCMin = OUT_MINIMUM;
 	ESCMax = OUT_MAXIMUM;
 
@@ -153,13 +155,13 @@ void CheckAlarms(void)
 
 	NewBatteryVolts = ADC(ADCBattVoltsChan, ADCVREF5V) >> 3; 
 	BatteryVolts = SoftFilter(BatteryVolts, NewBatteryVolts);
-	F[LowBatt] =  (BatteryVolts < (int16)P[LowVoltThres]) & 1;
+	F.LowBatt =  (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 
-	F[BeeperInUse] = F[LowBatt] || F[LostModel];
+	F.BeeperInUse = F.LowBatt || F.LostModel;
 
-	if ( F[BeeperInUse] )
+	if ( F.BeeperInUse )
 	{
-		if( F[LowBatt] ) // repeating beep
+		if( F.LowBatt ) // repeating beep
 			if( ((int16)mS[Clock] & 0x0200) == 0 )
 			{
 				Beeper_ON;
@@ -171,7 +173,7 @@ void CheckAlarms(void)
 				LEDRed_OFF;
 			}	
 		else
-			if ( F[LostModel] ) // 2 beeps with interval
+			if ( F.LostModel ) // 2 beeps with interval
 				if( ((int16)mS[Clock] & 0x0400) == 0 )
 				{
 					Beeper_ON;
@@ -190,7 +192,7 @@ void CheckAlarms(void)
 	}	
 	#ifdef NAV_ACQUIRE_BEEPER
 	else
-		if ( (State == InFlight) && (!F[HoldBeeperArmed]) && (mS[Clock] > mS[BeeperTimeout]) )
+		if ( (State == InFlight) && (!F.HoldBeeperArmed) && (mS[Clock] > mS[BeeperTimeout]) )
 			Beeper_OFF;
 	#endif // NAV_ACQUIRE_BEEPER 
 
@@ -232,7 +234,7 @@ int16 SlewLimit(int16 Old, int16 New, int16 Slew)
 
 void DumpTrace(void)
 {
-#ifdef DEBUG_SENSORS
+	#ifdef DEBUG_SENSORS
 	uint8 t;
 
 	if ( DesiredThrottle > 20 ) 
@@ -245,6 +247,88 @@ void DumpTrace(void)
 		TxNextLine();
 	}
 
-#endif // DEBUG_SENSORS
+	#endif // DEBUG_SENSORS
 } // DumpTrace
+
+void SendUAVXState(void) // 925uS at 16MHz
+{
+	uint8 b;
+	// packet must be shorter than GPS shortest valid packet ($GPGGA)
+	// which is ~64 characters - so limit to 48?.
+	#ifdef TELEMETRY
+	for (b=10;b;b--) 
+		SendByte(0x55);
+      
+	SendByte(0xff); // synchronisation to "jolt" USART
+
+  	SendByte(SOH);
+
+  	TxCheckSum = 0;
+
+	switch ( UAVXCurrPacketTag ) {
+	case UAVXFlightPacketTag:
+		SendESCByte(UAVXFlightPacketTag);
+		SendESCByte(30 + FLAG_BYTES);
+		for ( b = 0; b < FLAG_BYTES; b++ )
+			SendESCByte(F.AllFlags[b]); 
+	
+	  	SendESCByte(State);
+
+		SendESCByte(BatteryVolts);
+		SendESCWord(0); 						// Battery Current
+		SendESCWord(RCGlitches);
+		
+		SendESCWord(DesiredThrottle);
+		SendESCWord(DesiredRoll);
+		SendESCWord(DesiredPitch);
+		SendESCWord(DesiredYaw);
+		SendESCWord(RollRate);
+		SendESCWord(PitchRate);
+		SendESCWord(YawRate);
+		SendESCWord(RollSum);
+		SendESCWord(PitchSum);
+		SendESCWord(YawSum);
+		SendESCWord(LRAcc);
+		SendESCWord(FBAcc);
+		SendESCWord(DUAcc);
+		
+		UAVXCurrPacketTag = UAVXNavPacketTag;
+		break;
+
+	case UAVXNavPacketTag:
+		SendESCByte(UAVXNavPacketTag);
+		SendESCByte(20);
+
+		SendESCByte(NavState);
+		SendESCByte(FailState);	
+
+		SendESCWord(GPSVel);
+		SendESCWord(CurrentRelBaroPressure);
+		SendESCWord(GPSHDilute);
+		SendESCWord(Heading);
+		SendESCWord(GPSRelAltitude);
+		SendESCWord(GPSEast);
+		SendESCWord(GPSNorth);
+		SendESCWord(GPSEastHold);
+		SendESCWord(GPSNorthHold);
+
+		UAVXCurrPacketTag = UAVXFlightPacketTag;
+		break;
+
+	default:
+		UAVXCurrPacketTag = UAVXFlightPacketTag;
+		break;		
+	}
+	
+  	SendESCByte(TxCheckSum);
+
+  	SendByte(EOT);
+
+  	SendByte(CR);
+	SendByte(LF);  	
+
+	#endif // TELEMETRY
+} // SendUAVXState
+
+
 

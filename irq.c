@@ -42,11 +42,11 @@ void high_isr_handler(void);
 void ReceivingGPSOnly(boolean r)
 {
 	#ifndef DEBUG_SENSORS
-	if ( r != F[ReceivingGPS] )
+	if ( r != F.ReceivingGPS )
 	{
 		PIE1bits.RCIE = false;
-		F[ReceivingGPS] = r;
-		if ( F[ReceivingGPS] )
+		F.ReceivingGPS = r;
+		if ( F.ReceivingGPS )
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
 		else
@@ -79,7 +79,7 @@ void MapRC(void)
 
 void DoRxPolarity(void)
 {
-	if ( P[ConfigBits] & RxSerialPPMMask  ) // serial PPM frame from within an Rx
+	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
 		CCP1CONbits.CCP1M0 = PPMPosPolarity[TxRxType];
 	else
 		CCP1CONbits.CCP1M0 = 1;	
@@ -95,6 +95,8 @@ void InitTimersAndInterrupts(void)
 	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 	DoRxPolarity();
 
+	TxHead = TxTail = 0;
+
 	for (i = Clock; i<= CompassUpdate; i++)
 		mS[i] = 0;
 
@@ -105,7 +107,7 @@ void InitTimersAndInterrupts(void)
 
 	PPM_Index = PrevEdge = RCGlitches = RxCheckSum =  0;
 	SignalCount = -RC_GOOD_BUCKET_MAX;
-	F[Signal] = F[RCNewValues] = false;
+	F.Signal = F.RCNewValues = false;
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
@@ -131,8 +133,8 @@ void high_isr_handler(void)
 		if ( Width.i16 > MIN_PPM_SYNC_PAUSE ) 	// A pause in 2us ticks > 5ms 
 		{
 			PPM_Index = 0;						// Sync pulse detected - next CH is CH1
-			F[RCFrameOK] = true;
-			F[RCNewValues] = false; 
+			F.RCFrameOK = true;
+			F.RCNewValues = false; 
 			PauseTime = Width.i16;
 		}
 		else 
@@ -150,34 +152,34 @@ void high_isr_handler(void)
 				{
 					// preserve old value i.e. default hold
 					RCGlitches++;
-					F[RCFrameOK] = false;
+					F.RCFrameOK = false;
 				}
 				PPM_Index++;
 				// MUST demand rock solid RC frames for autonomous functions not
 				// to be cancelled by noise-generated partially correct frames
 				if ( PPM_Index == RC_CONTROLS )
 				{
-					if ( F[RCFrameOK] )
+					if ( F.RCFrameOK )
 					{
-						F[RCNewValues] = true;
+						F.RCNewValues = true;
  						SignalCount++;
 					}
 					else
 					{
-						F[RCNewValues] = false;
+						F.RCNewValues = false;
 						SignalCount -= RC_GOOD_RATIO;
 					}
 
 					SignalCount = Limit(SignalCount, -RC_GOOD_BUCKET_MAX, RC_GOOD_BUCKET_MAX);
-					F[Signal] = SignalCount > 0;
+					F.Signal = SignalCount > 0;
 
-					if ( F[Signal])
+					if ( F.Signal )
 						mS[LastValidRx] = mS[Clock];
 					mS[RCSignalTimeout] = mS[Clock] + RC_SIGNAL_TIMEOUT_MS;
 				}
 			}
 
-		if ( (P[ConfigBits] & RxSerialPPMMask) == 0 )						
+		if ( !F.UsingSerialPPM )						
 			CCP1CONbits.CCP1M0 ^= 1;
 
 		PIR1bits.CCP1IF = false;
@@ -209,7 +211,7 @@ void high_isr_handler(void)
 				else
 				{
 					NMEA.length = ll;	
-					F[GPSSentenceReceived] = GPSTxCheckSum == RxCheckSum;
+					F.GPSSentenceReceived = GPSTxCheckSum == RxCheckSum;
 					GPSRxState = WaitGPSSentinel;
 				}
 				break;
@@ -253,15 +255,23 @@ void high_isr_handler(void)
 				break;	
 		    } 
 		}
+		#ifdef TELEMETRY
+		// piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
+		if (( TxHead != TxTail) && PIR1bits.TXIF )
+		{
+			TXREG = TxBuf[TxHead];
+			TxHead = (TxHead + 1) & TX_BUFF_MASK;
+		}
+		#endif // TELEMETRY
 		PIR1bits.RCIF = false;
 	}
 
 	if ( INTCONbits.T0IF )  // MilliSec clock with some "leaks" in output.c etc.
 	{ 
 		mS[Clock]++;
-		if ( F[Signal] && (mS[Clock] > mS[RCSignalTimeout]) ) 
+		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{
-			F[Signal] = false;
+			F.Signal = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
 		INTCONbits.TMR0IF = false;	

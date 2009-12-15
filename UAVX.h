@@ -2,10 +2,8 @@
 
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
-#define AUTO_LOAD_DEFAULTS					// Automatically load default paramters if EEPROM is empty
-
 // Jim - you may wish to try these?
-#define NAV_HOLD_WHEN_NEUTRAL				// Only attempt to hold position when sticks in neutral
+// #define NAV_HOLD_WHEN_NEUTRAL			// Only attempt to hold position when sticks in neutral
 // #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
 
 // Moving average of coordinates - Kalman Estimator probably needed
@@ -23,6 +21,8 @@
 #define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units ~= degrees max pitch/roll angle
 #define NAV_INT_LIMIT			8L		// *3 Suggest similar to DAMP_HORIZ_LIMIT 
 #define NAV_DIFF_LIMIT			16L		// *8,3 Less than NAV_MAX_ROLL_PITCH? 
+
+//#define TELEMETRY						// telemetry piggy-backed on GPS Rx
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
@@ -82,7 +82,7 @@
 
 // Baro
 
-//#define BARO_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
+#define BARO_SCRATCHY_BEEPER				// Scratchy beeper noise on hover
 
 // Increase the severity of the filter when averaging barometer pressure readings
 // New=(Old*7+New)/8).
@@ -96,7 +96,7 @@
 // Gyros
 
 // Adds a delay between gyro neutral acquisition samples (16)
-#define GYRO_ERECT_DELAY		1		// x 64 x 100mS 
+#define GYRO_ERECT_DELAY		1				// x 64 x 100mS 
 
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
@@ -148,7 +148,7 @@
 	
 #define	NAV_YAW_LIMIT			10L		// yaw slew rate for RTH
 #define NAV_MAX_TRIM			20L		// max trim offset for hover hold
-#define NAV_CORR_SLEW_LIMIT		5L		// *2L maximum change in roll or pitch correction per GPS update
+#define NAV_CORR_SLEW_LIMIT		1L		// *5L maximum change in roll or pitch correction per GPS update
 
 #define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
 #define ATTITUDE_HOLD_RESET_INTERVAL	25L		// number of impulse cycles before GPS position is re-acquired
@@ -181,6 +181,8 @@
 
 // Useful Constants
 #define NUL 	0
+#define SOH 1
+#define EOT 4
 #define HT 		9
 #define LF 		10
 #define CR 		13
@@ -234,6 +236,15 @@ typedef union {
 		uint8 high8;
 	};
 } i16u;
+
+typedef union {
+	int32 i32;
+	uint32 u32;
+	struct {
+		uint16 low16;
+		uint16 high16;
+	};
+} i32u;
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -302,8 +313,6 @@ typedef union {
 
 #define TMR2_5MS			78				// 1x 5ms + 
 #define TMR2_TICK			2				// uSec
-
-
 
 // LEDs
 #define AUX2M				0x01
@@ -465,8 +474,6 @@ extern int16 ADC(uint8, uint8);
 extern void InitADC(void);
 
 // autonomous.c
-extern int16 Make2Pi(int16);
-extern int16 MakePi(int16);
 extern void Navigate(int16, int16);
 extern void AltitudeHold(int16);
 extern void Descend(void);
@@ -553,6 +560,8 @@ extern void LEDGame(void);
 // math.c
 extern int16 SRS16(int16, uint8);
 extern int32 SRS32(int32, uint8);
+extern int16 Make2Pi(int16);
+extern int16 MakePi(int16);
 extern int16 Table16(int16, const int16 *);
 extern int16 int16sin(int16);
 extern int16 int16cos(int16);
@@ -595,6 +604,11 @@ extern uint8 PollRxChar(void);
 extern uint8 RxNumU(void);
 extern int8 RxNumS(void);
 extern void TxVal32(int32, int8, uint8);
+extern void SendByte(uint8);
+extern void SendESCByte(uint8);
+extern void SendWord(int16);
+extern void SendESCWord(int16);
+extern void SendPacket(uint8, uint8, uint8 *, boolean);
 
 // stats.c
 extern void ZeroStats(void);
@@ -618,6 +632,7 @@ extern int16 DecayX(int16, int16);
 extern void CheckAlarms(void);
 
 extern void DumpTrace(void);
+extern void SendUAVXState(void);
 
 // bootl18f.asm
 extern void BootStart(void);
@@ -717,7 +732,7 @@ extern int16	RollTrim, PitchTrim, YawTrim;
 extern int16	HoldYaw;
 extern int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
-extern int16	HoverThrottle, DesiredThrottle, IdleThrottle;
+extern int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 extern int16	CurrMaxRollPitch;
 extern i16u		Ax, Ay, Az;
@@ -754,7 +769,7 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure;
 extern int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
-extern int16	BE, BEp;
+extern int16	BaroROC, BE, BEp;
 extern i16u		BaroVal;
 extern int8		BaroSample;
 extern int16	BaroComp;
@@ -765,42 +780,79 @@ extern int16	Motor[NoOfMotors];
 extern boolean	ESCI2CFail[NoOfMotors];
 extern int16	Rl,Pl,Yl;		// PID output values
 
-enum Flags {
-	Signal,
-	BeeperInUse,
-	RCNewValues,
-	NewCommands,
-	FirstTimeout,
-	LowBatt,
-	AccelerationsValid,
-	CompassValid,
-	CompassMissRead,
-	BaroAltitudeValid,
-	BaroRestart,	
-	OutToggle,									
-	Failsafe,
-	GyrosErected,
-	NewBaroValue,
-	ReceivingGPS,
-	GPSValid,
-	LostModel,
-	ThrottleMoving,
-	Hovering,
-	NavComputed,
-	AttitudeHold,
-	HoldBeeperArmed,
-	RTHAltitudeHold,
-	ReturnHome,
-	TurnToHome,
-	Proximity,
-	CloseProximity,
-	ParametersValid,
-	GPSTestActive,
-	RCFrameOK, 
-	GPSSentenceReceived,
-	LastFlag
-	};
-extern boolean	F[LastFlag];
+#define FLAG_BYTES 6
+
+typedef union {
+	uint8 AllFlags[FLAG_BYTES];
+	struct {
+		uint8
+		Signal:1,
+		RCFrameOK:1, 
+
+		LostModel:1,
+		Failsafe:1,
+
+		UsingSerialPPM:1,
+		UsingTxMode2:1,
+		UsingXMode:1,
+
+		LowBatt:1,
+		AccelerationsValid:1,
+
+		CompassValid:1,
+		CompassMissRead:1,
+
+		BaroAltitudeValid:1,
+
+		BaroFailure:1,
+		AccFailure:1,
+		CompassFailure:1,
+		GPSFailure:1,
+								
+
+		GyrosErected:1,
+
+		ReceivingGPS:1,
+		GPSSentenceReceived:1,
+		GPSValid:1,
+		GPSOriginValid:1,
+
+		ThrottleMoving:1,
+		Hovering:1,
+
+		AttitudeHold:1,
+
+		ReturnHome:1,
+
+
+		UsingGPSAlt:1,
+
+		UsingRTHAutoDescend:1,
+
+		RTHAltitudeHold:1,	// stick programmed
+		TurnToHome:1,		// stick programmed
+
+		Proximity:1,
+		CloseProximity:1,
+
+
+		// internal flags not really useful externally
+		ParametersValid:1,
+
+		RCNewValues:1,
+		NewCommands:1,
+
+		NavComputed:1,
+
+		NewBaroValue:1,
+		BeeperInUse:1, 
+		HoldBeeperArmed:1, 
+		GPSTestActive:1;
+
+		};
+} Flags;
+
+extern Flags F;
 
 extern uint8	LEDCycles;		// for hover light display
 extern int16	AttitudeHoldResetCount;	
@@ -812,6 +864,16 @@ enum Statistics { GPSAltitudeS, RelBaroPressureS, GPSVelS, RollRateS, PitchRateS
 				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
 				MaxStats};
 extern i16u Stats[];
+
+enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
+                 AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
+                 MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, UAVXNavPacketTag};
+#define TX_BUFF_MASK	127
+extern uint8 TxHead, TxTail;
+extern uint8 TxCheckSum;
+extern uint8 TxBuf[];
+
+extern uint8 UAVXCurrPacketTag;
 
 extern int16	Trace[];
 

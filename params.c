@@ -74,13 +74,18 @@ void ReadParametersEE(void)
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = (((COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*MILLIPI)/180L);
-		if ( (P[ConfigBits] & FlyXModeMask) != 0 )
+		F.UsingXMode = P[ConfigBits] & FlyXModeMask;
+		if ( F.UsingXMode )
 			CompassOffset -= QUARTERMILLIPI;
 	
+		F.UsingSerialPPM = P[ConfigBits] & RxSerialPPMMask;
 		PIE1bits.CCP1IE = false;
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
+
+		F.UsingGPSAlt = P[ConfigBits] & UseGPSAltMask;
+		F.UsingRTHAutoDescend = P[ConfigBits] & UseRTHDescendMask;
 	
 		BatteryVolts = (int16)P[LowVoltThres];
 		
@@ -121,10 +126,10 @@ void UpdateParamSetChoice(void)
 	int8 NewParamSet, NewRTHAltitudeHold, NewTurnToHome, Selector;
 
 	NewParamSet = CurrentParamSet;
-	NewRTHAltitudeHold = F[RTHAltitudeHold];
-	NewTurnToHome = F[TurnToHome];
+	NewRTHAltitudeHold = F.RTHAltitudeHold;
+	NewTurnToHome = F.TurnToHome;
 
-	if ( P[ConfigBits] & TxMode2Mask )
+	if ( F.UsingTxMode2 )
 		Selector = DesiredRoll;
 	else
 		Selector = -DesiredYaw;
@@ -161,15 +166,15 @@ void UpdateParamSetChoice(void)
 					}
 			}
 
-		if ( ( NewParamSet != CurrentParamSet ) || ( NewRTHAltitudeHold != F[RTHAltitudeHold]) )
+		if ( ( NewParamSet != CurrentParamSet ) || ( NewRTHAltitudeHold != F.RTHAltitudeHold ) )
 		{	
 			CurrentParamSet = NewParamSet;
-			F[RTHAltitudeHold] = NewRTHAltitudeHold;
+			F.RTHAltitudeHold = NewRTHAltitudeHold;
 			LEDBlue_ON;
 			DoBeep100mSWithOutput(2, 2);
 			if ( CurrentParamSet == 2 )
 				DoBeep100mSWithOutput(2, 2);
-			if ( F[RTHAltitudeHold] )
+			if ( F.RTHAltitudeHold )
 				DoBeep100mSWithOutput(4, 4);
 			ParametersChanged |= true;
 			Beeper_OFF;
@@ -177,7 +182,7 @@ void UpdateParamSetChoice(void)
 		}
 	}
 
-	if ( P[ConfigBits] & TxMode2Mask )
+	if ( F.UsingTxMode2 )
 		Selector = -DesiredYaw;
 	else
 		Selector = DesiredRoll;
@@ -190,11 +195,11 @@ void UpdateParamSetChoice(void)
 			if ( Selector > STICK_WINDOW ) // left
 				NewTurnToHome = true; // right
 			
-		if ( NewTurnToHome != F[TurnToHome] )
+		if ( NewTurnToHome != F.TurnToHome )
 		{		
-			F[TurnToHome] = NewTurnToHome;
+			F.TurnToHome = NewTurnToHome;
 			LEDBlue_ON;
-			if ( F[TurnToHome] )
+			if ( F.TurnToHome )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;
@@ -207,13 +212,8 @@ void InitParameters(void)
 	ALL_LEDS_ON;
 	CurrentParamSet = 1;
 
-	#ifdef AUTO_LOAD_DEFAULTS
 	if ( ReadEE(TxRxType) == -1 )
 		UseDefaultParameters();
-	#else
-	while ( ReadEE(TxRxType) == -1 ) 
-		ProcessCommand();
-	#endif // AUTO_LOAD_DEFAULTS
 	
 	CurrentParamSet = 1;
 	ParametersChanged = true;

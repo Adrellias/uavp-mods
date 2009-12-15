@@ -184,12 +184,12 @@ void ParseGPGGASentence(void)
     //UpdateField();   // GHeight 
     //UpdateField();   // GHeightUnit 
  
-    F[GPSValid] = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );  
+    F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );  
 
-	if ( F[GPSTestActive] )
+	if ( F.GPSTestActive )
 	{
 		TxString("$GPGGA ");
-		if ( !F[GPSValid] )
+		if ( !F.GPSValid )
 		{
 			TxString(" fx=");
 			TxVal32(GPSFix, 0, ' ');
@@ -236,18 +236,18 @@ void ParseGPSSentence(void)
 
 	if ( State == InFlight ) Stats[GPSSentencesS].i16++;
 
-	if ( F[GPSValid] )
+	if ( F.GPSValid )
 	{
 	    if ( ValidGPSSentences <=  GPS_INITIAL_SENTENCES )
 		{   // repetition to ensure GPGGA altitude is captured
 
-			if ( F[GPSTestActive] )
+			if ( F.GPSTestActive )
 			{
 				TxVal32( GPS_INITIAL_SENTENCES - ValidGPSSentences, 0, 0);
 				TxNextLine();
 			}
 
-			F[GPSValid] = false;
+			F.GPSValid = false;
 
 			if (GPSHDilute <= GPS_MIN_HDILUTE )
 			{
@@ -300,7 +300,11 @@ void ParseGPSSentence(void)
 		}
 	}
 	else
-		if ( State == InFlight ) Stats[GPSInvalidS].i16++;
+		if ( State == InFlight ) 
+		{
+			Stats[GPSInvalidS].i16++;
+			F.GPSFailure = true;
+		}
 
 } // ParseGPSSentence
 
@@ -322,35 +326,36 @@ void InitGPS(void)
 
 	ValidGPSSentences = 0;
 
-	F[GPSValid] = false; 
-	F[GPSSentenceReceived] = false;
+	F.GPSValid = false; 
+	F.GPSSentenceReceived = false;
   	GPSRxState = WaitGPSSentinel; 
   	
 } // InitGPS
 
 void UpdateGPS(void)
 {
-	if ( F[GPSSentenceReceived] )
+	if ( F.GPSSentenceReceived )
 	{
 		LEDBlue_ON;
 		LEDRed_OFF;
-		F[GPSSentenceReceived] = false;  
+		F.GPSSentenceReceived = false;  
 		ParseGPSSentence(); // 7.5mS 18f2520 @ 16MHz
-		if ( F[GPSValid] )
+		if ( F.GPSValid )
 		{
-			F[NavComputed] = false;
+			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
+
+		SendUAVXState();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )
-			F[GPSValid] = false;
+			F.GPSValid = false;
 
 	LEDBlue_OFF;
-	if ( F[GPSValid] )
+	if ( F.GPSValid )
 		LEDRed_OFF;
 	else
 		LEDRed_ON;	
 } // UpdateGPS
-
 

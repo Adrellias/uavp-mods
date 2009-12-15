@@ -26,6 +26,8 @@
 
 int16 SRS16(int16, uint8);
 int32 SRS32(int32, uint8);
+int16 Make2Pi(int16);
+int16 MakePi(int16);
 int16 Table16(int16, const int16 *);
 int16 int16sin(int16);
 int16 int16cos(int16);
@@ -42,6 +44,20 @@ int32 SRS32(int32 x, uint8 s)
 {
 	return((x<0) ? -((-x)>>s) : (x>>s));
 } // SRS32
+
+int16 Make2Pi(int16 A)
+{
+	while ( A < 0 ) A += TWOMILLIPI;
+	while ( A >= TWOMILLIPI ) A -= TWOMILLIPI;
+	return( A );
+} // Make2Pi
+
+int16 MakePi(int16 A)
+{
+	while ( A < -MILLIPI ) A += TWOMILLIPI;
+	while ( A >= MILLIPI ) A -= TWOMILLIPI;
+	return( A );
+} // MakePi
 
 #pragma idata sintable
 const int16 SineTable[17]={ 
@@ -69,8 +85,7 @@ int16 int16sin(int16 A)
 	static int16 	v;
 	static boolean	Negate;
 
-	while ( A < 0 ) A += TWOMILLIPI;
-	while ( A >= TWOMILLIPI ) A -= TWOMILLIPI;
+	Make2Pi(A);
 
 	Negate = A >= MILLIPI;
 	if ( Negate )

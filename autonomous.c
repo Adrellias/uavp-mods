@@ -25,8 +25,6 @@
 
 // Prototypes
 
-int16 Make2Pi(int16);
-int16 MakePi(int16);
 void Navigate(int16, int16);
 void AltitudeHold(int16);
 void Descend(void);
@@ -44,26 +42,12 @@ int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, Nor
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-int16 Make2Pi(int16 A)
-{
-	while ( A < 0 ) A += TWOMILLIPI;
-	while ( A >= TWOMILLIPI ) A -= TWOMILLIPI;
-	return( A );
-} // Make2Pi
-
-int16 MakePi(int16 A)
-{
-	while ( A < -MILLIPI ) A += TWOMILLIPI;
-	while ( A >= MILLIPI ) A -= TWOMILLIPI;
-	return( A );
-} // MakePi
-
 void AltitudeHold(int16 DesiredAltitude) // Decimetres
 {
 	static int16 Temp;
 
-	if ( F[RTHAltitudeHold] )
-		if ( (P[ConfigBits] & UseGPSAltMask) || !F[BaroAltitudeValid] )
+	if ( F.RTHAltitudeHold )
+		if ( F.UsingGPSAlt || !F.BaroAltitudeValid )
 		{
 			AE = DesiredAltitude - GPSRelAltitude;
 			AE = Limit(AE, -GPS_ALT_BAND_DM, GPS_ALT_BAND_DM);
@@ -112,17 +96,17 @@ void AcquireHoldPosition(void)
 {
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr =  0;
 	RangeP = MAXINT16;
-	F[NavComputed] = false;
+	F.NavComputed = false;
 
 	GPSNorthHold = GPSNorth;
 	GPSEastHold = GPSEast;
-	F[Proximity] = F[CloseProximity] = false;
+	F.Proximity = F.CloseProximity = false;
 
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
 void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
-{	// F[GPSValid] must be true immediately prior to entry	
+{	// F.GPSValid] must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
 	// cos/sin/arctan lookup tables are used for speed.
@@ -131,18 +115,9 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 	static int16 SinHeading, CosHeading;
 	static int16 Temp, EastDiff, NorthDiff, WayHeading, RelHeading;
 
-	F[NewCommands] = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
+	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
-	if ( F[NavComputed] ) // maintain previous corrections
-	{
-		Temp = DesiredRoll + NavRCorr;
-		DesiredRoll = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-		Temp = DesiredPitch + NavPCorr;
-		DesiredPitch = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-		Temp = DesiredYaw + NavYCorr;
-		DesiredYaw = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-	}
-	else
+	if ( !F.NavComputed ) 
 	{
 		EastDiff = GPSEastWay - GPSEast;
 		NorthDiff = GPSNorthWay - GPSNorth;
@@ -152,8 +127,8 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			Range = (int16)int32sqrt( (int32)NorthDiff*(int32)NorthDiff + (int32)EastDiff*(int32)EastDiff );
 			WayHeading = int16atan2(EastDiff, NorthDiff);
 
-			F[Proximity] = Range < NavClosingRadius; 
-			F[CloseProximity] = false;
+			F.Proximity = Range < NavClosingRadius; 
+			F.CloseProximity = false;
 
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 			EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
@@ -204,19 +179,15 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			
 			// Roll & Pitch
 			NavRCorr = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);	
-			NavRCorr = Limit(NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH );
 			NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
 			NavRCorrP = NavRCorr;
-			DesiredRoll += NavRCorr;
 
 			NavPCorr = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
-			NavPCorr = Limit(NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH );
 			NavPCorr = SlewLimit(NavPCorrP, NavPCorr, NAV_CORR_SLEW_LIMIT);
 			NavPCorrP = NavPCorr;
-			DesiredPitch += NavPCorr;
-
+			
 			// Yaw
-			if ( F[TurnToHome] && !F[Proximity] )
+			if ( F.TurnToHome && !F.Proximity )
 			{
 				RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 				NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
@@ -224,17 +195,24 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			}
 			else
 				NavYCorr = 0;	
-			DesiredYaw += NavYCorr;
+
 		}
 		else
 		{
 			// Neutral Zone - no GPS influence
-			NavPCorr = NavPCorrP = NavRCorr = NavRCorrP =  0;
-			F[CloseProximity] = true;
+			NavPCorr = DecayX(NavPCorr, 2);
+			NavRCorr = DecayX(NavRCorr, 2);
+			NavYCorr = 0;
+			F.CloseProximity = true;
 		}
 
-		F[NavComputed] = true;
 	}
+
+	DesiredRoll = Limit(DesiredRoll + NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+	DesiredPitch = Limit(DesiredPitch + NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+	DesiredYaw += NavYCorr;
+	F.NavComputed = true;
+
 } // Navigate
 
 void FakeFlight()
@@ -265,8 +243,8 @@ void FakeFlight()
 		//	DesiredRoll = DesiredPitch = 0;
 			Heading += DesiredYaw / 5;
 
-			F[NavComputed] = false;
-			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F[NewCommands] )
+			F.NavComputed = false;
+			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F.NewCommands )
 				Navigate(0,0);
 
 			Delay100mSWithOutput(5);
@@ -302,18 +280,18 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F[GPSValid] && F[CompassValid]  && F[NewCommands] && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
+	if ( F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
 	{
 		switch ( NavState ) {
 		case HoldingStation:
-			if ( F[AttitudeHold] )
+			if ( F.AttitudeHold )
 			{
 				#ifdef NAV_ACQUIRE_BEEPER
-				if ( F[HoldBeeperArmed] && !F[BeeperInUse] )
+				if ( F.HoldBeeperArmed && !F.BeeperInUse )
 				{
 					mS[BeeperTimeout] = mS[Clock] + 500;
 					Beeper_ON;
-					F[HoldBeeperArmed] = false;
+					F.HoldBeeperArmed = false;
 				} 
 				#endif // NAV_ACQUIRE_BEEPER
 
@@ -325,7 +303,7 @@ void DoNavigation(void)
 			}
 			else
 			{
-				F[HoldBeeperArmed] = true;
+				F.HoldBeeperArmed = true;
 				AcquireHoldPosition();
 			}
 
@@ -334,7 +312,7 @@ void DoNavigation(void)
 			Navigate(GPSNorthHold, GPSEastHold);
 			#endif // !NAV_HOLD_WHEN_NEUTRAL
 
-			if ( F[ReturnHome] )
+			if ( F.ReturnHome )
 			{
 				AltSum = 0; 
 				NavState = ReturningHome;
@@ -344,7 +322,7 @@ void DoNavigation(void)
 
 			break;
 		case ReturningHome:
-			if ( F[ReturnHome] )
+			if ( F.ReturnHome )
 			{
 				#ifdef NAV_RTH_NO_PIC
 				DesiredPitch = DesiredRoll = 0;
@@ -352,7 +330,7 @@ void DoNavigation(void)
 
 				Navigate(WP[0].N, WP[0].E);
 				AltitudeHold(WP[0].A);
-				if ( F[Proximity] )
+				if ( F.Proximity )
 				{
 					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
 					NavState = AtHome;
@@ -363,8 +341,8 @@ void DoNavigation(void)
 			break;
 		case AtHome:
 			Navigate(WP[0].N, WP[0].E);
-			if ( F[ReturnHome] )
-				if ( (( P[ConfigBits] & UseRTHDescendMask ) != 0 ) && ( mS[Clock] > mS[RTHTimeout] ) )
+			if ( F.ReturnHome )
+				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
 				{
 					mS[AltHoldUpdate] = mS[Clock];
 					NavState = Descending;
@@ -376,7 +354,7 @@ void DoNavigation(void)
 			break;
 		case Descending:
 			Navigate(WP[0].N, WP[0].E);
-			if ( F[ReturnHome] )
+			if ( F.ReturnHome )
 				Descend();
 			else
 				AcquireHoldPosition();
@@ -387,11 +365,7 @@ void DoNavigation(void)
 		} // switch NavState
 	}
 	else // no Navigation
-	{
-		Beeper_OFF;
 		CheckForHover();
-	}
-
 
 } // DoNavigation
 
@@ -405,7 +379,7 @@ void DoFailsafe(void)
 			{
 				Descend();							// progressively increase desired baro pressure
 				if ( mS[Clock ] > mS[AbortTimeout] )
-					if ( F[Signal] )
+					if ( F.Signal )
 					{
 						LEDRed_OFF;
 						LEDGreen_ON;
@@ -423,11 +397,11 @@ void DoFailsafe(void)
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 			NavSensitivity = RC_NEUTRAL;		// 50% gain
-			F[ReturnHome] = F[TurnToHome] = true;
+			F.ReturnHome = F.TurnToHome = true;
 			NavState = ReturningHome;
 			DoNavigation();						// if GPS is out then check for hover will see zero throttle
 			if ( mS[Clock ] > mS[AbortTimeout] )
-				if ( F[Signal] )
+				if ( F.Signal )
 				{
 					LEDRed_OFF;
 					LEDGreen_ON;
@@ -439,7 +413,7 @@ void DoFailsafe(void)
 		case Aborting:
 			if( mS[Clock] > mS[AbortTimeout] )
 			{
-				F[LostModel] = true;
+				F.LostModel = true;
 				LEDGreen_OFF;
 				LEDRed_ON;
 
@@ -482,10 +456,10 @@ void CheckThrottleMoved(void)
 		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
 		{
 			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
-			F[ThrottleMoving] = true;
+			F.ThrottleMoving = true;
 		}
 		else
-			F[ThrottleMoving] = false;
+			F.ThrottleMoving = false;
 	}
 } // CheckThrottleMoved
 
@@ -506,7 +480,7 @@ void InitNavigation(void)
 	NavState = HoldingStation;
 	AttitudeHoldResetCount = 0;
 	CurrMaxRollPitch = 0;
-	F[Proximity] = F[CloseProximity] = true;
-	F[NavComputed] = false;
+	F.Proximity = F.CloseProximity = true;
+	F.NavComputed = false;
 } // InitNavigation
 

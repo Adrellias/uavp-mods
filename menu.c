@@ -53,6 +53,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"V..Analog input test\r\n"
 	"X..Flight stats\r\n"
 	"Y..Program YGE I2C ESC\r\n"
+//	"Z..Continuously display compass(Use HyperTerm)\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
@@ -63,7 +64,7 @@ void ShowPrompt(void)
 
 void ShowRxSetup(void)
 {
-	if ( P[ConfigBits] & RxSerialPPMMask )
+	if ( F.UsingSerialPPM )
 		if ( PPMPosPolarity[TxRxType] )
 			TxString("Serial PPM frame (Positive Polarity)");
 		else
@@ -84,13 +85,13 @@ void ShowSetup(uint8 h)
 
 	TxString("\r\nUAVX V" Version " ready.\r\nAccelerometers ");
 
-	if( F[AccelerationsValid] )
+	if( F.AccelerationsValid )
 		TxString("ONLINE\r\n");
 	else
 		TxString("not available\r\n");
 
 	TxString("Compass ");
-	if( F[CompassValid] )
+	if( F.CompassValid )
 	{
 		TxString("ONLINE (");
 		TxVal32(COMPASS_OFFSET_DEG,0,0);
@@ -100,7 +101,7 @@ void ShowSetup(uint8 h)
 		TxString("not available\r\n");
 
 	TxString("Baro ");
-	if ( F[BaroAltitudeValid] )
+	if ( F.BaroAltitudeValid )
 		if ( BaroType == BARO_ID_BMP085 )
 			TxString("BMP085 ONLINE\r\n");
 		else
@@ -155,7 +156,7 @@ void ShowSetup(uint8 h)
 		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 		}
 	
-		if ( P[ConfigBits] & RxSerialPPMMask )
+		if ( F.UsingSerialPPM )
 			ShowRxSetup();
 		else
 		{	
@@ -177,7 +178,31 @@ void ShowSetup(uint8 h)
 	}
 
 	TxString("Selected parameter set: ");
-	TxChar('0' + CurrentParamSet);
+	TxChar('0' + CurrentParamSet);	
+	TxNextLine();
+
+	TxString("Stick programming: \r\n");
+	if ( F.RTHAltitudeHold )
+		TxString("\tRTH altitude hold\r\n");
+	else
+		TxString("\tRTH manual altitude hold\r\n");
+	if ( F.TurnToHome )
+		TxString("\tRTH turn towards home\r\n");
+	else
+		TxString("\tRTH hold heading\r\n");
+
+	if ( (!F.Signal) || (Armed && FirstPass) || F.ReturnHome || ( InitialThrottle >= RC_THRES_START) )
+	{
+		TxString("ALARM:\r\n");
+		if ( !F.Signal )
+			TxString("\tRC signal invalid - bad EPAs or Tx may be off?\r\n");
+		if ( Armed && FirstPass ) 
+			TxString("\tUAVX is armed - disarm!\r\n");
+		if ( F.ReturnHome )
+			TxString("\tRTH is selected - deselect!\r\n");
+		if ( InitialThrottle >= RC_THRES_START )
+			TxString("\tThrottle is open - close throttle!\r\n");
+	}
 	
 	ShowPrompt();
 } // ShowSetup
@@ -257,10 +282,10 @@ void ProcessCommand(void)
 					// Attempts to block use of old versions of UAVPSet not compatible with UAVX
 					// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
 					if ( p < (MAX_PARAMETERS-1) )
-						F[ParametersValid] = false;
+						F.ParametersValid = false;
 					else
 						if ( p == (MAX_PARAMETERS-1) )
-							F[ParametersValid] = true; 	// ALL parameters must be written 
+							F.ParametersValid = true; 	// ALL parameters must be written 
 					TxString(" = ");
 					d = RxNumS();
 					if ( p < MAX_PARAMETERS )
@@ -353,8 +378,8 @@ void ProcessCommand(void)
 				LEDsAndBuzzer();
 				ShowPrompt();
 				break;
-			case 'Z':	// configure YGE30i EScs
-				CompassRun();
+			case 'Z': // Do compass run of 32K readings
+				// CompassRun();
 				break;
 
 			case '?'  :  // help
