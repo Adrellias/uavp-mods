@@ -3,7 +3,6 @@
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 // Jim - you may wish to try these?
-// #define NAV_HOLD_WHEN_NEUTRAL			// Only attempt to hold position when sticks in neutral
 // #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
 
 // Moving average of coordinates - Kalman Estimator probably needed
@@ -747,13 +746,14 @@ extern uint8 	GPSFix;
 extern int16 	GPSHDilute;
 extern int16 	GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
 extern int16 	GPSRelAltitude;
+extern int16 	ValidGPSSentences;
 
 extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
 
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Navigating, Terminating };
 extern uint8 	NavState;
 extern int16 	NavSensitivity;
-extern int16 	AltSum, AE, RangeP;
+extern int16 	AltSum, AE;
 
 // Waypoints
 
@@ -788,53 +788,25 @@ typedef union {
 		uint8
 		Signal:1,
 		RCFrameOK:1, 
-
 		LostModel:1,
 		Failsafe:1,
 
-		UsingSerialPPM:1,
-		UsingTxMode2:1,
-		UsingXMode:1,
-
 		LowBatt:1,
-		AccelerationsValid:1,
-
-		CompassValid:1,
-		CompassMissRead:1,
-
-		BaroAltitudeValid:1,
-
 		BaroFailure:1,
 		AccFailure:1,
 		CompassFailure:1,
 		GPSFailure:1,
-								
-
-		GyrosErected:1,
-
-		ReceivingGPS:1,
-		GPSSentenceReceived:1,
-		GPSValid:1,
-		GPSOriginValid:1,
-
-		ThrottleMoving:1,
-		Hovering:1,
 
 		AttitudeHold:1,
-
+		ThrottleMoving:1,
+		Hovering:1,
 		ReturnHome:1,
-
-
-		UsingGPSAlt:1,
-
-		UsingRTHAutoDescend:1,
-
-		RTHAltitudeHold:1,	// stick programmed
-		TurnToHome:1,		// stick programmed
-
 		Proximity:1,
 		CloseProximity:1,
 
+		UsingGPSAlt:1,
+		UsingRTHAutoDescend:1,
+		BaroAltitudeValid:1,
 
 		// internal flags not really useful externally
 		ParametersValid:1,
@@ -842,11 +814,25 @@ typedef union {
 		RCNewValues:1,
 		NewCommands:1,
 
-		NavComputed:1,
+		AccelerationsValid:1,
+		CompassValid:1,
+		CompassMissRead:1,
+		GyrosErected:1,
 
+		ReceivingGPS:1,
+		GPSSentenceReceived:1,
+		GPSValid:1,
+		GPSOriginValid:1,
+
+		NavComputed:1,
+		RTHAltitudeHold:1,	// stick programmed
+		TurnToHome:1,		// stick programmed
+		UsingSerialPPM:1,
+		UsingTxMode2:1,
+		UsingXMode:1,
 		NewBaroValue:1,
 		BeeperInUse:1, 
-		HoldBeeperArmed:1, 
+		AcquireNewPosition:1, 
 		GPSTestActive:1;
 
 		};

@@ -63,9 +63,9 @@ int16 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 // Global Variables
 
 #pragma udata gpsvars3
-int16 ValidGPSSentences;
 uint8 nll, cc, lo, hi;
 boolean EmptyField;
+int16 ValidGPSSentences;
 #pragma udata
 
 int16 ConvertGPSToM(int16 c)
@@ -212,7 +212,7 @@ void SetGPSOrigin(void)
 	GPSStartTime = GPSMissionTime;
 	GPSOriginLatitude = GPSLatitude;
 	GPSOriginLongitude = GPSLongitude;
-	GPSNorthP = GPSEastP = GPSVel = 0;
+	GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
 
 	mS[LastGPS] = mS[Clock];
 	
@@ -326,8 +326,7 @@ void InitGPS(void)
 
 	ValidGPSSentences = 0;
 
-	F.GPSValid = false; 
-	F.GPSSentenceReceived = false;
+	F.GPSOriginValid = F.GPSValid = F.GPSSentenceReceived = false;
   	GPSRxState = WaitGPSSentinel; 
   	
 } // InitGPS

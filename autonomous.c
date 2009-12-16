@@ -95,12 +95,11 @@ void Descend(void)
 void AcquireHoldPosition(void)
 {
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr =  0;
-	RangeP = MAXINT16;
 	F.NavComputed = false;
 
 	GPSNorthHold = GPSNorth;
 	GPSEastHold = GPSEast;
-	F.Proximity = F.CloseProximity = false;
+	F.Proximity = F.CloseProximity = F.AcquireNewPosition = false;
 
 	NavState = HoldingStation;
 } // AcquireHoldPosition
@@ -228,8 +227,7 @@ void FakeFlight()
 	if ( Armed )
 	{
 		Heading = MILLIPI;
-
-		RangeP = MAXINT16;	
+	
 		GPSEast = 1000L; GPSNorth = 1000L;
 		InitNavigation();
 
@@ -280,37 +278,29 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
+	if ( F.GPSOriginValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
 	{
 		switch ( NavState ) {
 		case HoldingStation:
 			if ( F.AttitudeHold )
-			{
-				#ifdef NAV_ACQUIRE_BEEPER
-				if ( F.HoldBeeperArmed && !F.BeeperInUse )
+			{		
+				if ( F.AcquireNewPosition )
 				{
-					mS[BeeperTimeout] = mS[Clock] + 500;
-					Beeper_ON;
-					F.HoldBeeperArmed = false;
-				} 
-				#endif // NAV_ACQUIRE_BEEPER
-
-				#ifdef NAV_HOLD_WHEN_NEUTRAL
-				NavState = HoldingStation;
-				Navigate(GPSNorthHold, GPSEastHold);
-				#endif // NAV_HOLD_WHEN_NEUTRAL
-				
+					AcquireHoldPosition();
+					#ifdef NAV_ACQUIRE_BEEPER
+					if ( !F.BeeperInUse )
+					{
+						mS[BeeperTimeout] = mS[Clock] + 500;
+						Beeper_ON;				
+					} 
+					#endif // NAV_ACQUIRE_BEEPER
+				}	
 			}
 			else
-			{
-				F.HoldBeeperArmed = true;
-				AcquireHoldPosition();
-			}
+				F.AcquireNewPosition = true;
 
-			#ifndef NAV_HOLD_WHEN_NEUTRAL // Keep GPS hold active regardless
 			NavState = HoldingStation;				
 			Navigate(GPSNorthHold, GPSEastHold);
-			#endif // !NAV_HOLD_WHEN_NEUTRAL
 
 			if ( F.ReturnHome )
 			{

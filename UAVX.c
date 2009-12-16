@@ -94,7 +94,7 @@ int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffse
 
 uint8 	NavState;
 int16 	NavSensitivity;
-int16 	AltSum, AE, RangeP;
+int16 	AltSum, AE;
 
 int16	ThrLow, ThrHigh, ThrNeutral;
 
@@ -319,7 +319,7 @@ void main(void)
 
 		#else
 
-		while ( Armed && F.ParametersValid )
+		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
 	
 			ReceivingGPSOnly(true); 
@@ -341,7 +341,6 @@ void main(void)
 					InitBarometer();
 					InitGPS();
 					InitNavigation();
-				//	ResetGPSOrigin();
 
 					DesiredThrottle = 0;
 					ErectGyros();			// DO NOT MOVE AIRCRAFT!
@@ -354,6 +353,7 @@ void main(void)
 					{
 						InitHeading();						
 						LEDCycles = 1;
+						F.GPSOriginValid = ValidGPSSentences >=  GPS_INITIAL_SENTENCES;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
 						State = InFlight;
 					}

@@ -67,8 +67,8 @@ void InitMisc(void)
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = 0;
-	F.BeeperInUse = F.HoldBeeperArmed = F.GPSTestActive = false; 
-	F.RTHAltitudeHold = F.ParametersValid = true;
+	F.BeeperInUse = F.GPSTestActive = false; 
+	F.RTHAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
 	IdleThrottle = RC_THRES_STOP;
@@ -192,7 +192,7 @@ void CheckAlarms(void)
 	}	
 	#ifdef NAV_ACQUIRE_BEEPER
 	else
-		if ( (State == InFlight) && (!F.HoldBeeperArmed) && (mS[Clock] > mS[BeeperTimeout]) )
+		if ( (State == InFlight) && (!F.AcquireNewPosition) && (mS[Clock] > mS[BeeperTimeout]) )
 			Beeper_OFF;
 	#endif // NAV_ACQUIRE_BEEPER 
 
