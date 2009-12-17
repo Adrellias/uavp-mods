@@ -74,18 +74,18 @@ void ReadParametersEE(void)
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = (((COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*MILLIPI)/180L);
-		F.UsingXMode = P[ConfigBits] & FlyXModeMask;
+		F.UsingXMode = ( (P[ConfigBits] & FlyXModeMask) != 0);
 		if ( F.UsingXMode )
 			CompassOffset -= QUARTERMILLIPI;
 	
-		F.UsingSerialPPM = P[ConfigBits] & RxSerialPPMMask;
+		F.UsingSerialPPM = ((P[ConfigBits] & RxSerialPPMMask) != 0);
 		PIE1bits.CCP1IE = false;
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
 
-		F.UsingGPSAlt = P[ConfigBits] & UseGPSAltMask;
-		F.UsingRTHAutoDescend = P[ConfigBits] & UseRTHDescendMask;
+		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
+		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 	
 		BatteryVolts = (int16)P[LowVoltThres];
 		
