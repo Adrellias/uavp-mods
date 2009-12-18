@@ -31,7 +31,6 @@ void Descend(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
-void CheckThrottleMoved(void);
 void DoFailsafe(void);
 void InitNavigation(void);
 
@@ -279,8 +278,50 @@ void FakeFlight()
 void DoNavigation(void)
 {
 	if ( F.GPSOriginValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
+//	if ( F.GPSOriginValid & F.GPSValid & F.CompassValid  & F.NewCommands & ( NavSensitivity > NAV_GAIN_THRESHOLD ) & ( mS[Clock] > mS[NavActiveTime]) )
 	{
-		switch ( NavState ) {
+		switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
+		case Navigating:
+			// not implemented yet
+			break;
+		case Descending:
+			Navigate(WP[0].N, WP[0].E);
+			if ( F.ReturnHome )
+				Descend();
+			else
+				AcquireHoldPosition();
+			break;
+		case AtHome:
+			Navigate(WP[0].N, WP[0].E);
+			if ( F.ReturnHome )
+				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
+				{
+					mS[AltHoldUpdate] = mS[Clock];
+					NavState = Descending;
+				}
+				else
+					AltitudeHold(WP[0].A);
+			else
+				AcquireHoldPosition();
+			break;
+		case ReturningHome:
+			if ( F.ReturnHome )
+			{
+				#ifdef NAV_RTH_NO_PIC
+				DesiredPitch = DesiredRoll = 0;
+				#endif // NAV_RTH_NO_PIC
+
+				Navigate(WP[0].N, WP[0].E);
+				AltitudeHold(WP[0].A);
+				if ( F.Proximity )
+				{
+					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
+					NavState = AtHome;
+				}
+			}
+			else
+				AcquireHoldPosition();					
+			break;
 		case HoldingStation:
 			if ( F.AttitudeHold )
 			{		
@@ -310,47 +351,6 @@ void DoNavigation(void)
 
 			CheckForHover();
 
-			break;
-		case ReturningHome:
-			if ( F.ReturnHome )
-			{
-				#ifdef NAV_RTH_NO_PIC
-				DesiredPitch = DesiredRoll = 0;
-				#endif // NAV_RTH_NO_PIC
-
-				Navigate(WP[0].N, WP[0].E);
-				AltitudeHold(WP[0].A);
-				if ( F.Proximity )
-				{
-					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
-					NavState = AtHome;
-				}
-			}
-			else
-				AcquireHoldPosition();					
-			break;
-		case AtHome:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F.ReturnHome )
-				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
-				{
-					mS[AltHoldUpdate] = mS[Clock];
-					NavState = Descending;
-				}
-				else
-					AltitudeHold(WP[0].A);
-			else
-				AcquireHoldPosition();
-			break;
-		case Descending:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F.ReturnHome )
-				Descend();
-			else
-				AcquireHoldPosition();
-			break;
-		case Navigating:
-			// not implemented yet
 			break;
 		} // switch NavState
 	}
@@ -433,25 +433,6 @@ void DoFailsafe(void)
 		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 			
 } // DoFailsafe
-
-void CheckThrottleMoved(void)
-{
-	if( mS[Clock] < mS[ThrottleUpdate] )
-		ThrNeutral = DesiredThrottle;
-	else
-	{
-		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
-		ThrLow = Max(ThrLow, THROTTLE_HOVER);
-		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
-		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
-		{
-			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
-			F.ThrottleMoving = true;
-		}
-		else
-			F.ThrottleMoving = false;
-	}
-} // CheckThrottleMoved
 
 void InitNavigation(void)
 {

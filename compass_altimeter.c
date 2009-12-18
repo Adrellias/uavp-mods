@@ -194,7 +194,7 @@ void GetBaroPressure(void)
 	{
 		ReadBaro();
 		Temp = (int16)( (int24)BaroVal.u16 - OriginBaroPressure );
-	//	BaroROC = BaroFilter(BaroROC, CurrentRelBaroPressure - Temp); // scale to dm/s??
+		BaroROC = BaroFilter(BaroROC, CurrentRelBaroPressure - Temp); // scale to dm/s??
 		CurrentRelBaroPressure = BaroFilter(CurrentRelBaroPressure, Temp );
 
 		if ( State == InFlight )
@@ -257,11 +257,30 @@ BAerror:
 	I2CStop();
 } // InitBarometer
 
+void CheckThrottleMoved(void)
+{
+	if( mS[Clock] < mS[ThrottleUpdate] )
+		ThrNeutral = DesiredThrottle;
+	else
+	{
+		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
+		ThrLow = Max(ThrLow, THROTTLE_HOVER);
+		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
+		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
+		{
+			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
+			F.ThrottleMoving = true;
+		}
+		else
+			F.ThrottleMoving = false;
+	}
+} // CheckThrottleMoved
+
 void CheckForHover(void)
 {
 	CheckThrottleMoved();
 	
-	if( F.ThrottleMoving )	// while moving throttle stick
+	if( F.ThrottleMoving )	
 	{
 		F.Hovering = false;
 		DesiredRelBaroPressure = CurrentRelBaroPressure;
@@ -302,14 +321,15 @@ void BaroPressureHold(int16 DesiredRelBaroPressure)
 		// Differential	
 		Delta = Limit(BE - BEp , -5, 8);	
 		BaroComp += SRS16(Delta * (int16)P[BaroCompKd], 2);
-		
-		BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
 
 		if ( !( F.RTHAltitudeHold && ( NavState == ReturningHome ) ) )
 		{
-			Temp = DesiredThrottle + BaroComp;
+			BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
+			Temp = DesiredThrottle + BaroComp; // don't limit BaroComp
 			HoverThrottle = HardFilter(HoverThrottle, Temp);
 		}
+		else
+			BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
 	
 		BEp = BE;
 	

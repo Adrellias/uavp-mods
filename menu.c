@@ -109,100 +109,111 @@ void ShowSetup(uint8 h)
 	else
 		TxString("not available\r\n");
 
-	if ( ReadEE(TxRxType) == -1 )
-		TxString("Parameters appear not to be initialised?\r\n");
+	if ( F.UsingXMode )
+		TxString("Orientation: X\r\n");
 	else
-	{
-		switch ( P[GyroType] ) {
-		case ADXRS300:TxString("Pitch/Roll Gyros: ADXRS610/300 or MLX90609\r\n"); break;
-		case ADXRS150:TxString("Pitch/Roll Gyros: ADXRS613/150\r\n"); break;
-		case IDG300:TxString("Pitch/Roll Gyros: IDG300\r\n"); break;
-		}
-		
-		switch ( P[ESCType] ) {
-		case ESCPPM:TxString("ESC: PPM "); break;
-		case ESCHolger:TxString("ESC: Holger I2C {"); break;
-		case ESCX3D:TxString("ESC: X-3D I2C {"); break;
-		case ESCYGEI2C:TxString("ESC: YGE I2C {"); break;
-		}
-
-		if ( P[ESCType] != ESCPPM )
-		{
-			for ( i = 0; i < NoOfMotors; i++ )
-				if ( ESCI2CFail[i] )
-					TxString(" Fail");
-				else
-					TxString(" OK");
-			TxString(" }");
-		}
-		TxNextLine();	
-	
-		#ifdef RX6CH
-		TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\R\N");
-		#endif // RX6CH
-		TxString("Tx/Rx: ");
-		switch ( P[TxRxType] ) {
-		case FutabaCh3: TxString("Futaba Th 3 {"); break;
-		case FutabaCh2: TxString("Futaba Th 2 {"); break;
-		case FutabaDM8:TxString("Futaba DM8 & AR7000 {"); break; 
-		case JRPPM: TxString("JR PPM {"); break; 
-		case JRDM9: TxString("JR DM9 & AR7000{"); break; 
-		case JRDXS12: TxString("JR DSX12 & AR7000 {"); break; 
-		case DX7AR7000: TxString("Spektrum DX7 & AR7000 {"); break;
-		case DX7AR6200: TxString("Spektrum DX7 & AR6200 {"); break;
-		case CustomTxRx: TxString("Custom {"); break;
-		case FutabaCh3_6_7: TxString("Futaba Th 2 Swap 6&7 {"); break;
-		case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break; 
-		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
-		}
-	
-		if ( F.UsingSerialPPM )
-			ShowRxSetup();
-		else
-		{	
-			for ( i = 0; i < RC_CONTROLS; i++)
-				TxChar(RxChMnem[RMap[i]-1]);
-		
-			TxString("} connect {");
-		
-			for ( i = 0; i < RC_CONTROLS; i+=2)
-			{
-				TxChar(RxChMnem[RMap[i]-1]);
-				TxChar(' ');
-			}
-		}
-		TxChar('}');
-		if ( P[TxRxType] == DX7AR6200 )
-			TxString(" Mix Rudder to Aux1");
-		TxString("\r\n");
+		TxString("Orientation: +\r\n");
+	switch ( P[GyroType] ) {
+	case ADXRS300:TxString("Pitch/Roll Gyros: ADXRS610/300 or MLX90609\r\n"); break;
+	case ADXRS150:TxString("Pitch/Roll Gyros: ADXRS613/150\r\n"); break;
+	case IDG300:TxString("Pitch/Roll Gyros: IDG300\r\n"); break;
 	}
+	
+	TxString("Motor ESCs: ");	
+	switch ( P[ESCType] ) {
+	case ESCPPM:TxString("PPM "); break;
+	case ESCHolger:TxString("Holger I2C {"); break;
+	case ESCX3D:TxString("X-3D I2C {"); break;
+	case ESCYGEI2C:TxString("YGE I2C {"); break;
+	}
+
+	if ( P[ESCType] != ESCPPM )
+	{
+		for ( i = 0; i < NoOfMotors; i++ )
+			if ( ESCI2CFail[i] )
+				TxString(" Fail");
+			else
+				TxString(" OK");
+		TxString(" }");
+	}
+	TxNextLine();	
+	
+	#ifdef RX6CH
+	TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
+	#endif // RX6CH
+	TxString("Tx/Rx: ");
+	
+	switch ( P[TxRxType] ) {
+	case FutabaCh3: TxString("Futaba Th 3 {"); break;
+	case FutabaCh2: TxString("Futaba Th 2 {"); break;
+	case FutabaDM8:TxString("Futaba DM8 & AR7000 {"); break; 
+	case JRPPM: TxString("JR PPM {"); break; 
+	case JRDM9: TxString("JR DM9 & AR7000{"); break; 
+	case JRDXS12: TxString("JR DSX12 & AR7000 {"); break; 
+	case DX7AR7000: TxString("Spektrum DX7 & AR7000 {"); break;
+	case DX7AR6200: TxString("Spektrum DX7 & AR6200 {"); break;
+	case CustomTxRx: TxString("Custom {"); break;
+	case FutabaCh3_6_7: TxString("Futaba Th 2 Swap 6&7 {"); break;
+	case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break; 
+	case GraupnerMX16s: TxString("Graupner MX16s {"); break;
+	}
+	
+	if ( F.UsingSerialPPM )
+		ShowRxSetup();
+	else
+	{	
+		for ( i = 0; i < RC_CONTROLS; i++)
+			TxChar(RxChMnem[RMap[i]-1]);
+		
+		TxString("} connect {");
+		
+		for ( i = 0; i < RC_CONTROLS; i+=2)
+		{
+			TxChar(RxChMnem[RMap[i]-1]);
+			TxChar(' ');
+		}
+	}
+	TxChar('}');
+	if ( P[TxRxType] == DX7AR6200 )
+		TxString(" Mix Rudder to Aux1 ");
+	if ( F.UsingTxMode2 )
+		TxString(" Tx Mode 2");
+	else
+		TxString(" Tx Mode 1");
+	TxNextLine();
 
 	TxString("Selected parameter set: ");
 	TxChar('0' + CurrentParamSet);	
 	TxNextLine();
 
-	TxString("Stick programming: \r\n");
-	if ( F.RTHAltitudeHold )
-		TxString("\tRTH altitude hold\r\n");
+	TxString("\r\nRTH: \r\n");
+	if ( F.UsingGPSAlt )
+		TxString("\tGPS is altitude source\r\n");
 	else
-		TxString("\tRTH manual altitude hold\r\n");
-	if ( F.TurnToHome )
-		TxString("\tRTH turn towards home\r\n");
+		TxString("\tBaro is altitude source\r\n");
+	if ( F.UsingRTHAutoDescend )
+		TxString("\tAuto descend ENABLED\r\n");
 	else
-		TxString("\tRTH hold heading\r\n");
+		TxString("\tAuto descend disabled\r\n");
 
-	if ( (!F.Signal) || (Armed && FirstPass) || F.ReturnHome || ( InitialThrottle >= RC_THRES_START) )
-	{
-		TxString("ALARM:\r\n");
-		if ( !F.Signal )
-			TxString("\tRC signal invalid - bad EPAs or Tx may be off?\r\n");
-		if ( Armed && FirstPass ) 
-			TxString("\tUAVX is armed - disarm!\r\n");
-		if ( F.ReturnHome )
-			TxString("\tRTH is selected - deselect!\r\n");
-		if ( InitialThrottle >= RC_THRES_START )
-			TxString("\tThrottle is open - close throttle!\r\n");
-	}
+	if ( F.RTHAltitudeHold )
+		TxString("\tAltitude hold enabled\r\n");
+	else
+		TxString("\tAltitude hold DISABLED\r\n");
+	if ( F.TurnToHome )
+		TxString("\tTurn towards home\r\n");
+	else
+		TxString("\tHold heading\r\n");
+
+	TxString("\r\nALARM (if any):\r\n");
+	if ( !F.Signal )
+		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
+	if ( Armed && FirstPass ) 
+		TxString("\tUAVX is armed - disarm!\r\n");
+	if ( F.ReturnHome )
+		TxString("\tRTH is selected - deselect!\r\n");
+	if ( InitialThrottle >= RC_THRES_START )
+		TxString("\tThrottle is open - close throttle!\r\n");
 	
 	ShowPrompt();
 } // ShowSetup

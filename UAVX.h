@@ -105,7 +105,7 @@
 // Altitude Hold
 
 // Throttle reduction and increase limits for Baro Alt Comp
-#define BARO_LOW_THR_COMP		-7L
+#define BARO_LOW_THR_COMP		-14L				// *-7
 #define BARO_HIGH_THR_COMP		30L
 
 #define BARO_SCALE				108L			//((438L*256L)/1043L)// Baro*256/GPSAlt
@@ -298,7 +298,7 @@ typedef union {
 	//NOT IMPLEMENTED YET #define _ClkOut	(400L/4)	// 10.0 MHz Xtal * 4 PLL
 //#endif
 
-#define _PreScale0			16				// 1:16 TMR0 prescaler 
+#define _PreScale0			16				// 1 6 TMR0 prescaler 
 #define _PreScale1			8				// 1:8 TMR1 prescaler 
 #define _PreScale2			16
 #define _PostScale2			16
@@ -480,7 +480,6 @@ extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
 extern void FakeFlight(void); 
-extern void CheckThrottleMoved(void);
 extern void DoFailsafe(void);
 extern void InitNavigation(void);
 
@@ -825,6 +824,7 @@ typedef union {
 		GPSOriginValid:1,
 
 		NavComputed:1,
+		CheckThrottleMoved:1,
 		RTHAltitudeHold:1,	// stick programmed
 		TurnToHome:1,		// stick programmed
 		UsingSerialPPM:1,

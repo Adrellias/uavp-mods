@@ -147,21 +147,21 @@ const rom int8	ComParms[]={
 	};
 
 const rom int8 DefaultParams[] = {
-	-18, 			// RollKp, 			01
-	-16, 			// RollKi,			02
-	50, 			// RollKd,			03
-	-4, 			// HorizDampKp,		04c 
-	4, 				// RollIntLimit,	05
-	-18, 			// PitchKp,			06
-	-16, 			// PitchKi,			07
-	50, 			// PitchKd,			08
-	8, 				// BaroCompKp,		09c
-	4, 				// PitchIntLimit,	10
+	-24, 			// RollKp, 			01
+	-14, 			// RollKi,			02
+	75, 			// RollKd,			03
+	0, 				// HorizDampKp,		04c 
+	3, 				// RollIntLimit,	05
+	-24, 			// PitchKp,			06
+	-14, 			// PitchKi,			07
+	75, 			// PitchKd,			08
+	4, 				// BaroCompKp,		09c
+	3, 				// PitchIntLimit,	10
 	
-	-25, 			// YawKp, 			11
+	-30, 			// YawKp, 			11
 	-20, 			// YawKi,			12
 	0, 				// YawKd,			13
-	25, 			// YawLimit,		14
+	30, 			// YawLimit,		14
 	2, 				// YawIntLimit,		15
 	0, 				// ConfigBits,		16c
 	4, 				// TimeSlots,		17c
@@ -169,19 +169,19 @@ const rom int8 DefaultParams[] = {
 	0, 				// CamRollKp,		19
 	45, 			// PercentHoverThr,	20c 
 	
-	-16, 			// VertDampKp,		21c
+	-1, 			// VertDampKp,		21c
 	0, 				// MiddleDU,		22c
 	10, 			// PercentIdleThr,	23c
 	0, 				// MiddleLR,		24c
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	20, 			// BaroCompKd,		28c
+	10, 			// BaroCompKd,		28c
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
-	24, 			// NavAltKp,		31c
-	24, 			// NavAltKi,		32c
+	15, 			// NavAltKp,		31c
+	15, 			// NavAltKi,		32c
 	20, 			// NavRTHAlt,		33
 	0, 				// NavMagVar,		34c
 	ADXRS300, 		// GyroType,		35c
@@ -191,9 +191,9 @@ const rom int8 DefaultParams[] = {
 	30,				// PercentNavSens6Ch	39
 	0,				// CamRollTrim,		40c
 
-	0,				// NavKd			41
-	10,				// VertDampDecay    42c
-	5,				// HorizDampDecay	43c
+	-16,				// NavKd			41
+	1,				// VertDampDecay    42c
+	1,				// HorizDampDecay	43c
 	0,				// 44 - 64 unused currently
 
 	0,

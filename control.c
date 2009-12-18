@@ -34,7 +34,6 @@ void ErectGyros(void);
 void CalcGyroRates(void);
 void DoControl(void);
 
-void CheckThrottleMoved(void);
 void UpdateControls(void);
 void CaptureTrims(void);
 void StopMotors(void);
