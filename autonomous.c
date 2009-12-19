@@ -277,8 +277,7 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F.GPSOriginValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
-//	if ( F.GPSOriginValid & F.GPSValid & F.CompassValid  & F.NewCommands & ( NavSensitivity > NAV_GAIN_THRESHOLD ) & ( mS[Clock] > mS[NavActiveTime]) )
+	if ( F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
 	{
 		switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
 		case Navigating:

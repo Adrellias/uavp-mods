@@ -353,7 +353,6 @@ void main(void)
 					{
 						InitHeading();						
 						LEDCycles = 1;
-						F.GPSOriginValid = ValidGPSSentences >=  GPS_INITIAL_SENTENCES;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
 						State = InFlight;
 					}

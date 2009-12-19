@@ -151,12 +151,12 @@ void ParseGPGGASentence(void)
 
     UpdateField();
     
-    UpdateField();   //UTime
+    UpdateField();   	//UTime
 	//GPSMissionTime=ConvertUTime(lo,hi);
 
 	UpdateField();   	//Lat
     GPSLatitude = ConvertLatLonM(lo, hi);
-    UpdateField();   //LatH
+    UpdateField();   	//LatH
     if (NMEA.s[lo] == 'S')
       	GPSLatitude = -GPSLatitude;
 
@@ -249,15 +249,21 @@ void ParseGPSSentence(void)
 
 			F.GPSValid = false;
 
-			if (GPSHDilute <= GPS_MIN_HDILUTE )
-			{
+			if ( GPSHDilute <= GPS_MIN_HDILUTE )
 				if ( ValidGPSSentences ==  GPS_INITIAL_SENTENCES )
-				{
-					SetGPSOrigin();
-					DoBeep100mSWithOutput(2,0);
-				}
-				ValidGPSSentences++;
-			}
+					if ( State == InFlight ) // already flying!
+					{
+						SetGPSOrigin();
+						F. GPSOriginValid = false;
+					}
+					else
+					{
+						SetGPSOrigin();
+						F. GPSOriginValid = true;
+						DoBeep100mSWithOutput(2,0);
+					}
+				else
+					ValidGPSSentences++;
 			else
 				ValidGPSSentences = 0;	
 		}
