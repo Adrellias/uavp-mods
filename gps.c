@@ -250,8 +250,8 @@ void ParseGPSSentence(void)
 			F.GPSValid = false;
 
 			if ( GPSHDilute <= GPS_MIN_HDILUTE )
+			{
 				if ( ValidGPSSentences == GPS_INITIAL_SENTENCES )
-				{
 					if ( State == InFlight ) // already flying!
 					{
 						SetGPSOrigin();
@@ -263,8 +263,8 @@ void ParseGPSSentence(void)
 						F. GPSOriginValid = true;
 						DoBeep100mSWithOutput(2,0);
 					}
-					ValidGPSSentences++;
-				}		
+				ValidGPSSentences++;
+			}		
 			else
 				ValidGPSSentences = 0;	
 		}
