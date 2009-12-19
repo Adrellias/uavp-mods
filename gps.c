@@ -151,12 +151,12 @@ void ParseGPGGASentence(void)
 
     UpdateField();
     
-    UpdateField();   	//UTime
+    UpdateField();   //UTime
 	//GPSMissionTime=ConvertUTime(lo,hi);
 
 	UpdateField();   	//Lat
     GPSLatitude = ConvertLatLonM(lo, hi);
-    UpdateField();   	//LatH
+    UpdateField();   //LatH
     if (NMEA.s[lo] == 'S')
       	GPSLatitude = -GPSLatitude;
 
@@ -213,14 +213,14 @@ void SetGPSOrigin(void)
 	GPSOriginLatitude = GPSLatitude;
 	GPSOriginLongitude = GPSLongitude;
 	GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
-
-	mS[LastGPS] = mS[Clock];
 	
+	mS[LastGPS] = mS[Clock];
+		
 	Temp = GPSLatitude/60000L;
 	Temp = Abs(Temp);
 	Temp = ConvertDDegToMPi(Temp);
 	GPSLongitudeCorrection = int16cos(Temp);
-
+	
 	GPSOriginAltitude = GPSAltitude;
 } // SetGPSOrigin
 

@@ -32,8 +32,8 @@ void StartBaroADC(void);
 void ReadBaro(void);
 void GetBaroPressure(void);
 void InitBarometer(void);
-void CheckForHover(void);
-void BaroPressureHold(int16);
+void BaroPressureHold(void);
+void AltitudeHold(void);
 
 //_____________________________________________________________________________________
 
@@ -257,46 +257,9 @@ BAerror:
 	I2CStop();
 } // InitBarometer
 
-void CheckThrottleMoved(void)
-{
-	if( mS[Clock] < mS[ThrottleUpdate] )
-		ThrNeutral = DesiredThrottle;
-	else
-	{
-		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
-		ThrLow = Max(ThrLow, THROTTLE_HOVER);
-		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
-		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
-		{
-			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
-			F.ThrottleMoving = true;
-		}
-		else
-			F.ThrottleMoving = false;
-	}
-} // CheckThrottleMoved
-
-void CheckForHover(void)
-{
-	CheckThrottleMoved();
-	
-	if( F.ThrottleMoving )	
-	{
-		F.Hovering = false;
-		DesiredRelBaroPressure = CurrentRelBaroPressure;
-		BaroComp = BE = BEp = 0;	
-	}
-	else
-		F.Hovering = F.BaroAltitudeValid;
-
-	if ( F.Hovering )
-		BaroPressureHold(DesiredRelBaroPressure);
-
-} // CheckForHover
-
-void BaroPressureHold(int16 DesiredRelBaroPressure)
+void BaroPressureHold()
 {	// decreasing pressure is increasing altitude
-	static int16 Temp, Delta;
+	static int16 Temp, BaroDiff;
 
 	if ( F.NewBaroValue && F.BaroAltitudeValid )
 	{
@@ -319,18 +282,10 @@ void BaroPressureHold(int16 DesiredRelBaroPressure)
 				BaroComp++; // climb
 					
 		// Differential	
-		Delta = Limit(BE - BEp , -5, 8);	
-		BaroComp += SRS16(Delta * (int16)P[BaroCompKd], 2);
+		BaroDiff = Limit(BE - BEp , -5, 8);	
+		BaroComp += SRS16(BaroDiff * (int16)P[BaroCompKd], 2);
+		BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
 
-		if ( !( F.RTHAltitudeHold && ( NavState == ReturningHome ) ) )
-		{
-			BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
-			Temp = DesiredThrottle + BaroComp; // don't limit BaroComp
-			HoverThrottle = HardFilter(HoverThrottle, Temp);
-		}
-		else
-			BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
-	
 		BEp = BE;
 	
 		#ifdef BARO_SCRATCHY_BEEPER
@@ -339,4 +294,51 @@ void BaroPressureHold(int16 DesiredRelBaroPressure)
 	}
 
 } // BaroPressureHold	
+
+void CheckThrottleMoved(void)
+{
+	if( mS[Clock] < mS[ThrottleUpdate] )
+		ThrNeutral = DesiredThrottle;
+	else
+	{
+		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
+		ThrLow = Max(ThrLow, THROTTLE_HOVER);
+		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
+		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
+		{
+			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
+			F.ThrottleMoving = true;
+		}
+		else
+			F.ThrottleMoving = false;
+	}
+} // CheckThrottleMoved
+
+
+void AltitudeHold()
+{
+	if ( F.RTHAltitudeHold && ( NavState != HoldingStation ) )
+	{
+		F.Hovering = false;
+		BaroPressureHold();
+	}
+	else // holding station
+	{
+		CheckThrottleMoved();
+
+		F.Hovering = (!F.ThrottleMoving) && true; // ROC qualifier
+		
+		if( F.Hovering )
+		{
+			HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
+			BaroPressureHold();
+		}
+		else	
+		{
+			DesiredRelBaroPressure = CurrentRelBaroPressure;
+			BaroComp = BE = BEp = 0;	
+		}
+	}
+
+} // AltitudeHold
 

@@ -387,17 +387,19 @@ void main(void)
 				FailState = Waiting;
 			}
 			else
-				DoFailsafe();
+				DoPPMFailsafe();
 
 			GetGyroValues();				// First gyro read
 			GetHeading();
 			GetBaroPressure();
+			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
 			mS[UpdateTimeout] = mS[Clock] + P[TimeSlots];
 
 			GetGyroValues();				// Second gyro read
 			DoControl();
+
 			MixAndLimitMotors();
 			MixAndLimitCam();
 			OutSignals();

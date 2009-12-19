@@ -26,12 +26,12 @@
 // Prototypes
 
 void Navigate(int16, int16);
-void AltitudeHold(int16);
+void SetDesiredAltitude(int16);
 void Descend(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
-void DoFailsafe(void);
+void DoPPMFailsafe(void);
 void InitNavigation(void);
 
 // Variables
@@ -41,7 +41,7 @@ int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, Nor
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-void AltitudeHold(int16 DesiredAltitude) // Decimetres
+void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 {
 	static int16 Temp;
 
@@ -60,18 +60,16 @@ void AltitudeHold(int16 DesiredAltitude) // Decimetres
 		else
 		{
 			DesiredThrottle = HoverThrottle;
-			Temp = -SRS32( (int32)DesiredAltitude * BARO_SCALE, 8);
-			BaroPressureHold(Temp);	
+			DesiredRelBaroPressure = -SRS32( (int32)DesiredAltitude * BARO_SCALE, 8);
 		}
 	else
 	{
 		// manual control of altitude
 	}
-} // AltitudeHold
+} // SetDesiredAltitude
 
 void Descend(void)
 { // uses Baro only
-	static int16 DesiredRelBaroPressure;
 
 	if (  mS[Clock] > mS[AltHoldUpdate] )
 		if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
@@ -82,8 +80,7 @@ void Descend(void)
 				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_MAX_DESCENT_DMPS * BARO_SCALE)/256L;
 			else
 				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_FINAL_DESCENT_DMPS * BARO_SCALE)/256L; 
-
-			BaroPressureHold( DesiredRelBaroPressure );	
+	
 			mS[AltHoldUpdate] += 1000L;
 		}
 		else
@@ -299,7 +296,7 @@ void DoNavigation(void)
 					NavState = Descending;
 				}
 				else
-					AltitudeHold(WP[0].A);
+					SetDesiredAltitude(WP[0].A);
 			else
 				AcquireHoldPosition();
 			break;
@@ -311,7 +308,7 @@ void DoNavigation(void)
 				#endif // NAV_RTH_NO_PIC
 
 				Navigate(WP[0].N, WP[0].E);
-				AltitudeHold(WP[0].A);
+				SetDesiredAltitude(WP[0].A);
 				if ( F.Proximity )
 				{
 					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
@@ -338,8 +335,7 @@ void DoNavigation(void)
 			}
 			else
 				F.AcquireNewPosition = true;
-
-			NavState = HoldingStation;				
+			
 			Navigate(GPSNorthHold, GPSEastHold);
 
 			if ( F.ReturnHome )
@@ -347,18 +343,13 @@ void DoNavigation(void)
 				AltSum = 0; 
 				NavState = ReturningHome;
 			}
-
-			CheckForHover();
-
 			break;
 		} // switch NavState
 	}
-	else // no Navigation
-		CheckForHover();
 
 } // DoNavigation
 
-void DoFailsafe(void)
+void DoPPMFailsafe(void)
 { // only relevant to PPM Rx or Quad NOT synchronising with Rx
 	if ( State == InFlight )
 		switch ( FailState ) {
@@ -407,7 +398,7 @@ void DoFailsafe(void)
 				LEDRed_ON;
 
 				mS[AltHoldUpdate] = mS[Clock];
-				AltitudeHold(WP[0].A);
+				SetDesiredAltitude(WP[0].A);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
@@ -431,7 +422,7 @@ void DoFailsafe(void)
 	else
 		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 			
-} // DoFailsafe
+} // DoPPMFailsafe
 
 void InitNavigation(void)
 {

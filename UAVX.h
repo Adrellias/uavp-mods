@@ -474,13 +474,13 @@ extern void InitADC(void);
 
 // autonomous.c
 extern void Navigate(int16, int16);
-extern void AltitudeHold(int16);
+extern void SetDesiredAltitude(int16);
 extern void Descend(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
 extern void FakeFlight(void); 
-extern void DoFailsafe(void);
+extern void DoPPMFailsafe(void);
 extern void InitNavigation(void);
 
 // compass_altimeter.c
@@ -491,8 +491,8 @@ extern void StartBaroADC(void);
 extern void ReadBaro(void);
 extern void GetBaroPressure(void);
 extern void InitBarometer(void);
-extern void CheckForHover(void);
-extern void BaroPressureHold(int16);
+extern void BaroPressureHold(void);
+extern void AltitudeHold(void);
 
 // control.c
 extern void GyroCompensation(void);
@@ -783,7 +783,7 @@ extern int16	Rl,Pl,Yl;		// PID output values
 
 typedef union {
 	uint8 AllFlags[FLAG_BYTES];
-	struct {
+	struct { // Order of these flags subject to change
 		uint8
 		Signal:1,
 		RCFrameOK:1, 

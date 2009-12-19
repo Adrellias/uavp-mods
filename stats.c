@@ -102,7 +102,8 @@ void ShowStats(void)
 	TxString("HDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
 	TxString("Invalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
-
+	if ( !F.GPSOriginValid )
+		TxString("No GPS Lock before launch - Origin was invalid\r\n");
 	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0)|(Stats[GPSInvalidS].i16 > 0))
 		LEDYellow_ON;
 } // ShowStats
