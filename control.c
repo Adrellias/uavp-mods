@@ -363,8 +363,9 @@ void DoControl(void)
  
 	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
-	Rl -= DesiredRoll;
+	Rl -= DesiredRoll + SRS16((DesiredRoll - DesiredRollP) * ATTITUDE_FF_DIFF, 4);
 	Rl -= LRComp;
+	DesiredRollP = DesiredRoll;
 
 	// Pitch
 
@@ -373,8 +374,9 @@ void DoControl(void)
 
 	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
-	Pl -= DesiredPitch;
+	Pl -= DesiredPitch + SRS16((DesiredPitch - DesiredPitchP) * ATTITUDE_FF_DIFF, 4);
 	Pl -= FBComp;
+	DesiredPitchP = DesiredPitch;
 
 	// Yaw
 

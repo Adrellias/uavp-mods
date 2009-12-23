@@ -149,6 +149,10 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			EastD = SRS16((EastDiffP - EastDiff) * (int16)P[NavKd], 7);
 			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+
+			#ifdef NAV_SUPPRESS_P
+			EastP = 0;
+			#endif // NAV_SUPPRESS_P
 	
 			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
 
@@ -169,6 +173,10 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			NorthD = SRS16((NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+
+			#ifdef NAV_SUPPRESS_P
+			NorthP = 0;
+			#endif // NAV_SUPPRESS_P
 
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 			
@@ -303,10 +311,6 @@ void DoNavigation(void)
 		case ReturningHome:
 			if ( F.ReturnHome )
 			{
-				#ifdef NAV_RTH_NO_PIC
-				DesiredPitch = DesiredRoll = 0;
-				#endif // NAV_RTH_NO_PIC
-
 				Navigate(WP[0].N, WP[0].E);
 				SetDesiredAltitude(WP[0].A);
 				if ( F.Proximity )
@@ -339,10 +343,11 @@ void DoNavigation(void)
 			Navigate(GPSNorthHold, GPSEastHold);
 
 			if ( F.ReturnHome )
-			{
-				AltSum = 0; 
-				NavState = ReturningHome;
-			}
+				if ( Max(Abs(RollSum), Abs(PitchSum)) <= NAV_RTH_LOCKOUT )
+				{
+					AltSum = 0; 
+					NavState = ReturningHome;
+				}
 			break;
 		} // switch NavState
 	}
@@ -420,7 +425,7 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
 			
 } // DoPPMFailsafe
 

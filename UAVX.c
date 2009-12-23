@@ -80,6 +80,7 @@ int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+int16	DesiredRollP, DesiredPitchP;
 int16	CurrMaxRollPitch;
 
 #pragma udata accs

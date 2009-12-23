@@ -3,7 +3,9 @@
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 // Jim - you may wish to try these?
-// #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
+// #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
+#define ATTITUDE_FF_DIFF			8L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
+#define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage 0 to disable						
 
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
@@ -105,7 +107,7 @@
 // Altitude Hold
 
 // Throttle reduction and increase limits for Baro Alt Comp
-#define BARO_LOW_THR_COMP		-14L				// *-7
+#define BARO_LOW_THR_COMP		-7L			
 #define BARO_HIGH_THR_COMP		30L
 
 #define BARO_SCALE				108L			//((438L*256L)/1043L)// Baro*256/GPSAlt
@@ -732,6 +734,7 @@ extern int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 extern int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+extern int16	DesiredRollP, DesiredPitchP;
 extern int16	CurrMaxRollPitch;
 extern i16u		Ax, Ay, Az;
 extern int8		LRIntKorr, FBIntKorr;
