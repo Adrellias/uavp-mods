@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -65,7 +65,7 @@ void LinearTest(void)
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
-		TxVal32(((int32)Ax.i16*1000+512)/1024, 3, 'G');
+		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Ax.i16, 0 , ')');
 		if ( Abs((Ax.i16)) > 128 )
@@ -73,7 +73,7 @@ void LinearTest(void)
 		TxNextLine();
 
 		TxString("\tF->B: \t");	
-		TxVal32(((int32)Az.i16*1000+512)/1024, 3, 'G');
+		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Az.i16, 0 , ')');
 		if ( Abs((Az.i16)) > 128 )
@@ -82,7 +82,7 @@ void LinearTest(void)
 
 		TxString("\tD->U:    \t");
 	
-		TxVal32(((int32)Ay.i16*1000+512)/1024, 3, 'G');
+		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
 		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
@@ -326,9 +326,9 @@ void DoCompassTest(void)
 	TxVal32((int32)Compass.u16, 1, 0);
 	TxString(" deg \tCorrected ");
 
-	Temp = Compass.u16 - (COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*10;
+	Temp = Compass.u16 - (COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*10L;
 	if ( F.UsingXMode )
-		Temp -= 450;
+		Temp += 450;
 	while (Temp < 0) Temp +=3600;
 	while (Temp >= 3600) Temp -=3600;
 	TxVal32((int32)Temp, 1, 0);

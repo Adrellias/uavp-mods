@@ -4,8 +4,10 @@
 
 // Jim - you may wish to try these?
 // #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
-#define ATTITUDE_FF_DIFF			8L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
+#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
 #define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage 0 to disable						
+
+#define BARO_HOVER_ROC_DMPS			10L		// Must be changing altitude at less than this for hover to be detected
 
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
@@ -27,8 +29,8 @@
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -67,6 +69,8 @@
 
 // UAVX Extensions
 
+//#define STATS_INC_GYRO_ACC				// includes tracking of Accs/Gyros but takes time in main loop!
+
 // Timeouts and Update Intervals
 
 #define FAILSAFE_TIMEOUT_MS		1000L 		// mS. hold last "good" settings and then either restore flight or abort
@@ -79,6 +83,7 @@
 #define NAV_ACTIVE_DELAY_MS		10000L		// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_TIMEOUT_MS		30000L		// mS. Descend if no control input when at Origin
 
+#define BARO_UPDATE_MS			100L		// mS.
 #define GPS_TIMEOUT_MS			2000L		// mS.
 
 // Baro
@@ -110,10 +115,10 @@
 #define BARO_LOW_THR_COMP		-7L			
 #define BARO_HIGH_THR_COMP		30L
 
-#define BARO_SCALE				108L			//((438L*256L)/1043L)// Baro*256/GPSAlt
+#define BARO_SCALE				864L			
 
 #define BARO_MAX_DESCENT_DMPS		5L 			// *10L Decimetres/Sec
-#define BARO_FINAL_DESCENT_DMPS		2L //5L		// Decimetres/Sec
+#define BARO_FINAL_DESCENT_DMPS		2L 			// *5L Decimetres/Sec
 #define BARO_DESCENT_TRANS_DM		150L		// Decimetres Altitude at final descent starts 
 #define BARO_FAILSAFE_MIN_ALT_DM	50L			// Decimetres above the origin the motors cut on failsafe descent
 
@@ -428,16 +433,16 @@ typedef union {
 #define BARO_TEMP_BMP085	0x2e
 #define BARO_TEMP_SMD500	0x6e
 #define BARO_PRESS			0xf4
-#define BARO_CTL			0xf4
+#define BARO_CTL			0xf4				// OSRS=3 for BMP085 25.5mS, SMD500 34mS				
 #define BARO_ADC_MSB		0xf6
 #define BARO_ADC_LSB		0xf7
 #define BARO_TYPE			0xd0
 //#define BARO_ID_SMD500	??
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-#define BARO_TEMP_TIME_MS		10
-#define BMP085_PRESS_TIME_MS 	8
-#define SMD500_PRESS_TIME_MS 	35	
+//#define BARO_TEMP_TIME_MS		10
+#define BMP085_PRESS_TIME_MS 	26
+#define SMD500_PRESS_TIME_MS 	34	
 
 // Sanity checks
 
@@ -510,6 +515,7 @@ extern void DoControl(void);
 extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void StopMotors(void);
+extern void CheckThrottleMoved(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
@@ -851,7 +857,7 @@ extern uint8	LEDShadow;		// shadow register
 enum Statistics { GPSAltitudeS, RelBaroPressureS, GPSVelS, RollRateS, PitchRateS, YawRateS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
 				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
-				MaxStats};
+				RCGlitchesS, MaxStats};
 extern i16u Stats[];
 
 enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 

@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -355,7 +355,8 @@ void main(void)
 						InitHeading();						
 						LEDCycles = 1;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
-						State = InFlight;
+						Stats[RCGlitchesS].i16 = RCGlitches; // start of flight
+						State = InFlight;	
 					}
 					break;
 				case Landing:
@@ -367,6 +368,7 @@ void main(void)
 						else
 						{
 							State = Landed;
+							Stats[RCGlitchesS].i16 = RCGlitches - Stats[RCGlitchesS].i16;	
 							WriteStatsEE();
 						}
 					break;
@@ -392,6 +394,7 @@ void main(void)
 
 			GetGyroValues();				// First gyro read
 			GetHeading();
+			CheckThrottleMoved();
 			GetBaroPressure();
 			AltitudeHold();
 	
