@@ -82,9 +82,8 @@ void ShowStats(void)
  
 	TxString("\r\nVel:    \t");TxVal32((Stats[GPSVelS].i16*10L)/METRES_TO_GPS,1,' '); TxString("M/S\r\n"); 
 
-	TxString("\r\nGPSAlt: \t");TxVal32(Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
-	TxString("BaroAlt:\t");TxVal32(((int32)Stats[RelBaroPressureS].i16 * (int32)256L)/BARO_SCALE, 1, ' '); TxString("M (");
-	TxVal32(Stats[RelBaroPressureS].i16,0,' '); TxString(" clicks)\r\n"); 
+	TxString("\r\nGPSAlt: \t");TxVal32(Stats[GPSAltitudeS].i16, 2,' '); TxString("M\r\n"); 
+	TxString("BaroAlt:\t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 2, ' '); TxString("M\r\n"); 
 
 	#ifdef STATS_INC_GYRO_ACC
 	TxString("\r\nRoll:   \t"); TxVal32((int32)(Stats[RollRateS].i16 - Stats[GyroMidRollS].i16), 0,'/'); TxString("512\r\n");
@@ -102,9 +101,14 @@ void ShowStats(void)
 	TxString("Baro:   \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
 
 	TxString("\r\nGPS\r\n");
-	TxString("HDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
-	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
-	TxString("Invalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
+	if ( Stats[MinHDiluteS].i16 >= 10000L )
+		TxString("\tNo GPS?\r\n");
+	else
+	{
+		TxString("HDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
+		TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
+		TxString("Invalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
+	}
 	if ( !F.GPSOriginValid )
 		TxString("No GPS lock before launch - Origin was not valid\r\n");
 	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0)|(Stats[GPSInvalidS].i16 > 0))

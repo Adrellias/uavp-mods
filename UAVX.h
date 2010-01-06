@@ -7,7 +7,9 @@
 #define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
 #define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage 0 to disable						
 
-#define BARO_HOVER_ROC_DMPS			10L		// Must be changing altitude at less than this for hover to be detected
+#define	ATTITUDE_SUPPRESS_DECAY					// supresses decay to zero angle when roll/pitch is not in fact zero!
+
+#define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
 
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
@@ -83,7 +85,6 @@
 #define NAV_ACTIVE_DELAY_MS		10000L		// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_TIMEOUT_MS		30000L		// mS. Descend if no control input when at Origin
 
-#define BARO_UPDATE_MS			100L		// mS.
 #define GPS_TIMEOUT_MS			2000L		// mS.
 
 // Baro
@@ -111,23 +112,20 @@
 
 // Altitude Hold
 
-// Throttle reduction and increase limits for Baro Alt Comp
-#define BARO_LOW_THR_COMP		-7L			
-#define BARO_HIGH_THR_COMP		30L
+#define BARO_ALT_BAND_CM			200L				// Centimetres
 
-#define BARO_SCALE				864L			
+// Throttle reduction/increase limits for Baro Alt Comp
 
-#define BARO_MAX_DESCENT_DMPS		5L 			// *10L Decimetres/Sec
-#define BARO_FINAL_DESCENT_DMPS		2L 			// *5L Decimetres/Sec
-#define BARO_DESCENT_TRANS_DM		150L		// Decimetres Altitude at final descent starts 
-#define BARO_FAILSAFE_MIN_ALT_DM	50L			// Decimetres above the origin the motors cut on failsafe descent
+#define BARO_MAX_DESCENT_CMPS		50L 		// Centimetres/Sec
+#define BARO_FINAL_DESCENT_CMPS		20L 		// Centimetres/Sec
+#define BARO_DESCENT_TRANS_CM		1500L		// Centimetres Altitude at which final descent starts 
+#define BARO_FAILSAFE_MIN_ALT_CM	500L		// Centimetres above the origin the motors cut on failsafe descent
 
-// Throttle reduction and increase limits for GPS Alt Comp
-#define GPS_ALT_LOW_THR_COMP	-10L
-#define GPS_ALT_HIGH_THR_COMP	30L
+#define ALT_LOW_THR_COMP			-7L		// Stick units
+#define ALT_HIGH_THR_COMP			30L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_DM			50L				// Decimetres
+#define GPS_ALT_BAND_CM			500L				// Centimetres
 
 // Navigation
 
@@ -496,9 +494,9 @@ extern void InitHeading(void);
 extern void GetHeading(void);
 extern void StartBaroADC(void);
 extern void ReadBaro(void);
-extern void GetBaroPressure(void);
+extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
-extern void BaroPressureHold(void);
+extern void BaroAltitudeHold(void);
 extern void AltitudeHold(void);
 
 // control.c
@@ -683,17 +681,17 @@ enum GyroTypes { ADXRS300, ADXRS150, IDG300};
 enum TxRxTypes { FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 				DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
 
-enum TraceTags {THE, TCurrentRelBaroPressure,
+enum TraceTags {THE, TCurrentRelBaroAltitude,
 				TRollRate,TPitchRate,TYE,
 				TRollSum,TPitchSum,TYawSum,
 				TAx,TAz,TAy,
-				TLRIntKorr, TFBIntKorr,
+				TLRIntCorr, TFBIntCorr,
 				TDesiredThrottle,
 				TDesiredRoll, TDesiredPitch, TDesiredYaw,
 				TMFront, TMBack, TMLeft, TMRight,
 				TMCamRoll, TMCamPitch
 				};
-#define TopTrace TMCamPitch
+#define TopTrace TMRight
 
 enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
 #define NoOfMotors 		4
@@ -743,7 +741,7 @@ extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPi
 extern int16	DesiredRollP, DesiredPitchP;
 extern int16	CurrMaxRollPitch;
 extern i16u		Ax, Ay, Az;
-extern int8		LRIntKorr, FBIntKorr;
+extern int8		LRIntCorr, FBIntCorr;
 extern int8		NeutralLR, NeutralFB, NeutralDU;
 extern int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 
@@ -775,9 +773,9 @@ extern WayPoint WP[];
 extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
-extern int24	OriginBaroPressure;
-extern int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
-extern int16	BaroROC, BE, BEp;
+extern int24	OriginBaroPressure, BaroSum;
+extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, CurrentRelBaroAltitudeP;
+extern int16	BaroROC, BaroROCP, BE, BEp;
 extern i16u		BaroVal;
 extern int8		BaroSample;
 extern int16	BaroComp;
@@ -854,7 +852,7 @@ extern int16	AttitudeHoldResetCount;
 extern int8		BatteryVolts; 
 extern uint8	LEDShadow;		// shadow register
 
-enum Statistics { GPSAltitudeS, RelBaroPressureS, GPSVelS, RollRateS, PitchRateS, YawRateS,
+enum Statistics { GPSAltitudeS, RelBaroAltitudeS, GPSVelS, RollRateS, PitchRateS, YawRateS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
 				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
 				RCGlitchesS, MaxStats};

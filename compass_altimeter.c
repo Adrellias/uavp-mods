@@ -30,9 +30,9 @@ void GetHeading(void);
 
 void StartBaroADC(void);
 void ReadBaro(void);
-void GetBaroPressure(void);
+void GetBaroAltitude(void);
 void InitBarometer(void);
-void BaroPressureHold(void);
+void BaroAltitudeHold(void);
 void AltitudeHold(void);
 
 //_____________________________________________________________________________________
@@ -125,7 +125,6 @@ void GetHeading(void)
 #endif // BARO_HARD_FILTER
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
-static int24 BaroSum = 0;
 static uint8 BaroQHead, BaroQTail;
 static int16 BaroQ[BARO_BUFF_SIZE];
 
@@ -141,10 +140,13 @@ void StartBaroADC(void)
 	if( SendI2CByte(BARO_PRESS) != I2C_ACK ) goto SBerror;
 	I2CStop();
 
+/*
 	if ( BaroType == BARO_ID_BMP085 )
 		mS[BaroUpdate] = mS[Clock] + BMP085_PRESS_TIME_MS;
 	else
 		mS[BaroUpdate] = mS[Clock] + SMD500_PRESS_TIME_MS;
+*/
+	mS[BaroUpdate] = mS[Clock] + 50;
 
 	F.BaroAltitudeValid = true;
 	return;
@@ -189,12 +191,14 @@ RVerror:
 	return;
 } // ReadBaro
 
+#define BARO_SCALE				864L			// scaled up by 256 ~3
 
-void GetBaroPressure(void)
+void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
 	static int16 Temp;
 	// SMD500 9.5mS (T) 34mS (P)  
 	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
+	// Use 50mS => 5 samples per altitude hold update
 
 	if ( mS[Clock] > mS[BaroUpdate] )
 	{
@@ -203,40 +207,42 @@ void GetBaroPressure(void)
 		BaroQHead = (BaroQHead + 1) & (BARO_BUFF_SIZE -1); // must be 8 entries in the BaroQ
 		BaroSum -= BaroQ[BaroQHead];
 	
-		Temp = (int16)( (int24)BaroVal.u16 - OriginBaroPressure );
+		Temp = (int16)( (int24)BaroVal.u16 - OriginBaroPressure ); 
 		BaroSum += Temp;
 		BaroQTail = (BaroQTail + 1) & (BARO_BUFF_SIZE -1);
 		BaroQ[BaroQTail] = Temp;
 
-		Temp = BaroFilter(CurrentRelBaroPressure, BaroSum);
-		BaroROC = CurrentRelBaroPressure - Temp; // filter as well?
-		CurrentRelBaroPressure = Temp;
+		// decreasing pressure is increase in altitude
+		// negate and rescale to cm altitude
+		CurrentRelBaroAltitude = SRS32((int32)-BaroSum * BARO_SCALE, 8); 
+		BaroROC = ( CurrentRelBaroAltitude - CurrentRelBaroAltitudeP ) * 20L;
+		BaroROC = HardFilter(BaroROCP, BaroROC);
 
-		if ( ++BaroSample == 8 ) // update every ~250mS for now but can be Baro update interval
+		CurrentRelBaroAltitudeP = CurrentRelBaroAltitude;
+		BaroROCP = BaroROC;
+
+		if ( ++BaroSample == 5 ) // update every ~250mS for now but can be Baro update interval
 		{
 			if ( State == InFlight )
 			{
-				Temp = Abs(CurrentRelBaroPressure);
-				if ( Temp > Stats[RelBaroPressureS].i16 ) 
-					Stats[RelBaroPressureS].i16 = Temp;
+				Temp = Abs(CurrentRelBaroAltitude);
+				if ( Temp > Stats[RelBaroAltitudeS].i16 ) 
+					Stats[RelBaroAltitudeS].i16 = Temp;
 			}
 			F.NewBaroValue = true;
 			BaroSample = 0;
 
 			#ifdef DEBUG_SENSORS	
-			Trace[TCurrentRelBaroPressure] = CurrentRelBaroPressure;
+			Trace[TCurrentRelBaroAltitude] = CurrentRelBaroAltitude;
 			#endif
 		}
 	}
-}// GetBaroPressure
+}// GetBaroAltitude
 
 void InitBarometer(void)
 {	
 	int24 BaroAverage;
 	uint8 s;
-	uint8 r;
-
-	BaroComp = 0;
 
 	// Determine baro type
 	I2CStart();
@@ -261,11 +267,11 @@ void InitBarometer(void)
 	}
 
 	OriginBaroPressure = (int24)(BaroAverage >> 5);
-	CurrentRelBaroPressure = BaroROC = BEp = 0;
-
+	
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
 		BaroQ[s] = 0; 
-	BaroQHead = BaroQTail = BaroSum = BaroSample = 0;
+	CurrentRelBaroAltitude = CurrentRelBaroAltitudeP = BaroROC = BaroROCP = 0;
+	BEp = BaroQHead = BaroQTail = BaroSum = BaroSample = BaroComp = 0;
 
 	F.NewBaroValue = false;
 	F.BaroAltitudeValid = true;
@@ -278,9 +284,9 @@ BAerror:
 	I2CStop();
 } // InitBarometer
 
-void BaroPressureHold()
-{	// decreasing pressure is increasing altitude
-	static int16 Temp, BaroDiff;
+void BaroAltitudeHold()
+{
+	static int16 Corr, Temp;
 
 	if ( F.NewBaroValue && F.BaroAltitudeValid )
 	{
@@ -290,54 +296,70 @@ void BaroPressureHold()
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	
-		BE = CurrentRelBaroPressure - DesiredRelBaroPressure;		
-		BE = Limit(BE, -40, 80); 
-			
-		// strictly this is acting more like an integrator 
-		// bumping VBaroComp up and down proportional to the error?	
-		Temp = SRS16(BE * (int16)P[BaroCompKp], 7);
-		if( BaroComp > Temp )
-			BaroComp--;
+		BE = CurrentRelBaroAltitude - DesiredRelBaroAltitude;
+		if ( BE > BARO_DESCENT_TRANS_CM )
+		{ // control descent using ROC
+			if ( BaroROC > BARO_MAX_DESCENT_CMPS )
+				BaroComp--;
+			else
+				BaroComp++;
+			BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+		}
 		else
-			if( BaroComp < Temp )
-				BaroComp++; // climb
-		
-/* BAD			
-		// Differential	
-		BaroDiff = Limit(BE - BEp , -40, 64);	
-		BaroComp += SRS16(BaroDiff * (int16)P[BaroCompKd], 5);
-*/
-		BaroComp = Limit(BaroComp, BARO_LOW_THR_COMP, BARO_HIGH_THR_COMP);
+		{		
+			Temp = Limit(BE, -128, 128); // prevent overflow
+	
+			Corr = -SRS16(Temp * (int16)P[BaroCompKp], 7);
+			Corr = Limit(Corr, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+			if( Corr > BaroComp )
+				BaroComp++;
+			else
+				if( Corr < BaroComp )
+					BaroComp--;
+		}
+ 
+	//	BEp = BE;
 
-		BEp = BE;
+	if ( DesiredThrottle > 20 ) 
+	{
+		TxVal32(DesiredRelBaroAltitude,2,' ');
+		TxVal32(CurrentRelBaroAltitude,2,' ');
+		TxVal32(BE,2,' ');
+		TxVal32(BaroROC,2,' ');
+		TxVal32(Corr, 0, ' ');
+		TxVal32(BaroComp,0,' ');
+		TxNextLine();
+	}
 	
 		#ifdef BARO_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	}
 
-} // BaroPressureHold	
+} // BaroAltitudeHold	
 
 void AltitudeHold()
 {
 	if ( F.RTHAltitudeHold && ( NavState != HoldingStation ) )
 	{
 		F.Hovering = false;
-		BaroPressureHold();
+		BaroAltitudeHold();
 	}
 	else // holding station
 	{
-		F.Hovering = (!F.ThrottleMoving) && (Abs(BaroROC) < ((BARO_HOVER_ROC_DMPS*BARO_SCALE)/256L)); 
+		F.Hovering = !F.ThrottleMoving; 
 		
 		if( F.Hovering )
 		{
-			HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
-			BaroPressureHold();
+			if ( Abs(BaroROC) < BARO_HOVER_MAX_ROC_CMPS )
+				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
+			BaroAltitudeHold();
 		}
 		else	
 		{
-			DesiredRelBaroPressure = CurrentRelBaroPressure;
-			BaroComp = BE = BEp = 0;	
+			DesiredRelBaroAltitude = CurrentRelBaroAltitude;
+			BEp = 0;
+			BaroComp = Decay1(BaroComp);	
 		}
 	}
 

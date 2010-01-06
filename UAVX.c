@@ -85,7 +85,7 @@ int16	CurrMaxRollPitch;
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
-int8	LRIntKorr, FBIntKorr;
+int8	LRIntCorr, FBIntCorr;
 int16	Rl,Pl,Yl;						// PID output values
 int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
@@ -100,9 +100,9 @@ int16 	AltSum, AE;
 int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
-int24	OriginBaroPressure;
-int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
-int16	BaroROC, BE, BEp;
+int24	OriginBaroPressure, BaroSum;
+int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, CurrentRelBaroAltitudeP;
+int16	BaroROC, BaroROCP, BE, BEp;
 i16u	BaroVal;
 int8	BaroSample;
 int16	BaroComp;
@@ -395,7 +395,7 @@ void main(void)
 			GetGyroValues();				// First gyro read
 			GetHeading();
 			CheckThrottleMoved();
-			GetBaroPressure();
+			GetBaroAltitude();
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point

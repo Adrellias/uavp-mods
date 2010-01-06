@@ -413,13 +413,16 @@ void BaroTest(void)
 	else
 		TxString("Type:\tSMD500\r\n");
 	
-	while ( mS[Clock] <= mS[BaroUpdate] );
-	ReadBaro();
-	CurrentRelBaroPressure = (int24)BaroVal.u16 - OriginBaroPressure;		
+	while ( !F.NewBaroValue )
+		GetBaroAltitude();	
+	F.NewBaroValue = false;	
+
 	TxString("Origin: \t");
 	TxVal32((int32)OriginBaroPressure,0,0);
-	TxString("\t Rel.: \t");	
-	TxVal32((int32)CurrentRelBaroPressure, 0, 0);
+	TxString("\t Relative*8: \t");
+	TxVal32((int32)BaroSum,0,0);
+	TxString("\t Alt.(M): \t");	
+	TxVal32((int32)CurrentRelBaroAltitude, 2, 0);
 		
 	TxNextLine();
 

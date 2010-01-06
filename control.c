@@ -122,7 +122,7 @@ void GyroCompensation(void)
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
 	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
 
-	#define GYRO_COMP_STEP 1
+	#define GYRO_COMP_STEP 2 //zzz
 
 	if( F.AccelerationsValid )
 	{
@@ -173,8 +173,8 @@ void GyroCompensation(void)
 		#endif
 
 		// correct DC level of the integral
-		LRIntKorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntKorr = Limit(LRIntKorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
+		LRIntCorr = Limit(LRIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	
 		// Pitch
 
@@ -189,20 +189,20 @@ void GyroCompensation(void)
 		#endif
 
 		// correct DC level of the integral	
-		FBIntKorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntKorr = Limit(FBIntKorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
+		FBIntCorr = Limit(FBIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 
 		#ifdef DEBUG_SENSORS
 		Trace[TAx]= LRAcc;
 		Trace[TAz] = FBAcc;
 		Trace[TAy] = DUAcc;
 
-		Trace[TLRIntKorr] = LRIntKorr * 8; // scale up for UAVPSet
-		Trace[TFBIntKorr] = FBIntKorr * 8;	
+		Trace[TLRIntCorr] = LRIntCorr * 8; // scale up for UAVPSet
+		Trace[TFBIntCorr] = FBIntCorr * 8;	
 		#endif // DEBUG_SENSORS	
 	}	
 	else
-		LRIntKorr = FBIntKorr = DUAcc = 0;
+		LRIntCorr = FBIntCorr = DUAcc = 0;
 
 } // GyroCompensation
 
@@ -273,16 +273,20 @@ void LimitRollSum(void)
 {
 	RollSum += SRS16(RollRate, 1);		// use 9 bit res. for I controller
 	RollSum = Limit(RollSum, -RollIntLimit256, RollIntLimit256);
-//zzz	RollSum = Decay1(RollSum);			// damps to zero even if still rolled
-	RollSum += LRIntKorr;				// last for accelerometer compensation
+	#ifndef ATTITUDE_SUPPRESS_DECAY
+	RollSum = Decay1(RollSum);			// damps to zero even if still rolled
+	#endif // ATTITUDE_SUPPRESS_DECAY
+	RollSum += LRIntCorr;				// last for accelerometer compensation
 } // LimitRollSum
 
 void LimitPitchSum(void)
 {
 	PitchSum += SRS16(PitchRate, 1);
 	PitchSum = Limit(PitchSum, -PitchIntLimit256, PitchIntLimit256);
-//zzz	PitchSum = Decay1(PitchSum); 
-	PitchSum += FBIntKorr;
+	#ifndef ATTITUDE_SUPPRESS_DECAY
+	PitchSum = Decay1(PitchSum); 
+	#endif // ATTITUDE_SUPPRESS_DECAY
+	PitchSum += FBIntCorr;
 } // LimitPitchSum
 
 void LimitYawSum(void)

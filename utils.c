@@ -236,7 +236,7 @@ void DumpTrace(void)
 {
 	#ifdef DEBUG_SENSORS
 	uint8 t;
-
+/*zzz
 	if ( DesiredThrottle > 20 ) 
 	{
 		for (t=0; t <= TopTrace; t++)
@@ -246,6 +246,7 @@ void DumpTrace(void)
 		}
 		TxNextLine();
 	}
+zzz */ 
 
 	#endif // DEBUG_SENSORS
 } // DumpTrace

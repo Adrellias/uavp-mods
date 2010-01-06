@@ -369,7 +369,7 @@ OS002:
 _endasm
 
 	mS[Clock]++;
-	EnableInterrupts;	
+	EnableInterrupts;
 
 #endif  // DEBUG_SENSORS
 

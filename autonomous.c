@@ -42,7 +42,7 @@ int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, Nor
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
+void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
 {
 	static int16 Temp;
 
@@ -50,18 +50,18 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 		if ( F.UsingGPSAlt || !F.BaroAltitudeValid )
 		{
 			AE = DesiredAltitude - GPSRelAltitude;
-			AE = Limit(AE, -GPS_ALT_BAND_DM, GPS_ALT_BAND_DM);
+			AE = Limit(AE, -GPS_ALT_BAND_CM, GPS_ALT_BAND_CM);
 			AltSum += AE;
 			AltSum = Limit(AltSum, -10, 10);	
 			Temp = SRS16(AE*(int16)P[GPSAltKp] + AltSum*(int16)P[GPSAltKi], 7);
 		
-			DesiredThrottle = HoverThrottle + Limit(Temp, GPS_ALT_LOW_THR_COMP, GPS_ALT_HIGH_THR_COMP);
+			DesiredThrottle = HoverThrottle + Limit(Temp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 			DesiredThrottle = Limit(DesiredThrottle, 0, OUT_MAXIMUM);
 		}
 		else
 		{
 			DesiredThrottle = HoverThrottle;
-			DesiredRelBaroPressure = -SRS32( (int32)DesiredAltitude * BARO_SCALE, 8);
+			DesiredRelBaroAltitude = DesiredAltitude;
 		}
 	else
 	{
@@ -72,20 +72,13 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 void Descend(void)
 { // uses Baro only
 
-	if (  mS[Clock] > mS[AltHoldUpdate] )
-		if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
-		{
-			DesiredThrottle = HoverThrottle;
-
-			if ( CurrentRelBaroPressure < -( BARO_DESCENT_TRANS_DM * BARO_SCALE)/256L )
-				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_MAX_DESCENT_DMPS * BARO_SCALE)/256L;
-			else
-				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_FINAL_DESCENT_DMPS * BARO_SCALE)/256L; 
-	
-			mS[AltHoldUpdate] += 1000L;
-		}
-		else
-			DesiredThrottle = 0;
+	if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
+	{
+		DesiredThrottle = HoverThrottle;
+		DesiredRelBaroAltitude = 0;
+	}
+	else
+		DesiredThrottle = 0;
 
 } // Descend
 
@@ -361,7 +354,8 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			if ( CurrentRelBaroPressure < -(BARO_FAILSAFE_MIN_ALT_DM * BARO_SCALE)/256L )
+//zzz
+			if ( CurrentRelBaroAltitude < -BARO_FAILSAFE_MIN_ALT_CM )
 			{
 				Descend();							// progressively increase desired baro pressure
 				if ( mS[Clock ] > mS[AbortTimeout] )
@@ -437,7 +431,7 @@ void InitNavigation(void)
 	for (w = 0; w < NAV_MAX_WAYPOINTS; w++)
 	{
 		WP[w].N = WP[w].E = 0; 
-		WP[w].A = (int16)P[NavRTHAlt]*10L; // Decimetres
+		WP[w].A = (int16)P[NavRTHAlt]*100L; // Centimetres
 	}
 
 	GPSNorthHold = GPSEastHold = 0;
