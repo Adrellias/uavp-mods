@@ -155,7 +155,7 @@ void CheckAlarms(void)
 
 	NewBatteryVolts = ADC(ADCBattVoltsChan, ADCVREF5V) >> 3; 
 	BatteryVolts = SoftFilter(BatteryVolts, NewBatteryVolts);
-	F.LowBatt =  (BatteryVolts < (int16)P[LowVoltThres]) & 1;
+	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel;
 
@@ -236,7 +236,7 @@ void DumpTrace(void)
 {
 	#ifdef DEBUG_SENSORS
 	uint8 t;
-/*zzz
+
 	if ( DesiredThrottle > 20 ) 
 	{
 		for (t=0; t <= TopTrace; t++)
@@ -245,8 +245,7 @@ void DumpTrace(void)
 			TxChar(';');
 		}
 		TxNextLine();
-	}
-zzz */ 
+	} 
 
 	#endif // DEBUG_SENSORS
 } // DumpTrace
@@ -307,7 +306,7 @@ void SendUAVXState(void) // 925uS at 16MHz
 	
 			SendESCWord(GPSVel);
 			SendESCWord(CurrentRelBaroPressure);
-			SendESCWord(BaroROC); // added after BA
+			SendESCWord(CurrentBaroROC); // added after BA
 			SendESCWord(GPSHDilute);
 			SendESCWord(Heading);
 			SendESCWord(GPSRelAltitude);

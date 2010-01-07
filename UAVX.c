@@ -102,7 +102,7 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, BaroSum;
 int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, CurrentRelBaroAltitudeP;
-int16	BaroROC, BaroROCP, BE, BEp;
+int16	CurrentBaroROC, BaroROCP, BE;
 i16u	BaroVal;
 int8	BaroSample;
 int16	BaroComp;
@@ -177,7 +177,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroCompKd,		28c
+	10, 			// BaroROCCompKp was BaroCompKd,		28c
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -374,9 +374,7 @@ void main(void)
 					break;
 				case InFlight:
 					DoNavigation();
-
 					LEDGame();
-
 					if ( DesiredThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mS[Clock] + THROTTLE_LOW_DELAY_MS;

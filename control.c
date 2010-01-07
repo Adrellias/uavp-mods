@@ -122,7 +122,7 @@ void GyroCompensation(void)
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
 	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
 
-	#define GYRO_COMP_STEP 2 //zzz
+	#define GYRO_COMP_STEP 2 // *1 zzz
 
 	if( F.AccelerationsValid )
 	{

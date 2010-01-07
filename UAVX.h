@@ -5,18 +5,18 @@
 // Jim - you may wish to try these?
 // #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
 #define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
-#define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage 0 to disable						
+#define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage; 0 to disable						
 
 #define	ATTITUDE_SUPPRESS_DECAY					// supresses decay to zero angle when roll/pitch is not in fact zero!
 
 #define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
 
+#define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
+
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
 #define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
-
-#define NAV_ACQUIRE_BEEPER
 
 #define DAMP_HORIZ_LIMIT 		3L		// equivalent stick units - no larger than 5
 
@@ -116,10 +116,11 @@
 
 // Throttle reduction/increase limits for Baro Alt Comp
 
-#define BARO_MAX_DESCENT_CMPS		50L 		// Centimetres/Sec
-#define BARO_FINAL_DESCENT_CMPS		20L 		// Centimetres/Sec
+#define BARO_MAX_ROC_CMPS			500L 		// Centimetres/Sec notional for descent calculations
+#define BARO_MAX_DESCENT_CMPS		-50L 		// Centimetres/Sec
+#define BARO_FINAL_DESCENT_CMPS		-20L 		// Centimetres/Sec
 #define BARO_DESCENT_TRANS_CM		1500L		// Centimetres Altitude at which final descent starts 
-#define BARO_FAILSAFE_MIN_ALT_CM	500L		// Centimetres above the origin the motors cut on failsafe descent
+#define BARO_FAILSAFE_MIN_ALT_CM	300L		// Centimetres above the origin the motors cut on failsafe descent
 
 #define ALT_LOW_THR_COMP			-7L		// Stick units
 #define ALT_HIGH_THR_COMP			30L
@@ -128,6 +129,8 @@
 #define GPS_ALT_BAND_CM			500L				// Centimetres
 
 // Navigation
+
+#define NAV_ACQUIRE_BEEPER
 
 #define NAV_MAX_NEUTRAL_RADIUS	3L				// Metres also minimum closing radius
 #define NAV_MAX_RADIUS			40L				// Metres
@@ -439,8 +442,9 @@ typedef union {
 #define BARO_ID_BMP085		((uint8)(0x55))
 
 //#define BARO_TEMP_TIME_MS		10
-#define BMP085_PRESS_TIME_MS 	26
-#define SMD500_PRESS_TIME_MS 	34	
+//#define BMP085_PRESS_TIME_MS 	26
+//#define SMD500_PRESS_TIME_MS 	34
+#define BARO_PRESS_TIME_MS	50	
 
 // Sanity checks
 
@@ -691,7 +695,7 @@ enum TraceTags {THE, TCurrentRelBaroAltitude,
 				TMFront, TMBack, TMLeft, TMRight,
 				TMCamRoll, TMCamPitch
 				};
-#define TopTrace TMRight
+#define TopTrace TMCamPitch
 
 enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
 #define NoOfMotors 		4
@@ -775,7 +779,7 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, BaroSum;
 extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, CurrentRelBaroAltitudeP;
-extern int16	BaroROC, BaroROCP, BE, BEp;
+extern int16	CurrentBaroROC, BaroROCP, BE;
 extern i16u		BaroVal;
 extern int8		BaroSample;
 extern int16	BaroComp;
@@ -849,7 +853,7 @@ extern Flags F;
 
 extern uint8	LEDCycles;		// for hover light display
 extern int16	AttitudeHoldResetCount;	
-extern int8		BatteryVolts; 
+extern int8	BatteryVolts; 
 extern uint8	LEDShadow;		// shadow register
 
 enum Statistics { GPSAltitudeS, RelBaroAltitudeS, GPSVelS, RollRateS, PitchRateS, YawRateS,
@@ -905,7 +909,7 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroCompKd,			// 28c
+	BaroROCCompKp,			// 28c was BaroCompKd
 	NavRadius,			// 29
 	NavKi,				// 30
 	

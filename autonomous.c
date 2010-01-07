@@ -354,8 +354,7 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-//zzz
-			if ( CurrentRelBaroAltitude < -BARO_FAILSAFE_MIN_ALT_CM )
+			if ( CurrentRelBaroAltitude < -BARO_FAILSAFE_MIN_ALT_CM ) // zzz
 			{
 				Descend();							// progressively increase desired baro pressure
 				if ( mS[Clock ] > mS[AbortTimeout] )
