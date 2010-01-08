@@ -417,12 +417,22 @@ void BaroTest(void)
 		GetBaroAltitude();	
 	F.NewBaroValue = false;	
 
-	TxString("Origin: \t");
-	TxVal32((int32)OriginBaroPressure,0,0);
-	TxString("\t Relative*8: \t");
+	TxString("Press: \t");
+	TxVal32((int32)BaroPress.u16,0,' ');
+	TxString("\tTemp:      \t");
+	TxVal32((int32)BaroTemp.u16,0,' ');
+	TxString("\r\nOrigin: \t");
+	TxVal32((int32)OriginBaroPressure,0,' ');
+	TxString("\tRelative*8: \t");
 	TxVal32((int32)BaroSum,0,0);
-	TxString("\t Alt.(M): \t");	
+	TxString("\tAlt.(M): \t");	
 	TxVal32((int32)CurrentRelBaroAltitude, 2, 0);
+
+	while ( mS[Clock] < mS[BaroUpdate] );
+	StartBaroADC(false);
+	while ( mS[Clock] < mS[BaroUpdate] );
+	ReadBaro(false);
+	StartBaroADC(true);
 		
 	TxNextLine();
 

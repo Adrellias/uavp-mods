@@ -38,6 +38,9 @@ void ZeroStats(void)
 
 	Stats[MinHDiluteS].i16 = 10000L;
 	Stats[MaxHDiluteS].i16 = 0;
+	Stats[MinBaroROCS].i16 = 10000L;
+	Stats[MaxBaroROCS].i16 = -10000L;
+
 } // ZeroStats
 
 void ReadStatsEE(void)
@@ -84,6 +87,8 @@ void ShowStats(void)
 
 	TxString("\r\nGPSAlt: \t");TxVal32(Stats[GPSAltitudeS].i16, 2,' '); TxString("M\r\n"); 
 	TxString("BaroAlt:\t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 2, ' '); TxString("M\r\n"); 
+	TxString("ROC:    \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
+							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' ');TxString("M/S\r\n");
 
 	#ifdef STATS_INC_GYRO_ACC
 	TxString("\r\nRoll:   \t"); TxVal32((int32)(Stats[RollRateS].i16 - Stats[GyroMidRollS].i16), 0,'/'); TxString("512\r\n");

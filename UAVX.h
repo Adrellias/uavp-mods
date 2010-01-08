@@ -441,7 +441,7 @@ typedef union {
 //#define BARO_ID_SMD500	??
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-//#define BARO_TEMP_TIME_MS		10
+#define BARO_TEMP_TIME_MS		10
 //#define BMP085_PRESS_TIME_MS 	26
 //#define SMD500_PRESS_TIME_MS 	34
 #define BARO_PRESS_TIME_MS	50	
@@ -496,8 +496,8 @@ extern void InitNavigation(void);
 extern void InitCompass(void);
 extern void InitHeading(void);
 extern void GetHeading(void);
-extern void StartBaroADC(void);
-extern void ReadBaro(void);
+extern void StartBaroADC(boolean);
+extern void ReadBaro(boolean);
 extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
 extern void BaroAltitudeHold(void);
@@ -778,9 +778,9 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, BaroSum;
-extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, CurrentRelBaroAltitudeP;
+extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
 extern int16	CurrentBaroROC, BaroROCP, BE;
-extern i16u		BaroVal;
+extern i16u		BaroTemp, BaroPress;
 extern int8		BaroSample;
 extern int16	BaroComp;
 extern uint8	BaroType;
@@ -856,7 +856,7 @@ extern int16	AttitudeHoldResetCount;
 extern int8	BatteryVolts; 
 extern uint8	LEDShadow;		// shadow register
 
-enum Statistics { GPSAltitudeS, RelBaroAltitudeS, GPSVelS, RollRateS, PitchRateS, YawRateS,
+enum Statistics { GPSAltitudeS, RelBaroAltitudeS, MinBaroROCS, MaxBaroROCS, GPSVelS, RollRateS, PitchRateS, YawRateS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
 				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
 				RCGlitchesS, MaxStats};
