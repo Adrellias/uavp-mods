@@ -1,6 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -255,14 +256,21 @@ void high_isr_handler(void)
 				break;	
 		    } 
 		}
-		#ifdef TELEMETRY
-		// piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
-		if (( TxHead != TxTail) && PIR1bits.TXIF )
-		{
-			TXREG = TxBuf[TxHead];
-			TxHead = (TxHead + 1) & TX_BUFF_MASK;
-		}
-		#endif // TELEMETRY
+		if ( !F.GPSTestActive )
+			#ifdef TELEMETRY
+			if ( F. UsingTelemetry )
+			{	
+				// piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
+				if (( TxHead != TxTail) && PIR1bits.TXIF )
+				{
+					TXREG = TxBuf[TxHead];
+					TxHead = (TxHead + 1) & TX_BUFF_MASK;
+				}
+			}
+			else
+			#endif // TELEMETRY
+				TXREG = gps_ch;
+	
 		PIR1bits.RCIF = false;
 	}
 

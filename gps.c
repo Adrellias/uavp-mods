@@ -1,6 +1,6 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =               Copyright (c) 2008 by Prof. Greg Egan                 =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -177,7 +177,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi); // Decimetres
+	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi) * 10L; // Centimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -279,7 +279,9 @@ void ParseGPSSentence(void)
 			Temp = GPSLongitude - GPSOriginLongitude;
 			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
 			GPSEast = GPSFilter(GPSEast, Temp);
- 
+
+			#ifdef GPS_INC_GROUNDSPEED
+			// nice to have but not essential ???
 			EastDiff = GPSEast - GPSEastP;
 			NorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
@@ -288,7 +290,8 @@ void ParseGPSSentence(void)
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
 			GPSNorthP = GPSNorth;
-			GPSEastP = GPSEast;			
+			GPSEastP = GPSEast;
+			#endif // GPS_INC_GROUNDSPEED			
 
 			GPSRelAltitude = GPSAltitude - GPSOriginAltitude;
 
@@ -329,6 +332,7 @@ void InitGPS(void)
 
 	cc = 0;
 
+	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
 	GPSEast = GPSNorth = GPSVel = 0;
 
@@ -352,8 +356,7 @@ void UpdateGPS(void)
 			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
-
-		SendUAVXState();	// Tx overlapped with next GPS packet Rx
+		SendUAVXState();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

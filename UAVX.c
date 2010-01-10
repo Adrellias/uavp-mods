@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -80,11 +80,12 @@ int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+int16	DesiredRollP, DesiredPitchP;
 int16	CurrMaxRollPitch;
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
-int8	LRIntKorr, FBIntKorr;
+int8	LRIntCorr, FBIntCorr;
 int16	Rl,Pl,Yl;						// PID output values
 int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
@@ -99,10 +100,10 @@ int16 	AltSum, AE;
 int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
-int24	OriginBaroPressure;
-int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
-int16	BaroROC, BE, BEp;
-i16u	BaroVal;
+int24	OriginBaroPressure, BaroSum;
+int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
+int16	CurrentBaroROC, BaroROCP, BE;
+i16u	BaroPress;
 int8	BaroSample;
 int16	BaroComp;
 uint8	BaroType;
@@ -141,7 +142,7 @@ const rom int8	ComParms[]={
 	0,0,0,0,0,1,1,1,0,1,
 	1,1,1,1,1,0,0,1,0,0,
 	1,1,0,1,1,1,1,0,0,1,
-	0,1,1,0,0,0,0,0,0,0,
+	0,1,1,1,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
@@ -176,7 +177,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroCompKd,		28c
+	10, 			// BaroROCCompKp was BaroCompKd,		28c
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -194,9 +195,9 @@ const rom int8 DefaultParams[] = {
 	-16,				// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	0,				// 44 - 64 unused currently
+	0,				// BaroScale		44c				
 
-	0,
+	0,				// 45 - 64 unused currently
 	0,
 	0,	
 	0,
@@ -295,9 +296,13 @@ void main(void)
 
 	InitLISL();
 	InitCompass();
-	InitBarometer();
 	InitGPS();
 	InitNavigation();
+	InitBarometer();
+
+//BMP085CalData(); //zzz
+//BMP085(38000, 3800); //zzz
+
 
 	ShowSetup(1);
 
@@ -338,13 +343,14 @@ void main(void)
 					CaptureTrims();
 
 					InitHeading();
-					InitBarometer();
 					InitGPS();
 					InitNavigation();
 
 					DesiredThrottle = 0;
 					ErectGyros();			// DO NOT MOVE AIRCRAFT!
 					DoStartingBeepsWithOutput(3);
+
+					InitBarometer(); 		// as late as possible to allow warmup
 	
 					State = Landed;
 					break;
@@ -354,7 +360,8 @@ void main(void)
 						InitHeading();						
 						LEDCycles = 1;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
-						State = InFlight;
+						Stats[RCGlitchesS].i16 = RCGlitches; // start of flight
+						State = InFlight;	
 					}
 					break;
 				case Landing:
@@ -366,14 +373,13 @@ void main(void)
 						else
 						{
 							State = Landed;
+							Stats[RCGlitchesS].i16 = RCGlitches - Stats[RCGlitchesS].i16;	
 							WriteStatsEE();
 						}
 					break;
 				case InFlight:
 					DoNavigation();
-
 					LEDGame();
-
 					if ( DesiredThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mS[Clock] + THROTTLE_LOW_DELAY_MS;
@@ -391,7 +397,8 @@ void main(void)
 
 			GetGyroValues();				// First gyro read
 			GetHeading();
-			GetBaroPressure();
+			CheckThrottleMoved();
+			GetBaroAltitude();
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
