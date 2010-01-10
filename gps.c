@@ -1,6 +1,6 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008 by Prof. Greg Egan                 =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -177,7 +177,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi) * 10L; // Centimetres
+	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi); // Decimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -252,17 +252,15 @@ void ParseGPSSentence(void)
 			if ( GPSHDilute <= GPS_MIN_HDILUTE )
 			{
 				if ( ValidGPSSentences == GPS_INITIAL_SENTENCES )
-					if ( State == InFlight ) // already flying!
+				{
+					if ( State == Starting ) // not flying!
 					{
 						SetGPSOrigin();
-						F. GPSOriginValid = false;
+						F.AcquireNewPosition = true;
+						F.GPSOriginValid = true;
+						DoBeep100mSWithOutput(2,0);	
 					}
-					else
-					{
-						SetGPSOrigin();
-						F. GPSOriginValid = true;
-						DoBeep100mSWithOutput(2,0);
-					}
+				}
 				ValidGPSSentences++;
 			}		
 			else
@@ -275,10 +273,13 @@ void ParseGPSSentence(void)
 
 			// all coordinates in 0.0001 Minutes or ~0.185M units relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
-			GPSNorth = GPSFilter(GPSNorth, GPSLatitude - GPSOriginLatitude);
-			Temp = GPSLongitude - GPSOriginLongitude;
-			GPSEast = GPSFilter(GPSEast, SRS32((int32)GPSEast * GPSLongitudeCorrection, 8)); 
+			Temp = GPSLatitude - GPSOriginLatitude;
+			GPSNorth = GPSFilter(GPSNorth, Temp);
 
+			Temp = GPSLongitude - GPSOriginLongitude;
+			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
+			GPSEast = GPSFilter(GPSEast, Temp);
+ 
 			EastDiff = GPSEast - GPSEastP;
 			NorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
@@ -351,7 +352,8 @@ void UpdateGPS(void)
 			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
-		SendUAVXState();	// Tx overlapped with next GPS packet Rx
+
+		SendUAVXState();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

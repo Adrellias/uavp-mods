@@ -1,7 +1,6 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -42,7 +41,7 @@ int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, Nor
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
+void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 {
 	static int16 Temp;
 
@@ -50,18 +49,18 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
 		if ( F.UsingGPSAlt || !F.BaroAltitudeValid )
 		{
 			AE = DesiredAltitude - GPSRelAltitude;
-			AE = Limit(AE, -GPS_ALT_BAND_CM, GPS_ALT_BAND_CM);
+			AE = Limit(AE, -GPS_ALT_BAND_DM, GPS_ALT_BAND_DM);
 			AltSum += AE;
 			AltSum = Limit(AltSum, -10, 10);	
 			Temp = SRS16(AE*(int16)P[GPSAltKp] + AltSum*(int16)P[GPSAltKi], 7);
 		
-			DesiredThrottle = HoverThrottle + Limit(Temp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+			DesiredThrottle = HoverThrottle + Limit(Temp, GPS_ALT_LOW_THR_COMP, GPS_ALT_HIGH_THR_COMP);
 			DesiredThrottle = Limit(DesiredThrottle, 0, OUT_MAXIMUM);
 		}
 		else
 		{
 			DesiredThrottle = HoverThrottle;
-			DesiredRelBaroAltitude = DesiredAltitude;
+			DesiredRelBaroPressure = -SRS32( (int32)DesiredAltitude * BARO_SCALE, 8);
 		}
 	else
 	{
@@ -72,13 +71,20 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
 void Descend(void)
 { // uses Baro only
 
-	if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
-	{
-		DesiredThrottle = HoverThrottle;
-		DesiredRelBaroAltitude = 0;
-	}
-	else
-		DesiredThrottle = 0;
+	if (  mS[Clock] > mS[AltHoldUpdate] )
+		if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
+		{
+			DesiredThrottle = HoverThrottle;
+
+			if ( CurrentRelBaroPressure < -( BARO_DESCENT_TRANS_DM * BARO_SCALE)/256L )
+				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_MAX_DESCENT_DMPS * BARO_SCALE)/256L;
+			else
+				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_FINAL_DESCENT_DMPS * BARO_SCALE)/256L; 
+	
+			mS[AltHoldUpdate] += 1000L;
+		}
+		else
+			DesiredThrottle = 0;
 
 } // Descend
 
@@ -143,10 +149,6 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			EastD = SRS16((EastDiffP - EastDiff) * (int16)P[NavKd], 7);
 			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-
-			#ifdef NAV_SUPPRESS_P
-			EastP = 0;
-			#endif // NAV_SUPPRESS_P
 	
 			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
 
@@ -167,10 +169,6 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			NorthD = SRS16((NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-
-			#ifdef NAV_SUPPRESS_P
-			NorthP = 0;
-			#endif // NAV_SUPPRESS_P
 
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 			
@@ -276,7 +274,7 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
+	if ( F.GPSOriginValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
 	{
 		switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
 		case Navigating:
@@ -305,6 +303,10 @@ void DoNavigation(void)
 		case ReturningHome:
 			if ( F.ReturnHome )
 			{
+				#ifdef NAV_RTH_NO_PIC
+				DesiredPitch = DesiredRoll = 0;
+				#endif // NAV_RTH_NO_PIC
+
 				Navigate(WP[0].N, WP[0].E);
 				SetDesiredAltitude(WP[0].A);
 				if ( F.Proximity )
@@ -337,11 +339,10 @@ void DoNavigation(void)
 			Navigate(GPSNorthHold, GPSEastHold);
 
 			if ( F.ReturnHome )
-				if ( Max(Abs(RollSum), Abs(PitchSum)) <= NAV_RTH_LOCKOUT )
-				{
-					AltSum = 0; 
-					NavState = ReturningHome;
-				}
+			{
+				AltSum = 0; 
+				NavState = ReturningHome;
+			}
 			break;
 		} // switch NavState
 	}
@@ -354,7 +355,7 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			if ( CurrentRelBaroAltitude < -BARO_FAILSAFE_MIN_ALT_CM ) // zzz
+			if ( CurrentRelBaroPressure < -(BARO_FAILSAFE_MIN_ALT_DM * BARO_SCALE)/256L )
 			{
 				Descend();							// progressively increase desired baro pressure
 				if ( mS[Clock ] > mS[AbortTimeout] )
@@ -419,7 +420,7 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
+		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 			
 } // DoPPMFailsafe
 
@@ -430,7 +431,7 @@ void InitNavigation(void)
 	for (w = 0; w < NAV_MAX_WAYPOINTS; w++)
 	{
 		WP[w].N = WP[w].E = 0; 
-		WP[w].A = (int16)P[NavRTHAlt]*100L; // Centimetres
+		WP[w].A = (int16)P[NavRTHAlt]*10L; // Decimetres
 	}
 
 	GPSNorthHold = GPSEastHold = 0;

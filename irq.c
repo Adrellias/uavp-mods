@@ -1,7 +1,6 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
