@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -37,7 +37,6 @@ void DoControl(void);
 void UpdateControls(void);
 void CaptureTrims(void);
 void StopMotors(void);
-void CheckThrottleMoved(void);
 void LightsAndSirens(void);
 void InitControl(void);
 
@@ -59,13 +58,11 @@ void GetGyroValues(void)
 	RollRate += NewRollRate;
 	PitchRate += NewPitchRate;
 
-	#ifdef STATS_INC_GYRO_ACC
 	if ( State == InFlight )
 	{
 		if ( NewRollRate > Stats[RollRateS].i16 ) Stats[RollRateS].i16 = NewRollRate;
 		if ( NewPitchRate > Stats[PitchRateS].i16 ) Stats[PitchRateS].i16 = NewPitchRate;
 	}
-	#endif // STATS_INC_GYRO_ACC
 } // GetGyroValues
 
 void ErectGyros(void)
@@ -102,11 +99,9 @@ void ErectGyros(void)
 	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
 	GyroMidYaw = (int16)((YawAv + 64) >> 7);
 
-	#ifdef STATS_INC_GYRO_ACC
 	Stats[RollRateS].i16 = Stats[GyroMidRollS].i16 = GyroMidRoll;
 	Stats[PitchRateS].i16 = Stats[GyroMidPitchS].i16 = GyroMidPitch;
 	Stats[YawRateS].i16 = Stats[GyroMidYawS].i16 = GyroMidYaw;
-	#endif // STATS_INC_GYRO_ACC
 
 	RollSum = PitchSum = YawSum = 0;
 	REp = PEp = YEp = 0;
@@ -120,45 +115,38 @@ void GyroCompensation(void)
 {
 	static int16 GravComp, Temp;
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
-	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
 
-	#define GYRO_COMP_STEP 2 // *1 zzz
+	#define GYRO_COMP_STEP 1
 
 	if( F.AccelerationsValid )
 	{
+		if ( P[GyroType] == IDG300 )
+			GravComp = 8; 		// -1/6 of reference
+		else
+			GravComp = 11; 		// 9..11   
+
 		ReadAccelerations();
 
-		NewLRAcc = Ax.i16;
-		NewDUAcc = Ay.i16;
-		NewFBAcc = Az.i16;
+		LRAcc = Ax.i16;
+		DUAcc = Ay.i16;
+		FBAcc = Az.i16;
 		
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
-		NewLRAcc -= (int16)P[MiddleLR];
-		NewFBAcc -= (int16)P[MiddleFB];
-		NewDUAcc -= (int16)P[MiddleDU];
+		LRAcc -= (int16)P[MiddleLR];
+		FBAcc -= (int16)P[MiddleFB];
+		DUAcc -= (int16)P[MiddleDU];
 
-		NewDUAcc -= 1024L;	// subtract 1g - not corrrect for other than level
+		DUAcc -= 1024L;	// subtract 1g - not corrrect for other than level
 						// ??? could check for large negative Acc => upside down?
 
-		LRAcc = HardFilter(LRAcc, NewLRAcc);
-		DUAcc = HardFilter(DUAcc, NewDUAcc);
-		FBAcc = HardFilter(FBAcc, NewFBAcc);
-			
-		#ifdef STATS_INC_GYRO_ACC
 		if ( State == InFlight )
 		{
 			if ( LRAcc > Stats[LRAccS].i16 ) Stats[LRAccS].i16 = LRAcc; 
 			if ( FBAcc > Stats[FBAccS].i16 ) Stats[FBAccS].i16 = FBAcc; 
 			if ( DUAcc > Stats[DUAccS].i16 ) Stats[DUAccS].i16 = DUAcc;
 		}
-		#endif // STATS_INC_GYRO_ACC
-
-		if ( P[GyroType] == IDG300 )
-			GravComp = 8; 		// -1/6 of reference
-		else
-			GravComp = 11; 		// 9..11   
 		
 		// Roll
 
@@ -173,8 +161,8 @@ void GyroCompensation(void)
 		#endif
 
 		// correct DC level of the integral
-		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntCorr = Limit(LRIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		LRIntKorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
+		LRIntKorr = Limit(LRIntKorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	
 		// Pitch
 
@@ -189,20 +177,20 @@ void GyroCompensation(void)
 		#endif
 
 		// correct DC level of the integral	
-		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntCorr = Limit(FBIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		FBIntKorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
+		FBIntKorr = Limit(FBIntKorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 
 		#ifdef DEBUG_SENSORS
 		Trace[TAx]= LRAcc;
 		Trace[TAz] = FBAcc;
 		Trace[TAy] = DUAcc;
 
-		Trace[TLRIntCorr] = LRIntCorr * 8; // scale up for UAVPSet
-		Trace[TFBIntCorr] = FBIntCorr * 8;	
+		Trace[TLRIntKorr] = LRIntKorr * 8; // scale up for UAVPSet
+		Trace[TFBIntKorr] = FBIntKorr * 8;	
 		#endif // DEBUG_SENSORS	
 	}	
 	else
-		LRIntCorr = FBIntCorr = DUAcc = 0;
+		LRIntKorr = FBIntKorr = DUAcc = 0;
 
 } // GyroCompensation
 
@@ -271,22 +259,22 @@ void InertialDamping(void)
 
 void LimitRollSum(void)
 {
+	static int16 Temp;
+
 	RollSum += SRS16(RollRate, 1);		// use 9 bit res. for I controller
 	RollSum = Limit(RollSum, -RollIntLimit256, RollIntLimit256);
-	#ifndef ATTITUDE_SUPPRESS_DECAY
-	RollSum = Decay1(RollSum);			// damps to zero even if still rolled
-	#endif // ATTITUDE_SUPPRESS_DECAY
-	RollSum += LRIntCorr;				// last for accelerometer compensation
+	RollSum = Decay1(RollSum);		// damps to zero even if still rolled
+	RollSum += LRIntKorr;				// last for accelerometer compensation
 } // LimitRollSum
 
 void LimitPitchSum(void)
 {
+	static int16 Temp;
+
 	PitchSum += SRS16(PitchRate, 1);
 	PitchSum = Limit(PitchSum, -PitchIntLimit256, PitchIntLimit256);
-	#ifndef ATTITUDE_SUPPRESS_DECAY
-	PitchSum = Decay1(PitchSum); 
-	#endif // ATTITUDE_SUPPRESS_DECAY
-	PitchSum += FBIntCorr;
+	PitchSum = Decay1(PitchSum);
+	PitchSum += FBIntKorr;
 } // LimitPitchSum
 
 void LimitYawSum(void)
@@ -370,34 +358,33 @@ void DoControl(void)
 
 	// Roll
 				
-	RE = SRS16(RollRate, 2); // discard 2 bits of resolution!
+	RE = SRS16(RollRate, 2);
 	LimitRollSum();
  
 	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
-	Rl -= DesiredRoll + SRS16((DesiredRoll - DesiredRollP) * ATTITUDE_FF_DIFF, 4);
+	Rl -= DesiredRoll;
 	Rl -= LRComp;
-	DesiredRollP = DesiredRoll;
 
 	// Pitch
 
-	PE = SRS16(PitchRate, 2); // discard 2 bits of resolution!
+	PE = SRS16(PitchRate, 2);
 	LimitPitchSum();
 
 	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
-	Pl -= DesiredPitch + SRS16((DesiredPitch - DesiredPitchP) * ATTITUDE_FF_DIFF, 4);
+	Pl -= DesiredPitch;
 	Pl -= FBComp;
-	DesiredPitchP = DesiredPitch;
 
 	// Yaw
 
-	YE = YawRate;	YE += DesiredYaw;
+	YE = YawRate;
+	YE += DesiredYaw;
 	LimitYawSum();
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
-	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
+	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);		// effective slew limit
 
 	#ifdef DEBUG_SENSORS
 	Trace[THE] = HE;
@@ -490,25 +477,6 @@ void StopMotors(void)
 
 	MCamPitch = MCamRoll = OUT_NEUTRAL;
 } // StopMotors
-
-void CheckThrottleMoved(void)
-{
-	if( mS[Clock] < mS[ThrottleUpdate] )
-		ThrNeutral = DesiredThrottle;
-	else
-	{
-		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
-		ThrLow = Max(ThrLow, THROTTLE_HOVER);
-		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
-		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
-		{
-			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
-			F.ThrottleMoving = true;
-		}
-		else
-			F.ThrottleMoving = false;
-	}
-} // CheckThrottleMoved
 
 void LightsAndSirens(void)
 {

@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -30,7 +30,7 @@ void ShowSetup(uint8);
 void ProcessCommand(void);
 
 #pragma idata menu1
-const rom uint8 SerHello[] = "\r\nUAVX " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+const rom uint8 SerHello[] = "\r\nUAVX " Version " Copyright 2008-2009 G.K. Egan & 2007-2008 W. Mahringer\r\n"
 							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
 							  "see http://www.gnu.org/licenses/!\r\n";
 
