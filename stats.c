@@ -99,7 +99,6 @@ void ShowStats(void)
 	TxString("\tBaro:   \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
 
 	TxString("\r\nGPS\r\n");
-	TxString("\r\nGPS\r\n");
 	if ( F.NavValid )
 	{
 		#ifdef GPS_INC_GROUNDSPEED 
