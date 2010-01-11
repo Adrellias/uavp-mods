@@ -269,7 +269,11 @@ void high_isr_handler(void)
 			}
 			else
 			#endif // TELEMETRY
-				TXREG = gps_ch;
+				{ 
+					#ifndef GPS_SUPPRESS_TELEMETRY
+					TXREG = gps_ch;
+					#endif // GPS_SUPPRESS_TELEMETRY
+				}
 	
 		PIR1bits.RCIF = false;
 	}
