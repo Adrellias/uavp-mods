@@ -28,7 +28,7 @@
 
 void Navigate(int16, int16);
 void SetDesiredAltitude(int16);
-void Descend(void);
+void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
@@ -69,21 +69,19 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
 	}
 } // SetDesiredAltitude
 
-void Descend(void)
-{ // uses Baro only
+void DoFailsafeLanding(void)
+{ 	// uses Baro only
+	// InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
+	DesiredRelBaroAltitude = 0;
+	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( CurrentRelBaroAltitude < BARO_LAND_CM )) )
 	{
-		DesiredRelBaroAltitude = 0;
-		if ( ( mS[Clock] > mS[LandingTimeout]) && ( CurrentRelBaroAltitude < BARO_LAND_CM ) )
-			DesiredThrottle = 0;
-		else
-			DesiredThrottle = HoverThrottle;
+		DesiredThrottle = 0;
+		StopMotors();
 	}
 	else
-		DesiredThrottle = 0;
-
-} // Descend
+		DesiredThrottle = HoverThrottle;
+} // DoFailsafeLanding
 
 void AcquireHoldPosition(void)
 {
@@ -288,7 +286,7 @@ void DoNavigation(void)
 		case Descending:
 			Navigate(WP[0].N, WP[0].E);
 			if ( F.ReturnHome )
-				Descend();
+				DoFailsafeLanding();
 			else
 				AcquireHoldPosition();
 			break;
@@ -311,10 +309,11 @@ void DoNavigation(void)
 				Navigate(WP[0].N, WP[0].E);
 				SetDesiredAltitude(WP[0].A);
 				if ( F.Proximity )
-				{
-					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
-					NavState = AtHome;
-				}
+					if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT )
+					{
+						mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
+						NavState = AtHome;
+					}
 			}
 			else
 				AcquireHoldPosition();					
@@ -340,11 +339,10 @@ void DoNavigation(void)
 			Navigate(GPSNorthHold, GPSEastHold);
 
 			if ( F.ReturnHome )
-				if ( Max(Abs(RollSum), Abs(PitchSum)) <= NAV_RTH_LOCKOUT )
-				{
-					AltSum = 0; 
-					NavState = ReturningHome;
-				}
+			{
+				AltSum = 0; 
+				NavState = ReturningHome;
+			}
 			break;
 		} // switch NavState
 	}
@@ -357,24 +355,16 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			if ( CurrentRelBaroAltitude < -BARO_FAILSAFE_MIN_ALT_CM ) // zzz
-			{
-				Descend();							// progressively increase desired baro pressure
-				if ( mS[Clock ] > mS[AbortTimeout] )
-					if ( F.Signal )
-					{
-						LEDRed_OFF;
-						LEDGreen_ON;
-						FailState = Waiting;
-					}
-					else
-						mS[AbortTimeout] += ABORT_UPDATE_MS;
-			}
-			else
-			{ // shutdown motors to avoid prop injury
-				DesiredThrottle = 0;
-				StopMotors();
-			}
+			DoFailsafeLanding();							// progressively increase desired baro pressure
+			if ( mS[Clock ] > mS[AbortTimeout] )
+				if ( F.Signal )
+				{
+					LEDRed_OFF;
+					LEDGreen_ON;
+					FailState = Waiting;
+				}
+				else
+					mS[AbortTimeout] += ABORT_UPDATE_MS;
 			break;
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
@@ -405,6 +395,7 @@ void DoPPMFailsafe(void)
 				#ifdef NAV_PPM_FAILSAFE_RTH
 				FailState = Returning;
 				#else
+				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 				FailState = Terminated;
 				#endif // PPM_FAILSAFE_RTH
 			}

@@ -100,12 +100,12 @@ int16 	AltSum, AE;
 int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
-int24	OriginBaroPressure, BaroSum;
+int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
 int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
 int16	CurrentBaroROC, BaroROCP, BE;
-i16u	BaroPress;
+i16u	BaroPress, BaroTemp;
 int8	BaroSample;
-int16	BaroComp;
+int16	BaroComp, BaroTempComp;
 uint8	BaroType;
 
 uint8	LEDShadow;		// shadow register
@@ -177,7 +177,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroROCCompKp was BaroCompKd,		28c
+	10, 			// BaroCompKd,		28c
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -300,10 +300,6 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
-//BMP085CalData(); //zzz
-//BMP085(38000, 3800); //zzz
-
-
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -317,6 +313,7 @@ void main(void)
 		LightsAndSirens();				// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
+		F.MotorsArmed = true;
 
 		#ifdef FAKE_FLIGHT 
 

@@ -417,13 +417,15 @@ void BaroTest(void)
 		GetBaroAltitude();	
 	F.NewBaroValue = false;	
 
-	TxString("Origin: \t");
+	TxString("Origin P/T:  \t");
 	TxVal32((int32)OriginBaroPressure,0,' ');
-	TxString("\r\nPress: \t");
-	TxVal32((int32)BaroPress.u16,0,' ');
-	TxString("\tRelative*8: \t");
-	TxVal32((int32)BaroSum,0,0);
-	TxString("\tAlt.(M): \t");	
+	TxVal32((int32)OriginBaroTemperature,0,' ');
+	TxString("\r\nRelative P/T: \t");
+	TxVal32((int32)BaroSum,0,' ');
+	TxVal32((int32)BaroTemp.u16,0,' ');
+	TxString("\r\nComp P:      \t");
+	TxVal32((int32)BaroSum + BaroTempComp,0,' ');
+	TxString("\r\nAlt.(M):     \t");	
 	TxVal32((int32)CurrentRelBaroAltitude, 2, 0);	
 	TxNextLine();
 
@@ -536,7 +538,7 @@ void GPSTest(void)
 			TxVal32(GPSHDilute, 2, ' ');
 	
 			TxString("ra=");
-			TxVal32(GPSRelAltitude, 1, 'M');
+			TxVal32(GPSRelAltitude, 2, 'M');
 
 			TxString(" re=");
 			TxVal32(((int32)GPSEast * 1855L)/1000L , 1,'M'); 

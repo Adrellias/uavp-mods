@@ -256,7 +256,7 @@ void high_isr_handler(void)
 				break;	
 		    } 
 		}
-		if ( !F.GPSTestActive )
+		if ( Armed && !F.GPSTestActive  )
 			#ifdef TELEMETRY
 			if ( F. UsingTelemetry )
 			{	
@@ -269,11 +269,11 @@ void high_isr_handler(void)
 			}
 			else
 			#endif // TELEMETRY
-				{ 
-					#ifndef GPS_SUPPRESS_TELEMETRY
-					TXREG = gps_ch;
-					#endif // GPS_SUPPRESS_TELEMETRY
-				}
+			{ 
+				#ifdef GPS_TELEMETRY
+				TXREG = gps_ch;
+				#endif // GPS_TELEMETRY
+			}
 	
 		PIR1bits.RCIF = false;
 	}

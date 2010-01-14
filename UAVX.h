@@ -5,14 +5,13 @@
 // Jim - you may wish to try these?
 // #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
 #define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
-#define NAV_RTH_LOCKOUT				10L		// Roll/Pitch Sum (Angle) above which RTH will not engage; 0 to disable						
-
+						
 #define	ATTITUDE_SUPPRESS_DECAY				// supresses decay to zero angle when roll/pitch is not in fact zero!
+#define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least for IDG300
 
-#define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
-
+// Baro
 #define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
-
+#define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
 #define TEMPORARY_BARO_SCALE		95L		// Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
 
 // Moving average of coordinates - Kalman Estimator probably needed
@@ -25,13 +24,14 @@
 #define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
 #define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
 
-#define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units ~= degrees max pitch/roll angle
-#define NAV_INT_LIMIT			8L		// *3 Suggest similar to DAMP_HORIZ_LIMIT 
-#define NAV_DIFF_LIMIT			16L		// *8,3 Less than NAV_MAX_ROLL_PITCH?
+#define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units
+#define NAV_INT_LIMIT			8L		// Suggest similar to DAMP_HORIZ_LIMIT 
+#define NAV_DIFF_LIMIT			16L		// Less than NAV_MAX_ROLL_PITCH
 
-//#define GPS_SUPPRESS_TELEMETRY 
-
-//#define TELEMETRY						// telemetry piggy-backed on GPS Rx
+//#define TELEMETRY						// include code for telemetry piggy-backed on GPS Rx
+#ifndef TELEMETRY
+	#define GPS_TELEMETRY 				// echo GPS data to downlink
+#endif
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
@@ -114,7 +114,6 @@
 // Altitude Hold
 
 #define BARO_ALT_BAND_CM			200L				// Cm.
-#define BARO_LAND_CM				300L				// Cm. deemed to have landed when below this height
 
 // Throttle reduction/increase limits for Baro Alt Comp
 
@@ -122,13 +121,13 @@
 #define BARO_MAX_DESCENT_CMPS		-50L 		// Cm./Sec
 #define BARO_FINAL_DESCENT_CMPS		-20L 		// Cm./Sec
 #define BARO_DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
-#define BARO_FAILSAFE_MIN_ALT_CM	300L		// Cm. above the origin the motors cut on failsafe descent
+#define BARO_LAND_CM				300L		// Cm. deemed to have landed when below this height
 
-#define ALT_LOW_THR_COMP			-7L		// Stick units
+#define ALT_LOW_THR_COMP			-7L			// Stick units
 #define ALT_HIGH_THR_COMP			30L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM			500L				// Cm.
+#define GPS_ALT_BAND_CM			500L			// Cm.
 
 // Navigation
 
@@ -444,10 +443,10 @@ typedef union {
 //#define BARO_ID_SMD500	??
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-#define BARO_TEMP_TIME_MS	10
+#define BARO_TEMP_TIME_MS	20	// 10
 //#define BMP085_PRESS_TIME_MS 	26
 //#define SMD500_PRESS_TIME_MS 	34
-#define BARO_PRESS_TIME_MS	50		
+#define BARO_PRESS_TIME_MS	45		
 
 // Sanity checks
 
@@ -487,7 +486,7 @@ extern void InitADC(void);
 // autonomous.c
 extern void Navigate(int16, int16);
 extern void SetDesiredAltitude(int16);
-extern void Descend(void);
+extern void DoFailsafeLanding(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
@@ -499,8 +498,8 @@ extern void InitNavigation(void);
 extern void InitCompass(void);
 extern void InitHeading(void);
 extern void GetHeading(void);
-extern void StartBaroADC(void);
-extern void ReadBaro(void);
+extern void StartBaroADC(boolean);
+extern void ReadBaro(boolean);
 extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
 extern void BaroAltitudeHold(void);
@@ -780,12 +779,12 @@ extern WayPoint WP[];
 extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
-extern int24	OriginBaroPressure, BaroSum;
+extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
 extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
 extern int16	CurrentBaroROC, BaroROCP, BE;
-extern i16u		BaroPress;
+extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
-extern int16	BaroComp;
+extern int16	BaroComp, BaroTempComp;
 extern uint8	BaroType;
 
 extern uint8	MCamRoll,MCamPitch;
@@ -839,6 +838,7 @@ typedef union {
 
 		NavComputed:1,
 		CheckThrottleMoved:1,
+		MotorsArmed:1,
 		RTHAltitudeHold:1,	// stick programmed
 		TurnToHome:1,		// stick programmed
 		UsingSerialPPM:1,
@@ -913,7 +913,7 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroROCCompKp,			// 28c was BaroCompKd
+	BaroCompKd,			// 28c 
 	NavRadius,			// 29
 	NavKi,				// 30
 	

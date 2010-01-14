@@ -489,6 +489,8 @@ void StopMotors(void)
 		Motor[m] = ESCMin;
 
 	MCamPitch = MCamRoll = OUT_NEUTRAL;
+
+	F.MotorsArmed = false;
 } // StopMotors
 
 void CheckThrottleMoved(void)

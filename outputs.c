@@ -126,16 +126,16 @@ void MixAndLimitMotors(void)
 		CurrThrottle = 0;
 	else
 		CurrThrottle = DesiredThrottle + (DUComp + BaroComp); // vertical compensation not optional
-
+	
 	Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 	CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
-
+	
 	if ( CurrThrottle > IdleThrottle )
 	{
 		DoMix(CurrThrottle);
-
+	
 		CheckDemand(CurrThrottle);
-
+	
 		if ( MotorDemandRescale )
 			DoMix(CurrThrottle);
 	}
@@ -194,6 +194,13 @@ void OutSignals(void)
 	Trace[TMCamPitch] = MCamPitch;
 
 	#else // !DEBUG_SENSORS
+
+	if ( !F.MotorsArmed )
+	{
+		Motor[Front] = Motor[Back] = 
+		Motor[Left] = Motor[Right] = ESCMin;
+		MCamPitch = MCamRoll = OUT_NEUTRAL;
+	}
 
 	WriteTimer0(0);
 	INTCONbits.TMR0IF = false;

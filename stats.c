@@ -100,23 +100,20 @@ void ShowStats(void)
 	#endif // STATS_INC_GYRO_ACC
 
 	TxString("\r\n\r\nSensor Failures (Count)\r\n");
-	TxString("\tAcc:    \t");TxVal32((int32)Stats[AccFailS].i16,0 , 0); TxNextLine();
-	TxString("\tCompass:\t");TxVal32((int32)Stats[CompassFailS].i16,0 , 0); TxNextLine();
-	TxString("\tBaro:   \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
+	TxString(" Acc:    \t");TxVal32((int32)Stats[AccFailS].i16,0 , 0); TxNextLine();
+	TxString(" Compass:\t");TxVal32((int32)Stats[CompassFailS].i16,0 , 0); TxNextLine();
+	TxString(" Baro:   \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
 
 	TxString("\r\nGPS\r\n");
-	if ( F.NavValid )
-	{
-		#ifdef GPS_INC_GROUNDSPEED 
-		TxString("\tVel:    \t");TxVal32((Stats[GPSVelS].i16*10L)/METRES_TO_GPS,1,' '); TxString("M/S\r\n"); 
-		#endif // GPS_INC_GROUNDSPEED
+	#ifdef GPS_INC_GROUNDSPEED 
+	TxString("Vel:    \t");TxVal32((Stats[GPSVelS].i16*10L)/METRES_TO_GPS,1,' '); TxString("M/S\r\n"); 
+	#endif // GPS_INC_GROUNDSPEED
+	TxString("HDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
+	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
+	TxString("Invalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
+	if ( !F.NavValid )
+	TxString("No GPS lock before launch - Navigation DISABLED\r\n");
 
-		TxString("\tHDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
-		TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
-		TxString("\tInvalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
-	}
-	else
-		TxString("\tNo GPS lock before launch - Navigation DISABLED\r\n");
 	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0)|(Stats[GPSInvalidS].i16 > 0))
 		LEDYellow_ON;
 } // ShowStats
