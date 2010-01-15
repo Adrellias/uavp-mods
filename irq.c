@@ -96,7 +96,7 @@ void InitTimersAndInterrupts(void)
 	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 	DoRxPolarity();
 
-	TxHead = TxTail = 0;
+	TxQ.Head = TxQ.Tail = 0;
 
 	for (i = Clock; i<= CompassUpdate; i++)
 		mS[i] = 0;
@@ -261,10 +261,10 @@ void high_isr_handler(void)
 			if ( F. UsingTelemetry )
 			{	
 				// piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
-				if (( TxHead != TxTail) && PIR1bits.TXIF )
+				if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
 				{
-					TXREG = TxBuf[TxHead];
-					TxHead = (TxHead + 1) & TX_BUFF_MASK;
+					TXREG = TxQ.B[TxQ.Head];
+					TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
 				}
 			}
 			else

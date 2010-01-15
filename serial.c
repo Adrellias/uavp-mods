@@ -237,8 +237,8 @@ void SendByte(uint8 ch)
 
 	TxCheckSum ^= ch;
 	NewTail=(TxTail+1) & TX_BUFF_MASK;
-  	TxBuf[NewTail]=ch;
-	TxTail = NewTail;
+  	TxQ.B[NewTail]=ch;
+	TxQ.Tail = NewTail;
 } // SendByte
 
 void SendESCByte(uint8 ch)

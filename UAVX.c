@@ -125,9 +125,8 @@ int16	AttitudeHoldResetCount;
 int8	BatteryVolts;
 
 #pragma udata txbuffer
-uint8 TxHead, TxTail;
 uint8 TxCheckSum;
-uint8 TxBuf[TX_BUFF_MASK+1];
+uint8Q TxQ;
 #pragma udata
 
 uint8 UAVXCurrPacketTag;

@@ -12,7 +12,11 @@
 // Baro
 #define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
 #define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
-#define TEMPORARY_BARO_SCALE		95L		// Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
+
+#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
+//#define TEMPORARY_BARO_SCALE		85L		// BMP085
+
+//#define BARO_HARD_FILTER					// if defined pressure is (7/8*old+new)/8 otherwise a simple average
 
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
@@ -253,6 +257,21 @@ typedef union {
 		uint16 high16;
 	};
 } i32u;
+
+typedef struct {
+	uint8 Head, Tail;
+	uint8 B[128];
+	} uint8Q;	
+
+typedef struct {
+	uint8 Head, Tail;
+	int16 B[8];
+	} int16Q;	
+
+typedef struct {
+	uint8 Head, Tail;
+	int32 B[128];
+	} int32Q;	
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -870,9 +889,8 @@ enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketT
                  AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
                  MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, UAVXNavPacketTag};
 #define TX_BUFF_MASK	127
-extern uint8 TxHead, TxTail;
 extern uint8 TxCheckSum;
-extern uint8 TxBuf[];
+extern uint8Q TxQ;
 
 extern uint8 UAVXCurrPacketTag;
 

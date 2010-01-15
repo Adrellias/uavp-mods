@@ -125,8 +125,9 @@ void GetHeading(void)
 #endif // BARO_HARD_FILTER
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
-static uint8 BaroQHead, BaroQTail;
-static int16 BaroQ[BARO_BUFF_SIZE];
+#pragma udata baroq
+static int16Q BaroQ;
+#pragma udata
 
 void StartBaroADC(boolean ReadPressure)
 {
@@ -208,7 +209,7 @@ RVerror:
 
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
-	static int24 RelPressSample, CompBaroPress;
+	static int24 Temp, RelPressSample, CompBaroPress;
 	// SMD500 9.5mS (T) 34mS (P)  
 	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
 	// Use 50mS => 5 samples per altitude hold update
@@ -224,13 +225,13 @@ void GetBaroAltitude(void)
 			else
 				StartBaroADC(true);
 	
-			BaroQHead = (BaroQHead + 1) & (BARO_BUFF_SIZE -1); // must be 8 entries in the BaroQ
-			BaroSum -= (int24)BaroQ[BaroQHead];
+			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1); // must be 8 entries in the BaroQ
+			BaroSum -= (int24)BaroQ.B[BaroQ.Head];
 		
 			RelPressSample = (int24)((int24)BaroPress.u16 - OriginBaroPressure); 
 			BaroSum += RelPressSample;
-			BaroQTail = (BaroQTail + 1) & (BARO_BUFF_SIZE -1);
-			BaroQ[BaroQTail] = (int16)RelPressSample;
+			BaroQ.Tail = (BaroQ.Tail + 1) & (BARO_BUFF_SIZE -1);
+			BaroQ.B[BaroQ.Tail] = (int16)RelPressSample;
 		}
 		else
 		{
@@ -247,11 +248,12 @@ void GetBaroAltitude(void)
 			// decreasing pressure is increase in altitude
 			// negate and rescale to cm altitude
 
-			CompBaroPress = (int24)BaroSum + BaroTempComp;
+			Temp = (int24)BaroSum + BaroTempComp;
+			CompBaroPress = BaroFilter(CompBaroPress, Temp);
 			CurrentRelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 5);
 
 			CurrentBaroROC = ( CurrentRelBaroAltitude - RelBaroAltitudeP ) * 4;
-			CurrentBaroROC = HardFilter(BaroROCP, CurrentBaroROC);
+			CurrentBaroROC = BaroFilter(BaroROCP, CurrentBaroROC);
 	
 			RelBaroAltitudeP = CurrentRelBaroAltitude;
 			BaroROCP = CurrentBaroROC;
@@ -285,10 +287,10 @@ void InitBarometer(void)
 	uint8 s;
 
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
-		BaroQ[s] = 0; 
+		BaroQ.B[s] = 0; 
 	CurrentRelBaroAltitude = RelBaroAltitudeP = CurrentBaroROC = BaroROCP = 0;
 	BaroSum = BaroSample = BaroComp = OriginBaroPressure = 0;
-	BaroQTail = 0;  BaroQHead = 1;
+	BaroQ.Tail = 0;  BaroQ.Head = 1;
 
 	F.NewBaroValue = false;
 	F.BaroAltitudeValid = true;

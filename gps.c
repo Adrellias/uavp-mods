@@ -177,7 +177,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi) * 10L; // Centimetres
+	GPSAltitude = (ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi)) * 10L; // Centimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
