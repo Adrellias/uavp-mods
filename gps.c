@@ -57,7 +57,7 @@ int32 GPSLatitude, GPSLongitude;
 int32 GPSOriginLatitude, GPSOriginLongitude;
 int16 GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
 int16 GPSLongitudeCorrection;
-int16 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
+int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 #pragma udata
 
 // Global Variables
@@ -334,6 +334,7 @@ void InitGPS(void)
 
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
+	GPSAltitude = 0;
 	GPSEast = GPSNorth = GPSVel = 0;
 
 	ValidGPSSentences = 0;

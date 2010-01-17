@@ -118,10 +118,10 @@ void GetHeading(void)
 
 // Barometer
 
-#ifdef BARO_HARD_FILTER
-	#define BaroFilter HardFilter
-#else
+#ifdef BARO_MEDIUM_FILTER
 	#define BaroFilter MediumFilter
+#else
+	#define BaroFilter SoftFilter
 #endif // BARO_HARD_FILTER
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
@@ -204,8 +204,8 @@ RVerror:
 	return;
 } // ReadBaro
 
-#define BARO_BMP085_TEMP_COEFF		65L 	
-#define BARO_SMD500_TEMP_COEFF		50L
+#define BARO_BMP085_TEMP_COEFF		62L 	
+#define BARO_SMD500_TEMP_COEFF		81L
 
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
@@ -239,7 +239,7 @@ void GetBaroAltitude(void)
 			if ( BaroType == BARO_ID_BMP085 )
 				BaroTempComp = SRS32(((int32)BaroTemp.u16 - OriginBaroTemperature) * BARO_BMP085_TEMP_COEFF, 4);
 			else
-				BaroTempComp = SRS32(((int32)BaroTemp.u16 - OriginBaroTemperature) * BARO_SMD500_TEMP_COEFF, 1);
+				BaroTempComp = SRS32(((int32)BaroTemp.u16 - OriginBaroTemperature) * BARO_SMD500_TEMP_COEFF, 2);
 			StartBaroADC(true);
 		}
 
@@ -268,7 +268,7 @@ void GetBaroAltitude(void)
 				if ( CurrentRelBaroAltitude > Stats[RelBaroAltitudeS].i16 )
 				{ 
 					Stats[RelBaroAltitudeS].i16 = CurrentRelBaroAltitude;
-					Stats[RelBaroPressureS].i16 = BaroSum;
+					Stats[RelBaroPressureS].i16 = CompBaroPress;
 				}
 			}
 			F.NewBaroValue = true;

@@ -418,13 +418,13 @@ void BaroTest(void)
 	F.NewBaroValue = false;	
 
 	TxString("Origin P/T:  \t");
-	TxVal32((int32)OriginBaroPressure,0,' ');
-	TxVal32((int32)OriginBaroTemperature,0,' ');
+	TxVal32((int32)OriginBaroPressure, 0, ' ');
+	TxVal32((int32)OriginBaroTemperature,0, ' ');
 	TxString("\r\nRelative P/T: \t");
 	TxVal32((int32)BaroSum,0,' ');
-	TxVal32((int32)BaroTemp.u16,0,' ');
+	TxVal32((int32)BaroTemp.u16 - OriginBaroTemperature, 0, ' ');
 	TxString("\r\nComp P:      \t");
-	TxVal32((int32)BaroSum + BaroTempComp,0,' ');
+	TxVal32((int32)BaroSum + BaroTempComp, 0, ' ');
 	TxString("\r\nAlt.(M):     \t");	
 	TxVal32((int32)CurrentRelBaroAltitude, 2, 0);	
 	TxNextLine();

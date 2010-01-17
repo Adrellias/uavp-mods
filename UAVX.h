@@ -13,10 +13,10 @@
 #define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
 #define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
 
-#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
-//#define TEMPORARY_BARO_SCALE		85L		// BMP085
+//#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
+#define TEMPORARY_BARO_SCALE		85L		// BMP085
 
-//#define BARO_HARD_FILTER					// if defined pressure is (7/8*old+new)/8 otherwise a simple average
+//#define BARO_MEDIUM_FILTER					// if defined pressure is (7/8*old+new)/8 otherwise a simple average
 
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
@@ -776,7 +776,7 @@ extern uint8 	GPSNoOfSats;
 extern uint8 	GPSFix;
 extern int16 	GPSHDilute;
 extern int16 	GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
-extern int16 	GPSRelAltitude;
+extern int24 	GPSRelAltitude, GPSAltitude;
 extern int16 	ValidGPSSentences;
 
 extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
