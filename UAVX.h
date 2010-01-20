@@ -1,13 +1,11 @@
 // EXPERIMENTAL
 
-//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
-
 // Jim - you may wish to try these?
 // #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
 #define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
 						
-#define	ATTITUDE_SUPPRESS_DECAY				// supresses decay to zero angle when roll/pitch is not in fact zero!
-#define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least for IDG300
+//#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
+#define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
 
 // Baro
 #define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
@@ -16,19 +14,19 @@
 //#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
 #define TEMPORARY_BARO_SCALE		85L		// BMP085
 
-//#define BARO_MEDIUM_FILTER					// if defined pressure is (7/8*old+new)/8 otherwise a simple average
-
-// Moving average of coordinates - Kalman Estimator probably needed
-//#define GPSFilter NoFilter
-#define GPSFilter SoftFilter				
-//#define GPSFilter MediumFilter
-
+// Accelerometers
 #define DAMP_HORIZ_LIMIT 		3L		// equivalent stick units - no larger than 5
 
 #define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
 #define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
 
-#define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units
+// GPS
+// Moving average of coordinates - Kalman Estimator probably needed
+//#define GPSFilter NoFilter
+#define GPSFilter SoftFilter				
+//#define GPSFilter MediumFilter
+
+#define NAV_MAX_ROLL_PITCH 		25L		// Rx stick units
 #define NAV_INT_LIMIT			8L		// Suggest similar to DAMP_HORIZ_LIMIT 
 #define NAV_DIFF_LIMIT			16L		// Less than NAV_MAX_ROLL_PITCH
 
@@ -36,6 +34,13 @@
 #ifndef TELEMETRY
 	#define GPS_TELEMETRY 				// echo GPS data to downlink
 #endif
+
+// Debugging
+
+//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
+
+//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+//#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
@@ -131,7 +136,7 @@
 #define ALT_HIGH_THR_COMP			30L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM			500L			// Cm.
+#define GPS_ALT_BAND_CM				500L		// Cm.
 
 // Navigation
 
@@ -769,6 +774,7 @@ extern i16u		Ax, Ay, Az;
 extern int8		LRIntCorr, FBIntCorr;
 extern int8		NeutralLR, NeutralFB, NeutralDU;
 extern int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+extern i16u 	Compass;
 
 // GPS
 extern int16 	GPSLongitudeCorrection;
@@ -876,12 +882,12 @@ extern Flags F;
 
 extern uint8	LEDCycles;		// for hover light display
 extern int16	AttitudeHoldResetCount;	
-extern int8	BatteryVolts; 
+extern int8		BatteryVolts; 
 extern uint8	LEDShadow;		// shadow register
 
 enum Statistics { GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS, MaxBaroROCS, GPSVelS, RollRateS, PitchRateS, YawRateS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
-				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
+				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, MinHDiluteS, MaxHDiluteS,
 				RCGlitchesS, MaxStats};
 extern i16u Stats[];
 
@@ -964,14 +970,15 @@ enum Params {
 #define RxSerialPPM 		3
 #define RxSerialPPMMask		0x08 
 
-#define UseTelemetry 		4
-#define UseTelemetryMask	0x10
+// bit 4 is pulse polarity for 3.15
 
 #define UseGPSAlt 			5
 #define	UseGPSAltMask		0x20
 
-#define UnusedConfig 		6
-#define	UnusedConfigMask	0x40
+// bit 6 is throttle channel for 3.15
+
+#define UseTelemetry 		7
+#define UseTelemetryMask	0x80
 
 #define STATS_ADDR_EE	 	( MAX_PARAMETERS *2 )
 extern int8 P[];

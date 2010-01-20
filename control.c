@@ -273,9 +273,9 @@ void LimitRollSum(void)
 {
 	RollSum += SRS16(RollRate, 1);		// use 9 bit res. for I controller
 	RollSum = Limit(RollSum, -RollIntLimit256, RollIntLimit256);
-	#ifndef ATTITUDE_SUPPRESS_DECAY
+	#ifdef ATTITUDE_ENABLE_DECAY
 	RollSum = Decay1(RollSum);			// damps to zero even if still rolled
-	#endif // ATTITUDE_SUPPRESS_DECAY
+	#endif // ATTITUDE_ENABLE_DECAY
 	RollSum += LRIntCorr;				// last for accelerometer compensation
 } // LimitRollSum
 
@@ -283,9 +283,9 @@ void LimitPitchSum(void)
 {
 	PitchSum += SRS16(PitchRate, 1);
 	PitchSum = Limit(PitchSum, -PitchIntLimit256, PitchIntLimit256);
-	#ifndef ATTITUDE_SUPPRESS_DECAY
+	#ifdef ATTITUDE_ENABLE_DECAY
 	PitchSum = Decay1(PitchSum); 
-	#endif // ATTITUDE_SUPPRESS_DECAY
+	#endif // ATTITUDE_ENABLE_DECAY
 	PitchSum += FBIntCorr;
 } // LimitPitchSum
 

@@ -83,6 +83,8 @@ int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim
 int16	DesiredRollP, DesiredPitchP;
 int16	CurrMaxRollPitch;
 
+i16u 	Compass;
+
 #pragma udata accs
 i16u	Ax, Ay, Az;
 int8	LRIntCorr, FBIntCorr;
@@ -289,7 +291,7 @@ void main(void)
 	InitParameters();
 
 	StopMotors();
-	INTCONbits.PEIE = true;						// Enable peripheral interrupts
+	INTCONbits.PEIE = true;	
 	INTCONbits.TMR0IE = true; 
 	EnableInterrupts;
 
@@ -344,10 +346,9 @@ void main(void)
 
 					DesiredThrottle = 0;
 					ErectGyros();			// DO NOT MOVE AIRCRAFT!
+					InitBarometer(); 		// as late as possible to allow warmup
 					DoStartingBeepsWithOutput(3);
 
-					InitBarometer(); 		// as late as possible to allow warmup
-	
 					State = Landed;
 					break;
 				case Landed:

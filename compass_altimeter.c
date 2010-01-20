@@ -94,7 +94,6 @@ void InitHeading(void)
 
 void GetHeading(void)
 {
-	static i16u Compass;
 	static int32 Temp;
 
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
@@ -118,11 +117,7 @@ void GetHeading(void)
 
 // Barometer
 
-#ifdef BARO_MEDIUM_FILTER
-	#define BaroFilter MediumFilter
-#else
-	#define BaroFilter SoftFilter
-#endif // BARO_HARD_FILTER
+#define BaroFilter NoFilter
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
 #pragma udata baroq
@@ -210,6 +205,7 @@ RVerror:
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
 	static int24 Temp, RelPressSample, CompBaroPress;
+	static int32 RelTemp;
 	// SMD500 9.5mS (T) 34mS (P)  
 	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
 	// Use 50mS => 5 samples per altitude hold update
@@ -236,10 +232,11 @@ void GetBaroAltitude(void)
 		else
 		{
 			ReadBaro(false);
+			RelTemp = (int32)BaroTemp.u16 - OriginBaroTemperature;
 			if ( BaroType == BARO_ID_BMP085 )
-				BaroTempComp = SRS32(((int32)BaroTemp.u16 - OriginBaroTemperature) * BARO_BMP085_TEMP_COEFF, 4);
+				BaroTempComp = SRS32(RelTemp * BARO_BMP085_TEMP_COEFF, 4);
 			else
-				BaroTempComp = SRS32(((int32)BaroTemp.u16 - OriginBaroTemperature) * BARO_SMD500_TEMP_COEFF, 2);
+				BaroTempComp = SRS32(RelTemp * BARO_SMD500_TEMP_COEFF, 2);
 			StartBaroADC(true);
 		}
 

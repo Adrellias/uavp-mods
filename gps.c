@@ -258,6 +258,7 @@ void ParseGPSSentence(void)
 						SetGPSOrigin();
 						F.AcquireNewPosition = true;
 						F.NavValid = true;
+						Stats[NavValidS].i16 = true;
 						DoBeep100mSWithOutput(2,0);	
 					}
 				}
