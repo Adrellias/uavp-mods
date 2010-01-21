@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -80,14 +80,11 @@ int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-int16	DesiredRollP, DesiredPitchP;
 int16	CurrMaxRollPitch;
-
-i16u 	Compass;
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
-int8	LRIntCorr, FBIntCorr;
+int8	LRIntKorr, FBIntKorr;
 int16	Rl,Pl,Yl;						// PID output values
 int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
@@ -102,12 +99,12 @@ int16 	AltSum, AE;
 int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
-int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
-int16	CurrentBaroROC, BaroROCP, BE;
-i16u	BaroPress, BaroTemp;
+int24	OriginBaroPressure;
+int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
+int16	BaroROC, BE, BEp;
+i16u	BaroVal;
 int8	BaroSample;
-int16	BaroComp, BaroTempComp;
+int16	BaroComp;
 uint8	BaroType;
 
 uint8	LEDShadow;		// shadow register
@@ -127,8 +124,9 @@ int16	AttitudeHoldResetCount;
 int8	BatteryVolts;
 
 #pragma udata txbuffer
+uint8 TxHead, TxTail;
 uint8 TxCheckSum;
-uint8Q TxQ;
+uint8 TxBuf[TX_BUFF_MASK+1];
 #pragma udata
 
 uint8 UAVXCurrPacketTag;
@@ -143,7 +141,7 @@ const rom int8	ComParms[]={
 	0,0,0,0,0,1,1,1,0,1,
 	1,1,1,1,1,0,0,1,0,0,
 	1,1,0,1,1,1,1,0,0,1,
-	0,1,1,1,0,0,0,0,0,0,
+	0,1,1,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
@@ -196,9 +194,9 @@ const rom int8 DefaultParams[] = {
 	-16,				// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	0,				// BaroScale		44c				
+	0,				// 44 - 64 unused currently
 
-	0,				// 45 - 64 unused currently
+	0,
 	0,
 	0,	
 	0,
@@ -291,15 +289,15 @@ void main(void)
 	InitParameters();
 
 	StopMotors();
-	INTCONbits.PEIE = true;	
+	INTCONbits.PEIE = true;						// Enable peripheral interrupts
 	INTCONbits.TMR0IE = true; 
 	EnableInterrupts;
 
 	InitLISL();
 	InitCompass();
+	InitBarometer();
 	InitGPS();
 	InitNavigation();
-	InitBarometer();
 
 	ShowSetup(1);
 
@@ -314,7 +312,6 @@ void main(void)
 		LightsAndSirens();				// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
-		F.MotorsArmed = true;
 
 		#ifdef FAKE_FLIGHT 
 
@@ -341,14 +338,14 @@ void main(void)
 					CaptureTrims();
 
 					InitHeading();
+					InitBarometer();
 					InitGPS();
 					InitNavigation();
 
 					DesiredThrottle = 0;
 					ErectGyros();			// DO NOT MOVE AIRCRAFT!
-					InitBarometer(); 		// as late as possible to allow warmup
 					DoStartingBeepsWithOutput(3);
-
+	
 					State = Landed;
 					break;
 				case Landed:
@@ -357,8 +354,7 @@ void main(void)
 						InitHeading();						
 						LEDCycles = 1;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
-						Stats[RCGlitchesS].i16 = RCGlitches; // start of flight
-						State = InFlight;	
+						State = InFlight;
 					}
 					break;
 				case Landing:
@@ -370,13 +366,14 @@ void main(void)
 						else
 						{
 							State = Landed;
-							Stats[RCGlitchesS].i16 = RCGlitches - Stats[RCGlitchesS].i16;	
 							WriteStatsEE();
 						}
 					break;
 				case InFlight:
 					DoNavigation();
+
 					LEDGame();
+
 					if ( DesiredThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mS[Clock] + THROTTLE_LOW_DELAY_MS;
@@ -394,8 +391,7 @@ void main(void)
 
 			GetGyroValues();				// First gyro read
 			GetHeading();
-			CheckThrottleMoved();
-			GetBaroAltitude();
+			GetBaroPressure();
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point

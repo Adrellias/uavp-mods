@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -65,7 +65,7 @@ void LinearTest(void)
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
-		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
+		TxVal32(((int32)Ax.i16*1000+512)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Ax.i16, 0 , ')');
 		if ( Abs((Ax.i16)) > 128 )
@@ -73,7 +73,7 @@ void LinearTest(void)
 		TxNextLine();
 
 		TxString("\tF->B: \t");	
-		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
+		TxVal32(((int32)Az.i16*1000+512)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Az.i16, 0 , ')');
 		if ( Abs((Az.i16)) > 128 )
@@ -82,7 +82,7 @@ void LinearTest(void)
 
 		TxString("\tD->U:    \t");
 	
-		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
+		TxVal32(((int32)Ay.i16*1000+512)/1024, 3, 'G');
 		TxString(" (");
 		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
 		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
@@ -196,8 +196,6 @@ static uint8 CP[9];
 
 void GetCompassParameters(void)
 {
-	#ifdef TESTS_FULL
-
 	uint8 r;
 
 	#define COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
@@ -239,17 +237,15 @@ CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
 
-	#endif // TESTS_FULL
-} // GetCompassParameters
+} // GetCompassParamters
 
 void DoCompassTest(void)
 {
 	uint16 v, prev;
 	int16 Temp;
+	i16u Compass;
 
 	TxString("\r\nCompass test\r\n");
-
-	#ifdef TESTS_FULL
 
 	#define COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
 
@@ -270,6 +266,8 @@ void DoCompassTest(void)
 	Delay1mS(7);
 
 	GetCompassParameters();
+
+	InitCompass();
 
 	TxString("Registers\r\n");
 	TxString("0:\tI2C"); 
@@ -319,30 +317,33 @@ void DoCompassTest(void)
 		}
 	TxNextLine(); 
 
-	#endif // TESTS_FULL
-
-	InitCompass();
-	if ( !F.CompassValid ) goto CTerror;
-
-	GetHeading();
-	if ( F.CompassMissRead ) goto CTerror;
+	I2CStart();
+	if( SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
+	Compass.high8 = RecvI2CByte(I2C_ACK);
+	Compass.low8 = RecvI2CByte(I2C_NACK);
+	I2CStop();
 
 	TxVal32((int32)Compass.u16, 1, 0);
 	TxString(" deg \tCorrected ");
-	TxVal32(((int32)Heading * 180L)/CENTIPI, 1, 0);
+
+	Temp = Compass.u16 - (COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*10;
+	if ( F.UsingXMode )
+		Temp -= 450;
+	while (Temp < 0) Temp +=3600;
+	while (Temp >= 3600) Temp -=3600;
+	TxVal32((int32)Temp, 1, 0);
 	TxString(" deg\r\n");
-	
+		
 	return;
 CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
+
 } // DoCompassTest
 
-
+/*
 void CompassRun(void)
 {
-	#ifdef TESTS_FULL
-
 	int16 i, r, Temp;
 	static i16u Compass;	
 
@@ -359,8 +360,8 @@ void CompassRun(void)
 		TxVal32((int32) Compass.i16,1,' ');
 		TxNextLine();
 	}
-	#endif // TESTS_FULL
 } // CompassRun
+*/
 
 void CalibrateCompass(void)
 {	// calibrate the compass by rotating the ufo through 720 deg smoothly
@@ -396,8 +397,8 @@ void CalibrateCompass(void)
 	InitCompass();
 
 	return;
-
 CCerror:
+	I2CStop();
 	TxString("Calibration FAILED\r\n");
 
 } // CalibrateCompass
@@ -412,31 +413,19 @@ void BaroTest(void)
 	else
 		TxString("Type:\tSMD500\r\n");
 	
-	while ( !F.NewBaroValue )
-		GetBaroAltitude();	
-	F.NewBaroValue = false;	
-
-	#ifdef TESTS_FULL_BARO
-
-	TxString("Origin P/T:  \t");
-	TxVal32((int32)OriginBaroPressure, 0, ' ');
-	TxVal32((int32)OriginBaroTemperature,0, ' ');
-	TxString("\r\nRelative P/T: \t");
-	TxVal32((int32)BaroPress.u16 - OriginBaroPressure,0,' ');
-	TxVal32((int32)BaroTemp.u16 - OriginBaroTemperature, 0, ' ');
-	TxString("\r\nComp P*8:    \t");
-	TxVal32((int32)BaroSum + BaroTempComp, 0, ' ');
-	TxNextLine();
-
-	#endif // TESTS_FULL_BARO
-
-	TxString("Alt.:     \t");	
-	TxVal32((int32)CurrentRelBaroAltitude, 2, ' ');
-	TxString("M");	
+	while ( mS[Clock] <= mS[BaroUpdate] );
+	ReadBaro();
+	CurrentRelBaroPressure = (int24)BaroVal.u16 - OriginBaroPressure;		
+	TxString("Origin: \t");
+	TxVal32((int32)OriginBaroPressure,0,0);
+	TxString("\t Rel.: \t");	
+	TxVal32((int32)CurrentRelBaroPressure, 0, 0);
+		
 	TxNextLine();
 
 	return;
 BAerror:
+	I2CStop();
 	TxString("FAIL\r\n");
 } // BaroTest
 
@@ -466,8 +455,9 @@ void LEDsAndBuzzer(void)
 	mask = 1;
 	for ( m = 1; m <= 8; m++ )		
 	{
+		TxChar(HT);
 		TxChar(m+'0');
-		TxString(":\t");
+		TxString(":8 ");
 		switch( m ) {
 		case 1: TxString("Aux2   "); break;
 		case 2: TxString("Blue   "); break;
@@ -542,7 +532,7 @@ void GPSTest(void)
 			TxVal32(GPSHDilute, 2, ' ');
 	
 			TxString("ra=");
-			TxVal32(GPSRelAltitude, 2, 'M');
+			TxVal32(GPSRelAltitude, 1, 'M');
 
 			TxString(" re=");
 			TxVal32(((int32)GPSEast * 1855L)/1000L , 1,'M'); 

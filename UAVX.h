@@ -1,51 +1,34 @@
 // EXPERIMENTAL
 
+//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
+
 // Jim - you may wish to try these?
-// #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
-#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
-						
-//#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
-#define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
+// #define NAV_RTH_NO_PIC					// No manual stick influence (made zero) when in RTH
 
-// Baro
-#define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
-#define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
-
-//#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
-#define TEMPORARY_BARO_SCALE		85L		// BMP085
-
-// Accelerometers
-#define DAMP_HORIZ_LIMIT 		3L		// equivalent stick units - no larger than 5
-
-#define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
-#define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
-
-// GPS
 // Moving average of coordinates - Kalman Estimator probably needed
 //#define GPSFilter NoFilter
 #define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
 
-#define NAV_MAX_ROLL_PITCH 		25L		// Rx stick units
-#define NAV_INT_LIMIT			8L		// Suggest similar to DAMP_HORIZ_LIMIT 
-#define NAV_DIFF_LIMIT			16L		// Less than NAV_MAX_ROLL_PITCH
+#define NAV_ACQUIRE_BEEPER
 
-//#define TELEMETRY						// include code for telemetry piggy-backed on GPS Rx
-#ifndef TELEMETRY
-	#define GPS_TELEMETRY 				// echo GPS data to downlink
-#endif
+#define DAMP_HORIZ_LIMIT 		3L		// equivalent stick units - no larger than 5
 
-// Debugging
+#define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
+#define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
 
-//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
+#define NAV_MAX_ROLL_PITCH 		25L		// *18 Rx stick units ~= degrees max pitch/roll angle
+#define NAV_INT_LIMIT			8L		// *3 Suggest similar to DAMP_HORIZ_LIMIT 
+#define NAV_DIFF_LIMIT			16L		// *8,3 Less than NAV_MAX_ROLL_PITCH? 
 
-//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-//#define TESTS_FULL					// increases information displayed in tests but increases code size
+#define GPS_INC_GROUNDSPEED
+
+//#define TELEMETRY						// telemetry piggy-backed on GPS Rx
 
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -84,9 +67,6 @@
 
 // UAVX Extensions
 
-//#define STATS_INC_GYRO_ACC				// includes tracking of Accs/Gyros but takes time in main loop!
-#define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
-
 // Timeouts and Update Intervals
 
 #define FAILSAFE_TIMEOUT_MS		1000L 		// mS. hold last "good" settings and then either restore flight or abort
@@ -98,13 +78,17 @@
 
 #define NAV_ACTIVE_DELAY_MS		10000L		// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_TIMEOUT_MS		30000L		// mS. Descend if no control input when at Origin
-#define NAV_RTH_LAND_TIMEOUT_MS	30000L		// mS. Shutdown throttle if descent lasts too long
 
 #define GPS_TIMEOUT_MS			2000L		// mS.
 
 // Baro
 
 #define BARO_SCRATCHY_BEEPER				// Scratchy beeper noise on hover
+
+// Increase the severity of the filter when averaging barometer pressure readings
+// New=(Old*7+New)/8).
+// Probably more important with SMD500
+//#define BARO_HARD_FILTER
 
 // Accelerometers
 
@@ -122,25 +106,25 @@
 
 // Altitude Hold
 
-#define BARO_ALT_BAND_CM			200L				// Cm.
+// Throttle reduction and increase limits for Baro Alt Comp
+#define BARO_LOW_THR_COMP		-7L				// *-7
+#define BARO_HIGH_THR_COMP		30L
 
-// Throttle reduction/increase limits for Baro Alt Comp
+#define BARO_SCALE				108L			//((438L*256L)/1043L)// Baro*256/GPSAlt
 
-#define BARO_MAX_ROC_CMPS			500L 		// Cm./Sec notional for descent calculations
-#define BARO_MAX_DESCENT_CMPS		-50L 		// Cm./Sec
-#define BARO_FINAL_DESCENT_CMPS		-20L 		// Cm./Sec
-#define BARO_DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
-#define BARO_LAND_CM				300L		// Cm. deemed to have landed when below this height
+#define BARO_MAX_DESCENT_DMPS		5L 			// *10L Decimetres/Sec
+#define BARO_FINAL_DESCENT_DMPS		2L //5L		// Decimetres/Sec
+#define BARO_DESCENT_TRANS_DM		150L		// Decimetres Altitude at final descent starts 
+#define BARO_FAILSAFE_MIN_ALT_DM	50L			// Decimetres above the origin the motors cut on failsafe descent
 
-#define ALT_LOW_THR_COMP			-7L			// Stick units
-#define ALT_HIGH_THR_COMP			30L
+// Throttle reduction and increase limits for GPS Alt Comp
+#define GPS_ALT_LOW_THR_COMP	-10L
+#define GPS_ALT_HIGH_THR_COMP	30L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM				500L		// Cm.
+#define GPS_ALT_BAND_DM			50L				// Decimetres
 
 // Navigation
-
-#define NAV_ACQUIRE_BEEPER
 
 #define NAV_MAX_NEUTRAL_RADIUS	3L				// Metres also minimum closing radius
 #define NAV_MAX_RADIUS			40L				// Metres
@@ -150,8 +134,8 @@
 #define	GPS_MIN_SATELLITES		6		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX				1		// must be 1 or 2 
 #define GPS_INITIAL_SENTENCES 	30L		// Number of sentences needed with set HDilute
-#define GPS_MIN_HDILUTE			130L	// HDilute * 100
-	
+#define GPS_MIN_HDILUTE			130L	// HDilute * 100	
+
 #ifdef C90
 	#define COMPASS_OFFSET_DEG	90L		// North degrees CW from Front - older compass
 #else
@@ -262,21 +246,6 @@ typedef union {
 		uint16 high16;
 	};
 } i32u;
-
-typedef struct {
-	uint8 Head, Tail;
-	uint8 B[128];
-	} uint8Q;	
-
-typedef struct {
-	uint8 Head, Tail;
-	int16 B[8];
-	} int16Q;	
-
-typedef struct {
-	uint8 Head, Tail;
-	int32 B[128];
-	} int32Q;	
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -459,18 +428,16 @@ typedef struct {
 #define BARO_TEMP_BMP085	0x2e
 #define BARO_TEMP_SMD500	0x6e
 #define BARO_PRESS			0xf4
-#define BARO_CTL			0xf4				// OSRS=3 for BMP085 25.5mS, SMD500 34mS				
+#define BARO_CTL			0xf4
 #define BARO_ADC_MSB		0xf6
 #define BARO_ADC_LSB		0xf7
-#define BARO_ADC_XLSB		0xf8				// BMP085
 #define BARO_TYPE			0xd0
 //#define BARO_ID_SMD500	??
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-#define BARO_TEMP_TIME_MS	20	// 10
-//#define BMP085_PRESS_TIME_MS 	26
-//#define SMD500_PRESS_TIME_MS 	34
-#define BARO_PRESS_TIME_MS	45		
+#define BARO_TEMP_TIME_MS		10
+#define BMP085_PRESS_TIME_MS 	8
+#define SMD500_PRESS_TIME_MS 	35	
 
 // Sanity checks
 
@@ -510,7 +477,7 @@ extern void InitADC(void);
 // autonomous.c
 extern void Navigate(int16, int16);
 extern void SetDesiredAltitude(int16);
-extern void DoFailsafeLanding(void);
+extern void Descend(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
@@ -522,11 +489,11 @@ extern void InitNavigation(void);
 extern void InitCompass(void);
 extern void InitHeading(void);
 extern void GetHeading(void);
-extern void StartBaroADC(boolean);
-extern void ReadBaro(boolean);
-extern void GetBaroAltitude(void);
+extern void StartBaroADC(void);
+extern void ReadBaro(void);
+extern void GetBaroPressure(void);
 extern void InitBarometer(void);
-extern void BaroAltitudeHold(void);
+extern void BaroPressureHold(void);
 extern void AltitudeHold(void);
 
 // control.c
@@ -543,7 +510,6 @@ extern void DoControl(void);
 extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void StopMotors(void);
-extern void CheckThrottleMoved(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
@@ -696,7 +662,7 @@ extern const rom uint8 SerPrompt[];
 // External Variables
 
 enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, FailsafeTimeout, 
-      AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, GPSTimeout, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+      AbortTimeout, RTHTimeout, LastValidRx, LastGPS, AltHoldUpdate, GPSTimeout, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 	
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 #define CONTROLS (NavGainC+1)
@@ -711,11 +677,11 @@ enum GyroTypes { ADXRS300, ADXRS150, IDG300};
 enum TxRxTypes { FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 				DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
 
-enum TraceTags {THE, TCurrentRelBaroAltitude,
+enum TraceTags {THE, TCurrentRelBaroPressure,
 				TRollRate,TPitchRate,TYE,
 				TRollSum,TPitchSum,TYawSum,
 				TAx,TAz,TAy,
-				TLRIntCorr, TFBIntCorr,
+				TLRIntKorr, TFBIntKorr,
 				TDesiredThrottle,
 				TDesiredRoll, TDesiredPitch, TDesiredYaw,
 				TMFront, TMBack, TMLeft, TMRight,
@@ -768,13 +734,11 @@ extern int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 extern int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-extern int16	DesiredRollP, DesiredPitchP;
 extern int16	CurrMaxRollPitch;
 extern i16u		Ax, Ay, Az;
-extern int8		LRIntCorr, FBIntCorr;
+extern int8		LRIntKorr, FBIntKorr;
 extern int8		NeutralLR, NeutralFB, NeutralDU;
 extern int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
-extern i16u 	Compass;
 
 // GPS
 extern int16 	GPSLongitudeCorrection;
@@ -782,7 +746,7 @@ extern uint8 	GPSNoOfSats;
 extern uint8 	GPSFix;
 extern int16 	GPSHDilute;
 extern int16 	GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
-extern int24 	GPSRelAltitude, GPSAltitude;
+extern int16 	GPSRelAltitude;
 extern int16 	ValidGPSSentences;
 
 extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
@@ -804,12 +768,12 @@ extern WayPoint WP[];
 extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
-extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
-extern int16	CurrentBaroROC, BaroROCP, BE;
-extern i16u		BaroPress, BaroTemp;
+extern int24	OriginBaroPressure;
+extern int16	DesiredRelBaroPressure, CurrentRelBaroPressure;
+extern int16	BaroROC, BE, BEp;
+extern i16u		BaroVal;
 extern int8		BaroSample;
-extern int16	BaroComp, BaroTempComp;
+extern int16	BaroComp;
 extern uint8	BaroType;
 
 extern uint8	MCamRoll,MCamPitch;
@@ -859,17 +823,16 @@ typedef union {
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
 		GPSValid:1,
+		GPSOriginValid:1,
 		NavValid:1,
 
 		NavComputed:1,
 		CheckThrottleMoved:1,
-		MotorsArmed:1,
 		RTHAltitudeHold:1,	// stick programmed
 		TurnToHome:1,		// stick programmed
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
 		UsingXMode:1,
-		UsingTelemetry:1,
 		NewBaroValue:1,
 		BeeperInUse:1, 
 		AcquireNewPosition:1, 
@@ -885,18 +848,19 @@ extern int16	AttitudeHoldResetCount;
 extern int8		BatteryVolts; 
 extern uint8	LEDShadow;		// shadow register
 
-enum Statistics { GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS, MaxBaroROCS, GPSVelS, RollRateS, PitchRateS, YawRateS,
+enum Statistics { GPSAltitudeS, RelBaroPressureS, GPSVelS, RollRateS, PitchRateS, YawRateS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
-				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, MinHDiluteS, MaxHDiluteS,
-				RCGlitchesS, MaxStats};
+				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, MinHDiluteS, MaxHDiluteS,
+				MaxStats};
 extern i16u Stats[];
 
 enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
                  AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
                  MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, UAVXNavPacketTag};
 #define TX_BUFF_MASK	127
+extern uint8 TxHead, TxTail;
 extern uint8 TxCheckSum;
-extern uint8Q TxQ;
+extern uint8 TxBuf[];
 
 extern uint8 UAVXCurrPacketTag;
 
@@ -937,7 +901,7 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroCompKd,			// 28c 
+	BaroCompKd,			// 28c
 	NavRadius,			// 29
 	NavKi,				// 30
 	
@@ -953,9 +917,8 @@ enum Params {
 	CamRollTrim,		// 40c
 	NavKd,				// 41
 	VertDampDecay,		// 42c
-	HorizDampDecay,		// 43c
-	BaroScale			// 44c		
-	// 45 - 64 unused currently
+	HorizDampDecay		// 43c		
+	// 44 - 64 unused currently
 	};
 
 #define FlyXMode 			0
@@ -970,15 +933,8 @@ enum Params {
 #define RxSerialPPM 		3
 #define RxSerialPPMMask		0x08 
 
-// bit 4 is pulse polarity for 3.15
-
 #define UseGPSAlt 			5
 #define	UseGPSAltMask		0x20
-
-// bit 6 is throttle channel for 3.15
-
-#define UseTelemetry 		7
-#define UseTelemetryMask	0x80
 
 #define STATS_ADDR_EE	 	( MAX_PARAMETERS *2 )
 extern int8 P[];

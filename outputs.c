@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
+// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -126,16 +126,16 @@ void MixAndLimitMotors(void)
 		CurrThrottle = 0;
 	else
 		CurrThrottle = DesiredThrottle + (DUComp + BaroComp); // vertical compensation not optional
-	
+
 	Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 	CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
-	
+
 	if ( CurrThrottle > IdleThrottle )
 	{
 		DoMix(CurrThrottle);
-	
+
 		CheckDemand(CurrThrottle);
-	
+
 		if ( MotorDemandRescale )
 			DoMix(CurrThrottle);
 	}
@@ -194,13 +194,6 @@ void OutSignals(void)
 	Trace[TMCamPitch] = MCamPitch;
 
 	#else // !DEBUG_SENSORS
-
-	if ( !F.MotorsArmed )
-	{
-		Motor[Front] = Motor[Back] = 
-		Motor[Left] = Motor[Right] = ESCMin;
-		MCamPitch = MCamRoll = OUT_NEUTRAL;
-	}
 
 	WriteTimer0(0);
 	INTCONbits.TMR0IF = false;
@@ -376,7 +369,7 @@ OS002:
 _endasm
 
 	mS[Clock]++;
-	EnableInterrupts;
+	EnableInterrupts;	
 
 #endif  // DEBUG_SENSORS
 
