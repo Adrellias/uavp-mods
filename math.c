@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -31,7 +31,7 @@ int16 MakePi(int16);
 int16 Table16(int16, const int16 *);
 int16 int16sin(int16);
 int16 int16cos(int16);
-int16 int16atan2(int16, int16);
+int16 int32atan2(int32, int32);
 int16 int16sqrt(int16);
 int32 int32sqrt(int32);
 
@@ -111,7 +111,7 @@ const int16 ArctanTable[17]={
    };
 #pragma idata
 
-int16 int16atan2(int16 y, int16 x)
+int16 int32atan2(int32 y, int32 x)
 {	// Result is in milliradian
 	// Caution - this routine is intended to be acceptably accurate for 
 	// angles less Pi/4 within a quadrant. Larger angles are directly interpolated
@@ -156,7 +156,7 @@ int16 int16atan2(int16 y, int16 x)
 					A = TWOMILLIPI - A;
 	}
 	return(A);
-} // int16atan2
+} // int32atan2
 
 int16 int16sqrt(int16 n)
 // 16 bit numbers 

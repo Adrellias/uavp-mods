@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -77,7 +77,7 @@ void InitMisc(void)
 	ESCMax = OUT_MAXIMUM;
 
 	GyroMidRoll = GyroMidPitch = GyroMidYaw = RollRate = PitchRate = YawRate = 0;
-
+	DesiredRollP = DesiredPitchP = 0;
 	RollTrim = PitchTrim = YawTrim = 0;	
 
 	LEDShadow = 0;
@@ -155,7 +155,7 @@ void CheckAlarms(void)
 
 	NewBatteryVolts = ADC(ADCBattVoltsChan, ADCVREF5V) >> 3; 
 	BatteryVolts = SoftFilter(BatteryVolts, NewBatteryVolts);
-	F.LowBatt =  (BatteryVolts < (int16)P[LowVoltThres]) & 1;
+	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel;
 
@@ -245,7 +245,7 @@ void DumpTrace(void)
 			TxChar(';');
 		}
 		TxNextLine();
-	}
+	} 
 
 	#endif // DEBUG_SENSORS
 } // DumpTrace
@@ -256,28 +256,29 @@ void SendUAVXState(void) // 925uS at 16MHz
 	// packet must be shorter than GPS shortest valid packet ($GPGGA)
 	// which is ~64 characters - so limit to 48?.
 	#ifdef TELEMETRY
+
 	for (b=10;b;b--) 
 		SendByte(0x55);
-      
+	      
 	SendByte(0xff); // synchronisation to "jolt" USART
-
-  	SendByte(SOH);
-
-  	TxCheckSum = 0;
-
+	
+	SendByte(SOH);
+	
+	TxCheckSum = 0;
+	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 		SendESCByte(UAVXFlightPacketTag);
 		SendESCByte(30 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			SendESCByte(F.AllFlags[b]); 
+		
+		SendESCByte(State);
 	
-	  	SendESCByte(State);
-
 		SendESCByte(BatteryVolts);
 		SendESCWord(0); 						// Battery Current
 		SendESCWord(RCGlitches);
-		
+			
 		SendESCWord(DesiredThrottle);
 		SendESCWord(DesiredRoll);
 		SendESCWord(DesiredPitch);
@@ -291,42 +292,43 @@ void SendUAVXState(void) // 925uS at 16MHz
 		SendESCWord(LRAcc);
 		SendESCWord(FBAcc);
 		SendESCWord(DUAcc);
-		
+			
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
-
+	
 	case UAVXNavPacketTag:
 		SendESCByte(UAVXNavPacketTag);
-		SendESCByte(20);
-
+		SendESCByte(22);
+	
 		SendESCByte(NavState);
 		SendESCByte(FailState);	
-
+	
 		SendESCWord(GPSVel);
-		SendESCWord(CurrentRelBaroPressure);
+		SendESCWord(CurrentRelBaroAltitude);
+		SendESCWord(CurrentBaroROC); // added after BA
 		SendESCWord(GPSHDilute);
 		SendESCWord(Heading);
 		SendESCWord(GPSRelAltitude);
-		SendESCWord(GPSEast);
-		SendESCWord(GPSNorth);
-		SendESCWord(GPSEastHold);
-		SendESCWord(GPSNorthHold);
-
+		SendESCWord(GPSEast/100);	// Metres
+		SendESCWord(GPSNorth/100);
+		SendESCWord(GPSEastHold/100);
+		SendESCWord(GPSNorthHold/100);
+	
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
-
+	
 	default:
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;		
 	}
+		
+	SendESCByte(TxCheckSum);
 	
-  	SendESCByte(TxCheckSum);
-
-  	SendByte(EOT);
-
-  	SendByte(CR);
-	SendByte(LF);  	
-
+	SendByte(EOT);
+	
+	SendByte(CR);
+	SendByte(LF);  
+	
 	#endif // TELEMETRY
 } // SendUAVXState
 

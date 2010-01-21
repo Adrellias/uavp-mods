@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -38,6 +38,9 @@ void ZeroStats(void)
 
 	Stats[MinHDiluteS].i16 = 10000L;
 	Stats[MaxHDiluteS].i16 = 0;
+	Stats[MinBaroROCS].i16 = 10000L;
+	Stats[MaxBaroROCS].i16 = -10000L;
+
 } // ZeroStats
 
 void ReadStatsEE(void)
@@ -78,39 +81,42 @@ void ShowStats(void)
 			Scale = 1500;
 
 	TxString("\r\nFlight Statistics\r\n");
+	TxString("RCGlitch: \t");TxVal32((int32) Stats[RCGlitchesS].i16,0,' '); TxString("\r\n");
 
-	TxString("GPSAlt: \t");TxVal32(Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
-	TxString("BaroAlt:\t");TxVal32(((int32)Stats[RelBaroPressureS].i16 * (int32)256L)/BARO_SCALE, 1, ' '); TxString("M (");
-	TxVal32(Stats[RelBaroPressureS].i16,0,' '); TxString(" clicks)\r\n\r\n"); 
+	#ifdef STATS_INC_GYRO_ACC
+	TxString("\r\nInertial\r\n");
+	TxString("Roll:     \t"); TxVal32((int32)(Stats[RollRateS].i16 - Stats[GyroMidRollS].i16), 0,'/'); TxString("512\r\n");
+	TxString("Pitch:    \t"); TxVal32((int32)(Stats[PitchRateS].i16 - Stats[GyroMidPitchS].i16), 0,'/'); TxString("512\r\n");
+	TxString("Yaw:      \t"); TxVal32((int32)(Stats[YawRateS].i16 - Stats[GyroMidYawS].i16), 0,'/'); TxString("512\r\n");
 
-	/*
-	TxString("Roll:   \t"); TxVal32(((int32)(Stats[RollRateS].i16 - Stats[GyroMidRollS].i16) * Scale)>>10, 1,' '); TxString("Deg/Sec\r\n");
-	TxString("Pitch:  \t"); TxVal32(((int32)(Stats[PitchRateS].i16 - Stats[GyroMidPitchS].i16) * Scale)>>10, 1,' '); TxString("Deg/Sec\r\n");
-	TxString("Yaw:    \t");TxVal32(((int32)(Stats[YawRateS].i16 - Stats[GyroMidYawS].i16) * 3000L)>>10, 1,' '); TxString("Deg/Sec\r\n\r\n");
-
-	TxString("LRAcc:  \t"); TxVal32(SRS32((int32)Stats[LRAccS].i16 * (int32)1000, 10), 3, 'G'); TxNextLine(); 
-	TxString("FBAcc:  \t"); TxVal32(SRS32((int32)Stats[FBAccS].i16 * (int32)1000, 10), 3, 'G'); TxNextLine();
-	TxString("DUAcc:  \t"); TxVal32(SRS32((int32)Stats[DUAccS].i16 * (int32)1000, 10), 3, 'G'); TxNextLine();
-	*/
+	TxString("\r\nLRAcc:    \t"); TxVal32(((int32)Stats[LRAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine(); 
+	TxString("FBAcc:    \t"); TxVal32(((int32)Stats[FBAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine();
+	TxString("DUAcc:    \t"); TxVal32(((int32)Stats[DUAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine();
+	#endif // STATS_INC_GYRO_ACC
 
 	TxString("\r\nSensor Failures (Count)\r\n");
-	TxString("\tAcc:    \t");TxVal32((int32)Stats[AccFailS].i16,0 , 0); TxNextLine();
-	TxString("\tCompass:\t");TxVal32((int32)Stats[CompassFailS].i16,0 , 0); TxNextLine();
-	TxString("\tBaro:   \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
+	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS].i16, 0, 0); TxNextLine();
+	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS].i16, 0, 0); TxNextLine();
+	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
 
+	TxString("\r\nBaro\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 2, ' '); TxString("M (");
+	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
+	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
+							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' ');TxString("M/S\r\n");
 	TxString("\r\nGPS\r\n");
-	if ( F.NavValid )
-	{
-		#ifdef GPS_INC_GROUNDSPEED 
-		TxString("\tVel:    \t");TxVal32((Stats[GPSVelS].i16*10L)/METRES_TO_GPS,1,' '); TxString("M/S\r\n"); 
-		#endif // GPS_INC_GROUNDSPEED
-
-		TxString("\tHDilute:\t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
-		TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
-		TxString("\tInvalid:\t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000)/Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
-	}
+	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 2,' '); TxString("M\r\n"); 
+	#ifdef GPS_INC_GROUNDSPEED 
+	TxString("Vel:      \t");TxVal32((int32)Stats[GPSVelS].i16, 2, ' '); TxString("M/S\r\n"); 
+	#endif // GPS_INC_GROUNDSPEED
+	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
+	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
+	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000L)/Stats[GPSSentencesS].i16, 2, '%'); TxNextLine();
+	if ( Stats[NavValidS].i16 )
+		TxString("Navigation ENABLED\r\n");	
 	else
-		TxString("\tNo GPS lock before launch - Navigation DISABLED\r\n");
+		TxString("Navigation DISABLED (No fix at launch)\r\n");
+
 	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0)|(Stats[GPSInvalidS].i16 > 0))
 		LEDYellow_ON;
 } // ShowStats

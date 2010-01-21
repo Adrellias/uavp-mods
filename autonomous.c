@@ -1,6 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -25,9 +26,9 @@
 
 // Prototypes
 
-void Navigate(int16, int16);
+void Navigate(int32, int32);
 void SetDesiredAltitude(int16);
-void Descend(void);
+void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
@@ -36,12 +37,13 @@ void InitNavigation(void);
 
 // Variables
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
-int16 Range, RangeToNeutral, EffNavSensitivity;
-int16 EastP, SumEastP, EastI, EastD, EastDiffP, EastCorr, NorthP, SumNorthP, NorthI, NorthD, NorthDiffP, NorthCorr;
+int16 EffNavSensitivity;
+int16 EastP, SumEastP, EastI, EastCorr, NorthP, SumNorthP, NorthI, NorthCorr;
+int32 EastD, EastDiffP, NorthD, NorthDiffP;
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
+void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
 {
 	static int16 Temp;
 
@@ -49,18 +51,18 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 		if ( F.UsingGPSAlt || !F.BaroAltitudeValid )
 		{
 			AE = DesiredAltitude - GPSRelAltitude;
-			AE = Limit(AE, -GPS_ALT_BAND_DM, GPS_ALT_BAND_DM);
+			AE = Limit(AE, -GPS_ALT_BAND_CM, GPS_ALT_BAND_CM);
 			AltSum += AE;
 			AltSum = Limit(AltSum, -10, 10);	
 			Temp = SRS16(AE*(int16)P[GPSAltKp] + AltSum*(int16)P[GPSAltKi], 7);
 		
-			DesiredThrottle = HoverThrottle + Limit(Temp, GPS_ALT_LOW_THR_COMP, GPS_ALT_HIGH_THR_COMP);
+			DesiredThrottle = HoverThrottle + Limit(Temp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 			DesiredThrottle = Limit(DesiredThrottle, 0, OUT_MAXIMUM);
 		}
 		else
 		{
 			DesiredThrottle = HoverThrottle;
-			DesiredRelBaroPressure = -SRS32( (int32)DesiredAltitude * BARO_SCALE, 8);
+			DesiredRelBaroAltitude = DesiredAltitude;
 		}
 	else
 	{
@@ -68,25 +70,19 @@ void SetDesiredAltitude(int16 DesiredAltitude) // Decimetres
 	}
 } // SetDesiredAltitude
 
-void Descend(void)
-{ // uses Baro only
+void DoFailsafeLanding(void)
+{ 	// uses Baro only
+	// InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	if (  mS[Clock] > mS[AltHoldUpdate] )
-		if ( InTheAir ) 							//  micro switch RC0 Pin 11 to ground when landed
-		{
-			DesiredThrottle = HoverThrottle;
-
-			if ( CurrentRelBaroPressure < -( BARO_DESCENT_TRANS_DM * BARO_SCALE)/256L )
-				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_MAX_DESCENT_DMPS * BARO_SCALE)/256L;
-			else
-				DesiredRelBaroPressure = CurrentRelBaroPressure + (BARO_FINAL_DESCENT_DMPS * BARO_SCALE)/256L; 
-	
-			mS[AltHoldUpdate] += 1000L;
-		}
-		else
-			DesiredThrottle = 0;
-
-} // Descend
+	DesiredRelBaroAltitude = 0;
+	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( CurrentRelBaroAltitude < BARO_LAND_CM )) )
+	{
+		DesiredThrottle = 0;
+		StopMotors();
+	}
+	else
+		DesiredThrottle = HoverThrottle;
+} // DoFailsafeLanding
 
 void AcquireHoldPosition(void)
 {
@@ -100,7 +96,7 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
+void Navigate(int32 GPSNorthWay, int32 GPSEastWay)
 {	// F.GPSValid] must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
@@ -108,7 +104,8 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 	// BEWARE magic numbers for integer arithmetic
 
 	static int16 SinHeading, CosHeading;
-	static int16 Temp, EastDiff, NorthDiff, WayHeading, RelHeading;
+	static int32 Temp, EastDiff, NorthDiff;
+	static WayHeading, RelHeading;
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
@@ -117,24 +114,32 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 		EastDiff = GPSEastWay - GPSEast;
 		NorthDiff = GPSNorthWay - GPSNorth;
 
-		if ( (Abs(EastDiff) >= NavNeutralRadius ) || (Abs(NorthDiff) >= NavNeutralRadius )) 
-		{
-			Range = (int16)int32sqrt( (int32)NorthDiff*(int32)NorthDiff + (int32)EastDiff*(int32)EastDiff );
-			WayHeading = int16atan2(EastDiff, NorthDiff);
+		F.CloseProximity = (Abs(EastDiff) < NavNeutralRadius ) && (Abs(NorthDiff) < NavNeutralRadius ); 
 
-			F.Proximity = Range < NavClosingRadius; 
-			F.CloseProximity = false;
+		if ( F.CloseProximity ) 
+		{
+			// Neutral Zone - no GPS influence
+			NavPCorr = DecayX(NavPCorr, 2);
+			NavRCorr = DecayX(NavRCorr, 2);
+			NavYCorr = 0;
+		}
+		else
+		{	// direct solution make North and East coordinate errors zero
 
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 			EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 
-			// direct solution make North and East coordinate errors zero
+			WayHeading = int32atan2(EastDiff, NorthDiff); 
+
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
 			
+			F.Proximity = false;
+
 			// East
 			if ( Abs(EastDiff) < NavClosingRadius )
 			{
+				F.Proximity = true;
 				EastP = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				EastP = Limit(EastP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 			}
@@ -149,12 +154,17 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			EastD = SRS16((EastDiffP - EastDiff) * (int16)P[NavKd], 7);
 			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+
+			#ifdef NAV_SUPPRESS_P
+			EastP = 0;
+			#endif // NAV_SUPPRESS_P
 	
 			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
 
 			// North
 			if ( Abs(NorthDiff) < NavClosingRadius )
 			{
+				F.Proximity = true;
 				NorthP = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				NorthP = Limit(NorthP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 			}
@@ -169,6 +179,10 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 			NorthD = SRS16((NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+
+			#ifdef NAV_SUPPRESS_P
+			NorthP = 0;
+			#endif // NAV_SUPPRESS_P
 
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 			
@@ -192,14 +206,7 @@ void Navigate(int16 GPSNorthWay, int16 GPSEastWay)
 				NavYCorr = 0;	
 
 		}
-		else
-		{
-			// Neutral Zone - no GPS influence
-			NavPCorr = DecayX(NavPCorr, 2);
-			NavRCorr = DecayX(NavRCorr, 2);
-			NavYCorr = 0;
-			F.CloseProximity = true;
-		}
+	
 
 	}
 
@@ -227,7 +234,7 @@ void FakeFlight()
 		GPSEast = 1000L; GPSNorth = 1000L;
 		InitNavigation();
 
-		TxString("\r\n Sens MRP Eff East North Head DRoll DPitch DYaw Range ");
+		TxString("\r\n Sens MRP Eff East North Head DRoll DPitch DYaw ");
 		TxString("EP EI ED EC | NP NI ND NC \r\n");
 	
 		while ( Armed )
@@ -260,7 +267,6 @@ void FakeFlight()
 			TxVal32((int32)EffNavSensitivity,0,' ');
 			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
 			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); TxVal32((int32)DesiredYaw, 0, ' ');
-			TxVal32((int32)Range, 0, ' '); 
 			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
 			TxVal32((int32)EastCorr, 0, ' ');
 			TxString("| ");
@@ -283,7 +289,7 @@ void DoNavigation(void)
 		case Descending:
 			Navigate(WP[0].N, WP[0].E);
 			if ( F.ReturnHome )
-				Descend();
+				DoFailsafeLanding();
 			else
 				AcquireHoldPosition();
 			break;
@@ -292,7 +298,7 @@ void DoNavigation(void)
 			if ( F.ReturnHome )
 				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
 				{
-					mS[AltHoldUpdate] = mS[Clock];
+					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 					NavState = Descending;
 				}
 				else
@@ -303,17 +309,14 @@ void DoNavigation(void)
 		case ReturningHome:
 			if ( F.ReturnHome )
 			{
-				#ifdef NAV_RTH_NO_PIC
-				DesiredPitch = DesiredRoll = 0;
-				#endif // NAV_RTH_NO_PIC
-
 				Navigate(WP[0].N, WP[0].E);
 				SetDesiredAltitude(WP[0].A);
 				if ( F.Proximity )
-				{
-					mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
-					NavState = AtHome;
-				}
+					if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT )
+					{
+						mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
+						NavState = AtHome;
+					}
 			}
 			else
 				AcquireHoldPosition();					
@@ -355,24 +358,16 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			if ( CurrentRelBaroPressure < -(BARO_FAILSAFE_MIN_ALT_DM * BARO_SCALE)/256L )
-			{
-				Descend();							// progressively increase desired baro pressure
-				if ( mS[Clock ] > mS[AbortTimeout] )
-					if ( F.Signal )
-					{
-						LEDRed_OFF;
-						LEDGreen_ON;
-						FailState = Waiting;
-					}
-					else
-						mS[AbortTimeout] += ABORT_UPDATE_MS;
-			}
-			else
-			{ // shutdown motors to avoid prop injury
-				DesiredThrottle = 0;
-				StopMotors();
-			}
+			DoFailsafeLanding();							// progressively increase desired baro pressure
+			if ( mS[Clock ] > mS[AbortTimeout] )
+				if ( F.Signal )
+				{
+					LEDRed_OFF;
+					LEDGreen_ON;
+					FailState = Waiting;
+				}
+				else
+					mS[AbortTimeout] += ABORT_UPDATE_MS;
 			break;
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
@@ -397,13 +392,13 @@ void DoPPMFailsafe(void)
 				LEDGreen_OFF;
 				LEDRed_ON;
 
-				mS[AltHoldUpdate] = mS[Clock];
 				SetDesiredAltitude(WP[0].A);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
 				FailState = Returning;
 				#else
+				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 				FailState = Terminated;
 				#endif // PPM_FAILSAFE_RTH
 			}
@@ -420,7 +415,7 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
 			
 } // DoPPMFailsafe
 
@@ -431,7 +426,7 @@ void InitNavigation(void)
 	for (w = 0; w < NAV_MAX_WAYPOINTS; w++)
 	{
 		WP[w].N = WP[w].E = 0; 
-		WP[w].A = (int16)P[NavRTHAlt]*10L; // Decimetres
+		WP[w].A = (int16)P[NavRTHAlt]*100L; // Centimetres
 	}
 
 	GPSNorthHold = GPSEastHold = 0;

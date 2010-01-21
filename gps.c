@@ -1,6 +1,6 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
+// =               Copyright (c) 2008 by Prof. Greg Egan                 =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -25,8 +25,6 @@
 
 // Prototypes
 
-int16 ConvertGPSToM(int16);
-int16 ConvertMToGPS(int16);
 void UpdateField(void);
 int16 ConvertInt(uint8, uint8);
 int32 ConvertLatLonM(uint8, uint8);
@@ -55,9 +53,9 @@ int16 GPSHDilute;
 int32 GPSMissionTime, GPSStartTime;
 int32 GPSLatitude, GPSLongitude;
 int32 GPSOriginLatitude, GPSOriginLongitude;
-int16 GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
+int32 GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
 int16 GPSLongitudeCorrection;
-int16 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
+int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 #pragma udata
 
 // Global Variables
@@ -67,17 +65,6 @@ uint8 nll, cc, lo, hi;
 boolean EmptyField;
 int16 ValidGPSSentences;
 #pragma udata
-
-int16 ConvertGPSToM(int16 c)
-{	// approximately 0.18553257183 Metres per LSB at the Equator
-	// only for converting difference in coordinates to 32K
-	return ( ((int32)c * (int32)18553)/((int32)100000) );
-} // ConvertGPSToM
-
-int16 ConvertMToGPS(int16 c)
-{
-	return ( ((int32)c * (int32)100000)/((int32)18553) );
-} // ConvertMToGPS
 
 int16 ConvertInt(uint8 lo, uint8 hi)
 {
@@ -93,10 +80,10 @@ int16 ConvertInt(uint8 lo, uint8 hi)
 } // ConvertInt
 
 int32 ConvertLatLonM(uint8 lo, uint8 hi)
-{ 	// NMEA coordinates normally assumed as DDDMM.MMMM ie 4 decimal minute digits
+{ 	// NMEA coordinates normally assumed as DDDMM.MMMMM ie 5 decimal minute digits
 	// but code can deal with 4 and 5 decimal minutes 
-	// Positions are stored at 4 decimal minute NMEA resolution which is
-	// approximately 0.1855 Metres per LSB at the Equator.
+	// Positions are stored at 5 decimal minute NMEA resolution which is
+	// approximately 1.855 cm per LSB at the Equator.
 	static int32 dd, mm, dm, r;
 	static int8 dp;	
 	
@@ -108,8 +95,12 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 
 	    dd = ConvertInt(lo, dp - 3);
 	    mm = ConvertInt(dp - 2 , dp - 1);
-		dm = ConvertInt(dp + 1, dp + 4);
-	    r = dd * 600000 + mm * 10000 + dm;
+		if ( ( hi - dp ) > 4 )
+			dm = ConvertInt(dp + 1, dp + 5);
+		else
+			dm = ConvertInt(dp + 1, dp + 4)* 10L;
+			
+	    r = dd * 6000000 + mm * 100000 + dm;
 	}
 	
 	return(r);
@@ -177,7 +168,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi); // Decimetres
+	GPSAltitude = (ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi)) * 10L; // Centimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -258,6 +249,7 @@ void ParseGPSSentence(void)
 						SetGPSOrigin();
 						F.AcquireNewPosition = true;
 						F.NavValid = true;
+						Stats[NavValidS].i16 = true;
 						DoBeep100mSWithOutput(2,0);	
 					}
 				}
@@ -271,26 +263,27 @@ void ParseGPSSentence(void)
 			GPSInterval = mS[Clock] - mS[LastGPS];
 			mS[LastGPS] = mS[Clock];
 
-			// all coordinates in 0.0001 Minutes or ~0.185M units relative to Origin
+			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
-			Temp = GPSLatitude - GPSOriginLatitude;
+			Temp = SRS32( (GPSLatitude - GPSOriginLatitude) * 15199, 13); // 1.8553cm;
 			GPSNorth = GPSFilter(GPSNorth, Temp);
 
-			Temp = GPSLongitude - GPSOriginLongitude;
+			Temp = SRS32( (GPSLongitude - GPSOriginLongitude) * 15199, 13);
 			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
 			GPSEast = GPSFilter(GPSEast, Temp);
- 
+
 			#ifdef GPS_INC_GROUNDSPEED
+			// nice to have but not essential ???
 			EastDiff = GPSEast - GPSEastP;
 			NorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
-			GPSVel = int16sqrt(EastDiff*EastDiff + NorthDiff*NorthDiff);
-			GPSVel = ((int24)GPSVel * 1000L)/GPSInterval;
+			GPSVel = int32sqrt(EastDiff*EastDiff + NorthDiff*NorthDiff);
+			GPSVel = ((int32)GPSVel * 1000L)/GPSInterval;
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
 			GPSNorthP = GPSNorth;
-			GPSEastP = GPSEast;	
-			#endif // GPS_INC_GROUNDSPEED		
+			GPSEastP = GPSEast;
+			#endif // GPS_INC_GROUNDSPEED			
 
 			GPSRelAltitude = GPSAltitude - GPSOriginAltitude;
 
@@ -331,7 +324,9 @@ void InitGPS(void)
 
 	cc = 0;
 
+	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
+	GPSAltitude = 0;
 	GPSEast = GPSNorth = GPSVel = 0;
 
 	ValidGPSSentences = 0;
@@ -354,8 +349,7 @@ void UpdateGPS(void)
 			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
-
-		SendUAVXState();	// Tx overlapped with next GPS packet Rx
+		SendUAVXState();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

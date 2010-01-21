@@ -1,7 +1,7 @@
 // =======================================================================
 // =                     UAVX Quadrocopter Controller                    =
-// =               Copyright (c) 2008, 2009 by Prof. Greg Egan           =
-// =   Original V3.15 Copyright (c) 2007, 2008 Ing. Wolfgang Mahringer   =
+// =                 Copyright (c) 2008 by Prof. Greg Egan               =
+// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
 // =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
 // =======================================================================
 
@@ -69,8 +69,8 @@ void ReadParametersEE(void)
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
-		NavNeutralRadius *= METRES_TO_GPS;
-		NavClosingRadius *= METRES_TO_GPS;
+		NavNeutralRadius *= 100; // cm
+		NavClosingRadius *= 100;
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = (((COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*MILLIPI)/180L);
@@ -87,8 +87,11 @@ void ReadParametersEE(void)
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
-	
+		F.UsingTelemetry = ((P[ConfigBits] & UseTelemetryMask) != 0);
+
 		BatteryVolts = (int16)P[LowVoltThres];
+
+		P[BaroScale] = TEMPORARY_BARO_SCALE; // zzz TEMP until new UAVPSet
 		
 		ParametersChanged = false;
 	}
