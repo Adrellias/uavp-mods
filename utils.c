@@ -35,7 +35,7 @@ void DoStartingBeepsWithOutput(uint8);
 void CheckAlarms(void);
 
 int16 SlewLimit(int16, int16, int16);
-int16 ProcLimit(int16, int16, int16);
+int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 
 void DumpTrace(void);
@@ -199,7 +199,7 @@ void CheckAlarms(void)
 } // CheckAlarms
 
 #ifndef USE_LIMIT_MACRO
-int16 ProcLimit(int16 i, int16 l, int16 u)
+int32 ProcLimit(int32 i, int32 l, int32 u)
 {
 	return ((i<l) ? l : ((i>u) ? u : i));	
 } // ProcLimit
@@ -308,8 +308,9 @@ void SendUAVXState(void) // 925uS at 16MHz
 		SendESCWord(CurrentBaroROC); // added after BA
 		SendESCWord(GPSHDilute);
 		SendESCWord(Heading);
-		SendESCWord(GPSRelAltitude);
-		SendESCWord(GPSEast/100);	// Metres
+// zzz too slow?
+		SendESCWord(GPSRelAltitude/100); // Metres
+		SendESCWord(GPSEast/100);	
 		SendESCWord(GPSNorth/100);
 		SendESCWord(GPSEastHold/100);
 		SendESCWord(GPSNorthHold/100);

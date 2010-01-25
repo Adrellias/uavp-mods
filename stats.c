@@ -59,6 +59,9 @@ void WriteStatsEE()
 	uint8 s;
 	int16 Temp;
 
+	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS /10);
+	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10);
+
 	for (s = 0 ; s < MaxStats ; s++ )
 	{
 		WriteEE(STATS_ADDR_EE + s*2, Stats[s].low8);
@@ -100,12 +103,12 @@ void ShowStats(void)
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
 
 	TxString("\r\nBaro\r\n");
-	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 2, ' '); TxString("M (");
+	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 1, ' '); TxString("M (");
 	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' ');TxString("M/S\r\n");
 	TxString("\r\nGPS\r\n");
-	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 2,' '); TxString("M\r\n"); 
+	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 
 	TxString("Vel:      \t");TxVal32((int32)Stats[GPSVelS].i16, 2, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED

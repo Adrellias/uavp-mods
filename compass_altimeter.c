@@ -262,9 +262,9 @@ void GetBaroAltitude(void)
 				else
 					if ( CurrentBaroROC < Stats[MinBaroROCS].i16 )
 						Stats[MinBaroROCS].i16 = CurrentBaroROC;
-				if ( CurrentRelBaroAltitude > Stats[RelBaroAltitudeS].i16 )
+				if ( CurrentRelBaroAltitude > MaxRelBaroAltitudeS ) 
 				{ 
-					Stats[RelBaroAltitudeS].i16 = CurrentRelBaroAltitude;
+					MaxRelBaroAltitudeS = CurrentRelBaroAltitude;
 					Stats[RelBaroPressureS].i16 = CompBaroPress;
 				}
 			}

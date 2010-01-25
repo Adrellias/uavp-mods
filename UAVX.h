@@ -506,8 +506,8 @@ extern int16 ADC(uint8, uint8);
 extern void InitADC(void);
 
 // autonomous.c
-extern void Navigate(int32, int32);
-extern void SetDesiredAltitude(int16);
+extern void Navigate(int24, int24);
+extern void SetDesiredAltitude(int24);
 extern void DoFailsafeLanding(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
@@ -656,7 +656,7 @@ extern void DoBeep100mSWithOutput(uint8, uint8);
 extern void DoStartingBeepsWithOutput(uint8);
 
 extern int16 SlewLimit(int16, int16, int16);
-extern int16 ProcLimit(int16, int16, int16);
+extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 
 extern void CheckAlarms(void);
@@ -777,7 +777,8 @@ extern int16 	GPSLongitudeCorrection;
 extern uint8 	GPSNoOfSats;
 extern uint8 	GPSFix;
 extern int16 	GPSHDilute;
-extern int32 	GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
+extern int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+extern int16	GPSVel;
 extern int24 	GPSRelAltitude, GPSAltitude;
 extern int16 	ValidGPSSentences;
 
@@ -801,8 +802,8 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
-extern int16	CurrentBaroROC, BaroROCP, BE;
+extern int24	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP, BE;
+extern int16	CurrentBaroROC, BaroROCP;
 extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
 extern int16	BaroComp, BaroTempComp;
@@ -885,6 +886,7 @@ enum Statistics { GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS,
 				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
 				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, MinHDiluteS, MaxHDiluteS,
 				RCGlitchesS, MaxStats};
+extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern i16u Stats[];
 
 enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 

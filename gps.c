@@ -53,7 +53,8 @@ int16 GPSHDilute;
 int32 GPSMissionTime, GPSStartTime;
 int32 GPSLatitude, GPSLongitude;
 int32 GPSOriginLatitude, GPSOriginLongitude;
-int32 GPSNorth, GPSEast, GPSNorthHold, GPSEastHold, GPSNorthP, GPSEastP, GPSVel;
+int24 GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+int16 GPSVel;
 int16 GPSLongitudeCorrection;
 int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 #pragma udata
@@ -217,7 +218,9 @@ void SetGPSOrigin(void)
 
 void ParseGPSSentence(void)
 {
-	static int16 EastDiff, NorthDiff, GPSVelP, Temp;
+	static int32 Temp;
+	static int24 EastDiff, NorthDiff;
+	static int16 GPSVelP;
 	static int24 GPSInterval;
 
 	cc = 0;
@@ -289,8 +292,8 @@ void ParseGPSSentence(void)
 
 			if ( State == InFlight )
 			{
-				if ( GPSRelAltitude > Stats[GPSAltitudeS].i16 ) 
-					Stats[GPSAltitudeS].i16 = GPSRelAltitude;
+				if ( GPSRelAltitude > MaxGPSAltitudeS )
+					MaxGPSAltitudeS = GPSRelAltitude;
 				if ( GPSVel > Stats[GPSVelS].i16 )
 					Stats[GPSVelS].i16 = GPSVel;
 

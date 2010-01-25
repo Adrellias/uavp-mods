@@ -103,8 +103,8 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int16	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP;
-int16	CurrentBaroROC, BaroROCP, BE;
+int24	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP, BE;
+int16	CurrentBaroROC, BaroROCP;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
 int16	BaroComp, BaroTempComp;
@@ -117,6 +117,7 @@ int16	Motor[NoOfMotors];
 boolean	ESCI2CFail[NoOfMotors];
 
 #pragma udata stats
+int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 i16u Stats[MaxStats];
 #pragma udata
 

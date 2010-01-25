@@ -26,8 +26,8 @@
 
 // Prototypes
 
-void Navigate(int32, int32);
-void SetDesiredAltitude(int16);
+void Navigate(int24, int24);
+void SetDesiredAltitude(int24);
 void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
@@ -39,19 +39,20 @@ void InitNavigation(void);
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
 int16 EffNavSensitivity;
 int16 EastP, SumEastP, EastI, EastCorr, NorthP, SumNorthP, NorthI, NorthCorr;
-int32 EastD, EastDiffP, NorthD, NorthDiffP;
+int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 
-void SetDesiredAltitude(int16 DesiredAltitude) // Centimetres
+void SetDesiredAltitude(int24 DesiredAltitude) // Centimetres
 {
+	static int24 Temp24;
 	static int16 Temp;
 
 	if ( F.RTHAltitudeHold )
 		if ( F.UsingGPSAlt || !F.BaroAltitudeValid )
 		{
-			AE = DesiredAltitude - GPSRelAltitude;
-			AE = Limit(AE, -GPS_ALT_BAND_CM, GPS_ALT_BAND_CM);
+			Temp24 = DesiredAltitude - GPSRelAltitude;
+			AE = (int16) Limit(Temp24, -GPS_ALT_BAND_CM, GPS_ALT_BAND_CM);
 			AltSum += AE;
 			AltSum = Limit(AltSum, -10, 10);	
 			Temp = SRS16(AE*(int16)P[GPSAltKp] + AltSum*(int16)P[GPSAltKi], 7);
@@ -96,7 +97,7 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-void Navigate(int32 GPSNorthWay, int32 GPSEastWay)
+void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 {	// F.GPSValid] must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
@@ -104,7 +105,7 @@ void Navigate(int32 GPSNorthWay, int32 GPSEastWay)
 	// BEWARE magic numbers for integer arithmetic
 
 	static int16 SinHeading, CosHeading;
-	static int32 Temp, EastDiff, NorthDiff;
+	static int24 Temp, EastDiff, NorthDiff;
 	static WayHeading, RelHeading;
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
