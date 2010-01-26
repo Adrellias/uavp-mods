@@ -37,7 +37,7 @@ void ReadParametersEE(void)
 
 	if ( ParametersChanged )
 	{   // overkill if only a single parameter has changed but is not in flight loop
-		addr = (CurrentParamSet - 1)* MAX_PARAMETERS;	
+		addr = (ParamSet - 1)* MAX_PARAMETERS;	
 		for ( i = 0; i < MAX_PARAMETERS; i++)
 			P[i] = ReadEE(addr + i);
 
@@ -69,8 +69,8 @@ void ReadParametersEE(void)
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
-		NavNeutralRadius *= 100; // cm
-		NavClosingRadius *= 100;
+		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
+		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = (((COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*MILLIPI)/180L);
@@ -118,7 +118,7 @@ void UseDefaultParameters(void)
 
 	WriteParametersEE(1);
 	WriteParametersEE(2);
-	CurrentParamSet = 1;
+	ParamSet = 1;
 	TxString("\r\nDefault Parameters Loaded\r\n");
 	TxString("Do a READ CONFIG to refresh the UAVPSet parameter display\r\n");	
 } // UseDefaultParameters
@@ -129,7 +129,7 @@ void UpdateParamSetChoice(void)
 
 	int8 NewParamSet, NewRTHAltitudeHold, NewTurnToHome, Selector;
 
-	NewParamSet = CurrentParamSet;
+	NewParamSet = ParamSet;
 	NewRTHAltitudeHold = F.RTHAltitudeHold;
 	NewTurnToHome = F.TurnToHome;
 
@@ -170,13 +170,13 @@ void UpdateParamSetChoice(void)
 					}
 			}
 
-		if ( ( NewParamSet != CurrentParamSet ) || ( NewRTHAltitudeHold != F.RTHAltitudeHold ) )
+		if ( ( NewParamSet != ParamSet ) || ( NewRTHAltitudeHold != F.RTHAltitudeHold ) )
 		{	
-			CurrentParamSet = NewParamSet;
+			ParamSet = NewParamSet;
 			F.RTHAltitudeHold = NewRTHAltitudeHold;
 			LEDBlue_ON;
 			DoBeep100mSWithOutput(2, 2);
-			if ( CurrentParamSet == 2 )
+			if ( ParamSet == 2 )
 				DoBeep100mSWithOutput(2, 2);
 			if ( F.RTHAltitudeHold )
 				DoBeep100mSWithOutput(4, 4);
@@ -214,12 +214,12 @@ void UpdateParamSetChoice(void)
 void InitParameters(void)
 {
 	ALL_LEDS_ON;
-	CurrentParamSet = 1;
+	ParamSet = 1;
 
 	if ( ReadEE(TxRxType) == -1 )
 		UseDefaultParameters();
 	
-	CurrentParamSet = 1;
+	ParamSet = 1;
 	ParametersChanged = true;
 	ReadParametersEE();
 	ALL_LEDS_OFF;

@@ -431,7 +431,7 @@ void BaroTest(void)
 	#endif // TESTS_FULL_BARO
 
 	TxString("Alt.:     \t");	
-	TxVal32((int32)CurrentRelBaroAltitude, 2, ' ');
+	TxVal32((int32)RelBaroAltitude, 2, ' ');
 	TxString("M");	
 	TxNextLine();
 
@@ -545,10 +545,10 @@ void GPSTest(void)
 			TxVal32(GPSRelAltitude, 2, 'M');
 
 			TxString(" re=");
-			TxVal32((int32)GPSEast, 2,'M'); 
+			TxVal32((int32)ConvertGPSToM(GPSEast) ,0 , 'M'); 
 
 			TxString(" rn=");
-			TxVal32((int32)GPSNorth, 2,'M');
+			TxVal32((int32)ConvertGPSToM(GPSNorth) ,0 ,'M');
 
 			TxNextLine();
 		}	

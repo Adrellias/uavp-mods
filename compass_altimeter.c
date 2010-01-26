@@ -247,24 +247,24 @@ void GetBaroAltitude(void)
 
 			Temp = (int24)BaroSum + BaroTempComp;
 			CompBaroPress = BaroFilter(CompBaroPress, Temp);
-			CurrentRelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 5);
+			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 5);
 
-			CurrentBaroROC = ( CurrentRelBaroAltitude - RelBaroAltitudeP ) * 4;
-			CurrentBaroROC = BaroFilter(BaroROCP, CurrentBaroROC);
+			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
+			BaroROC = BaroFilter(BaroROCP, BaroROC);
 	
-			RelBaroAltitudeP = CurrentRelBaroAltitude;
-			BaroROCP = CurrentBaroROC;
+			RelBaroAltitudeP = RelBaroAltitude;
+			BaroROCP = BaroROC;
 
 			if ( State == InFlight )
 			{
-				if ( CurrentBaroROC > Stats[MaxBaroROCS].i16 )
-					Stats[MaxBaroROCS].i16 = CurrentBaroROC;
+				if ( BaroROC > Stats[MaxBaroROCS].i16 )
+					Stats[MaxBaroROCS].i16 = BaroROC;
 				else
-					if ( CurrentBaroROC < Stats[MinBaroROCS].i16 )
-						Stats[MinBaroROCS].i16 = CurrentBaroROC;
-				if ( CurrentRelBaroAltitude > MaxRelBaroAltitudeS ) 
+					if ( BaroROC < Stats[MinBaroROCS].i16 )
+						Stats[MinBaroROCS].i16 = BaroROC;
+				if ( RelBaroAltitude > MaxRelBaroAltitudeS ) 
 				{ 
-					MaxRelBaroAltitudeS = CurrentRelBaroAltitude;
+					MaxRelBaroAltitudeS = RelBaroAltitude;
 					Stats[RelBaroPressureS].i16 = CompBaroPress;
 				}
 			}
@@ -272,7 +272,7 @@ void GetBaroAltitude(void)
 			BaroSample = 0;
 
 			#ifdef DEBUG_SENSORS	
-			Trace[TCurrentRelBaroAltitude] = CurrentRelBaroAltitude;
+			Trace[TRelBaroAltitude] = RelBaroAltitude/10L;
 			#endif
 		}
 	}
@@ -285,7 +285,7 @@ void InitBarometer(void)
 
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
 		BaroQ.B[s] = 0; 
-	CurrentRelBaroAltitude = RelBaroAltitudeP = CurrentBaroROC = BaroROCP = 0;
+	RelBaroAltitude = RelBaroAltitudeP = BaroROC = BaroROCP = 0;
 	BaroSum = BaroSample = BaroComp = OriginBaroPressure = 0;
 	BaroQ.Tail = 0;  BaroQ.Head = 1;
 
@@ -315,7 +315,7 @@ void InitBarometer(void)
 		BaroAverage += (int24)BaroPress.u16;	
 	}
 
-	while ( mS[Clock] < mS[BaroUpdate] ); // wait until outstanding presure read completes
+	while ( mS[Clock] < mS[BaroUpdate] ); // wait until outstanding pressure read completes
 	ReadBaro(true);
 
 	StartBaroADC(false);		// get temperature
@@ -347,7 +347,7 @@ void BaroAltitudeHold()
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	
-		BE = CurrentRelBaroAltitude - DesiredRelBaroAltitude;
+		BE = RelBaroAltitude - DesiredRelBaroAltitude;
 		
 		Temp = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM); // prevent overflow MAX BaroCompKp = 32	
 		Corr = -SRS16(Temp * (int16)P[BaroCompKp], 7);						
@@ -362,8 +362,16 @@ void BaroAltitudeHold()
 				BaroComp--;
 		BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		if ( CurrentBaroROC < BARO_MAX_DESCENT_CMPS ) // limit descent rate
-			BaroComp++;
+		if ( RelBaroAltitude > BARO_DESCENT_TRANS_CM ) // limit descent rate
+		{
+			if ( BaroROC < BARO_MAX_DESCENT_CMPS ) 
+				BaroComp += 2;
+		}
+		else
+		{
+			if ( BaroROC < BARO_FINAL_DESCENT_CMPS )
+				BaroComp += 2;
+		}
 		BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
 		#ifdef BARO_SCRATCHY_BEEPER
@@ -386,13 +394,13 @@ void AltitudeHold()
 		
 		if( F.Hovering )
 		{
-			if ( Abs(CurrentBaroROC) < BARO_HOVER_MAX_ROC_CMPS )
+			if ( Abs(BaroROC) < BARO_HOVER_MAX_ROC_CMPS )
 				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
 			BaroAltitudeHold();
 		}
 		else	
 		{
-			DesiredRelBaroAltitude = CurrentRelBaroAltitude;
+			DesiredRelBaroAltitude = RelBaroAltitude;
 			BaroComp = Decay1(BaroComp);	
 		}
 	}

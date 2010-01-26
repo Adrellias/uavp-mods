@@ -66,7 +66,7 @@ struct {
 
 const rom uint8 NMEATag[6] = {"GPGGA"};
 
-uint8	CurrentParamSet;
+uint8	ParamSet;
 boolean ParametersChanged;
 
 // Control
@@ -93,7 +93,7 @@ int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 #pragma udata
 
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+int24 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
 
 uint8 	NavState;
 int16 	NavSensitivity;
@@ -103,8 +103,8 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int24	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP, BE;
-int16	CurrentBaroROC, BaroROCP;
+int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+int16	BaroROC, BaroROCP;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
 int16	BaroComp, BaroTempComp;
@@ -117,8 +117,8 @@ int16	Motor[NoOfMotors];
 boolean	ESCI2CFail[NoOfMotors];
 
 #pragma udata stats
-int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
-i16u Stats[MaxStats];
+int24 	MaxRelBaroAltitudeS, MaxGPSAltitudeS;
+i16u 	Stats[MaxStats];
 #pragma udata
 
 int16	Trace[TopTrace+1];

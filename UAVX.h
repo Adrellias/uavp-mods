@@ -151,6 +151,8 @@
 #define GPS_MIN_FIX				1		// must be 1 or 2 
 #define GPS_INITIAL_SENTENCES 	30L		// Number of sentences needed with set HDilute
 #define GPS_MIN_HDILUTE			130L	// HDilute * 100
+
+#define GPS_TO_DM				12345	// zzz
 	
 #ifdef C90
 	#define COMPASS_OFFSET_DEG	90L		// North degrees CW from Front - older compass
@@ -237,6 +239,7 @@ typedef signed char 		int8;
 typedef unsigned int 		uint16;
 typedef int 				int16;
 typedef short long 			int24;
+//typedef long 			int24;
 typedef unsigned short long uint24;
 typedef long 				int32;
 typedef unsigned long 		uint32;
@@ -558,7 +561,9 @@ extern void ReceivingGPSOnly(uint8);
 
 // gps.c
 extern void UpdateField(void);
-extern int16 ConvertInt(uint8, uint8);
+extern int32 ConvertGPSToM(int32);
+extern int32 ConvertMToGPS(int32);
+extern int24 ConvertInt(uint8, uint8);
 extern int32 ConvertLatLonM(uint8, uint8);
 extern int32 ConvertUTime(uint8, uint8);
 extern void ParseGPRMCSentence(void);
@@ -707,7 +712,7 @@ enum GyroTypes { ADXRS300, ADXRS150, IDG300};
 enum TxRxTypes { FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 				DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
 
-enum TraceTags {THE, TCurrentRelBaroAltitude,
+enum TraceTags {THE, TRelBaroAltitude,
 				TRollRate,TPitchRate,TYE,
 				TRollSum,TPitchSum,TYawSum,
 				TAx,TAz,TAy,
@@ -751,7 +756,7 @@ extern struct {
 
 extern const rom uint8 NMEATag[];
 
-extern uint8 	CurrentParamSet;
+extern uint8 	ParamSet;
 extern boolean 	ParametersChanged;
 
 extern int16	RE, PE, YE, HE;
@@ -782,7 +787,7 @@ extern int16	GPSVel;
 extern int24 	GPSRelAltitude, GPSAltitude;
 extern int16 	ValidGPSSentences;
 
-extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+extern int24 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
 
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Navigating, Terminating };
 extern uint8 	NavState;
@@ -792,7 +797,7 @@ extern int16 	AltSum, AE;
 // Waypoints
 
 typedef  struct {
-	int16 N, E, A;			// Metres
+	int24 N, E, A;			// cm
 } WayPoint;
 
 extern WayPoint WP[];
@@ -802,8 +807,8 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int24	DesiredRelBaroAltitude, CurrentRelBaroAltitude, RelBaroAltitudeP, BE;
-extern int16	CurrentBaroROC, BaroROCP;
+extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+extern int16	BaroROC, BaroROCP;
 extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
 extern int16	BaroComp, BaroTempComp;

@@ -76,7 +76,7 @@ void DoFailsafeLanding(void)
 	// InTheAir micro switch RC0 Pin 11 to ground when landed
 
 	DesiredRelBaroAltitude = 0;
-	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( CurrentRelBaroAltitude < BARO_LAND_CM )) )
+	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( RelBaroAltitude < BARO_LAND_CM )) )
 	{
 		DesiredThrottle = 0;
 		StopMotors();
@@ -96,6 +96,8 @@ void AcquireHoldPosition(void)
 
 	NavState = HoldingStation;
 } // AcquireHoldPosition
+
+//int32 zzz, xxx;
 
 void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 {	// F.GPSValid] must be true immediately prior to entry	
@@ -123,6 +125,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			NavPCorr = DecayX(NavPCorr, 2);
 			NavRCorr = DecayX(NavRCorr, 2);
 			NavYCorr = 0;
+			EastDiffP = NorthDiffP = SumEastP = SumNorthP = 0;
 		}
 		else
 		{	// direct solution make North and East coordinate errors zero
@@ -130,7 +133,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 			EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 
-			WayHeading = int32atan2(EastDiff, NorthDiff); 
+			WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff); 
 
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
@@ -152,8 +155,11 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			EastI = SRS16(SumEastP * (int16)P[NavKi], 4);
 			SumEastP = DecayX(SumEastP, 1);
 
-			EastD = SRS16((EastDiffP - EastDiff) * (int16)P[NavKd], 7);
+			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 7);
+//xxx = (int32)(EastDiffP - EastDiff);
+//zzz = EastDiff;
 			EastDiffP = EastDiff;
+
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 
 			#ifdef NAV_SUPPRESS_P
@@ -177,7 +183,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 4);
 			SumNorthP = DecayX(SumNorthP, 1);
 
-			NorthD = SRS16((NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
+			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 
@@ -205,10 +211,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			}
 			else
 				NavYCorr = 0;	
-
-		}
-	
-
+		}	
 	}
 
 	DesiredRoll = Limit(DesiredRoll + NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
@@ -232,11 +235,11 @@ void FakeFlight()
 	{
 		Heading = MILLIPI;
 	
-		GPSEast = 1000L; GPSNorth = 1000L;
+		GPSEast = 10000L; GPSNorth = 10000L;
 		InitNavigation();
 
 		TxString("\r\n Sens MRP Eff East North Head DRoll DPitch DYaw ");
-		TxString("EP EI ED EC | NP NI ND NC \r\n");
+		TxString("EP EI zzz xxx ED EC | NP NI ND NC | P CP\r\n");
 	
 		while ( Armed )
 		{
@@ -252,15 +255,15 @@ void FakeFlight()
 			Delay100mSWithOutput(5);
 			CosH = int16cos(Heading);
 			SinH = int16sin(Heading);
-			GPSEast += ((int32)(-DesiredPitch) * SinH)/SCALE_VEL;
-			GPSNorth += ((int32)(-DesiredPitch) * CosH)/SCALE_VEL;
+			GPSEast += ((int32)(-DesiredPitch) * SinH * 10L)/SCALE_VEL;
+			GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L)/SCALE_VEL;
 			
 			A = Make2Pi(Heading + HALFMILLIPI);
 			CosH = int16cos(A);
 			SinH = int16sin(A);
-			GPSEast += ((int32)DesiredRoll * SinH) / SCALE_VEL;
+			GPSEast += ((int32)DesiredRoll * SinH * 10L) / SCALE_VEL;
 			GPSEast += FAKE_EAST_WIND; // wind	
-			GPSNorth += ((int32)DesiredRoll * CosH) / SCALE_VEL;
+			GPSNorth += ((int32)DesiredRoll * CosH * 10L) / SCALE_VEL;
 			GPSNorth += FAKE_NORTH_WIND; // wind
 		
 			TxVal32((int32)NavSensitivity,0,' ');
@@ -268,11 +271,17 @@ void FakeFlight()
 			TxVal32((int32)EffNavSensitivity,0,' ');
 			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
 			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); TxVal32((int32)DesiredYaw, 0, ' ');
-			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
+			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); 
+TxVal32((int32)zzz, 0, ' ');
+TxVal32((int32)xxx, 0, ' ');
+			TxVal32((int32)EastD, 0, ' '); 
 			TxVal32((int32)EastCorr, 0, ' ');
 			TxString("| ");
 			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
-			TxVal32((int32)NorthCorr, 0, ' '); 
+			TxVal32((int32)NorthCorr, 0, ' ');
+			TxString("| ");
+			TxVal32((int32)F.Proximity, 0, ' ');
+			TxVal32((int32)F.CloseProximity, 0, ' ');
 			TxNextLine();
 		}
 	}
@@ -393,7 +402,7 @@ void DoPPMFailsafe(void)
 				LEDGreen_OFF;
 				LEDRed_ON;
 
-				SetDesiredAltitude(WP[0].A);
+				SetDesiredAltitude((int24)WP[0].A);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
@@ -426,8 +435,11 @@ void InitNavigation(void)
 
 	for (w = 0; w < NAV_MAX_WAYPOINTS; w++)
 	{
-		WP[w].N = WP[w].E = 0; 
-		WP[w].A = (int16)P[NavRTHAlt]*100L; // Centimetres
+		WP[w].N = WP[w].E = 0;
+
+		WP[w].E = ConvertMToGPS(WP[w].E);
+		WP[w].N = ConvertMToGPS(WP[w].N); 
+		WP[w].A = (int24)P[NavRTHAlt]*100L; // Centimetres
 	}
 
 	GPSNorthHold = GPSEastHold = 0;

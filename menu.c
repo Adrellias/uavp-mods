@@ -80,7 +80,7 @@ void ShowSetup(uint8 h)
 	if( h )
 	{
 		TxString(SerHello);
-		CurrentParamSet = 1;	
+		ParamSet = 1;	
 	}
 
 	TxString("\r\nUAVX V" Version " ready.\r\nAccelerometers ");
@@ -183,7 +183,7 @@ void ShowSetup(uint8 h)
 	TxNextLine();
 
 	TxString("Selected parameter set: ");
-	TxChar('0' + CurrentParamSet);	
+	TxChar('0' + ParamSet);	
 	TxNextLine();
 
 	TxString("\r\nRTH: \r\n");
@@ -274,7 +274,7 @@ void ProcessCommand(void)
 				break;
 			case 'L'  :	// List parameters
 				TxString("\r\nParameter list for set #");	// do not change (UAVPset!)
-				TxChar('0' + CurrentParamSet);
+				TxChar('0' + ParamSet);
 				ReadParametersEE();
 				for(p = 0; p < MAX_PARAMETERS; p++)
 				{
@@ -302,7 +302,7 @@ void ProcessCommand(void)
 					if ( p < MAX_PARAMETERS )
 					{
 						// Keep RAM based set up to date.
-						if( CurrentParamSet == 1 )
+						if( ParamSet == 1 )
 						{
 							WriteEE(p, d);
 							if ( ComParms[p] )

@@ -40,6 +40,7 @@ void ZeroStats(void)
 	Stats[MaxHDiluteS].i16 = 0;
 	Stats[MinBaroROCS].i16 = 10000L;
 	Stats[MaxBaroROCS].i16 = -10000L;
+	MaxGPSAltitudeS = MaxRelBaroAltitudeS = -10000L;
 
 } // ZeroStats
 
@@ -52,6 +53,9 @@ void ReadStatsEE(void)
 		Stats[s].low8 = ReadEE(STATS_ADDR_EE + s*2);
 		Stats[s].high8 = ReadEE(STATS_ADDR_EE + s*2 + 1);
 	}
+
+	MaxGPSAltitudeS = (int24)Stats[GPSAltitudeS].i16 * 10L;
+	MaxRelBaroAltitudeS = (int24)Stats[RelBaroAltitudeS].i16 * 10L;
 } // InitStats
 
 void WriteStatsEE()
@@ -59,7 +63,7 @@ void WriteStatsEE()
 	uint8 s;
 	int16 Temp;
 
-	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS /10);
+	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS/10);
 	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10);
 
 	for (s = 0 ; s < MaxStats ; s++ )
@@ -84,7 +88,6 @@ void ShowStats(void)
 			Scale = 1500;
 
 	TxString("\r\nFlight Statistics\r\n");
-	TxString("RCGlitch: \t");TxVal32((int32) Stats[RCGlitchesS].i16,0,' '); TxString("\r\n");
 
 	#ifdef STATS_INC_GYRO_ACC
 	TxString("\r\nInertial\r\n");
@@ -97,10 +100,11 @@ void ShowStats(void)
 	TxString("DUAcc:    \t"); TxVal32(((int32)Stats[DUAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine();
 	#endif // STATS_INC_GYRO_ACC
 
-	TxString("\r\nSensor Failures (Count)\r\n");
+	TxString("\r\nSensor/Rx Failures (Count)\r\n");
 	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS].i16, 0, 0); TxNextLine();
 	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS].i16, 0, 0); TxNextLine();
-	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine(); 
+	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine();
+	TxString("Rx:       \t");TxVal32((int32) Stats[RCGlitchesS].i16,0,' '); TxNextLine(); 
 
 	TxString("\r\nBaro\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 1, ' '); TxString("M (");

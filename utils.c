@@ -304,8 +304,8 @@ void SendUAVXState(void) // 925uS at 16MHz
 		SendESCByte(FailState);	
 	
 		SendESCWord(GPSVel);
-		SendESCWord(CurrentRelBaroAltitude);
-		SendESCWord(CurrentBaroROC); // added after BA
+		SendESCWord(RelBaroAltitude);
+		SendESCWord(BaroROC); // added after BA
 		SendESCWord(GPSHDilute);
 		SendESCWord(Heading);
 // zzz too slow?

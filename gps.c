@@ -26,7 +26,9 @@
 // Prototypes
 
 void UpdateField(void);
-int16 ConvertInt(uint8, uint8);
+int32 ConvertGPSToM(int32);
+int32 ConvertMToGPS(int32);
+int24 ConvertInt(uint8, uint8);
 int32 ConvertLatLonM(uint8, uint8);
 int32 ConvertUTime(uint8, uint8);
 void ParseGPRMCSentence(void);
@@ -67,10 +69,22 @@ boolean EmptyField;
 int16 ValidGPSSentences;
 #pragma udata
 
-int16 ConvertInt(uint8 lo, uint8 hi)
+int32 ConvertGPSToM(int32 c)
+{	// approximately 1.8553257183 cm per LSB at the Equator
+	// conversion max is 21Km
+	return ( ((int32)c * (int32)1855)/((int32)100000) );
+} // ConvertGPSToM
+
+int32 ConvertMToGPS(int32 c)
+{
+	// conversion max is 21Km 
+	return ( ((int32)c * (int32)100000)/((int32)1855) );
+} // ConvertMToGPS
+
+int24 ConvertInt(uint8 lo, uint8 hi)
 {
 	static uint8 i;
-	static int16 r;
+	static int24 r;
 
 	r = 0;
 	if ( !EmptyField )
@@ -169,7 +183,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = (ConvertInt(lo, hi-2) * 10 + ConvertInt(hi, hi)) * 10L; // Centimetres
+	GPSAltitude = ( ConvertInt(lo, hi-2) * 10L + ConvertInt(hi, hi) ) * 10L; // Centimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -208,7 +222,7 @@ void SetGPSOrigin(void)
 	
 	mS[LastGPS] = mS[Clock];
 		
-	Temp = GPSLatitude/60000L;
+	Temp = GPSLatitude/600000L; // to degrees * 10
 	Temp = Abs(Temp);
 	Temp = ConvertDDegToMPi(Temp);
 	GPSLongitudeCorrection = int16cos(Temp);
@@ -219,7 +233,7 @@ void SetGPSOrigin(void)
 void ParseGPSSentence(void)
 {
 	static int32 Temp;
-	static int24 EastDiff, NorthDiff;
+	static int24 GPSEastDiff, GPSNorthDiff;
 	static int16 GPSVelP;
 	static int24 GPSInterval;
 
@@ -268,19 +282,17 @@ void ParseGPSSentence(void)
 
 			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
-			Temp = SRS32( (GPSLatitude - GPSOriginLatitude) * 15199, 13); // 1.8553cm;
 			GPSNorth = GPSFilter(GPSNorth, Temp);
 
-			Temp = SRS32( (GPSLongitude - GPSOriginLongitude) * 15199, 13);
 			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
 			GPSEast = GPSFilter(GPSEast, Temp);
 
 			#ifdef GPS_INC_GROUNDSPEED
 			// nice to have but not essential ???
-			EastDiff = GPSEast - GPSEastP;
-			NorthDiff = GPSNorth - GPSNorthP;
+			GPSEastDiff = GPSEast - GPSEastP;
+			GPSNorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
-			GPSVel = int32sqrt(EastDiff*EastDiff + NorthDiff*NorthDiff);
+			GPSVel = int32sqrt(GPSEastDiff*GPSEastDiff + GPSNorthDiff*GPSNorthDiff);
 			GPSVel = ((int32)GPSVel * 1000L)/GPSInterval;
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
@@ -294,6 +306,7 @@ void ParseGPSSentence(void)
 			{
 				if ( GPSRelAltitude > MaxGPSAltitudeS )
 					MaxGPSAltitudeS = GPSRelAltitude;
+
 				if ( GPSVel > Stats[GPSVelS].i16 )
 					Stats[GPSVelS].i16 = GPSVel;
 
