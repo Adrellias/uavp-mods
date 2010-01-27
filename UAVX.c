@@ -93,7 +93,7 @@ int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 #pragma udata
 
-int24 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
 
 uint8 	NavState;
 int16 	NavSensitivity;
@@ -353,7 +353,9 @@ void main(void)
 					State = Landed;
 					break;
 				case Landed:
-					if ( DesiredThrottle >= IdleThrottle  )
+					if ( DesiredThrottle < IdleThrottle  )
+						SetGPSOrigin();
+					else
 					{
 						InitHeading();						
 						LEDCycles = 1;
@@ -361,6 +363,7 @@ void main(void)
 						Stats[RCGlitchesS].i16 = RCGlitches; // start of flight
 						State = InFlight;	
 					}
+						
 					break;
 				case Landing:
 					if ( DesiredThrottle > IdleThrottle )
@@ -369,10 +372,10 @@ void main(void)
 						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;
 						else
-						{
-							State = Landed;
+						{		
 							Stats[RCGlitchesS].i16 = RCGlitches - Stats[RCGlitchesS].i16;	
 							WriteStatsEE();
+							State = Landed;
 						}
 					break;
 				case InFlight:

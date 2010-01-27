@@ -114,17 +114,17 @@ void ShowStats(void)
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 
-	TxString("Vel:      \t");TxVal32((int32)Stats[GPSVelS].i16, 2, ' '); TxString("M/S\r\n"); 
+	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS].i16), 0, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
-	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)10000L)/Stats[GPSSentencesS].i16, 2, '%'); TxNextLine();
+	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)1000000L)/(int32)Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
 	if ( Stats[NavValidS].i16 )
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
 
-	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0)|(Stats[GPSInvalidS].i16 > 0))
+	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0))
 		LEDYellow_ON;
 } // ShowStats
 

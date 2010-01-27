@@ -15,10 +15,10 @@
 #define TEMPORARY_BARO_SCALE		85L		// BMP085
 
 // Accelerometers
-#define DAMP_HORIZ_LIMIT 		3L		// equivalent stick units - no larger than 5
+#define DAMP_HORIZ_LIMIT 			3L		// equivalent stick units - no larger than 5
 
-#define DAMP_VERT_LIMIT_LOW		-5L		// maximum throttle reduction
-#define DAMP_VERT_LIMIT_HIGH	20L		// maximum throttle increase
+#define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
+#define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
 
 // GPS
 // Moving average of coordinates - Kalman Estimator probably needed
@@ -26,18 +26,19 @@
 #define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
 
-#define NAV_MAX_ROLL_PITCH 		25L		// Rx stick units
-#define NAV_INT_LIMIT			8L		// Suggest similar to DAMP_HORIZ_LIMIT 
-#define NAV_DIFF_LIMIT			16L		// Less than NAV_MAX_ROLL_PITCH
+#define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
+#define NAV_INT_LIMIT				8L		// Approx 1/3 NAV_MAX_ROLL_PITCH
+#define NAV_DIFF_LIMIT				16L		// Approx double NAV_INT_LIMIT
+#define NAV_INT_WINDUP_LIMIT		64L		// ???
 
 //#define TELEMETRY						// include code for telemetry piggy-backed on GPS Rx
 #ifndef TELEMETRY
-	#define GPS_TELEMETRY 				// echo GPS data to downlink
+	#define GPS_TELEMETRY 					// echo GPS data to downlink
 #endif
 
 // Debugging
 
-//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
+//#define FAKE_FLIGHT						// For testing Nav on the GROUND!
 
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
@@ -570,7 +571,6 @@ extern void ParseGPRMCSentence(void);
 extern void ParseGPGGASentence(void);
 extern void SetGPSOrigin(void);
 extern void ParseGPSSentence(void);
-extern void ResetGPSOrigin(void);
 extern void InitGPS(void);
 extern void UpdateGPS(void);
 
@@ -787,7 +787,7 @@ extern int16	GPSVel;
 extern int24 	GPSRelAltitude, GPSAltitude;
 extern int16 	ValidGPSSentences;
 
-extern int24 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
 
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Navigating, Terminating };
 extern uint8 	NavState;

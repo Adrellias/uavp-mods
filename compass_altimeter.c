@@ -118,6 +118,7 @@ void GetHeading(void)
 // Barometer
 
 #define BaroFilter NoFilter
+#define BaroROCFilter MediumFilter
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
 #pragma udata baroq
@@ -250,7 +251,7 @@ void GetBaroAltitude(void)
 			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 5);
 
 			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
-			BaroROC = BaroFilter(BaroROCP, BaroROC);
+			BaroROC = BaroROCFilter(BaroROCP, BaroROC);
 	
 			RelBaroAltitudeP = RelBaroAltitude;
 			BaroROCP = BaroROC;

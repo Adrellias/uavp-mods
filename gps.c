@@ -35,7 +35,6 @@ void ParseGPRMCSentence(void);
 void ParseGPGGASentence(void);
 void SetGPSOrigin(void);
 void ParseGPSSentence(void);
-void ResetGPSOrigin(void);
 void InitGPS(void);
 void UpdateGPS(void);
 
@@ -215,19 +214,30 @@ void SetGPSOrigin(void)
 {
 	static int32 Temp;
 
-	GPSStartTime = GPSMissionTime;
-	GPSOriginLatitude = GPSLatitude;
-	GPSOriginLongitude = GPSLongitude;
-	GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
-	
-	mS[LastGPS] = mS[Clock];
+	if ( ( ValidGPSSentences == GPS_INITIAL_SENTENCES ) && F.GPSValid )
+	{
+		GPSStartTime = GPSMissionTime;
+		GPSOriginLatitude = GPSLatitude;
+		GPSOriginLongitude = GPSLongitude;
+		GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
 		
-	Temp = GPSLatitude/600000L; // to degrees * 10
-	Temp = Abs(Temp);
-	Temp = ConvertDDegToMPi(Temp);
-	GPSLongitudeCorrection = int16cos(Temp);
+		mS[LastGPS] = mS[Clock];
+			
+		Temp = GPSLatitude/600000L; // to degrees * 10
+		Temp = Abs(Temp);
+		Temp = ConvertDDegToMPi(Temp);
+		GPSLongitudeCorrection = int16cos(Temp);
 	
-	GPSOriginAltitude = GPSAltitude;
+		GPSOriginAltitude = GPSAltitude;
+
+		if ( !F.NavValid )
+		{
+			DoBeep100mSWithOutput(2,0);
+			Stats[NavValidS].i16 = true;
+			F.NavValid = true;
+		}
+		F.AcquireNewPosition = true;		
+	}
 } // SetGPSOrigin
 
 void ParseGPSSentence(void)
@@ -246,7 +256,7 @@ void ParseGPSSentence(void)
 
 	if ( F.GPSValid )
 	{
-	    if ( ValidGPSSentences <=  GPS_INITIAL_SENTENCES )
+	    if ( ValidGPSSentences <  GPS_INITIAL_SENTENCES )
 		{   // repetition to ensure GPGGA altitude is captured
 
 			if ( F.GPSTestActive )
@@ -258,20 +268,7 @@ void ParseGPSSentence(void)
 			F.GPSValid = false;
 
 			if ( GPSHDilute <= GPS_MIN_HDILUTE )
-			{
-				if ( ValidGPSSentences == GPS_INITIAL_SENTENCES )
-				{
-					if ( State == Landed ) // not flying!
-					{
-						SetGPSOrigin();
-						F.AcquireNewPosition = true;
-						F.NavValid = true;
-						Stats[NavValidS].i16 = true;
-						DoBeep100mSWithOutput(2,0);	
-					}
-				}
 				ValidGPSSentences++;
-			}		
 			else
 				ValidGPSSentences = 0;	
 		}
@@ -288,7 +285,7 @@ void ParseGPSSentence(void)
 			GPSEast = GPSFilter(GPSEast, Temp);
 
 			#ifdef GPS_INC_GROUNDSPEED
-			// nice to have but not essential ???
+			// nice to have but not essential 
 			GPSEastDiff = GPSEast - GPSEastP;
 			GPSNorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
@@ -326,13 +323,6 @@ void ParseGPSSentence(void)
 		}
 
 } // ParseGPSSentence
-
-void ResetGPSOrigin(void)
-{
-	if ( ValidGPSSentences >  GPS_INITIAL_SENTENCES )
-		SetGPSOrigin();	
-	// otherwise continue with first acquisition
-} // ResetGPSOrigin
 
 void InitGPS(void)
 { 

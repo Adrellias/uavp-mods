@@ -234,6 +234,7 @@ UAVX ********************************************************************
 22.07.2009
 - Complete rationalisation of compass yaw compensation.
   Parameters converted to vector.
+
 15.08.2009
 - Release of Experimental UAVX.
   

@@ -97,8 +97,6 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-//int32 zzz, xxx;
-
 void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 {	// F.GPSValid] must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
@@ -151,15 +149,13 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				EastP = Limit(EastDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
 			SumEastP += EastP;
-			SumEastP = Limit(SumEastP, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			EastI = SRS16(SumEastP * (int16)P[NavKi], 4);
+			SumEastP = Limit(SumEastP, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			EastI = SRS16(SumEastP * (int16)P[NavKi], 7);
+			EastI = Limit(EastI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
 			SumEastP = DecayX(SumEastP, 1);
 
-			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 7);
-//xxx = (int32)(EastDiffP - EastDiff);
-//zzz = EastDiff;
+			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 10);
 			EastDiffP = EastDiff;
-
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 
 			#ifdef NAV_SUPPRESS_P
@@ -179,11 +175,12 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				NorthP = Limit(NorthDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
 			SumNorthP += NorthP;
-			SumNorthP = Limit(SumNorthP, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 4);
+			SumNorthP = Limit(SumNorthP, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 7);
+			NorthI = Limit(NorthI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
 			SumNorthP = DecayX(SumNorthP, 1);
 
-			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 7); 
+			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 10); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 
@@ -255,8 +252,8 @@ void FakeFlight()
 			Delay100mSWithOutput(5);
 			CosH = int16cos(Heading);
 			SinH = int16sin(Heading);
-			GPSEast += ((int32)(-DesiredPitch) * SinH * 10L)/SCALE_VEL;
-			GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L)/SCALE_VEL;
+			GPSEast += ((int32)(-DesiredPitch) * SinH * 10L) / SCALE_VEL;
+			GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L) / SCALE_VEL;
 			
 			A = Make2Pi(Heading + HALFMILLIPI);
 			CosH = int16cos(A);
@@ -271,10 +268,7 @@ void FakeFlight()
 			TxVal32((int32)EffNavSensitivity,0,' ');
 			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
 			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); TxVal32((int32)DesiredYaw, 0, ' ');
-			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); 
-TxVal32((int32)zzz, 0, ' ');
-TxVal32((int32)xxx, 0, ' ');
-			TxVal32((int32)EastD, 0, ' '); 
+			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
 			TxVal32((int32)EastCorr, 0, ' ');
 			TxString("| ");
 			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
