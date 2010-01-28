@@ -1,9 +1,6 @@
 // EXPERIMENTAL
 
-// Jim - you may wish to try these?
-// #define NAV_SUPPRESS_P					// No control proportional to distance from target other than integral
-#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
-						
+#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
 //#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
 #define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
 
@@ -20,15 +17,11 @@
 #define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
 #define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
 
-// GPS
-// Moving average of coordinates - Kalman Estimator probably needed
-//#define GPSFilter NoFilter
-#define GPSFilter SoftFilter				
-//#define GPSFilter MediumFilter
 
+// Nav
 #define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
-#define NAV_INT_LIMIT				8L		// Approx 1/3 NAV_MAX_ROLL_PITCH
-#define NAV_DIFF_LIMIT				16L		// Approx double NAV_INT_LIMIT
+#define NAV_INT_LIMIT				12L		// Approx 1/3 NAV_MAX_ROLL_PITCH
+#define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L		// ???
 
 //#define TELEMETRY						// include code for telemetry piggy-backed on GPS Rx
@@ -43,28 +36,25 @@
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
-// =======================================================================
-// =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
-// =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
-// =======================================================================
+// ===================================================================================================
+// =                                   UAVX Quadrocopter Controller                                  =
+// =                              Copyright (c) 2008 by Prof. Greg Egan                              =
+// =                    Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                    =
+// =                        http://code.google.com/p/uavp-mods/ http://uavp.ch                       =
+// ===================================================================================================
 
 //    This is part of UAVX.
 
-//    UAVX is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/.
 
 #ifndef BATCHMODE
 
@@ -135,6 +125,10 @@
 
 #define ALT_LOW_THR_COMP			-7L			// Stick units
 #define ALT_HIGH_THR_COMP			30L
+
+#define ALT_INT_WINDUP_LIMIT				4L
+#define ALT_INT_LIMIT				4L
+#define ALT_DIFF_LIMIT				4L
 
 // the range within which throttle adjustment is proportional to altitude error
 #define GPS_ALT_BAND_CM				500L		// Cm.
@@ -807,7 +801,7 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
 extern int16	BaroROC, BaroROCP;
 extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
@@ -957,8 +951,9 @@ enum Params {
 	NavKd,				// 41
 	VertDampDecay,		// 42c
 	HorizDampDecay,		// 43c
-	BaroScale			// 44c		
-	// 45 - 64 unused currently
+	BaroScale,			// 44c
+	BaroCompKi			// 45c		
+	// 46 - 64 unused currently
 	};
 
 #define FlyXMode 			0

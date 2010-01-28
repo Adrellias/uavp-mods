@@ -39,7 +39,11 @@ void InitGPS(void);
 void UpdateGPS(void);
 
 // Defines
-#define GPSFilter SoftFilter				// probably need Kalman Estimator?
+// Moving average of coordinates - Kalman Estimator probably needed
+#define GPSFilter NoFilter
+//#define GPSFilter SoftFilter				
+//#define GPSFilter MediumFilter
+
 #define GPSVelocityFilter SoftFilterU		// done after position filter
 
 // Variables

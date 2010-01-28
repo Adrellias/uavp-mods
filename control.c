@@ -94,8 +94,8 @@ void ErectGyros(void)
 	
 	if( !F.AccelerationsValid )
 	{
-		RollAv += P[MiddleLR] * 2;
-		PitchAv += P[MiddleFB] * 2;
+		RollAv += (int16)P[MiddleLR] * 2;
+		PitchAv += (int16)P[MiddleFB] * 2;
 	}
 	
 	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
@@ -215,7 +215,7 @@ void InertialDamping(void)
 	// Empirical - acceleration changes at ~approx Sum/8 for small angles
 	DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
 	DUVel = Limit(DUVel , -16384, 16383); 			
-	Temp = SRS16(SRS16(DUVel, 4) * (int16) P[VertDampKp], 13);
+	Temp = SRS16(SRS16(DUVel, 4) * (int16) (int16)P[VertDampKp], 13);
 	if( Temp > DUComp ) 
 		DUComp++;
 	else
@@ -232,26 +232,26 @@ void InertialDamping(void)
 			// Left - Right
 			LRVel += LRAcc;
 			LRVel = Limit(LRVel , -16384, 16383);  	
-			Temp = SRS16(SRS16(LRVel, 4) * (int32)P[HorizDampKp], 13);
+			Temp = SRS16(SRS16(LRVel, 4) * (int32)(int16)P[HorizDampKp], 13);
 			if( Temp > LRComp ) 
 				LRComp++;
 			else
 				if( Temp < LRComp )
 					LRComp--;
 			LRComp = Limit(LRComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
-			LRVel = DecayX(LRVel, P[HorizDampDecay]);
+			LRVel = DecayX(LRVel, (int16)P[HorizDampDecay]);
 	
 			// Front - Back
 			FBVel += FBAcc;
 			FBVel = Limit(FBVel , -16384, 16383);  
-			Temp = SRS16(SRS16(FBVel, 4) * (int32)P[HorizDampKp], 13);
+			Temp = SRS16(SRS16(FBVel, 4) * (int32)(int16)P[HorizDampKp], 13);
 			if( Temp > FBComp ) 
 				FBComp++;
 			else
 				if( Temp < FBComp )
 					FBComp--;
 			FBComp = Limit(FBComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
-			FBVel = DecayX(FBVel, P[HorizDampDecay]);
+			FBVel = DecayX(FBVel, (int16)P[HorizDampDecay]);
 		}
 		else
 		{
@@ -308,7 +308,7 @@ void LimitYawSum(void)
 		{
 			HE = MakePi(DesiredHeading - Heading);
 			HE = Limit(HE, -(MILLIPI/6), MILLIPI/6); // 30 deg limit
-			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)P[CompassKp], 12);  
+			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)(int16)P[CompassKp], 12);  
 			YE -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
 		}
 	}
@@ -566,7 +566,7 @@ void LightsAndSirens(void)
 
 	F.LostModel = false;
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-	mS[UpdateTimeout] = mS[Clock] + P[TimeSlots];
+	mS[UpdateTimeout] = mS[Clock] + (int16)P[TimeSlots];
 	FailState = Waiting;
 
 } // LightsAndSirens

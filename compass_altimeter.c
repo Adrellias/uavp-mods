@@ -1,24 +1,22 @@
-// =======================================================================
-// =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
-// =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
-// =======================================================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
 //    This is part of UAVX.
 
-//    UAVX is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/.
 
 #include "uavx.h"
 
@@ -287,7 +285,7 @@ void InitBarometer(void)
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
 		BaroQ.B[s] = 0; 
 	RelBaroAltitude = RelBaroAltitudeP = BaroROC = BaroROCP = 0;
-	BaroSum = BaroSample = BaroComp = OriginBaroPressure = 0;
+	BaroSum = BaroSample = BaroComp = OriginBaroPressure = BaroDiffSum = 0;
 	BaroQ.Tail = 0;  BaroQ.Head = 1;
 
 	F.NewBaroValue = false;
@@ -338,7 +336,8 @@ BAerror:
 
 void BaroAltitudeHold()
 {
-	static int16 Corr, Temp;
+	static int16 NewBaroComp, LimBE, BaroP, BaroI, BaroD;
+	static int24 Temp;
 
 	if ( F.NewBaroValue && F.BaroAltitudeValid )
 	{
@@ -349,30 +348,21 @@ void BaroAltitudeHold()
 		#endif
 	
 		BE = RelBaroAltitude - DesiredRelBaroAltitude;
-		
-		Temp = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM); // prevent overflow MAX BaroCompKp = 32	
-		Corr = -SRS16(Temp * (int16)P[BaroCompKp], 7);						
-		if( Corr > BaroComp )
-			#ifdef BARO_DOUBLE_UP_COMP
-			BaroComp+=2;
-			#else
-			BaroComp++;
-			#endif // BARO_DOUBLE_UP_COMP
-		else
-			if( Corr < BaroComp )
-				BaroComp--;
-		BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+		LimBE = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM);
 
-		if ( RelBaroAltitude > BARO_DESCENT_TRANS_CM ) // limit descent rate
-		{
-			if ( BaroROC < BARO_MAX_DESCENT_CMPS ) 
-				BaroComp += 2;
-		}
+		NewBaroComp = -SRS16(LimBE * (int16)P[BaroCompKp], 7);
+		
+		if ( BE < BARO_ALT_BAND_CM )
+			BaroDiffSum = Decay1(BaroDiffSum);
 		else
-		{
-			if ( BaroROC < BARO_FINAL_DESCENT_CMPS )
-				BaroComp += 2;
-		}
+			if ( (( BE < BARO_DESCENT_TRANS_CM )&&( BaroROC < BARO_FINAL_DESCENT_CMPS )) ||
+				 (BaroROC < BARO_MAX_DESCENT_CMPS) )
+				BaroDiffSum++;
+		BaroDiffSum = Limit(BaroDiffSum, 0, 6); // trial number!  
+	
+		NewBaroComp += BaroDiffSum;
+		
+		BaroComp = SlewLimit(BaroComp, NewBaroComp, 2);
 		BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
 		#ifdef BARO_SCRATCHY_BEEPER

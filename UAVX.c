@@ -103,7 +103,7 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
 int16	BaroROC, BaroROCP;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
@@ -197,10 +197,10 @@ const rom int8 DefaultParams[] = {
 	-16,				// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	0,				// BaroScale		44c				
+	0,				// BaroScale		44c
+	0,				// BaroCompKi		45c				
 
-	0,				// 45 - 64 unused currently
-	0,
+	0,				// 46 - 64 unused currently
 	0,	
 	0,
 	0,

@@ -1,24 +1,22 @@
-// =======================================================================
-// =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
-// =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
-// =======================================================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
 //    This is part of UAVX.
 
-//    UAVX is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-//    UAVXP is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/.
 
 // Autonomous flight routines
 
@@ -38,7 +36,7 @@ void InitNavigation(void);
 // Variables
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
 int16 EffNavSensitivity;
-int16 EastP, SumEastP, EastI, EastCorr, NorthP, SumNorthP, NorthI, NorthCorr;
+int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
@@ -123,7 +121,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			NavPCorr = DecayX(NavPCorr, 2);
 			NavRCorr = DecayX(NavRCorr, 2);
 			NavYCorr = 0;
-			EastDiffP = NorthDiffP = SumEastP = SumNorthP = 0;
+			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
 		else
 		{	// direct solution make North and East coordinate errors zero
@@ -131,7 +129,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 			EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 
-			WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff); 
+			WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
 
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
@@ -142,25 +140,21 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			if ( Abs(EastDiff) < NavClosingRadius )
 			{
 				F.Proximity = true;
-				EastP = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
-				EastP = Limit(EastP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+				Temp = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
+				EastP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 			}
 			else
 				EastP = Limit(EastDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
-			SumEastP += EastP;
-			SumEastP = Limit(SumEastP, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-			EastI = SRS16(SumEastP * (int16)P[NavKi], 7);
+			EastDiffSum += Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			EastDiffSum = Limit(EastDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6);
 			EastI = Limit(EastI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			SumEastP = DecayX(SumEastP, 1);
+			EastDiffSum = DecayX(EastDiffSum, 1);
 
-			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 10);
+			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 8);
 			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-
-			#ifdef NAV_SUPPRESS_P
-			EastP = 0;
-			#endif // NAV_SUPPRESS_P
 	
 			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
 
@@ -168,25 +162,21 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			if ( Abs(NorthDiff) < NavClosingRadius )
 			{
 				F.Proximity = true;
-				NorthP = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
-				NorthP = Limit(NorthP, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+				Temp = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
+				NorthP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 			}
 			else
 				NorthP = Limit(NorthDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 
-			SumNorthP += NorthP;
-			SumNorthP = Limit(SumNorthP, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-			NorthI = SRS16(SumNorthP * (int16)P[NavKi], 7);
+			NorthDiffSum += Limit(NorthDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			NorthDiffSum = Limit(NorthDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			NorthI = SRS16((int32)NorthDiffSum * (int16)P[NavKi], 6);
 			NorthI = Limit(NorthI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			SumNorthP = DecayX(SumNorthP, 1);
+			NorthDiffSum = DecayX(NorthDiffSum, 1);
 
-			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 10); 
+			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 8); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-
-			#ifdef NAV_SUPPRESS_P
-			NorthP = 0;
-			#endif // NAV_SUPPRESS_P
 
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 			
@@ -224,7 +214,7 @@ void FakeFlight()
 
 	static int16 CosH, SinH, A;
 
-	#define FAKE_NORTH_WIND 	0L
+	#define FAKE_NORTH_WIND 	20L
 	#define FAKE_EAST_WIND 		0L
     #define SCALE_VEL			256L
 
@@ -232,21 +222,23 @@ void FakeFlight()
 	{
 		Heading = MILLIPI;
 	
-		GPSEast = 10000L; GPSNorth = 10000L;
+		GPSEast = 5000L; GPSNorth = 5000L;
 		InitNavigation();
 
-		TxString("\r\n Sens MRP Eff East North Head DRoll DPitch DYaw ");
-		TxString("EP EI zzz xxx ED EC | NP NI ND NC | P CP\r\n");
+		TxString(" Sens MRP Eff East North Head DRoll DPitch DYaw ");
+		TxString("EP EI ES ED EC | NP NI NS ND NC | RC PC | P CP\r\n");
 	
 		while ( Armed )
 		{
 			UpdateControls();
 
-		//	DesiredRoll = DesiredPitch = 0;
+			DesiredRoll = DesiredPitch = DesiredYaw = 0;
 			Heading += DesiredYaw / 5;
 
+			F.GPSValid = F.NavValid = F.CompassValid = true;
 			F.NavComputed = false;
 			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F.NewCommands )
+{
 				Navigate(0,0);
 
 			Delay100mSWithOutput(5);
@@ -268,15 +260,19 @@ void FakeFlight()
 			TxVal32((int32)EffNavSensitivity,0,' ');
 			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
 			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); TxVal32((int32)DesiredYaw, 0, ' ');
-			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
+			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastDiffSum, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
 			TxVal32((int32)EastCorr, 0, ' ');
 			TxString("| ");
-			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
+			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthDiffSum, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
 			TxVal32((int32)NorthCorr, 0, ' ');
 			TxString("| ");
+			TxVal32((int32)NavRCorr, 0, ' ');
+			TxVal32((int32)NavPCorr, 0, ' ');
+			TxString("| ");
 			TxVal32((int32)F.Proximity, 0, ' ');
-			TxVal32((int32)F.CloseProximity, 0, ' ');
+			TxVal32((int32)F.CloseProximity, 0, ' ');	
 			TxNextLine();
+}
 		}
 	}
 	#endif // FAKE_FLIGHT
@@ -433,7 +429,7 @@ void InitNavigation(void)
 
 		WP[w].E = ConvertMToGPS(WP[w].E);
 		WP[w].N = ConvertMToGPS(WP[w].N); 
-		WP[w].A = (int24)P[NavRTHAlt]*100L; // Centimetres
+		WP[w].A = (int24)(int16)P[NavRTHAlt]*100L; // Centimetres
 	}
 
 	GPSNorthHold = GPSEastHold = 0;
