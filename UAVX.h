@@ -20,15 +20,10 @@
 
 // Nav
 #define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
-#define NAV_INT_LIMIT				12L		// Approx 1/3 NAV_MAX_ROLL_PITCH
 #define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L		// ???
 
-//#define TELEMETRY						// include code for telemetry piggy-backed on GPS Rx
-#ifndef TELEMETRY
-	#define GPS_TELEMETRY 					// echo GPS data to downlink
-#endif
-
+#define DEFAULT_TELEMETRY 			0		// 0 None, 1 GPS, 2 Data
 // Debugging
 
 //#define FAKE_FLIGHT						// For testing Nav on the GROUND!
@@ -88,7 +83,6 @@
 #define THROTTLE_UPDATE_MS		3000L		// mS. constant throttle time for hover
 
 #define NAV_ACTIVE_DELAY_MS		10000L		// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_TIMEOUT_MS		30000L		// mS. Descend if no control input when at Origin
 #define NAV_RTH_LAND_TIMEOUT_MS	30000L		// mS. Shutdown throttle if descent lasts too long
 
 #define GPS_TIMEOUT_MS			2000L		// mS.
@@ -117,9 +111,7 @@
 
 // Throttle reduction/increase limits for Baro Alt Comp
 
-#define BARO_MAX_ROC_CMPS			500L 		// Cm./Sec notional for descent calculations
 #define BARO_MAX_DESCENT_CMPS		-50L 		// Cm./Sec
-#define BARO_FINAL_DESCENT_CMPS		-20L 		// Cm./Sec
 #define BARO_DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
 #define BARO_LAND_CM				300L		// Cm. deemed to have landed when below this height
 
@@ -772,6 +764,7 @@ extern int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 extern i16u 	Compass;
 
 // GPS
+extern int32 	GPSLatitude, GPSLongitude;
 extern int16 	GPSLongitudeCorrection;
 extern uint8 	GPSNoOfSats;
 extern uint8 	GPSFix;
@@ -781,12 +774,13 @@ extern int16	GPSVel;
 extern int24 	GPSRelAltitude, GPSAltitude;
 extern int16 	ValidGPSSentences;
 
-extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
 
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Navigating, Terminating };
 extern uint8 	NavState;
 extern int16 	NavSensitivity;
 extern int16 	AltSum, AE;
+extern int32	NavRTHTimeout;
 
 // Waypoints
 
@@ -795,6 +789,7 @@ typedef  struct {
 } WayPoint;
 
 extern WayPoint WP[];
+extern uint8 CurrWP;
 
 // Failsafes
 extern int16	ThrLow, ThrHigh, ThrNeutral;
@@ -802,7 +797,7 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
 extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
-extern int16	BaroROC, BaroROCP;
+extern int16	BaroROC, BaroROCP, BaroDescentCmpS;
 extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
 extern int16	BaroComp, BaroTempComp;
@@ -813,8 +808,9 @@ extern int16	Motor[NoOfMotors];
 extern boolean	ESCI2CFail[NoOfMotors];
 extern int16	Rl,Pl,Yl;		// PID output values
 
-#define FLAG_BYTES 6
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, DataTelemetry };
 
+#define FLAG_BYTES 6
 typedef union {
 	uint8 AllFlags[FLAG_BYTES];
 	struct { // Order of these flags subject to change
@@ -934,7 +930,7 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroCompKd,			// 28c 
+	BaroCompKi,			// 28c 
 	NavRadius,			// 29
 	NavKi,				// 30
 	
@@ -952,8 +948,11 @@ enum Params {
 	VertDampDecay,		// 42c
 	HorizDampDecay,		// 43c
 	BaroScale,			// 44c
-	BaroCompKi			// 45c		
-	// 46 - 64 unused currently
+	TelemetryType,		// 45c
+	MaxDescentRateDmpS,	// 46
+	DescentDelayS,		// 47c
+	NavIntLimit			// 48		
+	// 47 - 64 unused currently
 	};
 
 #define FlyXMode 			0
@@ -975,8 +974,7 @@ enum Params {
 
 // bit 6 is throttle channel for 3.15
 
-#define UseTelemetry 		7
-#define UseTelemetryMask	0x80
+// bit 7 unusable in UAVPSet
 
 #define STATS_ADDR_EE	 	( MAX_PARAMETERS *2 )
 extern int8 P[];

@@ -87,11 +87,10 @@ void ReadParametersEE(void)
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
-		F.UsingTelemetry = ((P[ConfigBits] & UseTelemetryMask) != 0);
+		NavRTHTimeoutmS = (int32)P[DescentDelayS]*1000L;
+		BaroDescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
 		BatteryVolts = (int16)P[LowVoltThres];
-
-		P[BaroScale] = TEMPORARY_BARO_SCALE; // zzz TEMP until new UAVPSet
 		
 		ParametersChanged = false;
 	}

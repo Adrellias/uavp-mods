@@ -359,7 +359,8 @@ void UpdateGPS(void)
 			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
-		SendUAVXState();	// Tx overlapped with next GPS packet Rx
+
+		if ( !F.GPSTestActive )			SendUAVXState();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

@@ -229,8 +229,6 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 		TxChar(Separator);
 } // TxVal32
 
-#ifdef TELEMETRY
-
 void SendByte(uint8 ch)
 {
 	uint8 NewTail;
@@ -262,4 +260,3 @@ void SendESCWord(int16 v)
 	SendESCByte(v);
 } // SendWord
 
-#endif // TELEMETRY

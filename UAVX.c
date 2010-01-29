@@ -93,18 +93,19 @@ int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 #pragma udata
 
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset;
+int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
 
 uint8 	NavState;
 int16 	NavSensitivity;
 int16 	AltSum, AE;
+int32	NavRTHTimeout;
 
 int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
 int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
-int16	BaroROC, BaroROCP;
+int16	BaroROC, BaroROCP, BaroDescentCmpS;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
 int16	BaroComp, BaroTempComp;
@@ -140,11 +141,11 @@ int8 P[MAX_PARAMETERS];
 
 // mask giving common variables across parameter sets
 const rom int8	ComParms[]={
-	0,0,0,1,0,0,0,0,1,0,
+	0,0,0,1,0,0,0,0,0,0,
 	0,0,0,0,0,1,1,1,0,1,
-	1,1,1,1,1,0,0,1,0,0,
-	1,1,0,1,1,1,1,0,0,1,
-	0,1,1,1,0,0,0,0,0,0,
+	1,1,1,1,1,0,0,0,0,0,
+	0,0,0,1,1,1,1,0,0,1,
+	0,1,1,1,1,0,1,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
@@ -158,7 +159,7 @@ const rom int8 DefaultParams[] = {
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	4, 				// BaroCompKp,		09c
+	4, 				// BaroCompKp,		09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -179,12 +180,12 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroCompKd,		28c
-	30, 			// NavRadius,		29
+	10, 			// BaroCompKi,		28
+	90, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
-	15, 			// NavAltKp,		31c
-	15, 			// NavAltKi,		32c
+	15, 			// NavAltKp,		31
+	15, 			// NavAltKi,		32
 	20, 			// NavRTHAlt,		33
 	0, 				// NavMagVar,		34c
 	ADXRS300, 		// GyroType,		35c
@@ -194,17 +195,17 @@ const rom int8 DefaultParams[] = {
 	30,				// PercentNavSens6Ch	39
 	0,				// CamRollTrim,		40c
 
-	-16,				// NavKd			41
+	-16,			// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	0,				// BaroScale		44c
-	0,				// BaroCompKi		45c				
+	85,				// BaroScale		44c
+	0,				// TelemetryType	45c
+	3,				// MaxDescentRateDmpS 	46
+	30,				// DescentDelayS	47c
+	12,				// NavIntLimit		48			
 
-	0,				// 46 - 64 unused currently
+	0,				// 49 - 64 unused currently
 	0,	
-	0,
-	0,
-	0,
 
 	0,
 	0,

@@ -253,9 +253,10 @@ void DumpTrace(void)
 void SendUAVXState(void) // 925uS at 16MHz
 {
 	uint8 b;
+	i32u Temp;
+
 	// packet must be shorter than GPS shortest valid packet ($GPGGA)
 	// which is ~64 characters - so limit to 48?.
-	#ifdef TELEMETRY
 
 	for (b=10;b;b--) 
 		SendByte(0x55);
@@ -269,7 +270,7 @@ void SendUAVXState(void) // 925uS at 16MHz
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 		SendESCByte(UAVXFlightPacketTag);
-		SendESCByte(30 + FLAG_BYTES);
+		SendESCByte(32 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			SendESCByte(F.AllFlags[b]); 
 		
@@ -298,22 +299,36 @@ void SendUAVXState(void) // 925uS at 16MHz
 	
 	case UAVXNavPacketTag:
 		SendESCByte(UAVXNavPacketTag);
-		SendESCByte(22);
+		SendESCByte(30);
 	
 		SendESCByte(NavState);
-		SendESCByte(FailState);	
-	
+		SendESCByte(FailState);
+		SendESCByte(GPSNoOfSats);
+		SendESCByte(GPSFix);
+
+		SendESCByte(CurrWP);	
+		SendESCByte(0); // padding
+
 		SendESCWord(GPSVel);
-		SendESCWord(RelBaroAltitude);
-		SendESCWord(BaroROC); // added after BA
+		Temp.i32 = RelBaroAltitude;
+		SendESCWord(Temp.low16);
+		SendESCWord(Temp.high16);
+
+		SendESCWord(BaroROC); // cm/S 
 		SendESCWord(GPSHDilute);
 		SendESCWord(Heading);
-// zzz too slow?
-		SendESCWord(GPSRelAltitude/100); // Metres
-		SendESCWord(GPSEast/100);	
-		SendESCWord(GPSNorth/100);
-		SendESCWord(GPSEastHold/100);
-		SendESCWord(GPSNorthHold/100);
+
+		Temp.i32 = GPSRelAltitude; // cm
+		SendESCWord(Temp.low16);
+		SendESCWord(Temp.high16);
+
+		Temp.i32 = GPSLongitude; // 5 decimal minute units
+		SendESCWord(Temp.low16);
+		SendESCWord(Temp.high16);
+	
+		Temp.i32 = GPSLatitude;
+		SendESCWord(Temp.low16);
+		SendESCWord(Temp.high16);
 	
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
@@ -330,7 +345,6 @@ void SendUAVXState(void) // 925uS at 16MHz
 	SendByte(CR);
 	SendByte(LF);  
 	
-	#endif // TELEMETRY
 } // SendUAVXState
 
 

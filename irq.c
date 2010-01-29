@@ -256,23 +256,20 @@ void high_isr_handler(void)
 				break;	
 		    } 
 		}
-		if ( Armed && !F.GPSTestActive  )
-			#ifdef TELEMETRY
-			if ( F. UsingTelemetry )
-			{	
-				// piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
+		if ( Armed && !F.GPSTestActive  ) // piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
+			switch ( P[TelemetryType] ) {
+			case DataTelemetry:	
 				if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
 				{
 					TXREG = TxQ.B[TxQ.Head];
 					TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
 				}
-			}
-			else
-			#endif // TELEMETRY
-			{ 
-				#ifdef GPS_TELEMETRY
+				break;
+			case GPSTelemetry:
 				TXREG = gps_ch;
-				#endif // GPS_TELEMETRY
+				break;
+			case NoTelemetry:
+				break;
 			}
 	
 		PIR1bits.RCIF = false;

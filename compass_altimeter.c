@@ -351,14 +351,15 @@ void BaroAltitudeHold()
 		LimBE = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM);
 
 		NewBaroComp = -SRS16(LimBE * (int16)P[BaroCompKp], 7);
+
+		NewBaroComp = Limit(NewBaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 		
 		if ( BE < BARO_ALT_BAND_CM )
 			BaroDiffSum = Decay1(BaroDiffSum);
 		else
-			if ( (( BE < BARO_DESCENT_TRANS_CM )&&( BaroROC < BARO_FINAL_DESCENT_CMPS )) ||
-				 (BaroROC < BARO_MAX_DESCENT_CMPS) )
+			if ( BaroROC < BaroDescentCmpS )
 				BaroDiffSum++;
-		BaroDiffSum = Limit(BaroDiffSum, 0, 6); // trial number!  
+		BaroDiffSum = Limit(BaroDiffSum, 0, -(ALT_LOW_THR_COMP));  
 	
 		NewBaroComp += BaroDiffSum;
 		

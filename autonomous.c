@@ -40,6 +40,7 @@ int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCo
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
+uint8 CurrWP;
 
 void SetDesiredAltitude(int24 DesiredAltitude) // Centimetres
 {
@@ -142,15 +143,19 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				F.Proximity = true;
 				Temp = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				EastP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+
+				EastDiffSum += EastDiff;
+				EastDiffSum = Limit(EastDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
 			else
+			{
 				EastP = Limit(EastDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+				EastDiffSum = Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			}
 
-			EastDiffSum += Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-			EastDiffSum = Limit(EastDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6);
-			EastI = Limit(EastI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			EastDiffSum = DecayX(EastDiffSum, 1);
+			EastI = Limit(EastI, (int16)(-P[NavIntLimit]), P[NavIntLimit]);
+			EastDiffSum = Decay1(EastDiffSum);
 
 			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 8);
 			EastDiffP = EastDiff;
@@ -164,15 +169,19 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				F.Proximity = true;
 				Temp = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				NorthP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+
+				NorthDiffSum += NorthDiff;
+				NorthDiffSum = Limit(NorthDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
 			else
+			{
 				NorthP = Limit(NorthDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+				NorthDiffSum = Limit(NorthDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
+			}
 
-			NorthDiffSum += Limit(NorthDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-			NorthDiffSum = Limit(NorthDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			NorthI = SRS16((int32)NorthDiffSum * (int16)P[NavKi], 6);
-			NorthI = Limit(NorthI, -NAV_INT_LIMIT, NAV_INT_LIMIT);
-			NorthDiffSum = DecayX(NorthDiffSum, 1);
+			NorthI = Limit(NorthI, (int16)(-P[NavIntLimit]), P[NavIntLimit]);
+			NorthDiffSum = Decay1(NorthDiffSum);
 
 			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 8); 
 			NorthDiffP = NorthDiff;
@@ -314,7 +323,7 @@ void DoNavigation(void)
 				if ( F.Proximity )
 					if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT )
 					{
-						mS[RTHTimeout] = mS[Clock] + NAV_RTH_TIMEOUT_MS;					
+						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;					
 						NavState = AtHome;
 					}
 			}
@@ -431,6 +440,8 @@ void InitNavigation(void)
 		WP[w].N = ConvertMToGPS(WP[w].N); 
 		WP[w].A = (int24)(int16)P[NavRTHAlt]*100L; // Centimetres
 	}
+
+	CurrWP = 0;
 
 	GPSNorthHold = GPSEastHold = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
