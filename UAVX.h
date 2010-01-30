@@ -1,7 +1,10 @@
 // EXPERIMENTAL
 
 #define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
-//#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
+
+#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
+// unfortunately there seems to be a leak which cause the roll/pitch to increase without the decay.
+
 #define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
 
 // Baro
@@ -31,12 +34,12 @@
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
-// ===================================================================================================
-// =                                   UAVX Quadrocopter Controller                                  =
-// =                              Copyright (c) 2008 by Prof. Greg Egan                              =
-// =                    Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                    =
-// =                        http://code.google.com/p/uavp-mods/ http://uavp.ch                       =
-// ===================================================================================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
 //    This is part of UAVX.
 
@@ -49,7 +52,7 @@
 //    General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
-//    If not, see http://www.gnu.org/licenses/.
+//    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
 
@@ -951,8 +954,10 @@ enum Params {
 	TelemetryType,		// 45c
 	MaxDescentRateDmpS,	// 46
 	DescentDelayS,		// 47c
-	NavIntLimit			// 48		
-	// 47 - 64 unused currently
+	NavIntLimit,		// 48
+	BaroIntLimit,		// 49
+	GravComp			// 50		
+	// 51 - 64 unused currently
 	};
 
 #define FlyXMode 			0

@@ -1,24 +1,22 @@
-// =======================================================================
-// =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
-// =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
-// =======================================================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
 //    This is part of UAVX.
 
-//    UAVX is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/
 
 #include "uavx.h"
 
@@ -108,21 +106,22 @@ void ErectGyros(void)
 	Stats[YawRateS].i16 = Stats[GyroMidYawS].i16 = GyroMidYaw;
 	#endif // STATS_INC_GYRO_ACC
 
-	RollSum = PitchSum = YawSum = 0;
-	REp = PEp = YEp = 0;
+	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
 	F.GyrosErected = true;
 
 } // ErectGyros
 
+#define AccFilter NoFilter
+
 void GyroCompensation(void)
 {
-	static int16 GravComp, Temp;
+	static int16 Temp;
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
 	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
 
-	#define GYRO_COMP_STEP 2 // *1 zzz
+	#define GYRO_COMP_STEP 1
 
 	if( F.AccelerationsValid )
 	{
@@ -142,9 +141,9 @@ void GyroCompensation(void)
 		NewDUAcc -= 1024L;	// subtract 1g - not corrrect for other than level
 						// ??? could check for large negative Acc => upside down?
 
-		LRAcc = HardFilter(LRAcc, NewLRAcc);
-		DUAcc = HardFilter(DUAcc, NewDUAcc);
-		FBAcc = HardFilter(FBAcc, NewFBAcc);
+		LRAcc = AccFilter((int32)LRAcc, (int32)NewLRAcc);
+		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
+		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);
 			
 		#ifdef STATS_INC_GYRO_ACC
 		if ( State == InFlight )
@@ -155,15 +154,17 @@ void GyroCompensation(void)
 		}
 		#endif // STATS_INC_GYRO_ACC
 
+		/*
 		if ( P[GyroType] == IDG300 )
 			GravComp = 8; 		// -1/6 of reference
 		else
-			GravComp = 11; 		// 9..11   
+			GravComp = 11; 		// 9..11 
+		*/  
 		
 		// Roll
 
 		// static compensation due to Gravity
-		LRGrav = -SRS16(RollSum * GravComp, 5); 
+		LRGrav = -SRS16(RollSum * (int16)P[GravComp], 5); 
 	
 		// dynamic correction of moved mass
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_ROLL
@@ -179,7 +180,7 @@ void GyroCompensation(void)
 		// Pitch
 
 		// static compensation due to Gravity
-		FBGrav = -SRS16(PitchSum * GravComp, 5); 
+		FBGrav = -SRS16(PitchSum * (int16)P[GravComp], 5); 
 	
 		// dynamic correction of moved mass		
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_PITCH
@@ -215,7 +216,7 @@ void InertialDamping(void)
 	// Empirical - acceleration changes at ~approx Sum/8 for small angles
 	DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
 	DUVel = Limit(DUVel , -16384, 16383); 			
-	Temp = SRS16(SRS16(DUVel, 4) * (int16) (int16)P[VertDampKp], 13);
+	Temp = SRS32(SRS16(DUVel, 4) * (int32)P[VertDampKp], 13);
 	if( Temp > DUComp ) 
 		DUComp++;
 	else
@@ -232,7 +233,7 @@ void InertialDamping(void)
 			// Left - Right
 			LRVel += LRAcc;
 			LRVel = Limit(LRVel , -16384, 16383);  	
-			Temp = SRS16(SRS16(LRVel, 4) * (int32)(int16)P[HorizDampKp], 13);
+			Temp = SRS32(SRS16(LRVel, 4) * (int32)P[HorizDampKp], 13);
 			if( Temp > LRComp ) 
 				LRComp++;
 			else
@@ -244,7 +245,7 @@ void InertialDamping(void)
 			// Front - Back
 			FBVel += FBAcc;
 			FBVel = Limit(FBVel , -16384, 16383);  
-			Temp = SRS16(SRS16(FBVel, 4) * (int32)(int16)P[HorizDampKp], 13);
+			Temp = SRS32(SRS16(FBVel, 4) * (int32)P[HorizDampKp], 13);
 			if( Temp > FBComp ) 
 				FBComp++;
 			else
@@ -308,7 +309,7 @@ void LimitYawSum(void)
 		{
 			HE = MakePi(DesiredHeading - Heading);
 			HE = Limit(HE, -(MILLIPI/6), MILLIPI/6); // 30 deg limit
-			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)(int16)P[CompassKp], 12);  
+			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)P[CompassKp], 12);  
 			YE -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
 		}
 	}
@@ -392,7 +393,8 @@ void DoControl(void)
 
 	// Yaw
 
-	YE = YawRate;	YE += DesiredYaw;
+	YE = YawRate;	
+	YE += DesiredYaw;
 	LimitYawSum();
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
@@ -520,7 +522,7 @@ void LightsAndSirens(void)
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF; 
-	Timeout = mS[Clock] + 500; 					// mS.
+	Timeout = mS[Clock] + 500L; 					// mS.
 	do
 	{
 		ProcessCommand();
@@ -566,7 +568,7 @@ void LightsAndSirens(void)
 
 	F.LostModel = false;
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-	mS[UpdateTimeout] = mS[Clock] + (int16)P[TimeSlots];
+	mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
 	FailState = Waiting;
 
 } // LightsAndSirens
@@ -574,7 +576,7 @@ void LightsAndSirens(void)
 void InitControl(void)
 {
 	RollRate = PitchRate = 0;
-	RollTrim = PitchTrim = YawTrim = 0;	
+	RollTrim = PitchTrim = YawTrim = 0;
 	BaroComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
 	AE = AltSum = 0;

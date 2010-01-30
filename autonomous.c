@@ -154,7 +154,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			}
 
 			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6);
-			EastI = Limit(EastI, (int16)(-P[NavIntLimit]), P[NavIntLimit]);
+			EastI = Limit(EastI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
 			EastDiffSum = Decay1(EastDiffSum);
 
 			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 8);
@@ -180,7 +180,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			}
 
 			NorthI = SRS16((int32)NorthDiffSum * (int16)P[NavKi], 6);
-			NorthI = Limit(NorthI, (int16)(-P[NavIntLimit]), P[NavIntLimit]);
+			NorthI = Limit(NorthI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
 			NorthDiffSum = Decay1(NorthDiffSum);
 
 			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 8); 
@@ -339,7 +339,7 @@ void DoNavigation(void)
 					#ifdef NAV_ACQUIRE_BEEPER
 					if ( !F.BeeperInUse )
 					{
-						mS[BeeperTimeout] = mS[Clock] + 500;
+						mS[BeeperTimeout] = mS[Clock] + 500L;
 						Beeper_ON;				
 					} 
 					#endif // NAV_ACQUIRE_BEEPER
@@ -438,7 +438,7 @@ void InitNavigation(void)
 
 		WP[w].E = ConvertMToGPS(WP[w].E);
 		WP[w].N = ConvertMToGPS(WP[w].N); 
-		WP[w].A = (int24)(int16)P[NavRTHAlt]*100L; // Centimetres
+		WP[w].A = (int24)P[NavRTHAlt]*100L; // Centimetres
 	}
 
 	CurrWP = 0;

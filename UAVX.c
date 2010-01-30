@@ -1,24 +1,22 @@
-// =======================================================================
-// =                     UAVX Quadrocopter Controller                    =
-// =                 Copyright (c) 2008 by Prof. Greg Egan               =
-// =       Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer     =
-// =           http://code.google.com/p/uavp-mods/ http://uavp.ch        =
-// =======================================================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
 //    This is part of UAVX.
 
-//    UAVX is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/
 
 //#ifdef CLOCK_40MHZ
 //#pragma	config OSC=HSPLL, WDT=OFF, PWRT=ON, MCLRE=OFF, LVP=OFF, PBADEN=OFF, CCP2MX = PORTC
@@ -145,7 +143,7 @@ const rom int8	ComParms[]={
 	0,0,0,0,0,1,1,1,0,1,
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
-	0,1,1,1,1,0,1,0,0,0,
+	0,1,1,1,1,0,1,0,0,1,
 	0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
@@ -202,12 +200,12 @@ const rom int8 DefaultParams[] = {
 	0,				// TelemetryType	45c
 	3,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
-	12,				// NavIntLimit		48			
+	12,				// NavIntLimit		48
+	3,				// BaroIntLimit		49
+	11,				// GravComp			50c			
 
-	0,				// 49 - 64 unused currently
-	0,	
+	0,				// 51 - 64 unused currently	
 
-	0,
 	0,
 	0,
 	0,
@@ -404,7 +402,7 @@ void main(void)
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
-			mS[UpdateTimeout] = mS[Clock] + P[TimeSlots];
+			mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
 
 			GetGyroValues();				// Second gyro read
 			DoControl();
