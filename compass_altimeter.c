@@ -285,7 +285,7 @@ void InitBarometer(void)
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
 		BaroQ.B[s] = 0; 
 	RelBaroAltitude = RelBaroAltitudeP = BaroROC = BaroROCP = 0;
-	BaroSum = BaroSample = BaroComp = OriginBaroPressure = BaroDiffSum = 0;
+	BaroSum = BaroSample = BaroComp = OriginBaroPressure = BaroDiffSum = BaroDSum = 0;
 	BaroQ.Tail = 0;  BaroQ.Head = 1;
 
 	F.NewBaroValue = false;
@@ -347,24 +347,28 @@ void BaroAltitudeHold()
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	
-		BE = RelBaroAltitude - DesiredRelBaroAltitude;
+		BE = DesiredRelBaroAltitude - RelBaroAltitude;
 		LimBE = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM);
 
-		NewBaroComp = -SRS16(LimBE * (int16)P[BaroCompKp], 7);
+		BaroP = SRS16(LimBE * (int16)P[BaroKp], 7);
+		BaroP = Limit(BaroP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		NewBaroComp = Limit(NewBaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
-		
-		if ( BE < BARO_ALT_BAND_CM )
-			BaroDiffSum = Decay1(BaroDiffSum);
-		else
-			if ( BaroROC < BaroDescentCmpS )
-				BaroDiffSum++;
-		BaroDiffSum = Limit(BaroDiffSum, 0, -(ALT_LOW_THR_COMP));  
+		BaroDiffSum += LimBE;
+		BaroDiffSum = Limit(BaroDiffSum, -BARO_INT_WINDUP_LIMIT, BARO_INT_WINDUP_LIMIT);
+		BaroI = SRS16(BaroDiffSum * (int16)P[BaroKi], 4);
+		BaroI = Limit(BaroDiffSum, -(int16)P[BaroIntLimit], (int16)P[BaroIntLimit]);
+		BaroDiffSum = Decay1(BaroDiffSum);
+		 
+		if ( BaroROC < BaroDescentCmpS )
+		{
+			BaroDSum+=2;
+			BaroDSum = Limit(BaroDSum, 0, ALT_HIGH_THR_COMP); 
+		}
+		BaroDSum = Decay1(BaroDSum);
 	
-		NewBaroComp += BaroDiffSum;
-		
+		NewBaroComp = BaroP + BaroI + BaroDSum;
+		NewBaroComp = Limit(NewBaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
 		BaroComp = SlewLimit(BaroComp, NewBaroComp, 2);
-		BaroComp = Limit(BaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
 		#ifdef BARO_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;

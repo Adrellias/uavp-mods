@@ -61,8 +61,8 @@ void WriteStatsEE()
 	uint8 s;
 	int16 Temp;
 
-	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS/10);
-	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10);
+	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS/10L);
+	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10L);
 
 	for (s = 0 ; s < MaxStats ; s++ )
 	{
@@ -104,7 +104,7 @@ void ShowStats(void)
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine();
 	TxString("Rx:       \t");TxVal32((int32) Stats[RCGlitchesS].i16,0,' '); TxNextLine(); 
 
-	TxString("\r\nBaro\r\n");
+	TxString("\r\nBaro\r\n"); // can only display to 3276M
 	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 1, ' '); TxString("M (");
 	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
@@ -122,8 +122,6 @@ void ShowStats(void)
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
 
-	if ( (Stats[AccFailS].i16 > 0)|(Stats[CompassFailS].i16 > 0)|(Stats[BaroFailS].i16 > 0))
-		LEDYellow_ON;
 } // ShowStats
 
 

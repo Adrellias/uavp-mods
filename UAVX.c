@@ -102,8 +102,8 @@ int16	ThrLow, ThrHigh, ThrNeutral;
 
 // Variables for barometric sensor PD-controller
 int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
-int16	BaroROC, BaroROCP, BaroDescentCmpS;
+int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
 int16	BaroComp, BaroTempComp;
@@ -144,7 +144,7 @@ const rom int8	ComParms[]={
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	0,0,0,0,0,0,0,0,0,0,
+	1,0,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
 
@@ -157,7 +157,7 @@ const rom int8 DefaultParams[] = {
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	4, 				// BaroCompKp,		09
+	4, 				// BaroKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -178,7 +178,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	0, 				// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroCompKi,		28
+	10, 			// BaroKi,			28
 	90, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -202,11 +202,11 @@ const rom int8 DefaultParams[] = {
 	30,				// DescentDelayS	47c
 	12,				// NavIntLimit		48
 	3,				// BaroIntLimit		49
-	11,				// GravComp			50c			
+	11,				// GravComp			50c
+	1,				// CompSteps		51c			
 
-	0,				// 51 - 64 unused currently	
+	0,				// 52 - 64 unused currently	
 
-	0,
 	0,
 	0,
 	0,

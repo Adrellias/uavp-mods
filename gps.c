@@ -39,8 +39,8 @@ void UpdateGPS(void);
 
 // Defines
 // Moving average of coordinates - Kalman Estimator probably needed
-#define GPSFilter NoFilter
-//#define GPSFilter SoftFilter				
+//#define GPSFilter NoFilter
+#define GPSFilter SoftFilter				
 //#define GPSFilter MediumFilter
 
 #define GPSVelocityFilter SoftFilterU		// done after position filter
@@ -168,8 +168,7 @@ void ParseGPGGASentence(void)
     if (NMEA.s[lo] == 'S')
       	GPSLatitude = -GPSLatitude;
 
-    UpdateField();   	//Lon
-    // no latitude compensation on longitude - yet!    
+    UpdateField();   	//Lon   
     GPSLongitude = ConvertLatLonM(lo, hi);
     UpdateField();   	//LonH
 	if (NMEA.s[lo] == 'W')
@@ -282,8 +281,10 @@ void ParseGPSSentence(void)
 
 			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
+			Temp = GPSLatitude - GPSOriginLatitude;
 			GPSNorth = GPSFilter(GPSNorth, Temp);
 
+			Temp = GPSLongitude - GPSOriginLongitude;
 			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
 			GPSEast = GPSFilter(GPSEast, Temp);
 

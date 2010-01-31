@@ -8,7 +8,6 @@
 #define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
 
 // Baro
-#define BARO_DOUBLE_UP_COMP					// Hover has double the amount of up compensation each adjustment
 #define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
 
 //#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
@@ -26,12 +25,14 @@
 #define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L		// ???
 
+#define BARO_INT_WINDUP_LIMIT		16L
+
 #define DEFAULT_TELEMETRY 			0		// 0 None, 1 GPS, 2 Data
 // Debugging
 
 //#define FAKE_FLIGHT						// For testing Nav on the GROUND!
 
-//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -141,8 +142,6 @@
 #define GPS_MIN_FIX				1		// must be 1 or 2 
 #define GPS_INITIAL_SENTENCES 	30L		// Number of sentences needed with set HDilute
 #define GPS_MIN_HDILUTE			130L	// HDilute * 100
-
-#define GPS_TO_DM				12345	// zzz
 	
 #ifdef C90
 	#define COMPASS_OFFSET_DEG	90L		// North degrees CW from Front - older compass
@@ -768,6 +767,7 @@ extern i16u 	Compass;
 
 // GPS
 extern int32 	GPSLatitude, GPSLongitude;
+extern int32 GPSOriginLatitude, GPSOriginLongitude;//zzz
 extern int16 	GPSLongitudeCorrection;
 extern uint8 	GPSNoOfSats;
 extern uint8 	GPSFix;
@@ -799,8 +799,8 @@ extern int16	ThrLow, ThrHigh, ThrNeutral;
 			
 // Variables for barometric sensor PD-controller
 extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE, BaroDiffSum;
-extern int16	BaroROC, BaroROCP, BaroDescentCmpS;
+extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
+extern int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
 extern i16u		BaroPress, BaroTemp;
 extern int8		BaroSample;
 extern int16	BaroComp, BaroTempComp;
@@ -890,9 +890,10 @@ extern i16u Stats[];
 enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
                  AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
                  MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, UAVXNavPacketTag};
+
 #define TX_BUFF_MASK	127
-extern uint8 TxCheckSum;
-extern uint8Q TxQ;
+extern uint8 	TxCheckSum;
+extern uint8Q 	TxQ;
 
 extern uint8 UAVXCurrPacketTag;
 
@@ -912,7 +913,7 @@ enum Params {
 	PitchKp,			// 06
 	PitchKi,			// 07
 	PitchKd,			// 08
-	BaroCompKp,			// 09c
+	BaroKp,			// 09c
 	PitchIntLimit,		// 10
 	
 	YawKp, 				// 11
@@ -933,7 +934,7 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroCompKi,			// 28c 
+	BaroKi,				// 28c 
 	NavRadius,			// 29
 	NavKi,				// 30
 	
@@ -956,7 +957,8 @@ enum Params {
 	DescentDelayS,		// 47c
 	NavIntLimit,		// 48
 	BaroIntLimit,		// 49
-	GravComp			// 50		
+	GravComp,			// 50
+	CompSteps			// 51		
 	// 51 - 64 unused currently
 	};
 

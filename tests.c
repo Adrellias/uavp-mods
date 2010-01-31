@@ -530,23 +530,17 @@ void GPSTest(void)
 			else
 				TxChar(' ');
 			
-			TxString(" fx=");
-			TxVal32(GPSFix, 0, ' ');
+			TxString(" fx="); TxVal32(GPSFix, 0, ' ');
 	
-			TxString("s=");
-			TxVal32(GPSNoOfSats, 0, ' ');
+			TxString("s="); TxVal32(GPSNoOfSats, 0, ' ');
 	
-			TxString("hd=");
-			TxVal32(GPSHDilute, 2, ' ');
-	
-			TxString("ra=");
-			TxVal32(GPSRelAltitude, 2, 'M');
+			TxString("hd="); TxVal32(GPSHDilute, 2, ' ');
 
-			TxString(" re=");
-			TxVal32((int32)ConvertGPSToM(GPSEast) ,0 , 'M'); 
-
-			TxString(" rn=");
-			TxVal32((int32)ConvertGPSToM(GPSNorth) ,0 ,'M');
+			SetGPSOrigin();
+			TxString("ra="); TxVal32(GPSRelAltitude, 2, 'M');
+	
+			TxString(" re="); TxVal32((int32)ConvertGPSToM(GPSEast) ,0 , 'M'); 	
+			TxString(" rn="); TxVal32((int32)ConvertGPSToM(GPSNorth) ,0 ,'M');
 
 			TxNextLine();
 		}	

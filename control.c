@@ -60,8 +60,8 @@ void GetGyroValues(void)
 	#ifdef STATS_INC_GYRO_ACC
 	if ( State == InFlight )
 	{
-		if ( NewRollRate > Stats[RollRateS].i16 ) Stats[RollRateS].i16 = NewRollRate;
-		if ( NewPitchRate > Stats[PitchRateS].i16 ) Stats[PitchRateS].i16 = NewPitchRate;
+		if ( NewRollRate > Stats[RollRateS].i24 ) Stats[RollRateS].i24 = NewRollRate;
+		if ( NewPitchRate > Stats[PitchRateS].i24 ) Stats[PitchRateS].i24 = NewPitchRate;
 	}
 	#endif // STATS_INC_GYRO_ACC
 } // GetGyroValues
@@ -121,8 +121,6 @@ void GyroCompensation(void)
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
 	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
 
-	#define GYRO_COMP_STEP 1
-
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
@@ -148,19 +146,12 @@ void GyroCompensation(void)
 		#ifdef STATS_INC_GYRO_ACC
 		if ( State == InFlight )
 		{
-			if ( LRAcc > Stats[LRAccS].i16 ) Stats[LRAccS].i16 = LRAcc; 
-			if ( FBAcc > Stats[FBAccS].i16 ) Stats[FBAccS].i16 = FBAcc; 
-			if ( DUAcc > Stats[DUAccS].i16 ) Stats[DUAccS].i16 = DUAcc;
+			if ( LRAcc > Stats[LRAccS].i24 ) Stats[LRAccS].i24 = LRAcc; 
+			if ( FBAcc > Stats[FBAccS].i24 ) Stats[FBAccS].i24 = FBAcc; 
+			if ( DUAcc > Stats[DUAccS].i24 ) Stats[DUAccS].i24 = DUAcc;
 		}
 		#endif // STATS_INC_GYRO_ACC
 
-		/*
-		if ( P[GyroType] == IDG300 )
-			GravComp = 8; 		// -1/6 of reference
-		else
-			GravComp = 11; 		// 9..11 
-		*/  
-		
 		// Roll
 
 		// static compensation due to Gravity
@@ -175,7 +166,7 @@ void GyroCompensation(void)
 
 		// correct DC level of the integral
 		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntCorr = Limit(LRIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		LRIntCorr = Limit(LRIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
 	
 		// Pitch
 
@@ -191,7 +182,7 @@ void GyroCompensation(void)
 
 		// correct DC level of the integral	
 		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntCorr = Limit(FBIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		FBIntCorr = Limit(FBIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
 
 		#ifdef DEBUG_SENSORS
 		Trace[TAx]= LRAcc;
