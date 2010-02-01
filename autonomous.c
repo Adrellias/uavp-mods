@@ -114,36 +114,26 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 		EastDiff = GPSEastWay - GPSEast;
 		NorthDiff = GPSNorthWay - GPSNorth;
 
-		F.CloseProximity = (Abs(EastDiff) < NavNeutralRadius ) && (Abs(NorthDiff) < NavNeutralRadius ); 
-
-		if ( F.CloseProximity ) 
-		{
-			// Neutral Zone - no GPS influence
-			NavPCorr = DecayX(NavPCorr, 2);
-			NavRCorr = DecayX(NavRCorr, 2);
-			NavYCorr = 0;
-			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
-		}
-		else
-		{	// direct solution make North and East coordinate errors zero
-
+		F.CloseProximity = (Abs(EastDiff) < NavNeutralRadius ) && (Abs(NorthDiff) < NavNeutralRadius );
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
-			EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
+		EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 
+		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.CloseProximity )
+		{	// direct solution make North and East coordinate errors zero
 			WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
-
+	
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
-			
+				
 			F.Proximity = false;
-
+	
 			// East
 			if ( Abs(EastDiff) < NavClosingRadius )
 			{
 				F.Proximity = true;
 				Temp = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				EastP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-
+	
 				EastDiffSum += EastDiff;
 				EastDiffSum = Limit(EastDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
@@ -152,24 +142,24 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				EastP = Limit(EastDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 				EastDiffSum = Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
-
+	
 			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6);
 			EastI = Limit(EastI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
 			EastDiffSum = Decay1(EastDiffSum);
-
+	
 			EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 8);
 			EastDiffP = EastDiff;
 			EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-	
+		
 			EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
-
+	
 			// North
 			if ( Abs(NorthDiff) < NavClosingRadius )
 			{
 				F.Proximity = true;
 				Temp = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
 				NorthP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-
+	
 				NorthDiffSum += NorthDiff;
 				NorthDiffSum = Limit(NorthDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
@@ -178,26 +168,26 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				NorthP = Limit(NorthDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 				NorthDiffSum = Limit(NorthDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
-
+	
 			NorthI = SRS16((int32)NorthDiffSum * (int16)P[NavKi], 6);
 			NorthI = Limit(NorthI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
 			NorthDiffSum = Decay1(NorthDiffSum);
-
+	
 			NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 8); 
 			NorthDiffP = NorthDiff;
 			NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-
+	
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
-			
+				
 			// Roll & Pitch
 			NavRCorr = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);	
 			NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
 			NavRCorrP = NavRCorr;
-
+	
 			NavPCorr = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
 			NavPCorr = SlewLimit(NavPCorrP, NavPCorr, NAV_CORR_SLEW_LIMIT);
 			NavPCorrP = NavPCorr;
-			
+				
 			// Yaw
 			if ( F.TurnToHome && !F.Proximity )
 			{
@@ -208,6 +198,14 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			else
 				NavYCorr = 0;	
 		}	
+		else 
+		{
+			// Neutral Zone - no GPS influence
+			NavPCorr = DecayX(NavPCorr, 2);
+			NavRCorr = DecayX(NavRCorr, 2);
+			NavYCorr = 0;
+			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
+		}
 	}
 
 	DesiredRoll = Limit(DesiredRoll + NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
@@ -289,7 +287,7 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( NavSensitivity > NAV_GAIN_THRESHOLD ) && ( mS[Clock] > mS[NavActiveTime]) )
+	if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( mS[Clock] > mS[NavActiveTime]) )
 	{
 		switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
 		case Navigating:
@@ -357,6 +355,11 @@ void DoNavigation(void)
 			}
 			break;
 		} // switch NavState
+	}
+	else
+	{
+		DesiredRoll = Limit(DesiredRoll, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+		DesiredPitch = Limit(DesiredPitch, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 	}
 
 } // DoNavigation
