@@ -33,15 +33,11 @@
         include "general.asm"
 
 		; need to include clock for baud calculation
-	;	#ifdef CLOCK_16MHZ
-		_ClkOut			equ		(160/4)
-	;	#else // CLOCK_40MHZ
-	;	_ClkOut			equ		(400/4)
-	;	#endif
-
-		; use 38400 Baud throughout for now.
-		_BAUDRATE			equ		26 ;16000000/(16*(38400+1))
-	;	_BAUDRATE			equ		104 ;16000000/(16*(9600+1))
+		#ifdef CLOCK_16MHZ
+		_BAUDRATE			equ		26 
+		#else ; CLOCK_40MHZ
+		_BAUDRATE			equ		65 
+		#endif
 
 		_RestoreVec			equ		0
 		_MaxRxBuffer		equ		80	;normal max 64 hex chars + tags

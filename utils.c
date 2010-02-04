@@ -20,23 +20,22 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 extern void InitPorts(void);
 extern void InitMisc(void);
-
 void Delay1mS(int16);
 void Delay100mSWithOutput(int16);
 void DoBeep100mSWithOutput(uint8, uint8);
 void DoStartingBeepsWithOutput(uint8);
-
 void CheckAlarms(void);
-
 int16 SlewLimit(int16, int16, int16);
 int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
-
 void DumpTrace(void);
+void SendUAVXState(void);
+
+int16 Trace[TopTrace+1];
+uint8 UAVXCurrPacketTag;
+int8 BatteryVolts;
 
 void InitPorts(void)
 {
@@ -97,6 +96,7 @@ void Delay1mS(int16 d)
 	{						// compromises ClockMilliSec;
 		while ( !INTCONbits.TMR0IF ) {};
 		INTCONbits.TMR0IF = 0;
+		WriteTimer0(TMR0_1MS);
 	}
 
 	INTCONbits.TMR0IE = T0IntEn;
@@ -118,6 +118,7 @@ void Delay100mSWithOutput(int16 dur)
 			{
 				while ( !INTCONbits.TMR0IF ) {};
 				INTCONbits.TMR0IF = 0;
+				WriteTimer0(TMR0_1MS);
 			}
 			OutSignals(); // 1-2 ms Duration
 			if( PIR1bits.RCIF )
@@ -309,24 +310,24 @@ void SendUAVXState(void) // 925uS at 16MHz
 
 		SendESCWord(GPSVel);
 		Temp.i32 = RelBaroAltitude;
-		SendESCWord(Temp.low16);
-		SendESCWord(Temp.high16);
+		SendESCWord(Temp.w0);
+		SendESCWord(Temp.w1);
 
 		SendESCWord(BaroROC); // cm/S 
 		SendESCWord(GPSHDilute);
 		SendESCWord(Heading);
 
 		Temp.i32 = GPSRelAltitude; // cm
-		SendESCWord(Temp.low16);
-		SendESCWord(Temp.high16);
+		SendESCWord(Temp.w0);
+		SendESCWord(Temp.w1);
 
 		Temp.i32 = GPSLongitude; // 5 decimal minute units
-		SendESCWord(Temp.low16);
-		SendESCWord(Temp.high16);
+		SendESCWord(Temp.w0);
+		SendESCWord(Temp.w1);
 	
 		Temp.i32 = GPSLatitude;
-		SendESCWord(Temp.low16);
-		SendESCWord(Temp.high16);
+		SendESCWord(Temp.w0);
+		SendESCWord(Temp.w1);
 	
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;

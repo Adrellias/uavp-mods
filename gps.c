@@ -22,8 +22,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void UpdateField(void);
 int32 ConvertGPSToM(int32);
 int32 ConvertMToGPS(int32);
@@ -45,27 +43,29 @@ void UpdateGPS(void);
 
 #define GPSVelocityFilter SoftFilterU		// done after position filter
 
-// Variables
+const rom uint8 NMEATag[6] = {"GPGGA"};
+
+#pragma udata gpsbuff
+struct {
+	uint8 s[GPSRXBUFFLENGTH];
+	uint8 length;
+	} NMEA;
+#pragma udata
 
 #pragma udata gpsvars
-uint8 GPSNoOfSats;
-uint8 GPSFix;
-int16 GPSHDilute;
+int32 	GPSMissionTime, GPSStartTime;
+int32 	GPSLatitude, GPSLongitude;
+int32 	GPSOriginLatitude, GPSOriginLongitude;
+int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
+int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+int16 	GPSLongitudeCorrection;
+int16 	GPSVel;
+uint8 	GPSNoOfSats;
+uint8 	GPSFix;
+int16 	GPSHDilute;
 #pragma udata
 
-#pragma udata gpsvars2
-int32 GPSMissionTime, GPSStartTime;
-int32 GPSLatitude, GPSLongitude;
-int32 GPSOriginLatitude, GPSOriginLongitude;
-int24 GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
-int16 GPSVel;
-int16 GPSLongitudeCorrection;
-int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
-#pragma udata
-
-// Global Variables
-
-#pragma udata gpsvars3
+#pragma udata gpsvars1
 uint8 nll, cc, lo, hi;
 boolean EmptyField;
 int16 ValidGPSSentences;

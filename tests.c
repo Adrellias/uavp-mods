@@ -20,8 +20,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void DoLEDs(void);
 void LinearTest(void);
 uint8 ScanI2CBus(void);
@@ -157,8 +155,8 @@ void ReceiverTest(void)
 		TxString("\r\nSignal OK ");
 	else
 		TxString("\r\nSignal FAIL ");	
-	TxVal32(mS[Clock] - mS[LastValidRx], 3, 0);
-	TxString(" Sec. ago\r\n");
+	TxVal32(mS[Clock] - mS[LastValidRx], 0, 0);
+	TxString(" mS ago\r\n");
 	
 	// Be wary as new RC frames are being received as this
 	// is being displayed so data may be from overlapping frames
@@ -168,20 +166,36 @@ void ReceiverTest(void)
 		TxChar(s+'1');
 		TxString(": ");
 		TxChar(RxChMnem[RMap[s]-1]);
-		TxString(":\t 0x");
-		v = PPM[s].i16;
-		TxValH16(v);
-		TxChar(HT);
-	    TxVal32(((int32)(v & 0x00ff)*100)/RC_MAXIMUM, 0, '%');
+		TxString(":\t");
+ 
+		#ifdef CLOCK_16MHZ
 
-		if( ( v & 0xff00) != (uint16)0x0100 ) 
+		TxVal32((int32)PPM[s].i16 * 4L, 3, 0);
+		TxChar(HT);
+	    TxVal32(((int32)(PPM[s].i16 & 0x00ff)*100)/RC_MAXIMUM, 0, '%');
+		if( ( PPM[s].i16 & 0xff00) != (uint16)0x0100 ) 
 			TxString(" FAIL");
+
+		#else // CLOCK_40MHZ
+
+		TxVal32(( PPM[s].i16 * 8L + 5L ) / 10L, 3, 0);
+		TxChar(HT);
+		TxVal32(((int32)PPM[s].i16*100L + 625L ) / 1250L, 0, '%');
+		if( ( PPM[s].i16 < 0 ) || ( PPM[s].i16 > 1250 ) ) 
+			TxString(" FAIL");
+
+		#endif // CLOCK_16MHZ
+
 		TxNextLine();
 	}
 
 	// show pause time
 	TxString("Gap:\t");
-	v = TMR2_TICK*PauseTime;
+	#ifdef CLOCK_16MHZ
+	v = PauseTime * 2L;
+	#else // CLOCK_40MHZ
+	v = ( PauseTime * 8L + 5 )/10L;
+	#endif // CLOCK_16MHZ
 	TxVal32( v, 3, 0);		
 	TxString("mS\r\n");
 	TxString("Glitches:\t");
@@ -348,8 +362,8 @@ void CompassRun(void)
 	{
 		I2CStart();
 		F.CompassMissRead |= SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-		Compass.high8 = RecvI2CByte(I2C_ACK);
-		Compass.low8 = RecvI2CByte(I2C_NACK);
+		Compass.b1 = RecvI2CByte(I2C_ACK);
+		Compass.b0 = RecvI2CByte(I2C_NACK);
 		I2CStop();
 		
 		TxVal32((int32) mS[Clock],3,' ');
@@ -483,7 +497,7 @@ void LEDsAndBuzzer(void)
 		{
 			LEDShadow ^= mask;
 			SendLEDs();
-			Delay1mS(50);
+			Delay1mS(100);
 		}
 		mask <<= 1;
 	}

@@ -20,12 +20,15 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void ZeroStats(void);
 void ReadStatsEE(void);
 void WriteStatsEE(void);
 void ShowStats(void);
+
+#pragma udata stats
+int24 	MaxRelBaroAltitudeS, MaxGPSAltitudeS;
+i16u 	Stats[MaxStats];
+#pragma udata
 
 void ZeroStats(void)
 {
@@ -48,8 +51,8 @@ void ReadStatsEE(void)
 
 	for (s = 0 ; s < MaxStats ; s++ )
 	{
-		Stats[s].low8 = ReadEE(STATS_ADDR_EE + s*2);
-		Stats[s].high8 = ReadEE(STATS_ADDR_EE + s*2 + 1);
+		Stats[s].b0 = ReadEE(STATS_ADDR_EE + s*2);
+		Stats[s].b1 = ReadEE(STATS_ADDR_EE + s*2 + 1);
 	}
 
 	MaxGPSAltitudeS = (int24)Stats[GPSAltitudeS].i16 * 10L;
@@ -66,8 +69,8 @@ void WriteStatsEE()
 
 	for (s = 0 ; s < MaxStats ; s++ )
 	{
-		WriteEE(STATS_ADDR_EE + s*2, Stats[s].low8);
-		WriteEE(STATS_ADDR_EE + s*2 + 1, Stats[s].high8);
+		WriteEE(STATS_ADDR_EE + s*2, Stats[s].b0);
+		WriteEE(STATS_ADDR_EE + s*2 + 1, Stats[s].b1);
 	}
 
 	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);

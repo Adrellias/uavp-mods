@@ -22,8 +22,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void Navigate(int24, int24);
 void SetDesiredAltitude(int24);
 void DoFailsafeLanding(void);
@@ -33,7 +31,6 @@ void DoNavigation(void);
 void DoPPMFailsafe(void);
 void InitNavigation(void);
 
-// Variables
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
 int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
@@ -41,6 +38,13 @@ int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 WayPoint WP[NAV_MAX_WAYPOINTS];
 uint8 CurrWP;
+
+int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
+
+uint8 	NavState;
+int16 	NavSensitivity;
+int16 	AltSum, AE;
+int32	NavRTHTimeout;
 
 void SetDesiredAltitude(int24 DesiredAltitude) // Centimetres
 {
@@ -75,7 +79,7 @@ void DoFailsafeLanding(void)
 	// InTheAir micro switch RC0 Pin 11 to ground when landed
 
 	DesiredRelBaroAltitude = 0;
-	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( RelBaroAltitude < BARO_LAND_CM )) )
+	if ( !InTheAir || (( mS[Clock] > mS[LandingTimeout]) && ( NavState == Touchdown )) )
 	{
 		DesiredThrottle = 0;
 		StopMotors();
@@ -105,7 +109,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 
 	static int16 SinHeading, CosHeading;
 	static int24 Temp, EastDiff, NorthDiff;
-	static WayHeading, RelHeading;
+	static int16 WayHeading, RelHeading;
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
@@ -114,8 +118,9 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 		EastDiff = GPSEastWay - GPSEast;
 		NorthDiff = GPSNorthWay - GPSNorth;
 
-		F.CloseProximity = (Abs(EastDiff) < NavNeutralRadius ) && (Abs(NorthDiff) < NavNeutralRadius );
-		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
+		F.CloseProximity = (Abs(EastDiff)<NavNeutralRadius )&&(Abs(NorthDiff) < NavNeutralRadius);
+		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - 
+		// 							CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 		EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 
 		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.CloseProximity )
@@ -180,11 +185,13 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 			NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 				
 			// Roll & Pitch
-			NavRCorr = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);	
+			NavRCorr = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
+			NavRCorr = Limit(NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);	
 			NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
 			NavRCorrP = NavRCorr;
 	
 			NavPCorr = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
+			NavPCorr = Limit(NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 			NavPCorr = SlewLimit(NavPCorrP, NavPCorr, NAV_CORR_SLEW_LIMIT);
 			NavPCorrP = NavPCorr;
 				
@@ -208,8 +215,8 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 		}
 	}
 
-	DesiredRoll = Limit(DesiredRoll + NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-	DesiredPitch = Limit(DesiredPitch + NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+	DesiredRoll = DesiredRoll + NavRCorr;
+	DesiredPitch = DesiredPitch + NavPCorr;
 	DesiredYaw += NavYCorr;
 	F.NavComputed = true;
 
@@ -245,41 +252,44 @@ void FakeFlight()
 			F.GPSValid = F.NavValid = F.CompassValid = true;
 			F.NavComputed = false;
 			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F.NewCommands )
-{
+			{
 				Navigate(0,0);
 
-			Delay100mSWithOutput(5);
-			CosH = int16cos(Heading);
-			SinH = int16sin(Heading);
-			GPSEast += ((int32)(-DesiredPitch) * SinH * 10L) / SCALE_VEL;
-			GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L) / SCALE_VEL;
+				Delay100mSWithOutput(5);
+				CosH = int16cos(Heading);
+				SinH = int16sin(Heading);
+				GPSEast += ((int32)(-DesiredPitch) * SinH * 10L) / SCALE_VEL;
+				GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L) / SCALE_VEL;
+				
+				A = Make2Pi(Heading + HALFMILLIPI);
+				CosH = int16cos(A);
+				SinH = int16sin(A);
+				GPSEast += ((int32)DesiredRoll * SinH * 10L) / SCALE_VEL;
+				GPSEast += FAKE_EAST_WIND; // wind	
+				GPSNorth += ((int32)DesiredRoll * CosH * 10L) / SCALE_VEL;
+				GPSNorth += FAKE_NORTH_WIND; // wind
 			
-			A = Make2Pi(Heading + HALFMILLIPI);
-			CosH = int16cos(A);
-			SinH = int16sin(A);
-			GPSEast += ((int32)DesiredRoll * SinH * 10L) / SCALE_VEL;
-			GPSEast += FAKE_EAST_WIND; // wind	
-			GPSNorth += ((int32)DesiredRoll * CosH * 10L) / SCALE_VEL;
-			GPSNorth += FAKE_NORTH_WIND; // wind
-		
-			TxVal32((int32)NavSensitivity,0,' ');
-			TxVal32((int32)CurrMaxRollPitch,0,' ');
-			TxVal32((int32)EffNavSensitivity,0,' ');
-			TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
-			TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); TxVal32((int32)DesiredYaw, 0, ' ');
-			TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); TxVal32((int32)EastDiffSum, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
-			TxVal32((int32)EastCorr, 0, ' ');
-			TxString("| ");
-			TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); TxVal32((int32)NorthDiffSum, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
-			TxVal32((int32)NorthCorr, 0, ' ');
-			TxString("| ");
-			TxVal32((int32)NavRCorr, 0, ' ');
-			TxVal32((int32)NavPCorr, 0, ' ');
-			TxString("| ");
-			TxVal32((int32)F.Proximity, 0, ' ');
-			TxVal32((int32)F.CloseProximity, 0, ' ');	
-			TxNextLine();
-}
+				TxVal32((int32)NavSensitivity,0,' ');
+				TxVal32((int32)CurrMaxRollPitch,0,' ');
+				TxVal32((int32)EffNavSensitivity,0,' ');
+				TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
+				TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); 
+				TxVal32((int32)DesiredYaw, 0, ' ');
+				TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); 
+				TxVal32((int32)EastDiffSum, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
+				TxVal32((int32)EastCorr, 0, ' ');
+				TxString("| ");
+				TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); 
+				TxVal32((int32)NorthDiffSum, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
+				TxVal32((int32)NorthCorr, 0, ' ');
+				TxString("| ");
+				TxVal32((int32)NavRCorr, 0, ' ');
+				TxVal32((int32)NavPCorr, 0, ' ');
+				TxString("| ");
+				TxVal32((int32)F.Proximity, 0, ' ');
+				TxVal32((int32)F.CloseProximity, 0, ' ');	
+				TxNextLine();
+			}
 		}
 	}
 	#endif // FAKE_FLIGHT
@@ -293,10 +303,23 @@ void DoNavigation(void)
 		case Navigating:
 			// not implemented yet
 			break;
-		case Descending:
+		case Touchdown:
 			Navigate(WP[0].N, WP[0].E);
 			if ( F.ReturnHome )
 				DoFailsafeLanding();
+			else
+				AcquireHoldPosition();
+			break;
+		case Descending:
+			Navigate(WP[0].N, WP[0].E);
+			if ( F.ReturnHome )
+				if ( RelBaroAltitude < BARO_LAND_CM )
+				{
+					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+					NavState = Touchdown;
+				}
+				else
+					DoFailsafeLanding();
 			else
 				AcquireHoldPosition();
 			break;
@@ -304,10 +327,7 @@ void DoNavigation(void)
 			Navigate(WP[0].N, WP[0].E);
 			if ( F.ReturnHome )
 				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
-				{
-					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 					NavState = Descending;
-				}
 				else
 					SetDesiredAltitude(WP[0].A);
 			else
@@ -356,11 +376,9 @@ void DoNavigation(void)
 			break;
 		} // switch NavState
 	}
-	else
-	{
-		DesiredRoll = Limit(DesiredRoll, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-		DesiredPitch = Limit(DesiredPitch, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-	}
+
+	DesiredRoll = Limit(DesiredRoll, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
+	DesiredPitch = Limit(DesiredPitch, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
 
 } // DoNavigation
 
@@ -370,7 +388,7 @@ void DoPPMFailsafe(void)
 		switch ( FailState ) {
 		case Terminated:
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			DoFailsafeLanding();							// progressively increase desired baro pressure
+			DoFailsafeLanding();	// progressively increase desired baro pressure
 			if ( mS[Clock ] > mS[AbortTimeout] )
 				if ( F.Signal )
 				{
@@ -383,10 +401,10 @@ void DoPPMFailsafe(void)
 			break;
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
-			NavSensitivity = RC_NEUTRAL;		// 50% gain
+			NavSensitivity = RC_NEUTRAL;	// 50% gain
 			F.ReturnHome = F.TurnToHome = true;
 			NavState = ReturningHome;
-			DoNavigation();						// if GPS is out then check for hover will see zero throttle
+			DoNavigation();	// if GPS is out then check for hover will see zero throttle
 			if ( mS[Clock ] > mS[AbortTimeout] )
 				if ( F.Signal )
 				{

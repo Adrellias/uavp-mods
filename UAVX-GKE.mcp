@@ -45,6 +45,8 @@ file_017=.
 file_018=.
 file_019=.
 file_020=.
+file_021=.
+file_022=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -67,6 +69,8 @@ file_017=no
 file_018=no
 file_019=no
 file_020=no
+file_021=no
+file_022=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -89,6 +93,8 @@ file_017=no
 file_018=no
 file_019=no
 file_020=no
+file_021=no
+file_022=no
 [FILE_INFO]
 file_000=accel.c
 file_001=serial.c
@@ -101,23 +107,25 @@ file_007=autonomous.c
 file_008=gps.c
 file_009=i2c.c
 file_010=uavx.c
-file_011=compass_altimeter.c
-file_012=control.c
-file_013=menu.c
-file_014=tests.c
-file_015=params.c
-file_016=eeprom.c
-file_017=stats.c
-file_018=math.c
-file_019=leds.c
-file_020=uavx.h
+file_011=control.c
+file_012=menu.c
+file_013=tests.c
+file_014=params.c
+file_015=eeprom.c
+file_016=stats.c
+file_017=math.c
+file_018=leds.c
+file_019=gyro.c
+file_020=baro.c
+file_021=compass.c
+file_022=uavx.h
 [SUITE_INFO]
 suite_guid={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 suite_state=
 [TOOL_SETTINGS]
 TS{DD2213A8-6310-47B1-8376-9430CDFC013F}=
 TS{BFD27FBA-4A02-4C0E-A5E5-B812F3E7707C}=/m"$(BINDIR_)$(TARGETBASE).map" /w /o"$(BINDIR_)$(TARGETBASE).cof"
-TS{C2AF05E7-1416-4625-923D-E114DB6E2B96}=-Oi -w1 -DCLOCK_16MHZ -Opa-
+TS{C2AF05E7-1416-4625-923D-E114DB6E2B96}=-Oi  -DCLOCK_16MHZ -Opa-
 TS{C2AF05E7-1416-4625-923D-E114DB6E2B96}_alt=yes
 TS{ADE93A55-C7C7-4D4D-A4BA-59305F7D0391}=
 [INSTRUMENTED_TRACE]

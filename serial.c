@@ -22,8 +22,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void TxString(const rom uint8 *);
 void TxChar(uint8);
 void TxValU(uint8);
@@ -42,6 +40,11 @@ void SendESCByte(uint8);
 void SendWord(int16);
 void SendESCWord(int16);
 void SendPacket(uint8, uint8, uint8 *, boolean);
+
+#pragma udata txbuffer
+uint8 TxCheckSum;
+uint8Q TxQ;
+#pragma udata
 
 void TxString(const rom uint8 *pch)
 {

@@ -18,110 +18,46 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/.
 
+// Barometer
+
 #include "uavx.h"
-
-// Prototypes
-
-void InitCompass(void);
-void InitHeading(void);
-void GetHeading(void);
 
 void StartBaroADC(boolean);
 void ReadBaro(boolean);
 void GetBaroAltitude(void);
 void InitBarometer(void);
-void BaroAltitudeHold(void);
-void AltitudeHold(void);
-
-//_____________________________________________________________________________________
-
-// Compass
-
-void InitCompass(void)
-{
-	// 20Hz continuous read with periodic reset.
-	#ifdef SUPPRESS_COMPASS_SR
-		#define COMP_OPMODE 0b01100010
-	#else
-		#define COMP_OPMODE 0b01110010
-	#endif // SUPPRESS_COMPASS_SR
-
-	// Set device to Compass mode 
-	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('G')  != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(0x74) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(COMP_OPMODE) != I2C_ACK ) goto CTerror;
-	I2CStop();
-
-	Delay1mS(1);
-
-	I2CStart(); // save operation mode in EEPROM
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('L')  != I2C_ACK ) goto CTerror;
-	I2CStop();
-
-	Delay1mS(1);
-
-	I2CStart(); // Do Bridge Offset Set/Reset now
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('O')  != I2C_ACK ) goto CTerror;
-	I2CStop();
-
-	Delay1mS(50);
-
-	// use default heading mode (1/10th degrees)
-
-	F.CompassValid = true;
-	return;
-CTerror:
-	F.CompassValid = false;
-	Stats[CompassFailS].i16++;
-	F.CompassFailure = true;
-	
-	I2CStop();
-} // InitCompass
-
-
-void InitHeading(void)
-{
-	GetHeading();
-	DesiredHeading = Heading;
-	HEp = 0;
-} // InitHeading
-
-void GetHeading(void)
-{
-	static int32 Temp;
-
-	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
-	{
-		I2CStart();
-		F.CompassMissRead = SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-		Compass.high8 = RecvI2CByte(I2C_ACK);
-		Compass.low8 = RecvI2CByte(I2C_NACK);
-		I2CStop();
-
-		Temp = ConvertDDegToMPi(Compass.i16) - CompassOffset;
-		Heading = Make2Pi((int16) Temp);
-
-		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS].i16++;	
-	}
-	else
-		Heading = 0;
-} // GetHeading
-
-//_____________________________________________________________________________________
-
-// Barometer
 
 #define BaroFilter NoFilter
 #define BaroROCFilter MediumFilter
+
+// Baro (altimeter) sensor
+#define BARO_I2C_ID			0xee
+#define BARO_TEMP_BMP085	0x2e
+#define BARO_TEMP_SMD500	0x6e
+#define BARO_PRESS			0xf4
+#define BARO_CTL			0xf4				// OSRS=3 for BMP085 25.5mS, SMD500 34mS				
+#define BARO_ADC_MSB		0xf6
+#define BARO_ADC_LSB		0xf7
+#define BARO_ADC_XLSB		0xf8				// BMP085
+#define BARO_TYPE			0xd0
+
+#define BARO_TEMP_TIME_MS	20	// 10
+//#define BMP085_PRESS_TIME_MS 	26
+//#define SMD500_PRESS_TIME_MS 	34
+#define BARO_PRESS_TIME_MS	45		
 
 #define BARO_BUFF_SIZE 8	// MUST be 8
 #pragma udata baroq
 static int16Q BaroQ;
 #pragma udata
+
+int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
+int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP;
+int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
+i16u	BaroPress, BaroTemp;
+int8	BaroSample;
+int16	BaroComp, BaroTempComp;
+uint8	BaroType;
 
 void StartBaroADC(boolean ReadPressure)
 {
@@ -168,7 +104,7 @@ void ReadBaro(boolean ReadPressure)
 	if( SendI2CByte(BARO_ADC_MSB) != I2C_ACK ) goto RVerror;
 	I2CStart();	// restart
 	if( SendI2CByte(BARO_I2C_ID+1) != I2C_ACK ) goto RVerror;
-	BaroVal.high8 = RecvI2CByte(I2C_NACK);
+	BaroVal.b1 = RecvI2CByte(I2C_NACK);
 	I2CStop();
 			
 	I2CStart();
@@ -176,7 +112,7 @@ void ReadBaro(boolean ReadPressure)
 	if( SendI2CByte(BARO_ADC_LSB) != I2C_ACK ) goto RVerror;
 	I2CStart();	// restart
 	if( SendI2CByte(BARO_I2C_ID+1) != I2C_ACK ) goto RVerror;
-	BaroVal.low8 = RecvI2CByte(I2C_NACK);
+	BaroVal.b0 = RecvI2CByte(I2C_NACK);
 	I2CStop();
 
 	if ( ReadPressure )
@@ -333,73 +269,4 @@ BAerror:
 	Stats[BaroFailS].i16++;
 	I2CStop();
 } // InitBarometer
-
-void BaroAltitudeHold()
-{
-	static int16 NewBaroComp, LimBE, BaroP, BaroI, BaroD;
-	static int24 Temp;
-
-	if ( F.NewBaroValue && F.BaroAltitudeValid )
-	{
-		F.NewBaroValue = false;
-
-		#ifdef BARO_SCRATCHY_BEEPER
-		if ( !F.BeeperInUse ) Beeper_TOG;
-		#endif
-	
-		BE = DesiredRelBaroAltitude - RelBaroAltitude;
-		LimBE = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM);
-
-		BaroP = SRS16(LimBE * (int16)P[BaroKp], 7);
-		BaroP = Limit(BaroP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
-
-		BaroDiffSum += LimBE;
-		BaroDiffSum = Limit(BaroDiffSum, -BARO_INT_WINDUP_LIMIT, BARO_INT_WINDUP_LIMIT);
-		BaroI = SRS16(BaroDiffSum * (int16)P[BaroKi], 4);
-		BaroI = Limit(BaroDiffSum, -(int16)P[BaroIntLimit], (int16)P[BaroIntLimit]);
-		BaroDiffSum = Decay1(BaroDiffSum);
-		 
-		if ( BaroROC < BaroDescentCmpS )
-		{
-			BaroDSum+=2;
-			BaroDSum = Limit(BaroDSum, 0, ALT_HIGH_THR_COMP); 
-		}
-		BaroDSum = Decay1(BaroDSum);
-	
-		NewBaroComp = BaroP + BaroI + BaroDSum;
-		NewBaroComp = Limit(NewBaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
-		BaroComp = SlewLimit(BaroComp, NewBaroComp, 2);
-
-		#ifdef BARO_SCRATCHY_BEEPER
-		if ( !F.BeeperInUse ) Beeper_TOG;
-		#endif
-	}
-
-} // BaroAltitudeHold	
-
-void AltitudeHold()
-{
-	if ( F.RTHAltitudeHold && ( NavState != HoldingStation ) )
-	{
-		F.Hovering = false;
-		BaroAltitudeHold();
-	}
-	else // holding station
-	{
-		F.Hovering = !F.ThrottleMoving; 
-		
-		if( F.Hovering )
-		{
-			if ( Abs(BaroROC) < BARO_HOVER_MAX_ROC_CMPS )
-				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
-			BaroAltitudeHold();
-		}
-		else	
-		{
-			DesiredRelBaroAltitude = RelBaroAltitude;
-			BaroComp = Decay1(BaroComp);	
-		}
-	}
-
-} // AltitudeHold
 

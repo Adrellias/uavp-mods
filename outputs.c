@@ -45,6 +45,14 @@ void InitI2CESCs(void);
 #define ALL_OUTPUTS		(PORTB & 0b00001111)
 
 boolean OutToggle;
+uint8 MCamRoll,MCamPitch;
+int16 Motor[NoOfMotors];
+boolean ESCI2CFail[NoOfMotors];
+
+#pragma udata access outputvars
+near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
+near uint8 ESCMin, ESCMax;
+#pragma udata
 
 void DoMix(int16 CurrThrottle)
 {
@@ -200,7 +208,7 @@ void OutSignals(void)
 		MCamPitch = MCamRoll = OUT_NEUTRAL;
 	}
 
-	WriteTimer0(0);
+	WriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
 
 	MT = MCamRoll;
@@ -233,7 +241,8 @@ void OutSignals(void)
 		
 		DisableInterrupts;	// BLOCK ALL INTERRUPTS for NO MORE than 1mS
 		while( !INTCONbits.TMR0IF ) ;	// wait for first overflow
-		INTCONbits.TMR0IF=0;			// quit TMR0 interrupt
+		WriteTimer0(TMR0_1MS);
+		INTCONbits.TMR0IF = 0;			// quit TMR0 interrupt
 		
 		if( OutToggle )	// driver cam servos only every 2nd pulse
 		{
@@ -255,7 +264,7 @@ OS005:
 			MOVWF	PORTB,0
 			ANDLW	0x0f
 			BZ		OS006
-					
+			
 			DECFSZ	MF,1,1					// front motor
 			GOTO	OS007
 					
@@ -272,10 +281,41 @@ OS008:
 			BCF		SHADOWB,PulseRight,1	// stop Right pulse
 OS009:
 			DECFSZ	MB,1,1					// rear motor
-			GOTO	OS005
+			GOTO	OS010
 						
 			BCF		SHADOWB,PulseBack,1		// stop Back pulse			
-		
+
+OS010:
+			_endasm
+			#ifdef CLOCK_40MHZ
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			Delay1TCY();
+			#endif // CLOCK_40MHZ
+			_asm				
 			GOTO	OS005
 OS006:
 			_endasm
@@ -289,8 +329,7 @@ OS006:
 			//	}
 		
 		mS[Clock]++;
-		EnableInterrupts;
-	
+		EnableInterrupts;	
 	} 
 	else
 	{
@@ -342,11 +381,12 @@ OS006:
 
 	DisableInterrupts;				
 	while( !INTCONbits.TMR0IF ) ;		// wait for 2nd overflow (2 ms)
+	WriteTimer0(TMR0_1MS);
 
 	// This loop is exactly 16 cycles 
 	// under no circumstances should the loop cycle time be changed
 _asm
-	MOVLB	0
+		MOVLB	0
 OS001:
 	MOVF	SHADOWB,0,1				// Cannot read PORTB ???
 	MOVWF	PORTB,0
@@ -363,15 +403,46 @@ OS003:
 
 	BCF		SHADOWB,PulseCamPitch,1
 OS004:
-_endasm
+	_endasm
 	Delay1TCY();
 	Delay1TCY();
 	Delay1TCY();
 	Delay1TCY();
-_asm
+
+	#ifdef CLOCK_40MHZ
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	Delay1TCY();
+	#endif // CLOCK_40MHZ
+
+	_asm
+
 	GOTO	OS001
 OS002:
-_endasm
+	_endasm
 
 	mS[Clock]++;
 	EnableInterrupts;

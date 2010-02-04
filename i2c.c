@@ -18,11 +18,9 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-#include "uavx.h"
-
 // SW I2C Routines for Sensors
 
-// Prototypes
+#include "uavx.h"
 
 void I2CStart(void);
 void I2CStop(void);
@@ -30,12 +28,10 @@ boolean I2CWaitClkHi(void);
 uint8 SendI2CByte(uint8);
 uint8 RecvI2CByte(uint8);
 
-// Constants
-
-#ifdef CLOCK_40MHZ
-#define	I2C_DELAY		Delay10TCYx(3)
-#else
+#ifdef CLOCK_16MHZ
 #define	I2C_DELAY		Delay10TCY()
+#else // CLOCK_40MHZ
+#define	I2C_DELAY		Delay10TCYx(5)
 #endif
 
 #define I2C_IN			1
@@ -147,8 +143,6 @@ uint8 RecvI2CByte(uint8 r)
 
 // -----------------------------------------------------------
 // SW I2C Routines for ESCs
-
-// Prototypes
 
 boolean ESCWaitClkHi(void);
 void ESCI2CStart(void);

@@ -22,8 +22,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void SendCommand(int8);
 uint8 ReadLISL(uint8);
 uint8 ReadLISLNext(void);
@@ -32,8 +30,6 @@ void IsLISLActive(void);
 void InitLISL(void);
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
-
-// Constants
 
 #define SPI_HI_DELAY Delay10TCY()
 #define SPI_LO_DELAY Delay10TCY()
@@ -66,6 +62,14 @@ void GetNeutralAccelerations(void);
 #define LISL_DD_CFG		(0x38)
 #define LISL_INCR_ADDR	(0x40)
 #define LISL_READ		(0x80)
+
+#pragma udata accs
+i16u	Ax, Ay, Az;
+int8	LRIntCorr, FBIntCorr;
+int16	Rl,Pl,Yl;						// PID output values
+int8	NeutralLR, NeutralFB, NeutralDU;
+int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+#pragma udata
 
 void SendCommand(int8 c)
 {
@@ -187,12 +191,12 @@ void ReadAccelerations()
 
 	r = ReadLISL(LISL_STATUS + LISL_READ);
 
-	Ax.low8  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
-	Ax.high8 = ReadLISLNext();
-	Ay.low8  = ReadLISLNext();
-	Ay.high8 = ReadLISLNext();
-	Az.low8  = ReadLISLNext();
-	Az.high8 = ReadLISLNext();
+	Ax.b0  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
+	Ax.b1 = ReadLISLNext();
+	Ay.b0  = ReadLISLNext();
+	Ay.b1 = ReadLISLNext();
+	Az.b0  = ReadLISLNext();
+	Az.b1 = ReadLISLNext();
 	SPI_CS = DSEL_LISL;	// end transmission
 
 	if ( ((r & 0xf0) != 0) && (State == InFlight) ) 

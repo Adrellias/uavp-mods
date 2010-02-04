@@ -20,8 +20,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void ShowPrompt(void);
 void ShowRxSetup(void);
 void ShowSetup(uint8);
@@ -54,6 +52,8 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 //	"Z..Continuously display compass(Use HyperTerm)\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
+
+const rom uint8 RxChMnem[] = "TAERG12";
 
 void ShowPrompt(void)
 {
@@ -211,13 +211,11 @@ void ShowSetup(uint8 h)
 	if ( F.ReturnHome )
 		TxString("\tRTH is selected - deselect!\r\n");
 	if ( InitialThrottle >= RC_THRES_START )
-		TxString("\tThrottle is open - close throttle!\r\n");
+		TxString("\tThrottle may be open - close throttle!\r\n");
 	
 	ShowPrompt();
 } // ShowSetup
 
-// if a command is waiting, read and process it.
-// Do NOT call this routine while in flight!
 void ProcessCommand(void)
 {
 	static int8  p;

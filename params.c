@@ -20,13 +20,173 @@
 
 #include "uavx.h"
 
-// Prototypes
-
+void MapRC(void);
 void ReadParametersEE(void);
 void WriteParametersEE(uint8);
 void UseDefaultParameters(void);
 void UpdateWhichParamSet(void);
 void InitParameters(void);
+
+const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
+const rom int8	ComParms[]={ // mask giving common variables across parameter sets
+	0,0,0,1,0,0,0,0,0,0,
+	0,0,0,0,0,1,1,1,0,1,
+	1,1,1,1,1,0,0,0,0,0,
+	0,0,0,1,1,1,1,0,0,1,
+	0,1,1,1,1,0,1,0,0,1,
+	1,0,0,0,0,0,0,0,0,0,
+	0,0,0,0
+	};
+
+const rom int8 DefaultParams[] = {
+	-24, 			// RollKp, 			01
+	-14, 			// RollKi,			02
+	75, 			// RollKd,			03
+	0, 				// HorizDampKp,		04c 
+	3, 				// RollIntLimit,	05
+	-24, 			// PitchKp,			06
+	-14, 			// PitchKi,			07
+	75, 			// PitchKd,			08
+	4, 				// BaroKp,			09
+	3, 				// PitchIntLimit,	10
+	
+	-30, 			// YawKp, 			11
+	-20, 			// YawKi,			12
+	0, 				// YawKd,			13
+	30, 			// YawLimit,		14
+	2, 				// YawIntLimit,		15
+	0, 				// ConfigBits,		16c
+	4, 				// TimeSlots,		17c
+	48, 			// LowVoltThres,	18c
+	0, 				// CamRollKp,		19
+	45, 			// PercentHoverThr,	20c 
+	
+	-1, 			// VertDampKp,		21c
+	0, 				// MiddleDU,		22c
+	10, 			// PercentIdleThr,	23c
+	0, 				// MiddleLR,		24c
+	0, 				// MiddleFB,		25c
+	0, 				// CamPitchKp,		26
+	24, 			// CompassKp,		27
+	10, 			// BaroKi,			28
+	90, 			// NavRadius,		29
+	8, 				// NavKi,			30 
+
+	15, 			// NavAltKp,		31
+	15, 			// NavAltKi,		32
+	20, 			// NavRTHAlt,		33
+	0, 				// NavMagVar,		34c
+	ADXRS300, 		// GyroType,		35c
+	ESCPPM, 		// ESCType,			36c
+	DX7AR7000, 		// TxRxType			37c
+	2,				// NeutralRadius	38
+	30,				// PercentNavSens6Ch	39
+	0,				// CamRollTrim,		40c
+
+	-16,			// NavKd			41
+	1,				// VertDampDecay    42c
+	1,				// HorizDampDecay	43c
+	85,				// BaroScale		44c
+	0,				// TelemetryType	45c
+	3,				// MaxDescentRateDmpS 	46
+	30,				// DescentDelayS	47c
+	12,				// NavIntLimit		48
+	3,				// BaroIntLimit		49
+	11,				// GravComp			50c
+	1,				// CompSteps		51c			
+
+	0,				// 52 - 64 unused currently	
+
+	0,
+	0,
+	0,
+	0,
+	0,	
+	0,
+	0,
+	0,
+
+	0,
+	0,
+	0,
+	0					
+	};
+
+const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
+	{ 3,1,2,4,5,6,7 }, 	// Futaba Thr 3 Throttle
+	{ 2,1,4,3,5,6,7 },	// Futaba Thr 2 Throttle
+	{ 5,3,2,1,6,4,7 },	// Futaba 9C Spektrum DM8/AR7000
+	{ 1,2,3,4,5,6,7 },	// JR XP8103/PPM
+	{ 7,1,4,6,3,5,2 },	// JR 9XII Spektrum DM9 ?
+
+	{ 6,1,4,7,3,2,5 },	// JR DXS12 
+	{ 6,1,4,7,3,2,5 },	// Spektrum DX7/AR7000
+	{ 5,1,4,6,3,2,7 },	// Spektrum DX7/AR6200
+
+	{ 3,1,2,4,5,7,6 }, 	// Futaba Thr 3 Sw 6/7
+	{ 1,2,3,4,5,6,7 },	// Spektrum DX7/AR6000
+	{ 1,2,3,4,5,6,7 },	// Graupner MX16S
+
+	{ 1,2,3,4,5,6,7 }	// Custom
+	};
+
+// Rx signalling polarity used only for serial PPM frames usually
+// by tapping internal Rx circuitry.
+const rom boolean PPMPosPolarity[CustomTxRx+1] =
+	{
+		false, 	// Futaba Ch3 Throttle
+		false,	// Futaba Ch2 Throttle
+		true,	// Futaba 9C Spektrum DM8/AR7000
+		true,	// JR XP8103/PPM
+		true,	// JR 9XII Spektrum DM9/AR7000
+
+		true,	// JR DXS12
+		true,	// Spektrum DX7/AR7000
+		true,	// Spektrum DX7/AR6200
+		false,	// Futaba Thr 3 Sw 6/7
+		true,	// Spektrum DX7/AR6000
+		true,	// Graupner MX16S
+		true	// custom Tx/Rx combination
+	};
+
+// Reference Internal Quadrocopter Channel Order
+// 1 Throttle
+// 2 Aileron
+// 3 Elevator
+// 4 Rudder
+// 5 Gear
+// 6 Aux1
+// 7 Aux2
+
+uint8	ParamSet;
+boolean ParametersChanged;
+int8 RMap[CONTROLS];
+#pragma udata params
+int8 P[MAX_PARAMETERS];
+#pragma udata
+
+void MapRC(void)
+{  // re-maps captured PPM to Rx channel sequence
+	static uint8 c;
+	static int16 LastThrottle, Temp, i; 
+
+	LastThrottle = RC[ThrottleC];
+
+	for (c = 0 ; c < RC_CONTROLS ; c++)
+	{
+		i = Map[P[TxRxType]][c]-1;
+		#ifdef CLOCK_16MHZ
+		Temp = PPM[i].b0; // clip to bottom byte 0..255
+		#else // CLOCK_40MHZ
+		Temp = ( (int32)PPM[i].i16 * RC_MAXIMUM + 625L )/1250L; // scale to 4uS res. for now
+		#endif // CLOCK_16MHZ
+		RC[c] = RxFilter(RC[c], Temp);		
+	}
+
+	if ( THROTTLE_SLEW_LIMIT > 0 )
+		RC[ThrottleC] = SlewLimit(LastThrottle, RC[ThrottleC], THROTTLE_SLEW_LIMIT);
+
+} // MapRC
 
 void ReadParametersEE(void)
 {

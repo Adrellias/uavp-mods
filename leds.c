@@ -20,12 +20,13 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 void SendLEDs(void);
 void LEDsOn(uint8);
 void LEDsOff(uint8);
 void LEDGame(void);
+
+uint8 LEDShadow;		// shadow register
+uint8 LEDCycles;
 
 void SendLEDs(void)
 {

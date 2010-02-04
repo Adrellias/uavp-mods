@@ -20,8 +20,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 int8 ReadEE(uint8);
 void WriteEE(uint8, int8);
 

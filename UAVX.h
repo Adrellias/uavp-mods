@@ -1,38 +1,37 @@
 // EXPERIMENTAL
 
-#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
+#define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
 
-#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
+#define	ATTITUDE_ENABLE_DECAY			// enables decay to zero angle when roll/pitch is not in fact zero!
 // unfortunately there seems to be a leak which cause the roll/pitch to increase without the decay.
 
 #define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
 
 // Baro
-#define BARO_HOVER_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for hover to be detected
+#define BARO_HOVER_MAX_ROC_CMPS		50L	// Must be changing altitude at less than this for hover to be detected
 
-//#define TEMPORARY_BARO_SCALE		94L		// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
-#define TEMPORARY_BARO_SCALE		85L		// BMP085
+//#define TEMPORARY_BARO_SCALE		94L	// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
+#define TEMPORARY_BARO_SCALE		85L	// BMP085
 
 // Accelerometers
-#define DAMP_HORIZ_LIMIT 			3L		// equivalent stick units - no larger than 5
+#define DAMP_HORIZ_LIMIT 			3L	// equivalent stick units - no larger than 5
 
-#define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
-#define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
-
+#define DAMP_VERT_LIMIT_LOW			-5L	// maximum throttle reduction
+#define DAMP_VERT_LIMIT_HIGH		20L	// maximum throttle increase
 
 // Nav
-#define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
-#define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
-#define NAV_INT_WINDUP_LIMIT		64L		// ???
+#define NAV_MAX_ROLL_PITCH 			25L	// Rx stick units
+#define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
+#define NAV_INT_WINDUP_LIMIT		64L	// ???
 
 #define BARO_INT_WINDUP_LIMIT		16L
 
-#define DEFAULT_TELEMETRY 			0		// 0 None, 1 GPS, 2 Data
+#define DEFAULT_TELEMETRY 			0	// 0 None, 1 GPS, 2 Data
 // Debugging
 
-//#define FAKE_FLIGHT						// For testing Nav on the GROUND!
+//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
-#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+//#define TESTS_FULL_BARO					// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -56,44 +55,33 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-
-// Tricopter 
-// connector K1 = front motor
-//           K2 = rear left motor 
-//           K3 = rear right motor 
-//           K4 = yaw servo output
 //#define TRICOPTER						
-
 //#define RX6CH 						// 6ch Receivers
-
 //#define DEBUG_SENSORS					// Debug sensors with UAVPset - no motors
-
 #endif // !BATCHMODE
 
 //________________________________________________________________________________________________
 
-// UAVX Extensions
-
-//#define STATS_INC_GYRO_ACC				// includes tracking of Accs/Gyros but takes time in main loop!
-#define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
+//#define STATS_INC_GYRO_ACC			// includes tracking of Accs/Gyros but takes time in main loop!
+#define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
 
 // Timeouts and Update Intervals
 
-#define FAILSAFE_TIMEOUT_MS		1000L 		// mS. hold last "good" settings and then either restore flight or abort
-#define ABORT_TIMEOUT_MS		3000L	 	// mS. autonomous RTH with GPS or Descend without. 
-#define ABORT_UPDATE_MS			2000L		// mS. retry period for RC Signal and restore Pilot in Control
+#define FAILSAFE_TIMEOUT_MS		1000L 	// mS. hold last "good" settings and then restore flight or abort
+#define ABORT_TIMEOUT_MS		3000L	// mS. autonomous RTH with GPS or Descend without. 
+#define ABORT_UPDATE_MS			2000L	// mS. retry period for RC Signal and restore Pilot in Control
 
-#define THROTTLE_LOW_DELAY_MS	1000L		// mS. that motor runs at idle after the throttle is closed
-#define THROTTLE_UPDATE_MS		3000L		// mS. constant throttle time for hover
+#define THROTTLE_LOW_DELAY_MS	1000L	// mS. that motor runs at idle after the throttle is closed
+#define THROTTLE_UPDATE_MS		3000L	// mS. constant throttle time for hover
 
-#define NAV_ACTIVE_DELAY_MS		10000L		// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_LAND_TIMEOUT_MS	30000L		// mS. Shutdown throttle if descent lasts too long
+#define NAV_ACTIVE_DELAY_MS		10000L	// mS. after throttle exceeds idle that Nav becomes active
+#define NAV_RTH_LAND_TIMEOUT_MS	10000L	// mS. Shutdown throttle if descent lasts too long
 
-#define GPS_TIMEOUT_MS			2000L		// mS.
+#define GPS_TIMEOUT_MS			2000L	// mS.
 
 // Baro
 
-#define BARO_SCRATCHY_BEEPER				// Scratchy beeper noise on hover
+#define BARO_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
 
 // Accelerometers
 
@@ -102,7 +90,7 @@
 // Gyros
 
 // Adds a delay between gyro neutral acquisition samples (16)
-#define GYRO_ERECT_DELAY		1				// x 64 x 100mS 
+#define GYRO_ERECT_DELAY		1		// x 64 x 100mS 
 
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
@@ -111,30 +99,30 @@
 
 // Altitude Hold
 
-#define BARO_ALT_BAND_CM			200L				// Cm.
+#define BARO_ALT_BAND_CM			200L	// Cm.
 
 // Throttle reduction/increase limits for Baro Alt Comp
 
-#define BARO_MAX_DESCENT_CMPS		-50L 		// Cm./Sec
-#define BARO_DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
-#define BARO_LAND_CM				300L		// Cm. deemed to have landed when below this height
+#define BARO_MAX_DESCENT_CMPS		-50L 	// Cm./Sec
+#define BARO_DESCENT_TRANS_CM		1500L	// Cm. Altitude at which final descent starts 
+#define BARO_LAND_CM				300L	// Cm. deemed to have landed when below this height
 
-#define ALT_LOW_THR_COMP			-7L			// Stick units
+#define ALT_LOW_THR_COMP			-7L		// Stick units
 #define ALT_HIGH_THR_COMP			30L
 
-#define ALT_INT_WINDUP_LIMIT				4L
+#define ALT_INT_WINDUP_LIMIT		4L
 #define ALT_INT_LIMIT				4L
 #define ALT_DIFF_LIMIT				4L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM				500L		// Cm.
+#define GPS_ALT_BAND_CM				500L	// Cm.
 
 // Navigation
 
 #define NAV_ACQUIRE_BEEPER
 
-#define NAV_MAX_NEUTRAL_RADIUS	3L				// Metres also minimum closing radius
-#define NAV_MAX_RADIUS			40L				// Metres
+#define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
+#define NAV_MAX_RADIUS			40L		// Metres
 
 // reads $GPGGA and $GPRMC sentences - all others discarded
 
@@ -197,11 +185,6 @@
 #define true 	1
 #define false 	0
 
-#define EarthR 				(real32)(6378140.0)
-#define Pi 					(real32)(3.141592654)
-#define RecipEarthR 		(real32)(1.5678552E-7)
-
-#define DEGTOM 				(real32)(111319.5431531) 
 #define MILLIPI 			3142 
 #define CENTIPI 			314 
 #define HALFMILLIPI 		1571 
@@ -210,14 +193,6 @@
 
 #define MILLIRAD 			18 
 #define CENTIRAD 			2
-#define DEGMILLIRAD 		(real32)(17.453292) 
-#define DECIDEGMILLIRAD 	(real32)(1.7453292)
-#define MILLIRADDEG 		(real32)(0.05729578)
-#define MILLIRADDEG100 		(real32)(5.729578)
-#define CENTIRADDEG 		(real32)(0.5729578)
-#define DEGRAD 				(real32)(0.017453292)
-#define RADDEG 				(real32)(57.2957812)
-#define RADDEG1000000 		(real32)(57295781.2)
 
 #define MAXINT32 			0x7fffffff
 #define	MAXINT16 			0x7fff
@@ -239,17 +214,27 @@ typedef union {
 	int16 i16;
 	uint16 u16;
 	struct {
-		uint8 low8;
-		uint8 high8;
+		uint8 b0;
+		uint8 b1;
 	};
 } i16u;
+
+typedef union {
+	int24 i24;
+	uint24 u24;
+	struct {
+		uint8 b0;
+		uint8 b1;
+		uint8 b2;
+	};
+} i24u;
 
 typedef union {
 	int32 i32;
 	uint32 u32;
 	struct {
-		uint16 low16;
-		uint16 high16;
+		uint16 w0;
+		uint16 w1;
 	};
 } i32u;
 
@@ -315,36 +300,35 @@ typedef struct {
 #define InterruptsEnabled 	(INTCONbits.GIEH)
 
 // Clock
-//#ifdef CLOCK_16MHZ
-	#define _ClkOut			(160/4)			// 16.0 MHz Xtal
-//#else // CLOCK_40MHZ
-	//NOT IMPLEMENTED YET #define _ClkOut	(400L/4)	// 10.0 MHz Xtal * 4 PLL
-//#endif
+#ifdef CLOCK_16MHZ
+	#define	TMR0_1MS		1
+#else // CLOCK_40MHZ
+	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM
+#endif
 
-#define _PreScale0			16				// 1 6 TMR0 prescaler 
-#define _PreScale1			8				// 1:8 TMR1 prescaler 
-#define _PreScale2			16
-#define _PostScale2			16
+#define _PreScale0		16				// 1 6 TMR0 prescaler 
+#define _PreScale1		8				// 1:8 TMR1 prescaler 
+#define _PreScale2		16
+#define _PostScale2		16
 
 // Parameters for UART port ClockHz/(16*(BaudRate+1))
-#define _B9600				104 
-#define _B19200				(_ClkOut*100000/(4*19200) - 1)
-#define _B38400				26 
-#define _B115200			9 
-#define _B230400			(_ClkOut*100000/(4*115200) - 1)
-
-#define TMR2_5MS			78				// 1x 5ms + 
-#define TMR2_TICK			2				// uSec
+#ifdef CLOCK_16MHZ
+#define _B9600			104
+#define _B38400			26 
+#else // CLOCK_40MHZ
+#define _B9600			65
+#define _B38400			65
+#endif // CLOCK_16MHZ
 
 // LEDs
-#define AUX2M				0x01
-#define BlueM				0x02
-#define RedM				0x04
-#define GreenM				0x08
-#define AUX1M				0x10
-#define YellowM				0x20
-#define AUX3M				0x40
-#define BeeperM				0x80
+#define AUX2M			0x01
+#define BlueM			0x02
+#define RedM			0x04
+#define GreenM			0x08
+#define AUX1M			0x10
+#define YellowM			0x20
+#define AUX3M			0x40
+#define BeeperM			0x80
 
 #define ALL_LEDS_ON		LEDsOn(BlueM|RedM|GreenM|YellowM)
 #define AUX_LEDS_ON		LEDsOn(AUX1M|AUX2M|AUX3M)
@@ -375,38 +359,29 @@ typedef struct {
 
 // Bit definitions
 #define Armed			(PORTAbits.RA4)
-#define InTheAir			true	// zzz (PORTCbits.RC0) // micro switch to ground when closed
+#define InTheAir		true	// zzz (PORTCbits.RC0) // micro switch to ground when closed
 
-#define	I2C_ACK				((uint8)(0))
-#define	I2C_NACK			((uint8)(1))
+#define	I2C_ACK			((uint8)(0))
+#define	I2C_NACK		((uint8)(1))
 
-#define SPI_CS				PORTCbits.RC5
-#define SPI_SDA				PORTCbits.RC4
-#define SPI_SCL				PORTCbits.RC3
-#define SPI_IO				TRISCbits.TRISC4
+#define SPI_CS			PORTCbits.RC5
+#define SPI_SDA			PORTCbits.RC4
+#define SPI_SCL			PORTCbits.RC3
+#define SPI_IO			TRISCbits.TRISC4
 
-#define	RD_SPI				1
-#define WR_SPI				0
-#define DSEL_LISL  			1
-#define SEL_LISL  			0
-
-// ADC Channels
-#define ADCPORTCONFIG 		0b00001010 // AAAAA
-#define ADCBattVoltsChan 	0 
-#define NonIDGADCRollChan 	1
-#define NonIDGADCPitchChan 	2
-#define IDGADCRollChan 		2
-#define IDGADCPitchChan 	1
-#define ADCVRefChan 		3 
-#define ADCYawChan			4
-#define ADCVREF5V 			0
-#define ADCVREF3V3 			1
+#define	RD_SPI			1
+#define WR_SPI			0
+#define DSEL_LISL  		1
+#define SEL_LISL  		0
 
 // RC
 
-#define RxFilter					MediumFilterU
-//#define RxFilter					SoftFilterU
-//#define RxFilter					NoFilter
+#define CONTROLS 			7
+#define MAX_CONTROLS 		12 	// maximum Rx channels
+
+#define RxFilter			MediumFilterU
+//#define RxFilter			SoftFilterU
+//#define RxFilter			NoFilter
 
 #define	RC_GOOD_BUCKET_MAX	20
 #define RC_GOOD_RATIO		4
@@ -424,6 +399,8 @@ typedef struct {
 #define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
 #define RC_THR_MAX 			RC_MAXIMUM
 
+#define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
+
 #ifdef RX6CH 
 	#define RC_CONTROLS 5			
 #else
@@ -431,36 +408,18 @@ typedef struct {
 #endif //RX6CH
 
 // ESC
-#define OUT_MINIMUM			1					// Required for PPM timing loops
-#define OUT_NEUTRAL			((150 * _ClkOut/(2*_PreScale1))&0xFF)    //   0%
+#define OUT_MINIMUM			1			// Required for PPM timing loops
+#define OUT_NEUTRAL			120			// 1.5mS @ 108 16MHz
 #define OUT_MAXIMUM			240
 #define OUT_HOLGER_MAXIMUM	225
 #define OUT_YGEI2C_MAXIMUM	240
-#define OUT_X3D_MAXIMUM		200 
+#define OUT_X3D_MAXIMUM		200
 
 // Compass sensor
-#define COMPASS_I2C_ID		0x42				// I2C slave address
-#define COMPASS_MAXDEV		30					// maximum yaw compensation of compass heading 
-#define COMPASS_MIDDLE		10					// yaw stick neutral dead zone
-#define COMPASS_TIME_MS		50					// 20Hz
-
-// Baro (altimeter) sensor
-#define BARO_I2C_ID			0xee
-#define BARO_TEMP_BMP085	0x2e
-#define BARO_TEMP_SMD500	0x6e
-#define BARO_PRESS			0xf4
-#define BARO_CTL			0xf4				// OSRS=3 for BMP085 25.5mS, SMD500 34mS				
-#define BARO_ADC_MSB		0xf6
-#define BARO_ADC_LSB		0xf7
-#define BARO_ADC_XLSB		0xf8				// BMP085
-#define BARO_TYPE			0xd0
-//#define BARO_ID_SMD500	??
-#define BARO_ID_BMP085		((uint8)(0x55))
-
-#define BARO_TEMP_TIME_MS	20	// 10
-//#define BMP085_PRESS_TIME_MS 	26
-//#define SMD500_PRESS_TIME_MS 	34
-#define BARO_PRESS_TIME_MS	45		
+#define COMPASS_I2C_ID		0x42		// I2C slave address
+#define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
+#define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
+#define COMPASS_TIME_MS		50			// 20Hz
 
 // Sanity checks
 
@@ -481,337 +440,9 @@ typedef struct {
 
 // end of sanity checks
 
-// Prototypes
+//______________________________________________________________________________________________
 
-// accel.c
-extern void SendCommand(int8);
-extern uint8 ReadLISL(uint8);
-extern uint8 ReadLISLNext(void);
-extern void WriteLISL(uint8, uint8);
-extern void IsLISLActive(void);
-extern void InitLISL(void);
-extern void ReadAccelerations(void);
-extern void GetNeutralAccelerations(void);
-
-// adc.c
-extern int16 ADC(uint8, uint8);
-extern void InitADC(void);
-
-// autonomous.c
-extern void Navigate(int24, int24);
-extern void SetDesiredAltitude(int24);
-extern void DoFailsafeLanding(void);
-extern void AcquireHoldPosition(void);
-extern void NavGainSchedule(int16);
-extern void DoNavigation(void);
-extern void FakeFlight(void); 
-extern void DoPPMFailsafe(void);
-extern void InitNavigation(void);
-
-// compass_altimeter.c
-extern void InitCompass(void);
-extern void InitHeading(void);
-extern void GetHeading(void);
-extern void StartBaroADC(boolean);
-extern void ReadBaro(boolean);
-extern void GetBaroAltitude(void);
-extern void InitBarometer(void);
-extern void BaroAltitudeHold(void);
-extern void AltitudeHold(void);
-
-// control.c
-extern void GyroCompensation(void);
-extern void LimitRollSum(void);
-extern void LimitPitchSum(void);
-extern void LimitYawSum(void);
-extern void GetGyroValues(void);
-extern void ErectGyros(void);
-extern void InertialDamping(void);
-extern void CalcGyroRates(void);
-extern void DoControl(void);
-
-extern void UpdateControls(void);
-extern void CaptureTrims(void);
-extern void StopMotors(void);
-extern void CheckThrottleMoved(void);
-extern void LightsAndSirens(void);
-extern void InitControl(void);
-
-// eeprom.c
-extern int8 ReadEE(uint8);
-extern void WriteEE(uint8, int8);
-
-// irq.c
-extern void ReceivingGPSOnly(uint8);
-void DoRxPolarity(void);
-extern void MapRC(void);
-extern void InitTimersAndInterrupts(void);
-extern void ReceivingGPSOnly(uint8);
-
-// gps.c
-extern void UpdateField(void);
-extern int32 ConvertGPSToM(int32);
-extern int32 ConvertMToGPS(int32);
-extern int24 ConvertInt(uint8, uint8);
-extern int32 ConvertLatLonM(uint8, uint8);
-extern int32 ConvertUTime(uint8, uint8);
-extern void ParseGPRMCSentence(void);
-extern void ParseGPGGASentence(void);
-extern void SetGPSOrigin(void);
-extern void ParseGPSSentence(void);
-extern void InitGPS(void);
-extern void UpdateGPS(void);
-
-// i2c.c
-extern boolean I2CWaitClkHi(void);
-extern void I2CStart(void);
-extern void I2CStop(void);
-extern uint8 SendI2CByte(uint8);
-extern uint8 RecvI2CByte(uint8);
-
-extern boolean ESCWaitClkHi(void);
-extern void ESCI2CStart(void);
-extern void ESCI2CStop(void);
-extern uint8 SendESCI2CByte(uint8);
-
-// leds.c
-extern void SendLEDs(void);
-extern void LEDsOn(uint8);
-extern void LEDsOff(uint8);
-extern void LEDGame(void);
-
-// math.c
-extern int16 SRS16(int16, uint8);
-extern int32 SRS32(int32, uint8);
-extern int16 Make2Pi(int16);
-extern int16 MakePi(int16);
-extern int16 Table16(int16, const int16 *);
-extern int16 int16sin(int16);
-extern int16 int16cos(int16);
-extern int16 int32atan2(int32, int32);
-extern int16 int16sqrt(int16);
-extern int32 int32sqrt(int32);
-
-// menu.c
-extern void ShowPrompt(void);
-extern void ShowRxSetup(void);
-extern void ShowSetup(uint8);
-extern void ProcessCommand(void);
-
-// outputs.c
-extern uint8 SaturInt(int16);
-extern void DoMix(int16 CurrThrottle);
-extern void CheckDemand(int16 CurrThrottle);
-extern void MixAndLimitMotors(void);
-extern void MixAndLimitCam(void);
-extern void OutSignals(void);
-extern void InitI2CESCs(void);
-
-// params.c
-extern void ReadParametersEE(void);
-extern void WriteParametersEE(uint8);
-extern void UseDefaultParameters(void);
-extern void UpdateParamSetChoice(void);
-extern void InitParameters(void);
-
-// serial.c
-extern void TxString(const rom uint8 *);
-extern void TxChar(uint8);
-extern void TxValU(uint8);
-extern void TxValS(int8);
-extern void TxNextLine(void);
-extern void TxNibble(uint8);
-extern void TxValH(uint8);
-extern void TxValH16(uint16);
-extern uint8 PollRxChar(void);
-extern uint8 RxNumU(void);
-extern int8 RxNumS(void);
-extern void TxVal32(int32, int8, uint8);
-extern void SendByte(uint8);
-extern void SendESCByte(uint8);
-extern void SendWord(int16);
-extern void SendESCWord(int16);
-extern void SendPacket(uint8, uint8, uint8 *, boolean);
-
-// stats.c
-extern void ZeroStats(void);
-extern void ReadStatsEE(void);
-extern void WriteStatsEE(void);
-extern void ShowStats(void);
-
-// utils.c
-extern void InitPorts(void);
-extern void InitMisc(void);
-
-extern void Delay1mS(int16);
-extern void Delay100mSWithOutput(int16);
-extern void DoBeep100mSWithOutput(uint8, uint8);
-extern void DoStartingBeepsWithOutput(uint8);
-
-extern int16 SlewLimit(int16, int16, int16);
-extern int32 ProcLimit(int32, int32, int32);
-extern int16 DecayX(int16, int16);
-
-extern void CheckAlarms(void);
-
-extern void DumpTrace(void);
-extern void SendUAVXState(void);
-
-// bootl18f.asm
-extern void BootStart(void);
-
-// tests.c
-extern void DoLEDs(void);
-extern void LinearTest(void);
-extern uint8 ScanI2CBus(void);
-extern void ReceiverTest(void);
-extern void GetCompassParameters(void);
-extern void DoCompassTest(void);
-extern void CompassRun(void);
-extern void CalibrateCompass(void);
-extern void BaroTest(void);
-extern void PowerOutput(int8);
-extern void LEDsAndBuzzer(void);
-extern void GPSTest(void);
-extern void AnalogTest(void);
-extern void ProgramSlaveAddress(uint8);
-extern void ConfigureESCs(void);
-
-// Menu strings
-extern const rom uint8 SerHello[];
-extern const rom uint8 SerSetup[];
-extern const rom uint8 SerPrompt[];
-
-// External Variables
-
-enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, FailsafeTimeout, 
-      AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, GPSTimeout, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
-	
-enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
-#define CONTROLS (NavGainC+1)
-#define MAX_CONTROLS 12 // maximum Rx channels
-
-enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
-enum FlightStates { Starting, Landing, Landed, InFlight};
-enum FailStates { Waiting, Aborting, Returning, Terminated };
-
-enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
-enum GyroTypes { ADXRS300, ADXRS150, IDG300};
-enum TxRxTypes { FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
-				DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
-
-enum TraceTags {THE, TRelBaroAltitude,
-				TRollRate,TPitchRate,TYE,
-				TRollSum,TPitchSum,TYawSum,
-				TAx,TAz,TAy,
-				TLRIntCorr, TFBIntCorr,
-				TDesiredThrottle,
-				TDesiredRoll, TDesiredPitch, TDesiredYaw,
-				TMFront, TMBack, TMLeft, TMRight,
-				TMCamRoll, TMCamPitch
-				};
-#define TopTrace TMCamPitch
-
-enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
-#define NoOfMotors 		4
-
-extern uint24 mS[];
-
-extern uint8	State, FailState;
-extern uint8 	SHADOWB, MF, MB, ML, MR, MT, ME; // motor and servo outputs
-extern i16u 	PPM[];
-extern int8 	PPM_Index;
-extern int24 	PrevEdge, CurrEdge;
-extern i16u 	Width;
-extern int16	PauseTime; // for tests
-extern uint8 	GPSRxState;
-extern uint8 	ll, tt, gps_ch;
-extern uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
-extern uint8	ESCMin, ESCMax;
-
-extern int16	RC[];
-extern int8 	RMap[CONTROLS];
-extern int8		SignalCount;
-extern uint16	RCGlitches;
-extern boolean	FirstPass;
-
-#define MAXTAGINDEX 	4
-#define GPSRXBUFFLENGTH 80
-extern struct {
-		uint8 	s[GPSRXBUFFLENGTH];
-		uint8 	length;
-	} NMEA;
-
-extern const rom uint8 NMEATag[];
-
-extern uint8 	ParamSet;
-extern boolean 	ParametersChanged;
-
-extern int16	RE, PE, YE, HE;
-extern int16	REp,PEp,YEp, HEp;
-extern int16	PitchSum, RollSum, YawSum;
-extern int16	RollRate, PitchRate, YawRate;
-extern int16	RollTrim, PitchTrim, YawTrim;
-extern int16	HoldYaw;
-extern int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
-extern int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
-extern int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
-extern int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-extern int16	DesiredRollP, DesiredPitchP;
-extern int16	CurrMaxRollPitch;
-extern i16u		Ax, Ay, Az;
-extern int8		LRIntCorr, FBIntCorr;
-extern int8		NeutralLR, NeutralFB, NeutralDU;
-extern int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
-extern i16u 	Compass;
-
-// GPS
-extern int32 	GPSLatitude, GPSLongitude;
-extern int32 GPSOriginLatitude, GPSOriginLongitude;//zzz
-extern int16 	GPSLongitudeCorrection;
-extern uint8 	GPSNoOfSats;
-extern uint8 	GPSFix;
-extern int16 	GPSHDilute;
-extern int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
-extern int16	GPSVel;
-extern int24 	GPSRelAltitude, GPSAltitude;
-extern int16 	ValidGPSSentences;
-
-extern int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
-
-enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Navigating, Terminating };
-extern uint8 	NavState;
-extern int16 	NavSensitivity;
-extern int16 	AltSum, AE;
-extern int32	NavRTHTimeout;
-
-// Waypoints
-
-typedef  struct {
-	int24 N, E, A;			// cm
-} WayPoint;
-
-extern WayPoint WP[];
-extern uint8 CurrWP;
-
-// Failsafes
-extern int16	ThrLow, ThrHigh, ThrNeutral;
-			
-// Variables for barometric sensor PD-controller
-extern int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
-extern int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
-extern i16u		BaroPress, BaroTemp;
-extern int8		BaroSample;
-extern int16	BaroComp, BaroTempComp;
-extern uint8	BaroType;
-
-extern uint8	MCamRoll,MCamPitch;
-extern int16	Motor[NoOfMotors];
-extern boolean	ESCI2CFail[NoOfMotors];
-extern int16	Rl,Pl,Yl;		// PID output values
-
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, DataTelemetry };
+// main.c
 
 #define FLAG_BYTES 6
 typedef union {
@@ -873,36 +504,323 @@ typedef union {
 		};
 } Flags;
 
+enum FlightStates { Starting, Landing, Landed, InFlight};
 extern Flags F;
+extern near uint8 State;
 
-extern uint8	LEDCycles;		// for hover light display
-extern int16	AttitudeHoldResetCount;	
-extern int8		BatteryVolts; 
-extern uint8	LEDShadow;		// shadow register
+// accel.c
 
-enum Statistics { GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS, MaxBaroROCS, GPSVelS, RollRateS, PitchRateS, YawRateS,
-				LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, GyroMidYawS, 
-				AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, MinHDiluteS, MaxHDiluteS,
-				RCGlitchesS, MaxStats};
-extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
-extern i16u Stats[];
+extern void SendCommand(int8);
+extern uint8 ReadLISL(uint8);
+extern uint8 ReadLISLNext(void);
+extern void WriteLISL(uint8, uint8);
+extern void IsLISLActive(void);
+extern void InitLISL(void);
+extern void ReadAccelerations(void);
+extern void GetNeutralAccelerations(void);
 
-enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
-                 AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
-                 MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, UAVXNavPacketTag};
+extern i16u Ax, Ay, Az;
+extern int8 LRIntCorr, FBIntCorr;
+extern int8 NeutralLR, NeutralFB, NeutralDU;
+extern int16 DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+//______________________________________________________________________________________________
 
-#define TX_BUFF_MASK	127
-extern uint8 	TxCheckSum;
-extern uint8Q 	TxQ;
+// adc.c
 
-extern uint8 UAVXCurrPacketTag;
+extern int16 ADC(uint8, uint8);
+extern void InitADC(void);
 
-extern int16	Trace[];
+// ADC Channels
+#define ADCPORTCONFIG 		0b00001010 // AAAAA
+#define ADCBattVoltsChan 	0 
+#define NonIDGADCRollChan 	1
+#define NonIDGADCPitchChan 	2
+#define IDGADCRollChan 		2
+#define IDGADCPitchChan 	1
+#define ADCVRefChan 		3 
+#define ADCYawChan			4
+#define ADCVREF5V 			0
+#define ADCVREF3V3 			1
 
-// Principal quadrocopter parameters
+//______________________________________________________________________________________________
 
-// parameters start at address zero in EEPROM
+// autonomous.c
 
+extern void Navigate(int24, int24);
+extern void SetDesiredAltitude(int24);
+extern void DoFailsafeLanding(void);
+extern void AcquireHoldPosition(void);
+extern void NavGainSchedule(int16);
+extern void DoNavigation(void);
+extern void FakeFlight(void); 
+extern void DoPPMFailsafe(void);
+extern void InitNavigation(void);
+
+typedef struct { int24 N, E, A;} WayPoint; // cm
+
+enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, 
+	Terminating };
+enum FailStates { Waiting, Aborting, Returning, Terminated };
+
+extern near uint8 FailState;
+extern  WayPoint WP[];
+extern uint8 CurrWP;
+extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius; 
+extern int16 CompassOffset, NavRTHTimeoutmS;
+extern uint8 NavState;
+extern int16 NavSensitivity;
+extern int32 NavRTHTimeout;
+extern int16 AltSum, AE;
+
+//______________________________________________________________________________________________
+
+// baro.c
+
+extern void StartBaroADC(boolean);
+extern void ReadBaro(boolean);
+extern void GetBaroAltitude(void);
+extern void InitBarometer(void);
+
+#define BARO_ID_BMP085		((uint8)(0x55))
+
+extern int24 OriginBaroPressure, OriginBaroTemperature, BaroSum;
+extern int24 DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP;
+extern int16 BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
+extern i16u BaroPress, BaroTemp;
+extern int8 BaroSample;
+extern int16 BaroComp, BaroTempComp;
+extern uint8 BaroType;
+
+//______________________________________________________________________________________________
+
+// compass.c
+
+extern void InitCompass(void);
+extern void InitHeading(void);
+extern void GetHeading(void);
+
+extern i16u Compass;
+
+//______________________________________________________________________________________________
+
+// control.c
+
+extern void AltitudeHold(void);
+extern void BaroAltitudeHold(void);
+
+extern void LimitRollSum(void);
+extern void LimitPitchSum(void);
+extern void LimitYawSum(void);
+extern void InertialDamping(void);
+extern void DoControl(void);
+
+extern void UpdateControls(void);
+extern void CaptureTrims(void);
+extern void StopMotors(void);
+extern void CheckThrottleMoved(void);
+extern void LightsAndSirens(void);
+extern void InitControl(void);
+
+extern int16 RC[];
+extern int16 RE, PE, YE, HE;					// gyro rate error	
+extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
+extern int16 Rl,Pl,Yl;							// PID output values
+extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
+extern int16 RollTrim, PitchTrim, YawTrim;
+extern int16 HoldYaw;
+extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
+extern int16 HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
+extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
+extern int16 DesiredRollP, DesiredPitchP;
+extern int16 CurrMaxRollPitch;
+extern int16 ThrLow, ThrHigh, ThrNeutral;
+extern int16 AttitudeHoldResetCount;
+extern boolean FirstPass;
+
+//______________________________________________________________________________________________
+
+// eeprom.c
+
+extern int8 ReadEE(uint8);
+extern void WriteEE(uint8, int8);
+
+//______________________________________________________________________________________________
+
+// gps.c
+
+extern void UpdateField(void);
+extern int32 ConvertGPSToM(int32);
+extern int32 ConvertMToGPS(int32);
+extern int24 ConvertInt(uint8, uint8);
+extern int32 ConvertLatLonM(uint8, uint8);
+extern int32 ConvertUTime(uint8, uint8);
+extern void ParseGPRMCSentence(void);
+extern void ParseGPGGASentence(void);
+extern void SetGPSOrigin(void);
+extern void ParseGPSSentence(void);
+extern void InitGPS(void);
+extern void UpdateGPS(void);
+
+#define MAXTAGINDEX 		4
+#define GPSRXBUFFLENGTH 	80
+extern struct {
+		uint8 	s[GPSRXBUFFLENGTH];
+		uint8 	length;
+	} NMEA;
+
+extern const rom uint8 NMEATag[];
+
+extern int32 GPSMissionTime, GPSStartTime;
+extern int32 GPSLatitude, GPSLongitude;
+extern int32 GPSOriginLatitude, GPSOriginLongitude;
+extern int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
+extern int24 GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+extern int16 GPSLongitudeCorrection;
+extern int16 GPSVel;
+extern uint8 GPSNoOfSats;
+extern uint8 GPSFix;
+extern int16 GPSHDilute;
+extern uint8 nll, cc, lo, hi;
+extern boolean EmptyField;
+extern int16 ValidGPSSentences;
+
+//______________________________________________________________________________________________
+
+// gyro.c
+
+extern void CompensateRollPitchGyros(void);
+extern void GetRollPitchGyroValues(void);
+extern void GetYawGyroValue(void);
+extern void ErectGyros(void);
+extern void CalcGyroRates(void);
+
+extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw;
+extern int16 RollRate, PitchRate, YawRate;
+
+//______________________________________________________________________________________________
+
+// irq.c
+
+extern void DoRxPolarity(void);
+extern void ReceivingGPSOnly(uint8);
+extern void InitTimersAndInterrupts(void);
+extern void ReceivingGPSOnly(uint8);
+
+enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
+	FailsafeTimeout, AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, 
+	GPSTimeout, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+
+enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
+
+extern uint24 mS[];
+extern int16 RC[];
+
+extern near i16u PPM[];
+extern near int8 PPM_Index;
+extern near int24 PrevEdge, CurrEdge;
+//zzzextern near i24u Width;
+extern near int24 PauseTime; // for tests
+extern near uint8 GPSRxState;
+extern near uint8 ll, tt, gps_ch;
+extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
+extern int8	SignalCount;
+extern uint16 RCGlitches;
+
+//______________________________________________________________________________________________
+
+// i2c.c
+
+extern boolean I2CWaitClkHi(void);
+extern void I2CStart(void);
+extern void I2CStop(void);
+extern uint8 SendI2CByte(uint8);
+extern uint8 RecvI2CByte(uint8);
+
+extern boolean ESCWaitClkHi(void);
+extern void ESCI2CStart(void);
+extern void ESCI2CStop(void);
+extern uint8 SendESCI2CByte(uint8);
+
+//______________________________________________________________________________________________
+
+// leds.c
+
+extern void SendLEDs(void);
+extern void LEDsOn(uint8);
+extern void LEDsOff(uint8);
+extern void LEDGame(void);
+
+extern uint8 LEDShadow;		// shadow register
+extern uint8 LEDCycles;		// for hover light display
+
+//______________________________________________________________________________________________
+
+// math.c
+
+extern int16 SRS16(int16, uint8);
+extern int32 SRS32(int32, uint8);
+extern int16 Make2Pi(int16);
+extern int16 MakePi(int16);
+extern int16 Table16(int16, const int16 *);
+extern int16 int16sin(int16);
+extern int16 int16cos(int16);
+extern int16 int32atan2(int32, int32);
+extern int16 int16sqrt(int16);
+extern int32 int32sqrt(int32);
+
+//______________________________________________________________________________________________
+
+// menu.c
+
+extern void ShowPrompt(void);
+extern void ShowRxSetup(void);
+extern void ShowSetup(uint8);
+extern void ProcessCommand(void);
+
+extern const rom uint8 SerHello[];
+extern const rom uint8 SerSetup[];
+extern const rom uint8 SerPrompt[];
+
+extern const rom uint8 RxChMnem[];
+
+//______________________________________________________________________________________________
+
+// outputs.c
+
+extern uint8 SaturInt(int16);
+extern void DoMix(int16 CurrThrottle);
+extern void CheckDemand(int16 CurrThrottle);
+extern void MixAndLimitMotors(void);
+extern void MixAndLimitCam(void);
+extern void OutSignals(void);
+extern void InitI2CESCs(void);
+
+enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
+#define NoOfMotors 		4
+
+extern uint8 MCamRoll,MCamPitch;
+extern int16 Motor[NoOfMotors];
+extern boolean ESCI2CFail[NoOfMotors];
+extern near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
+extern near uint8 ESCMin, ESCMax;
+
+//______________________________________________________________________________________________
+
+// params.c
+
+extern void MapRC(void);
+extern void ReadParametersEE(void);
+extern void WriteParametersEE(uint8);
+extern void UseDefaultParameters(void);
+extern void UpdateParamSetChoice(void);
+extern void InitParameters(void);
+
+enum TxRxTypes { 
+	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
+	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
+enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
+enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
+enum GyroTypes { ADXRS300, ADXRS150, IDG300};
 #define MAX_PARAMETERS	64		// parameters in EEPROM start at zero
 enum Params {
 	RollKp, 			// 01
@@ -984,12 +902,128 @@ enum Params {
 // bit 7 unusable in UAVPSet
 
 #define STATS_ADDR_EE	 	( MAX_PARAMETERS *2 )
-extern int8 P[];
+
 extern const rom int8 ComParms[];
 extern const rom int8 DefaultParams[];
 extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
-extern const rom uint8 RxChMnem[];
 extern const rom uint8 ESCLimits [];
 extern const rom boolean PPMPosPolarity[];
+
+extern uint8 ParamSet;
+extern boolean ParametersChanged;
+extern int8 P[];
+extern int8 RMap[];
+
+//__________________________________________________________________________________________
+
+// serial.c
+
+extern void TxString(const rom uint8 *);
+extern void TxChar(uint8);
+extern void TxValU(uint8);
+extern void TxValS(int8);
+extern void TxNextLine(void);
+extern void TxNibble(uint8);
+extern void TxValH(uint8);
+extern void TxValH16(uint16);
+extern uint8 PollRxChar(void);
+extern uint8 RxNumU(void);
+extern int8 RxNumS(void);
+extern void TxVal32(int32, int8, uint8);
+extern void SendByte(uint8);
+extern void SendESCByte(uint8);
+extern void SendWord(int16);
+extern void SendESCWord(int16);
+extern void SendPacket(uint8, uint8, uint8 *, boolean);
+
+#define TX_BUFF_MASK	127
+extern uint8 	TxCheckSum;
+extern uint8Q 	TxQ;
+
+//______________________________________________________________________________________________
+
+// stats.c
+
+extern void ZeroStats(void);
+extern void ReadStatsEE(void);
+extern void WriteStatsEE(void);
+extern void ShowStats(void);
+
+enum Statistics { 
+	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS, MaxBaroROCS, GPSVelS, 
+	RollRateS, PitchRateS, YawRateS, LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, 
+	GyroMidYawS, AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, 
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, MaxStats};
+
+extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
+extern i16u Stats[];
+//______________________________________________________________________________________________
+
+// utils.c
+
+extern void InitPorts(void);
+extern void InitMisc(void);
+extern void Delay1mS(int16);
+extern void Delay100mSWithOutput(int16);
+extern void DoBeep100mSWithOutput(uint8, uint8);
+extern void DoStartingBeepsWithOutput(uint8);
+extern int16 SlewLimit(int16, int16, int16);
+extern int32 ProcLimit(int32, int32, int32);
+extern int16 DecayX(int16, int16);
+extern void CheckAlarms(void);
+extern void DumpTrace(void);
+extern void SendUAVXState(void);
+
+enum TraceTags {
+	THE, TRelBaroAltitude,
+	TRollRate,TPitchRate,TYE,
+	TRollSum,TPitchSum,TYawSum,
+	TAx,TAz,TAy,
+	TLRIntCorr, TFBIntCorr,
+	TDesiredThrottle,
+	TDesiredRoll, TDesiredPitch, TDesiredYaw,
+	TMFront, TMBack, TMLeft, TMRight,
+	TMCamRoll, TMCamPitch
+	};
+#define TopTrace TMCamPitch
+
+enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
+	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
+	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
+	UAVXNavPacketTag};
+
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, DataTelemetry };
+
+extern int16 Trace[];
+extern int8 BatteryVolts;
+extern uint8 UAVXCurrPacketTag;
+
+//______________________________________________________________________________________________
+
+// bootl18f.asm
+
+extern void BootStart(void);
+
+//______________________________________________________________________________________________
+
+// tests.c
+
+extern void DoLEDs(void);
+extern void LinearTest(void);
+extern uint8 ScanI2CBus(void);
+extern void ReceiverTest(void);
+extern void GetCompassParameters(void);
+extern void DoCompassTest(void);
+extern void CompassRun(void);
+extern void CalibrateCompass(void);
+extern void BaroTest(void);
+extern void PowerOutput(int8);
+extern void LEDsAndBuzzer(void);
+extern void GPSTest(void);
+extern void AnalogTest(void);
+extern void ProgramSlaveAddress(uint8);
+extern void ConfigureESCs(void);
+
+
 
 

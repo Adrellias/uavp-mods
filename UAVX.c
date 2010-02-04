@@ -18,259 +18,16 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-//#ifdef CLOCK_40MHZ
-//#pragma	config OSC=HSPLL, WDT=OFF, PWRT=ON, MCLRE=OFF, LVP=OFF, PBADEN=OFF, CCP2MX = PORTC
-//#else
+#ifdef CLOCK_40MHZ
+#pragma	config OSC=HSPLL, WDT=OFF, PWRT=ON, MCLRE=OFF, LVP=OFF, PBADEN=OFF, CCP2MX = PORTC
+#else
 #pragma	config OSC=HS, WDT=OFF, PWRT=ON, MCLRE=OFF, LVP=OFF, PBADEN=OFF, CCP2MX = PORTC  
-//#endif
+#endif
 
 #include "uavx.h"
 
-// Global Variables
-
-#pragma udata clocks
-uint24	mS[CompassUpdate+1];
-#pragma udata
-
-// Interrupt related 
-#pragma udata access isrvars
-uint8 	SHADOWB, MF, MB, ML, MR, MT, ME; // motor/servo outputs
-uint8	State, FailState;
-i16u 	PPM[MAX_CONTROLS];
-int8 	PPM_Index;
-int24 	PrevEdge, CurrEdge;
-i16u 	Width;
-int16 	PauseTime;
-uint8 	GPSRxState;
-uint8 	ll, tt, gps_ch;
-uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
-uint8	ESCMin, ESCMax;
-#pragma udata
-
-int16 	RC[CONTROLS];
-int8	SignalCount;
-uint16	RCGlitches;
-boolean	FirstPass; 
-
-const rom uint8 RxChMnem[] = "TAERG12";
-int8 	RMap[CONTROLS];
-
-#pragma udata gpsbuff
-struct {
-	uint8 s[GPSRXBUFFLENGTH];
-	uint8 length;
-	} NMEA;
-#pragma udata
-
-const rom uint8 NMEATag[6] = {"GPGGA"};
-
-uint8	ParamSet;
-boolean ParametersChanged;
-
-// Control
-int16	RE, PE, YE, HE;					// gyro rate error	
-int16	REp, PEp, YEp, HEp;				// previous error for derivative
-int16	RollSum, PitchSum, YawSum;		// integral 	
-int16	RollRate, PitchRate, YawRate;
-int16	RollTrim, PitchTrim, YawTrim;
-int16	HoldYaw;
-int16	RollIntLimit256, PitchIntLimit256, YawIntLimit256;
-int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
-int16	HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
-int16	DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-int16	DesiredRollP, DesiredPitchP;
-int16	CurrMaxRollPitch;
-
-i16u 	Compass;
-
-#pragma udata accs
-i16u	Ax, Ay, Az;
-int8	LRIntCorr, FBIntCorr;
-int16	Rl,Pl,Yl;						// PID output values
-int8	NeutralLR, NeutralFB, NeutralDU;
-int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
-#pragma udata
-
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
-
-uint8 	NavState;
-int16 	NavSensitivity;
-int16 	AltSum, AE;
-int32	NavRTHTimeout;
-
-int16	ThrLow, ThrHigh, ThrNeutral;
-
-// Variables for barometric sensor PD-controller
-int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP, BE;
-int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
-i16u	BaroPress, BaroTemp;
-int8	BaroSample;
-int16	BaroComp, BaroTempComp;
-uint8	BaroType;
-
-uint8	LEDShadow;		// shadow register
-
-uint8	MCamRoll,MCamPitch;
-int16	Motor[NoOfMotors];
-boolean	ESCI2CFail[NoOfMotors];
-
-#pragma udata stats
-int24 	MaxRelBaroAltitudeS, MaxGPSAltitudeS;
-i16u 	Stats[MaxStats];
-#pragma udata
-
-int16	Trace[TopTrace+1];
 Flags 	F;
-uint8	LEDCycles;
-int16	AttitudeHoldResetCount;	
-int8	BatteryVolts;
-
-#pragma udata txbuffer
-uint8 TxCheckSum;
-uint8Q TxQ;
-#pragma udata
-
-uint8 UAVXCurrPacketTag;
-
-#pragma udata params
-int8 P[MAX_PARAMETERS];
-#pragma udata
-
-// mask giving common variables across parameter sets
-const rom int8	ComParms[]={
-	0,0,0,1,0,0,0,0,0,0,
-	0,0,0,0,0,1,1,1,0,1,
-	1,1,1,1,1,0,0,0,0,0,
-	0,0,0,1,1,1,1,0,0,1,
-	0,1,1,1,1,0,1,0,0,1,
-	1,0,0,0,0,0,0,0,0,0,
-	0,0,0,0
-	};
-
-const rom int8 DefaultParams[] = {
-	-24, 			// RollKp, 			01
-	-14, 			// RollKi,			02
-	75, 			// RollKd,			03
-	0, 				// HorizDampKp,		04c 
-	3, 				// RollIntLimit,	05
-	-24, 			// PitchKp,			06
-	-14, 			// PitchKi,			07
-	75, 			// PitchKd,			08
-	4, 				// BaroKp,			09
-	3, 				// PitchIntLimit,	10
-	
-	-30, 			// YawKp, 			11
-	-20, 			// YawKi,			12
-	0, 				// YawKd,			13
-	30, 			// YawLimit,		14
-	2, 				// YawIntLimit,		15
-	0, 				// ConfigBits,		16c
-	4, 				// TimeSlots,		17c
-	48, 			// LowVoltThres,	18c
-	0, 				// CamRollKp,		19
-	45, 			// PercentHoverThr,	20c 
-	
-	-1, 			// VertDampKp,		21c
-	0, 				// MiddleDU,		22c
-	10, 			// PercentIdleThr,	23c
-	0, 				// MiddleLR,		24c
-	0, 				// MiddleFB,		25c
-	0, 				// CamPitchKp,		26
-	24, 			// CompassKp,		27
-	10, 			// BaroKi,			28
-	90, 			// NavRadius,		29
-	8, 				// NavKi,			30 
-
-	15, 			// NavAltKp,		31
-	15, 			// NavAltKi,		32
-	20, 			// NavRTHAlt,		33
-	0, 				// NavMagVar,		34c
-	ADXRS300, 		// GyroType,		35c
-	ESCPPM, 		// ESCType,			36c
-	DX7AR7000, 		// TxRxType			37c
-	2,				// NeutralRadius	38
-	30,				// PercentNavSens6Ch	39
-	0,				// CamRollTrim,		40c
-
-	-16,			// NavKd			41
-	1,				// VertDampDecay    42c
-	1,				// HorizDampDecay	43c
-	85,				// BaroScale		44c
-	0,				// TelemetryType	45c
-	3,				// MaxDescentRateDmpS 	46
-	30,				// DescentDelayS	47c
-	12,				// NavIntLimit		48
-	3,				// BaroIntLimit		49
-	11,				// GravComp			50c
-	1,				// CompSteps		51c			
-
-	0,				// 52 - 64 unused currently	
-
-	0,
-	0,
-	0,
-	0,
-	0,	
-	0,
-	0,
-	0,
-
-	0,
-	0,
-	0,
-	0					
-	};
-
-// Reference Internal Quadrocopter Channel Order
-// 1 Throttle
-// 2 Aileron
-// 3 Elevator
-// 4 Rudder
-// 5 Gear
-// 6 Aux1
-// 7 Aux2
-
-const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
-	{ 3,1,2,4,5,6,7 }, 	// Futaba Thr 3 Throttle
-	{ 2,1,4,3,5,6,7 },	// Futaba Thr 2 Throttle
-	{ 5,3,2,1,6,4,7 },	// Futaba 9C Spektrum DM8/AR7000
-	{ 1,2,3,4,5,6,7 },	// JR XP8103/PPM
-	{ 7,1,4,6,3,5,2 },	// JR 9XII Spektrum DM9 ?
-
-	{ 6,1,4,7,3,2,5 },	// JR DXS12 
-	{ 6,1,4,7,3,2,5 },	// Spektrum DX7/AR7000
-	{ 5,1,4,6,3,2,7 },	// Spektrum DX7/AR6200
-
-	{ 3,1,2,4,5,7,6 }, 	// Futaba Thr 3 Sw 6/7
-	{ 1,2,3,4,5,6,7 },	// Spektrum DX7/AR6000
-	{ 1,2,3,4,5,6,7 },	// Graupner MX16S
-
-	{ 1,2,3,4,5,6,7 }	// Custom
-	};
-
-// Rx signalling polarity used only for serial PPM frames usually
-// by tapping internal Rx circuitry.
-const rom boolean PPMPosPolarity[CustomTxRx+1] =
-	{
-		false, 	// Futaba Ch3 Throttle
-		false,	// Futaba Ch2 Throttle
-		true,	// Futaba 9C Spektrum DM8/AR7000
-		true,	// JR XP8103/PPM
-		true,	// JR 9XII Spektrum DM9/AR7000
-
-		true,	// JR DXS12
-		true,	// Spektrum DX7/AR7000
-		true,	// Spektrum DX7/AR6200
-		false,	// Futaba Thr 3 Sw 6/7
-		true,	// Spektrum DX7/AR6000
-		true,	// Graupner MX16S
-		true	// custom Tx/Rx combination
-	};
-
-// Must be in thesame order as 
-const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
-
+  
 void main(void)
 {
 	static int16	Temp;
@@ -395,7 +152,7 @@ void main(void)
 			else
 				DoPPMFailsafe();
 
-			GetGyroValues();				// First gyro read
+			GetRollPitchGyroValues();				// First gyro read
 			GetHeading();
 			CheckThrottleMoved();
 			GetBaroAltitude();
@@ -404,7 +161,7 @@ void main(void)
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
 			mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
 
-			GetGyroValues();				// Second gyro read
+			GetRollPitchGyroValues();				// Second gyro read
 			DoControl();
 
 			MixAndLimitMotors();

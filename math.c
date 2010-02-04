@@ -20,8 +20,6 @@
 
 #include "uavx.h"
 
-// Prototypes
-
 int16 SRS16(int16, uint8);
 int32 SRS32(int32, uint8);
 int16 Make2Pi(int16);
