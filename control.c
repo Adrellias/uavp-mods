@@ -322,6 +322,12 @@ void UpdateControls(void)
 			NavSensitivity = RC[NavGainC];
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
+		#ifndef ATTITUDE_NO_LIMITS
+		RollPitchMax = (NAV_MAX_ROLL_PITCH + NAV_CONTROL_HEADROOM) +
+						(( MAX_ROLL_PITCH - (NAV_MAX_ROLL_PITCH + NAV_CONTROL_HEADROOM) ) *
+						(RC_MAXIMUM - NavSensitivity)) /
+						RC_MAXIMUM;
+		#endif // ATTITUDE_NO_LIMITS
 
 		F.ReturnHome = RC[RTHC] > RC_NEUTRAL;
 

@@ -20,7 +20,10 @@
 #define DAMP_VERT_LIMIT_HIGH		20L	// maximum throttle increase
 
 // Nav
+//#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
+
 #define NAV_MAX_ROLL_PITCH 			25L	// Rx stick units
+#define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
 
@@ -568,7 +571,7 @@ extern uint8 CurrWP;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
-extern int16 NavSensitivity;
+extern int16 NavSensitivity, RollPitchMax;
 extern int32 NavRTHTimeout;
 extern int16 AltSum, AE;
 
@@ -718,7 +721,7 @@ extern int16 RC[];
 extern near i16u PPM[];
 extern near int8 PPM_Index;
 extern near int24 PrevEdge, CurrEdge;
-//zzzextern near i24u Width;
+extern near i16u Width;
 extern near int24 PauseTime; // for tests
 extern near uint8 GPSRxState;
 extern near uint8 ll, tt, gps_ch;

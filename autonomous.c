@@ -42,7 +42,7 @@ uint8 CurrWP;
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, CompassOffset, NavRTHTimeoutmS;
 
 uint8 	NavState;
-int16 	NavSensitivity;
+int16 	NavSensitivity, RollPitchMax;
 int16 	AltSum, AE;
 int32	NavRTHTimeout;
 
@@ -377,8 +377,13 @@ void DoNavigation(void)
 		} // switch NavState
 	}
 
+	#ifdef ATTITUDE_NO_LIMITS
 	DesiredRoll = Limit(DesiredRoll, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
 	DesiredPitch = Limit(DesiredPitch, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
+	#else 
+	DesiredRoll = Limit(DesiredRoll, -RollPitchMax, RollPitchMax);
+	DesiredPitch = Limit(DesiredPitch, -RollPitchMax, RollPitchMax);
+	#endif // ATTITUDE_NO_LIMITS
 
 } // DoNavigation
 

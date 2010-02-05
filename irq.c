@@ -284,7 +284,11 @@ void high_isr_handler(void)
 
 	if ( INTCONbits.T0IF )  // MilliSec clock with some "leaks" in output.c etc.
 	{ 
-//		WriteTimer0(TMR0_1MS + ReadTimer0());
+		#ifdef CLOCK_16MHZ
+	//	WriteTimer0( TMR0_1MS + (uint8)ReadTimer0() );
+		#else // CLOCK_40MHZ
+	//	WriteTimer0( (uint16)TMR0_1MS + ReadTimer0() );
+		#endif // CLOCK_16MHZ
 		mS[Clock]++;
 		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{
