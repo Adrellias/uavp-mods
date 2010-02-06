@@ -298,7 +298,7 @@ void DoControl(void)
 
 void UpdateControls(void)
 {
-	static int16 HoldRoll, HoldPitch;
+	static int16 HoldRoll, HoldPitch, RollPitchScale;
 
 	if ( F.RCNewValues )
 	{
@@ -310,10 +310,6 @@ void UpdateControls(void)
 		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
 			DesiredThrottle = 0;
 
-		DesiredRoll = RC[RollC] - RC_NEUTRAL;
-		DesiredPitch = RC[PitchC] - RC_NEUTRAL;
-		DesiredYaw = RC[YawC] - RC_NEUTRAL;
-
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;
 			// NavSensitivity set in ReadParametersEE
@@ -322,12 +318,17 @@ void UpdateControls(void)
 			NavSensitivity = RC[NavGainC];
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
-		#ifndef ATTITUDE_NO_LIMITS
-		RollPitchMax = (NAV_MAX_ROLL_PITCH + NAV_CONTROL_HEADROOM) +
-						(( MAX_ROLL_PITCH - (NAV_MAX_ROLL_PITCH + NAV_CONTROL_HEADROOM) ) *
-						(RC_MAXIMUM - NavSensitivity)) /
-						RC_MAXIMUM;
+
+		#ifdef ATTITUDE_NO_LIMITS
+		RollPitchScale = 128L;
+		#else
+		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
 		#endif // ATTITUDE_NO_LIMITS
+
+		DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
+		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
+
+		DesiredYaw = RC[YawC] - RC_NEUTRAL;
 
 		F.ReturnHome = RC[RTHC] > RC_NEUTRAL;
 
@@ -357,7 +358,8 @@ void UpdateControls(void)
 } // UpdateControls
 
 void CaptureTrims(void)
-{ // only used in detecting movement from neutral in hold GPS position
+{ 	// only used in detecting movement from neutral in hold GPS position
+	// Trims are invalidated if Nav sensitivity is changed - Answer do not use trims ?
 	RollTrim = Limit(DesiredRoll, -NAV_MAX_TRIM, NAV_MAX_TRIM);
 	PitchTrim = Limit(DesiredPitch, -NAV_MAX_TRIM, NAV_MAX_TRIM);
 	YawTrim = Limit(DesiredYaw, -NAV_MAX_TRIM, NAV_MAX_TRIM);

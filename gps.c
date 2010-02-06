@@ -282,9 +282,13 @@ void ParseGPSSentence(void)
 			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
 			Temp = GPSLatitude - GPSOriginLatitude;
-			GPSNorth = GPSFilter(GPSNorth, Temp);
+//TxVal32(mS[Clock],3,HT);
 
+//TxVal32(Temp, 0,HT); // zzz
+			GPSNorth = GPSFilter(GPSNorth, Temp);
+//TxVal32(GPSNorth, 0,HT); // zzz
 			Temp = GPSLongitude - GPSOriginLongitude;
+//TxVal32(Temp, 0,HT); // zzz
 			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
 			GPSEast = GPSFilter(GPSEast, Temp);
 
@@ -302,7 +306,11 @@ void ParseGPSSentence(void)
 			#endif // GPS_INC_GROUNDSPEED			
 
 			GPSRelAltitude = GPSAltitude - GPSOriginAltitude;
-
+//TxVal32(GPSEast, 0,HT); // zzz
+//TxVal32(GPSRelAltitude, 3,HT);
+//TxVal32(GPSNoOfSats,0,HT);
+//TxVal32(GPSHDilute,3,HT);
+//TxNextLine();
 			if ( State == InFlight )
 			{
 				if ( GPSRelAltitude > MaxGPSAltitudeS )
