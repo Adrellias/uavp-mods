@@ -161,16 +161,14 @@ void MixAndLimitCam(void)
 	static int16 Cr, Cp;
 
 	// use only roll/pitch angle estimates
+	Cp = OUT_NEUTRAL;
 	if( P[CamPitchKp] != 0 )
-		Cp = (PitchSum * 4L) / (int16)P[CamPitchKp];
-	else
-		Cp = OUT_NEUTRAL;
+		Cp += (PitchSum * 4L) / (int16)P[CamPitchKp];
 	Cp += DesiredCamPitchTrim; 			
 
+	Cr = OUT_NEUTRAL;
 	if( P[CamRollKp] != 0 )
-		Cr = (RollSum * 4L) / (int16)P[CamRollKp];
-	else
-		Cr = OUT_NEUTRAL;
+		Cr += (RollSum * 4L) / (int16)P[CamRollKp];
 	Cr += P[CamRollTrim];
 
 	MCamRoll = Limit(Cr, 1, OUT_MAXIMUM);

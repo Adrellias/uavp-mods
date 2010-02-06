@@ -282,7 +282,7 @@ typedef struct {
 #define ConvertDDegToMPi(d) (((int32)d * 3574L)>>11)
 #define ConvertMPiToDDeg(d) (((int32)d * 2048L)/3574L)
 
-#define ToPercent(n, m) (((n)*100)/m)
+#define ToPercent(n, m) (((n)*100L)/m)
 
 // Simple filters using weighted averaging
 #define VerySoftFilter(O,N) 	(SRS16((O)+(N)*3, 2))
