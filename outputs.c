@@ -27,8 +27,6 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 
-// Constants
-
 #define MAGICNUMBER 	32	//84
 
 // For K1-K4 Connectors
@@ -52,6 +50,8 @@ boolean ESCI2CFail[NoOfMotors];
 #pragma udata access outputvars
 near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
 near uint8 ESCMin, ESCMax;
+near int8 ServoCycleCount;
+near int8 ServoInterval;
 #pragma udata
 
 void DoMix(int16 CurrThrottle)
@@ -161,15 +161,11 @@ void MixAndLimitCam(void)
 	static int16 Cr, Cp;
 
 	// use only roll/pitch angle estimates
-	Cp = OUT_NEUTRAL;
-	if( P[CamPitchKp] != 0 )
-		Cp += (PitchSum * 4L) / (int16)P[CamPitchKp];
-	Cp += DesiredCamPitchTrim; 			
+	Cr = SRS32((int24)RollSum * P[CamRollKp], 8);
+	Cr += (int16)P[CamRollTrim] + OUT_NEUTRAL;
 
-	Cr = OUT_NEUTRAL;
-	if( P[CamRollKp] != 0 )
-		Cr += (RollSum * 4L) / (int16)P[CamRollKp];
-	Cr += P[CamRollTrim];
+	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8);
+	Cp += DesiredCamPitchTrim + OUT_NEUTRAL; 			
 
 	MCamRoll = Limit(Cr, 1, OUT_MAXIMUM);
 	MCamPitch = Limit(Cp, 1, OUT_MAXIMUM);
@@ -242,7 +238,7 @@ void OutSignals(void)
 		WriteTimer0(TMR0_1MS);
 		INTCONbits.TMR0IF = 0;			// quit TMR0 interrupt
 		
-		if( OutToggle )	// driver cam servos only every 2nd pulse
+		if( ServoCycleCount == 0 )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -250,8 +246,10 @@ void OutSignals(void)
 			MOVWF	SHADOWB,1
 			_endasm	
 			PORTB |= 0x3f;
+			ServoCycleCount = ServoInterval;
 		}
-		OutToggle ^= 1;
+		else
+			ServoCycleCount--;
 		
 		// This loop is exactly 16 cycles 
 		// under no circumstances should the loop cycle time be changed
@@ -331,7 +329,7 @@ OS006:
 	} 
 	else
 	{
-		if( OutToggle )	// driver cam servos only every 2nd pulse
+		if( ServoCycleCount == 0 )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -339,8 +337,10 @@ OS006:
 			MOVWF	SHADOWB,1
 			_endasm	
 			PORTB |= 0x3f;
+			ServoCycleCount = ServoInterval;
 		}
-		OutToggle ^= 1;
+		else
+			ServoCycleCount--;
 		
 		// in X3D- and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL
 		// Ack (r) not checked as no recovery is possible

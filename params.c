@@ -248,6 +248,8 @@ void ReadParametersEE(void)
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 		BaroDescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
+		ServoInterval = 24 / Limit(P[TimeSlots], 0, 24) + 1; // ~22.5mS per Rx frame
+
 		BatteryVolts = (int16)P[LowVoltThres];
 		
 		ParametersChanged = false;

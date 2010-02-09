@@ -220,6 +220,10 @@ typedef union {
 		uint8 b0;
 		uint8 b1;
 	};
+	struct {
+		uint8 i0;
+		uint8 i1;
+	};
 } i16u;
 
 typedef union {
@@ -806,6 +810,8 @@ extern int16 Motor[NoOfMotors];
 extern boolean ESCI2CFail[NoOfMotors];
 extern near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
 extern near uint8 ESCMin, ESCMax;
+extern near int8 ServoCycleCount;
+extern near int8 ServoInterval;
 
 //______________________________________________________________________________________________
 
