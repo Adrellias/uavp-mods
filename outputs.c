@@ -50,8 +50,7 @@ boolean ESCI2CFail[NoOfMotors];
 #pragma udata access outputvars
 near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
 near uint8 ESCMin, ESCMax;
-near int8 ServoCycleCount;
-near int8 ServoInterval;
+near boolean ServoToggle;
 #pragma udata
 
 void DoMix(int16 CurrThrottle)
@@ -238,7 +237,7 @@ void OutSignals(void)
 		WriteTimer0(TMR0_1MS);
 		INTCONbits.TMR0IF = 0;			// quit TMR0 interrupt
 		
-		if( ServoCycleCount == 0 )	// driver cam servos only every 2nd pulse
+		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -246,10 +245,8 @@ void OutSignals(void)
 			MOVWF	SHADOWB,1
 			_endasm	
 			PORTB |= 0x3f;
-			ServoCycleCount = ServoInterval;
 		}
-		else
-			ServoCycleCount--;
+		ServoToggle ^= true;
 		
 		// This loop is exactly 16 cycles 
 		// under no circumstances should the loop cycle time be changed
@@ -329,7 +326,7 @@ OS006:
 	} 
 	else
 	{
-		if( ServoCycleCount == 0 )	// driver cam servos only every 2nd pulse
+		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
@@ -337,10 +334,8 @@ OS006:
 			MOVWF	SHADOWB,1
 			_endasm	
 			PORTB |= 0x3f;
-			ServoCycleCount = ServoInterval;
 		}
-		else
-			ServoCycleCount--;
+		ServoToggle ^= true;
 		
 		// in X3D- and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL
 		// Ack (r) not checked as no recovery is possible

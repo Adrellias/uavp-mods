@@ -59,9 +59,6 @@ void InitMisc(void)
 
 	State = Starting;				// For trace preconditions
 
-	ServoCycleCount = 0;
-	ServoInterval = 4;
-
 	for ( i = 0; i <= TopTrace; i++)
 		Trace[i] = 0;
 	

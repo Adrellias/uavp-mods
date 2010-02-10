@@ -5,7 +5,7 @@
 #define	ATTITUDE_ENABLE_DECAY			// enables decay to zero angle when roll/pitch is not in fact zero!
 // unfortunately there seems to be a leak which cause the roll/pitch to increase without the decay.
 
-#define NAV_RTH_LOCKOUT				350L	// ~70 units per degree - at least that is for IDG300
+#define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
 
 // Baro
 #define BARO_HOVER_MAX_ROC_CMPS		50L	// Must be changing altitude at less than this for hover to be detected
@@ -810,8 +810,7 @@ extern int16 Motor[NoOfMotors];
 extern boolean ESCI2CFail[NoOfMotors];
 extern near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
 extern near uint8 ESCMin, ESCMax;
-extern near int8 ServoCycleCount;
-extern near int8 ServoInterval;
+extern near boolean ServoToggle;
 
 //______________________________________________________________________________________________
 

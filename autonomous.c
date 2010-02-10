@@ -148,7 +148,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
 				EastDiffSum = Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
 			}
 	
-			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6);
+			EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6); 
 			EastI = Limit(EastI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
 			EastDiffSum = Decay1(EastDiffSum);
 	

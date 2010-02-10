@@ -58,7 +58,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// ConfigBits,		16c
 	4, 				// TimeSlots,		17c
 	48, 			// LowVoltThres,	18c
-	0, 				// CamRollKp,		19
+	24, 			// CamRollKp,		19
 	45, 			// PercentHoverThr,	20c 
 	
 	-1, 			// VertDampKp,		21c
@@ -66,7 +66,7 @@ const rom int8 DefaultParams[] = {
 	10, 			// PercentIdleThr,	23c
 	0, 				// MiddleLR,		24c
 	0, 				// MiddleFB,		25c
-	0, 				// CamPitchKp,		26
+	24, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
 	10, 			// BaroKi,			28
 	90, 			// NavRadius,		29
@@ -247,8 +247,6 @@ void ReadParametersEE(void)
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 		BaroDescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
-
-		ServoInterval = 24 / Limit(P[TimeSlots], 0, 24) + 1; // ~22.5mS per Rx frame
 
 		BatteryVolts = (int16)P[LowVoltThres];
 		
