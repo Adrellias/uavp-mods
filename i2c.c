@@ -30,9 +30,11 @@ uint8 RecvI2CByte(uint8);
 
 #ifdef CLOCK_16MHZ
 #define	I2C_DELAY		Delay10TCY()
+#define I2C_DELAY2		
 #else // CLOCK_40MHZ
-#define	I2C_DELAY		Delay10TCYx(5)
-#endif
+#define	I2C_DELAY		Delay10TCYx(3)
+#define I2C_DELAY2		Delay1TCY();Delay1TCY()	
+#endif // CLOCK_16MHZ
 
 #define I2C_IN			1
 #define I2C_OUT			0
@@ -42,20 +44,19 @@ uint8 RecvI2CByte(uint8);
 #define I2C_SCL			PORTBbits.RB7
 #define I2C_CIO			TRISBbits.TRISB7
 
-#define I2C_DATA_LOW	{I2C_SDA=0;I2C_DIO=I2C_OUT;}
+#define I2C_DATA_LOW	{I2C_SDA=0;I2C_DELAY2;I2C_DIO=I2C_OUT;I2C_DELAY2;}
 #define I2C_DATA_FLOAT	{I2C_DIO=I2C_IN;}
-#define I2C_CLK_LOW		{I2C_SCL=0;I2C_CIO=I2C_OUT;}
-#define I2C_CLK_FLOAT	{I2C_CIO=I2C_IN;} 
+#define I2C_CLK_LOW		{I2C_SCL=0;I2C_DELAY2;I2C_CIO=I2C_OUT;I2C_DELAY2;}
+#define I2C_CLK_FLOAT	{I2C_CIO=I2C_IN;I2C_DELAY2;} 
 
 boolean I2CWaitClkHi(void)
 {
 	static uint8 s;
 
-	I2C_CLK_FLOAT;								// set SCL to input, output a high
+	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 1;
-	while( !I2C_SCL )							// timeout wraparound through 255 to 0 1.25mS
+	while( !I2C_SCL )	// timeout wraparound through 255 to 0 1.25mS @ 16MHz
 		if( ++s == 0 ) return (false);
-	
 	return( true );
 } // I2CWaitClkHi
 
@@ -130,7 +131,9 @@ uint8 RecvI2CByte(uint8 r)
 			return(0);
 
 	I2C_SDA = r;
+	I2C_DELAY2;
 	I2C_DIO = I2C_OUT;
+	I2C_DELAY2;
 										
 	if( I2CWaitClkHi() )
 	{

@@ -336,6 +336,8 @@ void DoCompassTest(void)
 	InitCompass();
 	if ( !F.CompassValid ) goto CTerror;
 
+	Delay1mS(COMPASS_TIME_MS);
+
 	GetHeading();
 	if ( F.CompassMissRead ) goto CTerror;
 

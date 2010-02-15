@@ -34,7 +34,7 @@
 
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
-//#define TESTS_FULL_BARO					// show pressures and temperatures in Baro test
+//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -308,10 +308,10 @@ typedef struct {
 
 // Clock
 #ifdef CLOCK_16MHZ
-	#define	TMR0_1MS		1
+	#define	TMR0_1MS		0
 #else // CLOCK_40MHZ
 	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM
-#endif
+#endif // CLOCK_16MHZ
 
 #define _PreScale0		16				// 1 6 TMR0 prescaler 
 #define _PreScale1		8				// 1:8 TMR1 prescaler 
@@ -325,6 +325,17 @@ typedef struct {
 #else // CLOCK_40MHZ
 #define _B9600			65
 #define _B38400			65
+#endif // CLOCK_16MHZ
+
+// This is messy - trial and error to determine worst case interrupt latency!
+#ifdef CLOCK_16MHZ
+	#define INT_LATENCY		(uint16)(256 - 35 ) // x 4uS
+	#define FastWriteTimer0(t) TMR0L=(uint8)t
+	#define GetTimer0		Timer0.u16=TMR0L
+#else // CLOCK_40MHZ
+	#define INT_LATENCY		(uint16)(65536 - 35 ) // x 1.6uS
+	#define FastWriteTimer0(t) Timer0.u16=t;TMR0H=Timer0.b1;TMR0L=Timer0.b0
+	#define GetTimer0		{Timer0.b0=TMR0L;Timer0.b1=TMR0H;}	
 #endif // CLOCK_16MHZ
 
 // LEDs
@@ -416,8 +427,8 @@ typedef struct {
 
 // ESC
 #define OUT_MINIMUM			1			// Required for PPM timing loops
-#define OUT_NEUTRAL			120			// 1.5mS @ 108 16MHz
-#define OUT_MAXIMUM			240
+#define OUT_MAXIMUM			200			// ??
+#define OUT_NEUTRAL			105			// 1.503mS @ 105 16MHz
 #define OUT_HOLGER_MAXIMUM	225
 #define OUT_YGEI2C_MAXIMUM	240
 #define OUT_X3D_MAXIMUM		200
@@ -708,6 +719,7 @@ extern int16 RollRate, PitchRate, YawRate;
 
 // irq.c
 
+extern void SyncToTimer0AndDisableInterrupts(void);
 extern void DoRxPolarity(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
@@ -725,7 +737,7 @@ extern int16 RC[];
 extern near i16u PPM[];
 extern near int8 PPM_Index;
 extern near int24 PrevEdge, CurrEdge;
-extern near i16u Width;
+extern near i16u Width, Timer0;
 extern near int24 PauseTime; // for tests
 extern near uint8 GPSRxState;
 extern near uint8 ll, tt, gps_ch;
@@ -805,7 +817,6 @@ extern void InitI2CESCs(void);
 enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
 #define NoOfMotors 		4
 
-extern uint8 MCamRoll,MCamPitch;
 extern int16 Motor[NoOfMotors];
 extern boolean ESCI2CFail[NoOfMotors];
 extern near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;

@@ -32,6 +32,7 @@
 // Simple averaging of last two channel captures
 //#define RC_FILTER
 
+void SyncToTimer0AndDisableInterrupts(void);
 void DoRxPolarity(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
@@ -43,7 +44,7 @@ uint24	mS[CompassUpdate+1];
 #pragma udata
 #pragma udata access isrvars
 near int24 	PrevEdge, CurrEdge;
-near i16u 	Width;
+near i16u 	Width, Timer0;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
 near int24 	PauseTime;
@@ -53,9 +54,19 @@ near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near uint8	State, FailState;
 #pragma udata
 
-
 int8	SignalCount;
 uint16	RCGlitches;
+
+void SyncToTimer0AndDisableInterrupts(void)
+{
+	do { GetTimer0; } while ( Timer0.u16 < INT_LATENCY ); 
+	// one interrupt service which may occur between the check and the disable! 	
+	DisableInterrupts;
+
+	while( !INTCONbits.TMR0IF ) ;		// now wait overflow
+	FastWriteTimer0(TMR0_1MS);	
+	INTCONbits.TMR0IF = false;			// quit TMR0 interrupt
+} // SyncToTimer0AndDisableInterrupts
 
 void DoRxPolarity(void)
 {
@@ -282,13 +293,17 @@ void high_isr_handler(void)
 		PIR1bits.RCIF = false;
 	}
 
-	if ( INTCONbits.T0IF )  // MilliSec clock with some "leaks" in output.c etc.
-	{ 
+	if ( INTCONbits.T0IF )  
+	{
 		#ifdef CLOCK_16MHZ
-	//	WriteTimer0( TMR0_1MS + (uint8)ReadTimer0() );
+			// do nothing - just let TMR0 wrap around for 1.024mS intervals
 		#else // CLOCK_40MHZ
-	//	WriteTimer0( (uint16)TMR0_1MS + ReadTimer0() );
-		#endif // CLOCK_16MHZ
+			Timer0.b0 = TMR0L;
+			Timer0.b1 = TMR0H;
+			Timer0.u16 += TMR0_1MS; // ???zzz
+			TMR0H = Timer0.b1;
+			TMR0L = Timer0.b0;
+		#endif // CLOCK_40MHZ
 		mS[Clock]++;
 		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{
@@ -297,7 +312,6 @@ void high_isr_handler(void)
 		}
 		INTCONbits.TMR0IF = false;	
 	}
-
 } // high_isr_handler
 	
 #pragma code high_isr = 0x08

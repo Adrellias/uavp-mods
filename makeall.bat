@@ -22,7 +22,7 @@ rem Prevous switches THC and CAM have been abandoned in favour of Tx based
 rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
 
 rem Add/Delete required combinations to these sets
-set CLOCK=CLOCK_16MHZ
+set CLOCK=CLOCK_40MHZ CLOCK_16MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG DEBUG_SENSORS 
 set RX=RX7CH RX6CH

@@ -58,6 +58,7 @@ void InitMisc(void)
 	uint8 i;
 
 	State = Starting;				// For trace preconditions
+	ServoToggle = false;
 
 	for ( i = 0; i <= TopTrace; i++)
 		Trace[i] = 0;
@@ -96,7 +97,7 @@ void Delay1mS(int16 d)
 	{						// compromises ClockMilliSec;
 		while ( !INTCONbits.TMR0IF ) {};
 		INTCONbits.TMR0IF = 0;
-		WriteTimer0(TMR0_1MS);
+		FastWriteTimer0(TMR0_1MS);
 	}
 
 	INTCONbits.TMR0IE = T0IntEn;
@@ -118,7 +119,7 @@ void Delay100mSWithOutput(int16 dur)
 			{
 				while ( !INTCONbits.TMR0IF ) {};
 				INTCONbits.TMR0IF = 0;
-				WriteTimer0(TMR0_1MS);
+				FastWriteTimer0(TMR0_1MS);
 			}
 			OutSignals(); // 1-2 ms Duration
 			if( PIR1bits.RCIF )

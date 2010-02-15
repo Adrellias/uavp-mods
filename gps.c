@@ -302,11 +302,7 @@ void ParseGPSSentence(void)
 			#endif // GPS_INC_GROUNDSPEED			
 
 			GPSRelAltitude = GPSAltitude - GPSOriginAltitude;
-//TxVal32(GPSEast, 0,HT); // zzz
-//TxVal32(GPSRelAltitude, 3,HT);
-//TxVal32(GPSNoOfSats,0,HT);
-//TxVal32(GPSHDilute,3,HT);
-//TxNextLine();
+
 			if ( State == InFlight )
 			{
 				if ( GPSRelAltitude > MaxGPSAltitudeS )

@@ -57,7 +57,7 @@ void main(void)
 	InitGPS();
 	InitNavigation();
 	InitBarometer();
-
+I2CStop();//zzz
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -68,7 +68,7 @@ void main(void)
 		ReceivingGPSOnly(false);
 		EnableInterrupts;
 
-		LightsAndSirens();				// Check for Rx Signal, Disarmed on power up, Throttle closed
+		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
 		F.MotorsArmed = true;
@@ -166,7 +166,7 @@ void main(void)
 
 			MixAndLimitMotors();
 			MixAndLimitCam();
-			OutSignals();
+			OutSignals();							// some jitter because sync precedes this
 
 			CheckAlarms();
 			DumpTrace();

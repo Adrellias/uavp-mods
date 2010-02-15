@@ -27,8 +27,6 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 
-#define MAGICNUMBER 	32	//84
-
 // For K1-K4 Connectors
 #define	PulseFront		0
 #define	PulseLeft		1
@@ -43,7 +41,6 @@ void InitI2CESCs(void);
 #define ALL_OUTPUTS		(PORTB & 0b00001111)
 
 boolean OutToggle;
-uint8 MCamRoll,MCamPitch;
 int16 Motor[NoOfMotors];
 boolean ESCI2CFail[NoOfMotors];
 
@@ -166,15 +163,21 @@ void MixAndLimitCam(void)
 	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8);
 	Cp += DesiredCamPitchTrim + OUT_NEUTRAL; 			
 
-	MCamRoll = Limit(Cr, 1, OUT_MAXIMUM);
-	MCamPitch = Limit(Cp, 1, OUT_MAXIMUM);
+	MT = Limit(Cr, 1, OUT_MAXIMUM);
+	ME = Limit(Cp, 1, OUT_MAXIMUM);
 
 } // MixAndLimitCam
 
 void OutSignals(void)
-{
+{	// The PWM pulses are in two parts these being a 1mS preamble followed by a 0-1mS part. 
+	// Interrupts are enabled during the first part which uses TMR0.  TMR0 is monitored until 
+	// there is just sufficient time for one remaining interrupt latency before disabling 
+	// interrupts.  We do this because there appears to be no atomic method of detecting the 
+	// remaining time AND conditionally disabling the interupt. 
 	static uint8 m;
 	static uint8 r;
+	static i16u SaveTimer0;
+	static uint24 SaveClockmS;
 
 	#ifdef DEBUG_SENSORS
 
@@ -189,8 +192,8 @@ void OutSignals(void)
 	Trace[TMLeft] = Motor[Left];
 	Trace[TMRight] = Motor[Right];
 
-	Trace[TMCamRoll] = MCamRoll;
-	Trace[TMCamPitch] = MCamPitch;
+	Trace[TMCamRoll] = MT;
+	Trace[TMCamPitch] = ME;
 
 	#else // !DEBUG_SENSORS
 
@@ -198,14 +201,17 @@ void OutSignals(void)
 	{
 		Motor[Front] = Motor[Back] = 
 		Motor[Left] = Motor[Right] = ESCMin;
-		MCamPitch = MCamRoll = OUT_NEUTRAL;
+		MT = ME = OUT_NEUTRAL;
 	}
 
-	WriteTimer0(TMR0_1MS);
+	// Save TMR0 and reset
+	DisableInterrupts;
+	SaveClockmS = mS[Clock];
+	GetTimer0;
+	SaveTimer0.u16 = Timer0.u16;
+	FastWriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
-
-	MT = MCamRoll;
-	ME = MCamPitch;
+	EnableInterrupts;
 
 	if ( P[ESCType] == ESCPPM )
 	{
@@ -221,130 +227,89 @@ void OutSignals(void)
 		ML = Motor[Left];
 		MR = Motor[Right];
 
-		// simply wait for nearly 1 ms
-		// irq service time is max 256 cycles = 64us = 16 TMR0 ticks
-		while( ReadTimer0() < (uint16)(0x100-3-MAGICNUMBER) ) ; // 16
-		
-		// now stop CCP1 interrupt
-		// capture can survive 1ms without service!
-		
-		// Strictly only if the masked interrupt region below is
-		// less than the minimum valid Rx pulse width which
-		// is 1027uS less capture time overheads
-		
-		DisableInterrupts;	// BLOCK ALL INTERRUPTS for NO MORE than 1mS
-		while( !INTCONbits.TMR0IF ) ;	// wait for first overflow
-		WriteTimer0(TMR0_1MS);
-		INTCONbits.TMR0IF = 0;			// quit TMR0 interrupt
-		
+		SyncToTimer0AndDisableInterrupts();
+
 		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
-			_asm
-			MOVLB	0					// select Bank0
-			MOVLW	0x3f				// turn on motors
-			MOVWF	SHADOWB,1
-			_endasm	
-			PORTB |= 0x3f;
-		}
-		ServoToggle ^= true;
-		
-		// This loop is exactly 16 cycles 
-		// under no circumstances should the loop cycle time be changed
 			_asm
 			MOVLB	0						// select Bank0
-OS005:
-			MOVF	SHADOWB,0,1				// Cannot read PORTB ???
-			MOVWF	PORTB,0
-			ANDLW	0x0f
-			BZ		OS006
-			
-			DECFSZ	MF,1,1					// front motor
-			GOTO	OS007
-					
-			BCF		SHADOWB,PulseFront,1	// stop Front pulse
-OS007:
-			DECFSZ	ML,1,1					// left motor
-			GOTO	OS008
-					
-			BCF		SHADOWB,PulseLeft,1		// stop Left pulse
-OS008:
-			DECFSZ	MR,1,1					// right motor
-			GOTO	OS009
-					
-			BCF		SHADOWB,PulseRight,1	// stop Right pulse
-OS009:
-			DECFSZ	MB,1,1					// rear motor
-			GOTO	OS010
-						
-			BCF		SHADOWB,PulseBack,1		// stop Back pulse			
-
-OS010:
-			_endasm
-			#ifdef CLOCK_40MHZ
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			Delay1TCY();
-			#endif // CLOCK_40MHZ
-			_asm				
-			GOTO	OS005
-OS006:
-			_endasm
-			// This will be the corresponding C code:
-			//	while( ALL_OUTPUTS != 0 )
-			//	{	// remain in loop as int16 as any output is still high
-			//		if( TMR2 = MFront  ) PulseFront  = 0;
-			//		if( TMR2 = MBack ) PulseBack = 0;
-			//		if( TMR2 = MLeft  ) PulseLeft  = 0;
-			//		if( TMR2 = MRight ) PulseRight = 0;
-			//	}
-		
-		mS[Clock]++;
-		EnableInterrupts;	
-	} 
-	else
-	{
-		if( ServoToggle )	// driver cam servos only every 2nd pulse
-		{
-			_asm
-			MOVLB	0					// select Bank0
-			MOVLW	0x3f				// turn on motors
+			MOVLW	0x3f					// turn on all motors
 			MOVWF	SHADOWB,1
 			_endasm	
 			PORTB |= 0x3f;
 		}
-		ServoToggle ^= true;
+		else
+		{
+			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
+		}
+
+		_asm
+		MOVLB	0							// select Bank0
+OS005:
+		MOVF	SHADOWB,0,1	
+		MOVWF	PORTB,0
+		ANDLW	0x0f
+		BZ		OS006
+			
+		DECFSZ	MF,1,1				
+		GOTO	OS007
+					
+		BCF		SHADOWB,PulseFront,1
+OS007:
+		DECFSZ	ML,1,1		
+		GOTO	OS008
+					
+		BCF		SHADOWB,PulseLeft,1
+OS008:
+		DECFSZ	MR,1,1
+		GOTO	OS009
+					
+		BCF		SHADOWB,PulseRight,1
+OS009:
+		DECFSZ	MB,1,1	
+		GOTO	OS010
+						
+		BCF		SHADOWB,PulseBack,1			
+
+OS010:
+		_endasm
+		#ifdef CLOCK_40MHZ
+		Delay10TCYx(2); 
+		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
+		Delay1TCY(); Delay1TCY(); 
+		#endif // CLOCK_40MHZ
+		_asm				
+		GOTO	OS005
+OS006:
+		_endasm
 		
-		// in X3D- and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL
-		// Ack (r) not checked as no recovery is possible
-		// All motors driven with fourth motor ignored for Tricopter	
+		EnableInterrupts;
+		SyncToTimer0AndDisableInterrupts();	
+	} 
+	else
+	{ // I2C ESCs
+		if( ServoToggle )	// driver cam servos only every 2nd pulse
+		{
+			_asm
+			MOVLB	0					// select Bank0
+			MOVLW	0x30				// turn on motors
+			MOVWF	SHADOWB,1
+			_endasm	
+			PORTB |= 0x30;
+		}
+		else
+		{
+			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
+		}
+		
+		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
+		// ACK (r) not checked as no recovery is possible.
+		// All motors driven with fourth motor ignored for Tricopter.	
 		if ( P[ESCType] ==  ESCHolger )
 			for ( m = 0 ; m < NoOfMotors ; m++ )
 			{
 				ESCI2CStart();
-				r = SendESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
+				r = SendESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
 				r = SendESCI2CByte( Motor[m] );
 				ESCI2CStop();
 			}
@@ -370,75 +335,62 @@ OS006:
 				}
 	}
 
-	while( ReadTimer0() < (uint16)(0x100-3-MAGICNUMBER) ) ; 	// wait for 2nd TMR0 near overflow
-
-	DisableInterrupts;				
-	while( !INTCONbits.TMR0IF ) ;		// wait for 2nd overflow (2 ms)
-	WriteTimer0(TMR0_1MS);
-
-	// This loop is exactly 16 cycles 
-	// under no circumstances should the loop cycle time be changed
-_asm
+	if ( ServoToggle )
+	{	
+		_asm
 		MOVLB	0
 OS001:
-	MOVF	SHADOWB,0,1				// Cannot read PORTB ???
-	MOVWF	PORTB,0
-	ANDLW	0x30		// output ports 4 and 5
-	BZ		OS002		// stop if all 2 outputs are 0
-
-	DECFSZ	MT,1,1
-	GOTO	OS003
-
-	BCF		SHADOWB,PulseCamRoll,1
+		MOVF	SHADOWB,0,1	
+		MOVWF	PORTB,0
+		ANDLW	0x30		
+		BZ		OS002	
+	
+		DECFSZ	MT,1,1
+		GOTO	OS003
+	
+		BCF		SHADOWB,PulseCamRoll,1
 OS003:
-	DECFSZ	ME,1,1
-	GOTO	OS004
-
-	BCF		SHADOWB,PulseCamPitch,1
+		DECFSZ	ME,1,1
+		GOTO	OS004
+	
+		BCF		SHADOWB,PulseCamPitch,1
 OS004:
-	_endasm
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-
-	#ifdef CLOCK_40MHZ
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	Delay1TCY();
-	#endif // CLOCK_40MHZ
-
-	_asm
-
-	GOTO	OS001
+		_endasm
+	
+		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
+		Delay1TCY();
+	
+		#ifdef CLOCK_40MHZ
+		Delay10TCYx(2); 
+		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
+		Delay1TCY(); Delay1TCY(); 
+		#endif // CLOCK_40MHZ
+	
+		_asm
+	
+		GOTO	OS001
 OS002:
-	_endasm
+		_endasm
 
-	mS[Clock]++;
+		EnableInterrupts;
+		SyncToTimer0AndDisableInterrupts();
+	}
+
+	FastWriteTimer0(SaveTimer0.u16);
+	// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?
+	if ( P[ESCType] == ESCPPM )
+		if ( ServoToggle )
+			Clock[mS] = SaveClockmS + 3;
+		else
+			Clock[mS] = SaveClockmS + 2;
+	else
+		if ( ServoToggle )
+			Clock[mS] = SaveClockmS + 2;
+		else
+			Clock[mS] = SaveClockmS;
 	EnableInterrupts;
+
+	ServoToggle ^= true;
 
 #endif  // DEBUG_SENSORS
 

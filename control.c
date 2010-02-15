@@ -374,7 +374,7 @@ void StopMotors(void)
 	for (m = 0; m < NoOfMotors; m++)
 		Motor[m] = ESCMin;
 
-	MCamPitch = MCamRoll = OUT_NEUTRAL;
+	ME = ME = OUT_NEUTRAL;
 
 	F.MotorsArmed = false;
 } // StopMotors
