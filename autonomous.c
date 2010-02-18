@@ -297,85 +297,82 @@ void FakeFlight()
 
 void DoNavigation(void)
 {
-	if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands && ( mS[Clock] > mS[NavActiveTime]) )
-	{
-		switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
-		case Navigating:
-			// not implemented yet
-			break;
-		case Touchdown:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F.ReturnHome )
+	switch ( NavState ) { // most probable case last - switches in C18 are IF chains not branch tables!
+	case Navigating:
+		// not implemented yet
+		break;
+	case Touchdown:
+		Navigate(WP[0].N, WP[0].E);
+		if ( F.ReturnHome )
+			DoFailsafeLanding();
+		else
+			AcquireHoldPosition();
+		break;
+	case Descending:
+		Navigate(WP[0].N, WP[0].E);
+		if ( F.ReturnHome )
+			if ( RelBaroAltitude < BARO_LAND_CM )
+			{
+				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+				NavState = Touchdown;
+			}
+			else
 				DoFailsafeLanding();
+		else
+			AcquireHoldPosition();
+		break;
+	case AtHome:
+		Navigate(WP[0].N, WP[0].E);
+		if ( F.ReturnHome )
+			if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
+				NavState = Descending;
 			else
-				AcquireHoldPosition();
-			break;
-		case Descending:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F.ReturnHome )
-				if ( RelBaroAltitude < BARO_LAND_CM )
-				{
-					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
-					NavState = Touchdown;
-				}
-				else
-					DoFailsafeLanding();
-			else
-				AcquireHoldPosition();
-			break;
-		case AtHome:
-			Navigate(WP[0].N, WP[0].E);
-			if ( F.ReturnHome )
-				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
-					NavState = Descending;
-				else
-					SetDesiredAltitude(WP[0].A);
-			else
-				AcquireHoldPosition();
-			break;
-		case ReturningHome:
-			if ( F.ReturnHome )
-			{
-				Navigate(WP[0].N, WP[0].E);
 				SetDesiredAltitude(WP[0].A);
-				if ( F.Proximity )
-					if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT )
-					{
-						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;					
-						NavState = AtHome;
-					}
-			}
-			else
-				AcquireHoldPosition();					
-			break;
-		case HoldingStation:
-			if ( F.AttitudeHold )
-			{		
-				if ( F.AcquireNewPosition )
+		else
+			AcquireHoldPosition();
+		break;
+	case ReturningHome:
+		if ( F.ReturnHome )
+		{
+			Navigate(WP[0].N, WP[0].E);
+			SetDesiredAltitude(WP[0].A);
+			if ( F.Proximity )
+				if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT )
 				{
-					AcquireHoldPosition();
-					#ifdef NAV_ACQUIRE_BEEPER
-					if ( !F.BeeperInUse )
-					{
-						mS[BeeperTimeout] = mS[Clock] + 500L;
-						Beeper_ON;				
-					} 
-					#endif // NAV_ACQUIRE_BEEPER
-				}	
-			}
-			else
-				F.AcquireNewPosition = true;
-			
-			Navigate(GPSNorthHold, GPSEastHold);
-
-			if ( F.ReturnHome )
+					mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;					
+					NavState = AtHome;
+				}
+		}
+		else
+			AcquireHoldPosition();					
+		break;
+	case HoldingStation:
+		if ( F.AttitudeHold )
+		{		
+			if ( F.AcquireNewPosition )
 			{
-				AltSum = 0; 
-				NavState = ReturningHome;
-			}
-			break;
-		} // switch NavState
-	}
+				AcquireHoldPosition();
+				#ifdef NAV_ACQUIRE_BEEPER
+				if ( !F.BeeperInUse )
+				{
+					mS[BeeperTimeout] = mS[Clock] + 500L;
+					Beeper_ON;				
+				} 
+				#endif // NAV_ACQUIRE_BEEPER
+			}	
+		}
+		else
+			F.AcquireNewPosition = true;
+			
+		Navigate(GPSNorthHold, GPSEastHold);
+
+		if ( F.ReturnHome )
+		{
+			AltSum = 0; 
+			NavState = ReturningHome;
+		}
+		break;
+	} // switch NavState
 
 	DesiredRoll = Limit(DesiredRoll, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
 	DesiredPitch = Limit(DesiredPitch, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
@@ -399,22 +396,30 @@ void DoPPMFailsafe(void)
 				else
 					mS[AbortTimeout] += ABORT_UPDATE_MS;
 			break;
+		#ifdef NAV_PPM_FAILSAFE_RTH
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
-			NavSensitivity = RC_NEUTRAL;	// 50% gain
-			F.ReturnHome = F.TurnToHome = true;
-			NavState = ReturningHome;
-			DoNavigation();	// if GPS is out then check for hover will see zero throttle
-			if ( mS[Clock ] > mS[AbortTimeout] )
-				if ( F.Signal )
-				{
-					LEDRed_OFF;
-					LEDGreen_ON;
-					FailState = Waiting;
-				}
-				else
-					mS[AbortTimeout] += ABORT_UPDATE_MS;
+			F.NewCommands = true;
+			if ( F.NavValid && F.GPSValid && F.CompassValid )
+			{
+				DoNavigation();	
+				if ( mS[Clock ] > mS[AbortTimeout] )
+					if ( F.Signal )
+					{
+						LEDRed_OFF;
+						LEDGreen_ON;
+						FailState = Waiting;
+					}
+					else
+						mS[AbortTimeout] += ABORT_UPDATE_MS;
+			}
+			else
+			{
+				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+				FailState = Terminated;
+			}
 			break;
+		#endif // PPM_FAILSAFE_RTH
 		case Aborting:
 			if( mS[Clock] > mS[AbortTimeout] )
 			{
@@ -422,14 +427,19 @@ void DoPPMFailsafe(void)
 				LEDGreen_OFF;
 				LEDRed_ON;
 
+				F.RTHAltitudeHold = true;
 				SetDesiredAltitude((int24)WP[0].A);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
-				FailState = Returning;
+					NavSensitivity = RC_NEUTRAL;	// 50% gain
+					F.ReturnHome = F.TurnToHome = true;
+					AltSum = 0;
+					NavState = ReturningHome;
+					FailState = Returning;
 				#else
-				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
-				FailState = Terminated;
+					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+					FailState = Terminated;
 				#endif // PPM_FAILSAFE_RTH
 			}
 			break;
@@ -445,8 +455,7 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
-			
+		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;			
 } // DoPPMFailsafe
 
 void InitNavigation(void)

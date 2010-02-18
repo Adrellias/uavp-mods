@@ -182,7 +182,7 @@ void GetBaroAltitude(void)
 
 			Temp = (int24)BaroSum + BaroTempComp;
 			CompBaroPress = BaroFilter(CompBaroPress, Temp);
-			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 5);
+			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 6);
 
 			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
 			BaroROC = BaroROCFilter(BaroROCP, BaroROC);

@@ -39,7 +39,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"C..Compass test\r\n"
 	"D..Load default parameter set\r\n"
 	"G..GPS test (Use HyperTerm)\r\n"
-	"H..Barometer test\r\n"
+	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"
@@ -81,8 +81,13 @@ void ShowSetup(uint8 h)
 		ParamSet = 1;	
 	}
 
-	TxString("\r\nUAVX V" Version " ready.\r\nAccelerometers ");
+	#ifdef CLOCK_16MHZ
+	TxString("\r\nUAVX V" Version " 16MHz\r\n");
+	#else // CLOCK_40MHZ
+	TxString("\r\nUAVX V" Version " 40MHz\r\n");
+	#endif // CLOCK_16MHZ
 
+	TxString("Accelerometers ");
 	if( F.AccelerationsValid )
 		TxString("ONLINE\r\n");
 	else
@@ -104,6 +109,12 @@ void ShowSetup(uint8 h)
 			TxString("BMP085 ONLINE\r\n");
 		else
 			TxString("SMD500 ONLINE\r\n");
+	else
+		TxString("not available\r\n");
+
+	TxString("Rangefinder ");
+	if ( F.RangefinderAltitudeValid )
+		TxString("ONLINE\r\n");
 	else
 		TxString("not available\r\n");
 

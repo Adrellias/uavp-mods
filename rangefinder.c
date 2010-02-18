@@ -16,34 +16,24 @@
 //    General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
-//    If not, see http://www.gnu.org/licenses/
+//    If not, see http://www.gnu.org/licenses/.
+
+// Rangefinder (Maxbotix 5V Analog at 1cm/click)
 
 #include "uavx.h"
 
-int16 ADC(uint8);
-void InitADC(void);
+void GetRangefinderAltitude(void);
+void InitRangefinder(void);
 
-int16 ADC(uint8 Channel)
-{ // all ADC reads use 5V reference
+int16 RangefinderAltitude;
 
-	SetChanADC(Channel<<3);		// using automatic acq
-	ConvertADC();  
-	while (BusyADC()){};
-
-	return ( ReadADC() ); 
-} // ADC
-
-void InitADC()
+void GetRangefinderAltitude(void)
 {
+	RangefinderAltitude = ADC(ADCAltChan);
+} // GetRangefinderAltitude
 
- OpenADC(ADC_FOSC_32 & 
-          ADC_RIGHT_JUST &
-          ADC_12_TAD,
-		  ADC_CH0 &
-		  ADC_INT_OFF &
-          ADC_VREFPLUS_VDD &
-          ADC_VREFMINUS_VSS,	  
-          ADCPORTCONFIG);
-} // InitADC
-
-
+void InitRangefinder(void)
+{
+	GetRangefinderAltitude();
+	F.RangefinderAltitudeValid = RangefinderAltitude < 100; // old UAVP will be 3.3V or ~600 
+} // InitRangefinder

@@ -54,10 +54,11 @@ void main(void)
 
 	InitLISL();
 	InitCompass();
+	InitRangefinder();
 	InitGPS();
 	InitNavigation();
 	InitBarometer();
-I2CStop();//zzz
+
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -102,8 +103,8 @@ I2CStop();//zzz
 					InitNavigation();
 
 					DesiredThrottle = 0;
-					ErectGyros();			// DO NOT MOVE AIRCRAFT!
-					InitBarometer(); 		// as late as possible to allow warmup
+					ErectGyros();				// DO NOT MOVE AIRCRAFT!
+					InitBarometer(); 			// as late as possible to allow some warmup
 					DoStartingBeepsWithOutput(3);
 
 					State = Landed;
@@ -135,7 +136,10 @@ I2CStop();//zzz
 						}
 					break;
 				case InFlight:
-					DoNavigation();
+					if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands 
+						&& ( mS[Clock] > mS[NavActiveTime]) )
+						DoNavigation();
+
 					LEDGame();
 					if ( DesiredThrottle < IdleThrottle )
 					{
@@ -152,7 +156,7 @@ I2CStop();//zzz
 			else
 				DoPPMFailsafe();
 
-			GetRollPitchGyroValues();				// First gyro read
+			GetRollPitchGyroValues();				// First gyro sample
 			GetHeading();
 			CheckThrottleMoved();
 			GetBaroAltitude();
@@ -161,7 +165,7 @@ I2CStop();//zzz
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
 			mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
 
-			GetRollPitchGyroValues();				// Second gyro read
+			GetRollPitchGyroValues();				// Second gyro sample
 			DoControl();
 
 			MixAndLimitMotors();

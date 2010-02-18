@@ -105,13 +105,13 @@ void ShowStats(void)
 	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS].i16, 0, 0); TxNextLine();
 	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS].i16, 0, 0); TxNextLine();
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine();
-	TxString("Rx:       \t");TxVal32((int32) Stats[RCGlitchesS].i16,0,' '); TxNextLine(); 
+	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS].i16,0,' '); TxNextLine(); 
 
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
 	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 1, ' '); TxString("M (");
 	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
-							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' ');TxString("M/S\r\n");
+							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' '); TxString("M/S\r\n");
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 

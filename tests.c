@@ -352,7 +352,6 @@ CTerror:
 	TxString("FAIL\r\n");
 } // DoCompassTest
 
-
 void CompassRun(void)
 {
 	#ifdef TESTS_FULL
@@ -418,7 +417,7 @@ CCerror:
 
 void BaroTest(void)
 {
-	TxString("\r\nBarometer test\r\n");
+	TxString("\r\nAltitude test\r\n");
 	if ( !F.BaroAltitudeValid ) goto BAerror;
 
 	if ( BaroType == BARO_ID_BMP085 )
@@ -446,7 +445,17 @@ void BaroTest(void)
 
 	TxString("Alt.:     \t");	
 	TxVal32((int32)RelBaroAltitude, 2, ' ');
-	TxString("M");	
+	TxString("M\r\n");
+
+	TxString("R.Finder: \t");
+	if ( F.RangefinderAltitudeValid )
+	{
+		GetRangefinderAltitude();
+		TxVal32((int32)RangefinderAltitude, 2, ' ');
+		TxString("M");
+	}
+	else
+		TxString("no range");	
 	TxNextLine();
 
 	return;
@@ -573,78 +582,63 @@ void GPSTest(void)
 void AnalogTest(void)
 {
 	int32 v;
+	uint8 c;
+	int32 A[5];
 
-	TxString("\r\nAnalog ch. test\r\n");
+	A[ADCBattVoltsChan] = ((int24)ADC(ADCBattVoltsChan)* 61L + 102L)/205L; // resistive divider
+	for ( c = 1; c <= 4; c++ )
+		A[c] = ((int24)ADC(c)* 50L + 512L)/1024L;
+
+	TxString("\r\nAnalog ch. test");
+	TxString("\r\nDepends on an accurate 5V supply\r\n");
 
 	// Roll
 	if ( P[GyroType] == IDG300 )
-		v = ((int24)ADC(IDGADCRollChan, ADCVREF5V) * 50 + 5)/10; // resolution is 0,001 Volt
+		v = A[IDGADCRollChan];
 	else
-		v = ((int24)ADC(NonIDGADCRollChan, ADCVREF5V) * 50 + 5)/10; 
-	//TxVal32(ADCRollChan, 0, ' ');
+		v = A[NonIDGADCRollChan]; 
 	TxString("Roll: \t"); 
-	TxVal32(v, 3, 'V');
-	if ( P[GyroType] == IDG300 )
-	{
-		if ( ( v < 750 ) || ( v > 1750 ) ) 
-			TxString(" gyro NC or fault?");
-	}
-	else
-	{
-		if ( ( v < 2000 ) || ( v > 3000 ) )
-			TxString(" gyro NC or fault?");
-	}
+	TxVal32(v, 1, 'V');
+	if ( ( v < 20 ) || ( v > 30 ) )
+		TxString(" gyro NC or fault?");
 	TxNextLine();
 
 	// Pitch
 	if ( P[GyroType] == IDG300 )
-		v = ((int24)ADC(IDGADCPitchChan, ADCVREF5V) * 50 + 5)/10; 
+		v = A[IDGADCPitchChan]; 
 	else
-		v = ((int24)ADC(NonIDGADCPitchChan, ADCVREF5V) * 50 + 5)/10; 
-	//TxVal32(ADCPitchChan, 0, ' ');
+		v = A[NonIDGADCPitchChan]; 
 	TxString("Pitch:\t");		
-	TxVal32(v, 3, 'V');
-	if ( P[GyroType] == IDG300 )
-	{
-		if ( ( v < 750 ) || ( v > 1750 ) ) 
-			TxString(" gyro NC or fault?");
-	}
-	else
-	{
-		if ( ( v < 2000 ) || ( v > 3000 ) )
-			TxString(" gyro NC or fault?");
-	}	
+	TxVal32(v, 1, 'V');
+	if ( ( v < 20 ) || ( v > 30 ) )
+		TxString(" gyro NC or fault?");
+	
 	TxNextLine();
 
 	// Yaw
-	v = ((int24)ADC(ADCYawChan, ADCVREF5V) * 50 + 5)/10; // resolution is 0,001 Volt
-	//TxVal32(ADCYawChan, 0, ' ');
+	v = A[ADCYawChan];
 	TxString("Yaw:  \t");
-	TxVal32(v, 3, 'V');
-	if ( ( v < 2000 ) || ( v > 3000 ) )
+	TxVal32(v, 1, 'V');
+	if ( ( v < 20 ) || ( v > 30 ) )
 		TxString(" gyro NC or fault?");	
 	TxNextLine();
 	TxNextLine();
 
 	// Battery
-	v = ((int24)ADC(ADCBattVoltsChan, ADCVREF5V) * 46 + 9)/17; // resolution is 0,01 Volt
-	//TxVal32(ADCBattVoltsChan, 0, ' ');
+	v = A[ADCBattVoltsChan];
 	TxString("Batt:\t");
-	TxVal32(v, 2, 'V');
-	if ( v < 900 )
+	TxVal32(v, 1, 'V');
+	if ( v < 90 )
 		TxString(" ** LIPO ALARM < 9V ** ");
 	else	
-	if ( v < 950 )
+	if ( v < 95 )
 		TxString(" ** LOW < 9.5V ** ");
 	TxNextLine();
 
-	// VRef
-	v = ((int24)ADC(ADCVRefChan, ADCVREF5V) * 50 + 5)/10; // resolution is 0,001 Volt
-	//TxVal32(ADCVRefChan, 0, ' ');	
-	TxString("Ref:  \t");	
-	TxVal32(v, 3, 'V');
-	if ( ( v < 3000 ) || ( v > 4000 ) )
-		TxString(" fault?");	
+	// Altitude
+	v = A[ADCAltChan];
+	TxString("Alt:  \t");	
+	TxVal32(v, 1, 'V');	
 	TxNextLine();	
 } // AnalogTest
 

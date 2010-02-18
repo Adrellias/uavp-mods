@@ -23,7 +23,7 @@ for /f "tokens=2 delims=: " %%m in ('time /T') do set minutes=%%m
 for /f "tokens=3 delims=: " %%a in ('time /T') do set ampm=%%a
 set NOW=%hour%%minutes%%ampm%
 
-set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps autonomous i2c outputs
+set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder autonomous i2c outputs
 set ASRC=bootl18f
 
 set CC="C:\MCC18\bin\mcc18" 

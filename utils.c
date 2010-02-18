@@ -45,6 +45,8 @@ void InitPorts(void)
 
 	PORTB = 0b11000000;								// all outputs to low, except RB6 & 7 (I2C)!
 	TRISB = 0b01000000;								// all servo and LED outputs
+
+	// RC0 Pin 11 currently unused 
 	PORTC = 0b01100000;								// all outputs to low, except TxD and CS
 	TRISC = 0b10000100;								// RC7, RC2 are inputs
 
@@ -153,7 +155,7 @@ void CheckAlarms(void)
 {
 	static int16 NewBatteryVolts;
 
-	NewBatteryVolts = ADC(ADCBattVoltsChan, ADCVREF5V) >> 3; 
+	NewBatteryVolts = ADC(ADCBattVoltsChan) >> 3; 
 	BatteryVolts = SoftFilter(BatteryVolts, NewBatteryVolts);
 	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 

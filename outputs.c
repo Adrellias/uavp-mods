@@ -36,10 +36,6 @@ void InitI2CESCs(void);
 #define	PulseCamRoll	4
 #define	PulseCamPitch	5
 
-#define ALL_PULSE_ON	(PORTB |= 0b00001111)
-#define ALL_OUTPUTS_OFF	(PORTB &= 0b11110000)
-#define ALL_OUTPUTS		(PORTB & 0b00001111)
-
 boolean OutToggle;
 int16 Motor[NoOfMotors];
 boolean ESCI2CFail[NoOfMotors];

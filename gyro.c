@@ -37,13 +37,13 @@ void GetRollPitchGyroValues(void)
 
 	if ( P[GyroType] == IDG300 ) // 500 Deg/Sec
 	{
-		NewRollRate = (int16)ADC(IDGADCRollChan, ADCVREF3V3);
-		NewPitchRate = (int16)ADC(IDGADCPitchChan, ADCVREF3V3);
+		NewRollRate = (int16)ADC(IDGADCRollChan);
+		NewPitchRate = (int16)ADC(IDGADCPitchChan);
 	}
 	else
 	{
-		NewRollRate = (int16)ADC(NonIDGADCRollChan, ADCVREF5V);
-		NewPitchRate = (int16)ADC(NonIDGADCPitchChan, ADCVREF5V);
+		NewRollRate = (int16)ADC(NonIDGADCRollChan);
+		NewPitchRate = (int16)ADC(NonIDGADCPitchChan);
 	}
 
 	RollRate += NewRollRate;
@@ -60,7 +60,7 @@ void GetRollPitchGyroValues(void)
 
 void GetYawGyroValue(void)
 {
-	YawRate = ADC(ADCYawChan, ADCVREF5V);
+	YawRate = ADC(ADCYawChan);
 } // GetYawGyroValue
 
 void ErectGyros(void)
@@ -76,15 +76,15 @@ void ErectGyros(void)
 
 		if ( P[GyroType] == IDG300 )
 		{
-			RollAv += ADC(IDGADCRollChan, ADCVREF3V3);
-			PitchAv += ADC(IDGADCPitchChan, ADCVREF3V3);	
+			RollAv += ADC(IDGADCRollChan);
+			PitchAv += ADC(IDGADCPitchChan);	
 		}
 		else
 		{
-			RollAv += ADC(NonIDGADCRollChan, ADCVREF5V);
-			PitchAv += ADC(NonIDGADCPitchChan, ADCVREF5V);
+			RollAv += ADC(NonIDGADCRollChan);
+			PitchAv += ADC(NonIDGADCPitchChan);
 		}
-		YawAv += ADC(ADCYawChan, ADCVREF5V);
+		YawAv += ADC(ADCYawChan);
 	}
 	
 	if( !F.AccelerationsValid )
@@ -203,7 +203,7 @@ void CalcGyroRates(void)
 	// 300 Deg/Sec is the "reference" gyro full scale rate
 
 	if ( P[GyroType] == IDG300 )
-	{ 	// 500 Deg/Sec or 1.66 ~= 2 so do not average readings 
+	{ 	// 500 Deg/Sec, 5/3.3V Ref => ~2.5 so do not average 
 		RollRate -= GyroMidRoll * 2;
 		PitchRate -= GyroMidPitch * 2;
 		RollRate = -RollRate;			// adjust for reversed roll gyro sense

@@ -143,8 +143,6 @@
 #define	NAV_GAIN_THRESHOLD 		40L		// Navigation disabled if Ch7 is less than this
 #define NAV_GAIN_6CH			80L		// Low GPS gain for 6ch Rx
 
-//#define NAV_ZERO_INT 					// Zeros the integral when the sign is not the same as the error			
-	
 #define	NAV_YAW_LIMIT			10L		// yaw slew rate for RTH
 #define NAV_MAX_TRIM			20L		// max trim offset for hover hold
 #define NAV_CORR_SLEW_LIMIT		1L		// *5L maximum change in roll or pitch correction per GPS update
@@ -329,11 +327,11 @@ typedef struct {
 
 // This is messy - trial and error to determine worst case interrupt latency!
 #ifdef CLOCK_16MHZ
-	#define INT_LATENCY		(uint16)(256 - 35 ) // x 4uS
+	#define INT_LATENCY		(uint16)(256 - 35) // x 4uS
 	#define FastWriteTimer0(t) TMR0L=(uint8)t
-	#define GetTimer0		Timer0.u16=TMR0L
+	#define GetTimer0		Timer0.u16=(uint16)TMR0L
 #else // CLOCK_40MHZ
-	#define INT_LATENCY		(uint16)(65536 - 35 ) // x 1.6uS
+	#define INT_LATENCY		(uint16)(65536 - 35) // x 1.6uS
 	#define FastWriteTimer0(t) Timer0.u16=t;TMR0H=Timer0.b1;TMR0L=Timer0.b0
 	#define GetTimer0		{Timer0.b0=TMR0L;Timer0.b1=TMR0H;}	
 #endif // CLOCK_16MHZ
@@ -488,6 +486,7 @@ typedef union {
 		UsingGPSAlt:1,
 		UsingRTHAutoDescend:1,
 		BaroAltitudeValid:1,
+		RangefinderAltitudeValid:1,
 
 		// internal flags not really useful externally
 		ParametersValid:1,
@@ -545,7 +544,7 @@ extern int16 DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 
 // adc.c
 
-extern int16 ADC(uint8, uint8);
+extern int16 ADC(uint8);
 extern void InitADC(void);
 
 // ADC Channels
@@ -555,10 +554,8 @@ extern void InitADC(void);
 #define NonIDGADCPitchChan 	2
 #define IDGADCRollChan 		2
 #define IDGADCPitchChan 	1
-#define ADCVRefChan 		3 
+#define ADCAltChan 			3 	// Altitude
 #define ADCYawChan			4
-#define ADCVREF5V 			0
-#define ADCVREF3V3 			1
 
 //______________________________________________________________________________________________
 
@@ -932,6 +929,15 @@ extern uint8 ParamSet;
 extern boolean ParametersChanged;
 extern int8 P[];
 extern int8 RMap[];
+
+//__________________________________________________________________________________________
+
+// rangefinder.c
+
+extern void GetRangefinderAltitude(void);
+extern void InitRangefinder(void);
+
+extern int16 RangefinderAltitude;
 
 //__________________________________________________________________________________________
 
