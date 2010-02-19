@@ -48,7 +48,11 @@ void InitPorts(void)
 
 	// RC0 Pin 11 currently unused 
 	PORTC = 0b01100000;								// all outputs to low, except TxD and CS
+	#ifdef HAVE_CUTOFF_SW
+	TRISC = 0b10000101;								// RC7, RC2, RC0 are inputs
+	#else
 	TRISC = 0b10000100;								// RC7, RC2 are inputs
+	#endif // HAVE_CUTOFF_SW
 
 	SSPSTATbits.CKE = true;							// low logic threshold for LISL
 	INTCON2bits.NOT_RBPU = false;	// WEAK PULLUPS MUST BE ENABLED OTHERWISE I2C VERSIONS 

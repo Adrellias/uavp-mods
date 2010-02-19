@@ -1,5 +1,7 @@
 // EXPERIMENTAL
 
+//#define HAVE_CUTOFF_SW					// Ground PortC Bit 0 (Pin 11) for landing cutoff.
+
 #define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
 
 #define	ATTITUDE_ENABLE_DECAY			// enables decay to zero angle when roll/pitch is not in fact zero!
@@ -375,7 +377,13 @@ typedef struct {
 
 // Bit definitions
 #define Armed			(PORTAbits.RA4)
-#define InTheAir		true	// zzz (PORTCbits.RC0) // micro switch to ground when closed
+
+#ifdef HAVE_CUTOFF_SW
+#define InTheAir		(PORTCbits.RC0) // micro switch to ground when closed
+#else
+#define InTheAir		true	 
+#endif // HAVE_CUTOFF_SW
+
 
 #define	I2C_ACK			((uint8)(0))
 #define	I2C_NACK		((uint8)(1))
