@@ -183,14 +183,6 @@ void GetBaroAltitude(void)
 			Temp = (int24)BaroSum + BaroTempComp;
 			CompBaroPress = BaroFilter(CompBaroPress, Temp);
 			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);
-if ( Armed && F.GPSValid ) // zzz
-{
-TxVal32(mS[Clock],3,' ');
-TxVal32(GPSRelAltitude, 2 ,' ');
-TxVal32(CompBaroPress,0,' ');
-TxVal32(RelBaroAltitude, 2 ,' ');
-TxNextLine();
-}
 			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
 			BaroROC = BaroROCFilter(BaroROCP, BaroROC);
 	
