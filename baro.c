@@ -51,12 +51,12 @@ void InitBarometer(void);
 static int16Q BaroQ;
 #pragma udata
 
-int24	OriginBaroPressure, OriginBaroTemperature, BaroSum;
-int24	DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP;
-int16	BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
+int24	OriginBaroPressure, OriginBaroTemperature, BaroSum, CompBaroPress;
+int24	RelBaroAltitude, RelBaroAltitudeP;
+int16	BaroROC, BaroROCP;
 i16u	BaroPress, BaroTemp;
 int8	BaroSample;
-int16	BaroComp, BaroTempComp;
+int16	BaroTempComp;
 uint8	BaroType;
 
 void StartBaroADC(boolean ReadPressure)
@@ -139,7 +139,7 @@ RVerror:
 
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
-	static int24 Temp, RelPressSample, CompBaroPress;
+	static int24 Temp, RelPressSample;
 	static int32 RelTemp;
 	// SMD500 9.5mS (T) 34mS (P)  
 	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
@@ -202,7 +202,7 @@ void GetBaroAltitude(void)
 					Stats[RelBaroPressureS].i16 = CompBaroPress;
 				}
 			}
-			F.NewBaroValue = true;
+			F.NewBaroValue = F.BaroAltitudeValid;
 			BaroSample = 0;
 
 			#ifdef DEBUG_SENSORS	
@@ -220,7 +220,8 @@ void InitBarometer(void)
 	for ( s = 0; s < BARO_BUFF_SIZE; s ++ ) 
 		BaroQ.B[s] = 0; 
 	RelBaroAltitude = RelBaroAltitudeP = BaroROC = BaroROCP = 0;
-	BaroSum = BaroSample = BaroComp = OriginBaroPressure = BaroDiffSum = BaroDSum = 0;
+	BaroSum = BaroSample = OriginBaroPressure = 0;
+	AltComp = AltDiffSum = AltDSum = 0;
 	BaroQ.Tail = 0;  BaroQ.Head = 1;
 
 	F.NewBaroValue = false;

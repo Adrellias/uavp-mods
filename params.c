@@ -47,7 +47,7 @@ const rom int8 DefaultParams[] = {
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	4, 				// BaroKp,			09
+	4, 				// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -68,12 +68,12 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	24, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// BaroKi,			28
+	10, 			// AltKi,			28
 	90, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
-	15, 			// NavAltKp,		31
-	15, 			// NavAltKi,		32
+	0, 				// unused1,			31
+	0, 				// unused2,			32
 	20, 			// NavRTHAlt,		33
 	0, 				// NavMagVar,		34c
 	ADXRS300, 		// GyroType,		35c
@@ -91,7 +91,7 @@ const rom int8 DefaultParams[] = {
 	3,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	12,				// NavIntLimit		48
-	3,				// BaroIntLimit		49
+	3,				// AltIntLimit		49
 	11,				// GravComp			50c
 	1,				// CompSteps		51c			
 
@@ -227,6 +227,7 @@ void ReadParametersEE(void)
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
+		NavProximityRadius = ConvertMToGPS(NAV_PROXIMITY_RADIUS);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
@@ -246,7 +247,7 @@ void ReadParametersEE(void)
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
-		BaroDescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
+		DescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
 		BatteryVolts = (int16)P[LowVoltThres];
 		
@@ -284,11 +285,11 @@ void UpdateParamSetChoice(void)
 {
 	#define STICK_WINDOW 30
 
-	int8 NewParamSet, NewRTHAltitudeHold, NewTurnToHome, Selector;
+	int8 NewParamSet, NewNavAltitudeHold, NewTurnToWP, Selector;
 
 	NewParamSet = ParamSet;
-	NewRTHAltitudeHold = F.RTHAltitudeHold;
-	NewTurnToHome = F.TurnToHome;
+	NewNavAltitudeHold = F.NavAltitudeHold;
+	NewTurnToWP = F.TurnToWP;
 
 	if ( F.UsingTxMode2 )
 		Selector = DesiredRoll;
@@ -302,13 +303,13 @@ void UpdateParamSetChoice(void)
 			if ( Selector < -STICK_WINDOW ) // left
 			{ // bottom left
 				NewParamSet = 1;
-				NewRTHAltitudeHold = true;
+				NewNavAltitudeHold = true;
 			}
 			else
 				if ( Selector > STICK_WINDOW ) // right
 				{ // bottom right
 					NewParamSet = 2;
-					NewRTHAltitudeHold = true;
+					NewNavAltitudeHold = true;
 				}
 		}		
 		else
@@ -316,26 +317,26 @@ void UpdateParamSetChoice(void)
 			{		
 				if ( Selector < -STICK_WINDOW ) // left
 				{
-					NewRTHAltitudeHold = false;
+					NewNavAltitudeHold = false;
 					NewParamSet = 1;
 				}
 				else 
 					if ( Selector > STICK_WINDOW ) // right
 					{
-						NewRTHAltitudeHold = false;
+						NewNavAltitudeHold = false;
 						NewParamSet = 2;
 					}
 			}
 
-		if ( ( NewParamSet != ParamSet ) || ( NewRTHAltitudeHold != F.RTHAltitudeHold ) )
+		if ( ( NewParamSet != ParamSet ) || ( NewNavAltitudeHold != F.NavAltitudeHold ) )
 		{	
 			ParamSet = NewParamSet;
-			F.RTHAltitudeHold = NewRTHAltitudeHold;
+			F.NavAltitudeHold = NewNavAltitudeHold;
 			LEDBlue_ON;
 			DoBeep100mSWithOutput(2, 2);
 			if ( ParamSet == 2 )
 				DoBeep100mSWithOutput(2, 2);
-			if ( F.RTHAltitudeHold )
+			if ( F.NavAltitudeHold )
 				DoBeep100mSWithOutput(4, 4);
 			ParametersChanged |= true;
 			Beeper_OFF;
@@ -351,16 +352,16 @@ void UpdateParamSetChoice(void)
 	if ( (Abs(RC[ThrottleC]) < STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW ) )
 	{
 		if ( Selector < -STICK_WINDOW ) // left
-			NewTurnToHome = false;
+			NewTurnToWP = false;
 		else
 			if ( Selector > STICK_WINDOW ) // left
-				NewTurnToHome = true; // right
+				NewTurnToWP = true; // right
 			
-		if ( NewTurnToHome != F.TurnToHome )
+		if ( NewTurnToWP != F.TurnToWP )
 		{		
-			F.TurnToHome = NewTurnToHome;
+			F.TurnToWP = NewTurnToWP;
 			LEDBlue_ON;
-			if ( F.TurnToHome )
+			if ( F.TurnToWP )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;

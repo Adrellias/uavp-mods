@@ -67,6 +67,9 @@ void WriteStatsEE()
 	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS/10L);
 	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10L);
 
+	if ( SumCompBaroPress != 0 )
+		Stats[GPSBaroScaleS].i16 = (SumGPSRelAltitude * 16)/(-SumCompBaroPress); 
+
 	for (s = 0 ; s < MaxStats ; s++ )
 	{
 		WriteEE(STATS_ADDR_EE + s*2, Stats[s].b0);
@@ -112,6 +115,12 @@ void ShowStats(void)
 	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' '); TxString("M/S\r\n");
+
+	if ( Stats[GPSBaroScaleS].i16 !=0 )
+	{
+		TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS].i16, 0, ' '); TxString("UAVPSet?\r\n");
+	}
+
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 

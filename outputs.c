@@ -123,7 +123,7 @@ void MixAndLimitMotors(void)
 	if ( DesiredThrottle < IdleThrottle )
 		CurrThrottle = 0;
 	else
-		CurrThrottle = DesiredThrottle + (DUComp + BaroComp); // vertical compensation not optional
+		CurrThrottle = DesiredThrottle + (DUComp + AltComp); // vertical compensation not optional
 	
 	Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 	CurrThrottle = Limit(CurrThrottle, 0, Temp ); 

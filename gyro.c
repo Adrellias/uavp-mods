@@ -61,6 +61,11 @@ void GetRollPitchGyroValues(void)
 void GetYawGyroValue(void)
 {
 	YawRate = ADC(ADCYawChan);
+	YawRate >>= 2;	// use only 8 bit A/D resolution
+	#ifdef STATS_INC_GYRO_ACC
+	if (( State == InFlight ) && (YawRate > Stats[YawRateS].i16) ) Stats[YawRateS].i16 = YawRate;
+	#endif // STATS_INC_GYRO_ACC
+
 } // GetYawGyroValue
 
 void ErectGyros(void)
@@ -230,10 +235,8 @@ void CalcGyroRates(void)
 		PitchRate = (PitchRate * 7L)/10L; 
 	}
 	
-	// Yaw is sampled only once every frame, 8 bit A/D resolution
-	GetYawGyroValue();
-	YawRate >>= 2;
-	if (( State == InFlight ) && (YawRate > Stats[YawRateS].i16) ) Stats[YawRateS].i16 = YawRate;	
+	// Yaw is sampled only once every frame
+	GetYawGyroValue();	
 	YawRate -= GyroMidYaw;
 
 } // CalcGyroRates

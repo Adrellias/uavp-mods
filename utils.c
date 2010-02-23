@@ -72,7 +72,7 @@ void InitMisc(void)
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = 0;
 	F.BeeperInUse = F.GPSTestActive = false; 
-	F.RTHAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
+	F.NavAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
 	IdleThrottle = RC_THRES_STOP;

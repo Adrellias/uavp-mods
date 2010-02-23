@@ -160,6 +160,7 @@ void main(void)
 			GetHeading();
 			CheckThrottleMoved();
 			GetBaroAltitude();
+			GetRangefinderAltitude();
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point

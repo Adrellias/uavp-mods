@@ -205,12 +205,12 @@ void ShowSetup(uint8 h)
 	else
 		TxString("\tAuto descend disabled\r\n");
 
-	if ( F.RTHAltitudeHold )
+	if ( F.NavAltitudeHold )
 		TxString("\tAltitude hold enabled\r\n");
 	else
 		TxString("\tAltitude hold DISABLED\r\n");
-	if ( F.TurnToHome )
-		TxString("\tTurn towards home\r\n");
+	if ( F.TurnToWP )
+		TxString("\tTurn toward Way Point\r\n");
 	else
 		TxString("\tHold heading\r\n");
 
@@ -219,8 +219,8 @@ void ShowSetup(uint8 h)
 		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
 	if ( Armed && FirstPass ) 
 		TxString("\tUAVX is armed - disarm!\r\n");
-	if ( F.ReturnHome )
-		TxString("\tRTH is selected - deselect!\r\n");
+	if ( F.Navigate )
+		TxString("\tNavigate/RTH is selected - deselect!\r\n");
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - close throttle!\r\n");
 	

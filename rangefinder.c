@@ -25,11 +25,19 @@
 void GetRangefinderAltitude(void);
 void InitRangefinder(void);
 
-int16 RangefinderAltitude;
+int16 RangefinderAltitude, RangefinderROC;
 
 void GetRangefinderAltitude(void)
 {
-	RangefinderAltitude = ADC(ADCAltChan);
+	static int16 Temp;
+
+	Temp = ADC(ADCAltChan);
+	if ( mS[Clock] > mS[RangefinderROCUpdate] )
+	{
+		mS[RangefinderROCUpdate] = mS[Clock] + 1000; // 1 Sec.
+		RangefinderROC = Temp - RangefinderAltitude;
+	}
+	RangefinderAltitude = Temp;	
 } // GetRangefinderAltitude
 
 void InitRangefinder(void)

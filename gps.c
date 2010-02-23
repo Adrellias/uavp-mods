@@ -59,7 +59,7 @@ int32 	GPSOriginLatitude, GPSOriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
 int16 	GPSLongitudeCorrection;
-int16 	GPSVel;
+int16 	GPSVel, GPSROC;
 uint8 	GPSNoOfSats;
 uint8 	GPSFix;
 int16 	GPSHDilute;
@@ -70,6 +70,8 @@ uint8 nll, cc, lo, hi;
 boolean EmptyField;
 int16 ValidGPSSentences;
 #pragma udata
+
+int32 SumGPSRelAltitude, SumCompBaroPress;
 
 int32 ConvertGPSToM(int32 c)
 {	// approximately 1.8553257183 cm per LSB at the Equator
@@ -301,7 +303,13 @@ void ParseGPSSentence(void)
 			GPSEastP = GPSEast;
 			#endif // GPS_INC_GROUNDSPEED			
 
-			GPSRelAltitude = GPSAltitude - GPSOriginAltitude;
+			Temp = GPSAltitude - GPSOriginAltitude;
+			if ( mS[Clock] > mS[GPSROCUpdate] )
+			{
+				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
+				GPSROC = Temp - GPSRelAltitude;
+			}
+			GPSRelAltitude = Temp; 
 
 			if ( State == InFlight )
 			{
@@ -316,6 +324,12 @@ void ParseGPSSentence(void)
 				else 
 					if ( GPSHDilute < Stats[MinHDiluteS].i16 ) 
 						Stats[MinHDiluteS].i16 = GPSHDilute;
+
+				if (( GPSRelAltitude > 1000 ) && ( GPSRelAltitude < 2500 )) // 10-25M
+				{
+					SumGPSRelAltitude += GPSRelAltitude;
+					SumCompBaroPress += CompBaroPress;
+				}
 			}
 		}
 	}
@@ -340,6 +354,8 @@ void InitGPS(void)
 	GPSEast = GPSNorth = GPSVel = 0;
 
 	ValidGPSSentences = 0;
+
+	SumGPSRelAltitude = SumCompBaroPress = 0;
 
 	F.NavValid = F.GPSValid = F.GPSSentenceReceived = false;
   	GPSRxState = WaitGPSSentinel; 

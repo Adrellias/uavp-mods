@@ -33,14 +33,14 @@
         include "general.asm"
 
 		; need to include clock for baud calculation
-		#ifdef CLOCK_16MHZ
-		_BAUDRATE			equ		26 
-		#else ; CLOCK_40MHZ
-		_BAUDRATE			equ		65 
-		#endif
+#ifdef CLOCK_16MHZ
+_BAUDRATE			equ		26 
+#else ; CLOCK_40MHZ
+_BAUDRATE			equ		65 
+#endif
 
-		_RestoreVec			equ		0
-		_MaxRxBuffer		equ		80	;normal max 64 hex chars + tags
+_RestoreVec			equ		0
+_MaxRxBuffer		equ		80	;normal max 64 hex chars + tags
 
 		; RAM variables all in Bank 0
 		cblock 16
@@ -85,16 +85,16 @@ Messages
 		;moved to base of boot which always starts at the base
 		;of a 256 byte segment
 		addwf	PCL,f
-		_Hello		dt	"Boot 2.0\0"
-		_Err		dt	"ERR\0"
-		_CSum		dt	"CSUM\0"
-		_OK			dt	"OK\0"
-		_Done		dt	"SUCCESS!\0"
-		Txt_Hello	equ	_Hello-Messages-1
-		Txt_Err		equ	_Err-Messages-1
-		Txt_CSum	equ	_CSum-Messages-1
-		Txt_OK		equ	_OK-Messages-1
-		Txt_Done	equ	_Done-Messages-1
+_Hello		dt	"Boot 2.0\0"
+_Err		dt	"ERR\0"
+_CSum		dt	"CSUM\0"
+_OK			dt	"OK\0"
+_Done		dt	"SUCCESS!\0"
+Txt_Hello	equ	_Hello-Messages-1
+Txt_Err		equ	_Err-Messages-1
+Txt_CSum	equ	_CSum-Messages-1
+Txt_OK		equ	_OK-Messages-1
+Txt_Done	equ	_Done-Messages-1
 
 Init		
 		movlb	0

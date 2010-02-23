@@ -20,7 +20,7 @@
 
 #include "uavx.h"
 
-void BaroAltitudeHold(void);
+void DoAltitudeHold(int24, int16);
 void AltitudeHold(void);
 void InertialDamping(void);
 void LimitRollSum(void);
@@ -53,58 +53,90 @@ int16 CurrMaxRollPitch;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
+int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
+int24 DesiredAltitude;
 
 boolean	FirstPass;
 
-void BaroAltitudeHold()
-{
-	static int16 NewBaroComp, LimBE, BaroP, BaroI, BaroD;
+void DoAltitudeHold(int24 Altitude, int16 ROC)
+{ // Syncronised to baro intervals independant of active altitude source
+
+	static int16 NewAltComp, LimBE, AltP, AltI, AltD;
 	static int24 Temp, BE;
 
-	if ( F.NewBaroValue && F.BaroAltitudeValid )
+	if ( F.NewBaroValue && F.BaroAltitudeValid ) 
 	{
-		F.NewBaroValue = false;
-
-		#ifdef BARO_SCRATCHY_BEEPER
+		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
+
+		F.NewBaroValue = false;
 	
-		BE = DesiredRelBaroAltitude - RelBaroAltitude;
-		LimBE = Limit(BE, -BARO_ALT_BAND_CM, BARO_ALT_BAND_CM);
+		BE = DesiredAltitude - Altitude;
+		LimBE = Limit(BE, -ALT_BAND_CM, ALT_BAND_CM);
 
-		BaroP = SRS16(LimBE * (int16)P[BaroKp], 7);
-		BaroP = Limit(BaroP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+		AltP = SRS16(LimBE * (int16)P[AltKp], 7);
+		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		BaroDiffSum += LimBE;
-		BaroDiffSum = Limit(BaroDiffSum, -BARO_INT_WINDUP_LIMIT, BARO_INT_WINDUP_LIMIT);
-		BaroI = SRS16(BaroDiffSum * (int16)P[BaroKi], 4);
-		BaroI = Limit(BaroDiffSum, -(int16)P[BaroIntLimit], (int16)P[BaroIntLimit]);
-		BaroDiffSum = Decay1(BaroDiffSum);
+		AltDiffSum += LimBE;
+		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
+		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
+		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
+		AltDiffSum = Decay1(AltDiffSum);
 		 
-		if ( BaroROC < BaroDescentCmpS )
+		if ( ROC < DescentCmpS )
 		{
-			BaroDSum+=2;
-			BaroDSum = Limit(BaroDSum, 0, ALT_HIGH_THR_COMP); 
+			AltDSum+=2;
+			AltDSum = Limit(AltDSum, 0, ALT_HIGH_THR_COMP); 
 		}
-		BaroDSum = Decay1(BaroDSum);
+		AltDSum = Decay1(AltDSum);
 	
-		NewBaroComp = BaroP + BaroI + BaroDSum;
-		NewBaroComp = Limit(NewBaroComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
-		BaroComp = SlewLimit(BaroComp, NewBaroComp, 2);
+		NewAltComp = AltP + AltI + AltDSum;
+		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
+		AltComp = SlewLimit(AltComp, NewAltComp, 2);
 
-		#ifdef BARO_SCRATCHY_BEEPER
+		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	}
 
-} // BaroAltitudeHold	
+} // DoAltitudeHold	
 
 void AltitudeHold()
 {
-	if ( F.RTHAltitudeHold && ( NavState != HoldingStation ) )
+	static int24 Altitude;
+	static int16 ROC;
+
+	// relies upon good cross calibration of baro and rangefinder!!!!!!
+
+	if ( F.RangefinderAltitudeValid ) // some hysteresis
+		if (( RangefinderAltitude < 500 ) && !F.UsingRangefinderAlt)
+			F.UsingRangefinderAlt = true;
+		else
+			if (( RangefinderAltitude > 600 ) && F.UsingRangefinderAlt)
+				F.UsingRangefinderAlt = false;	
+
+	if ( F.UsingRangefinderAlt )
+	{
+		Altitude = RangefinderAltitude;
+		ROC = RangefinderROC;
+	}
+	else
+		if ( F.UsingGPSAlt && F.GPSValid )
+		{
+			Altitude = GPSRelAltitude;
+			ROC = GPSROC;
+		}
+		else
+		{
+			Altitude = RelBaroAltitude;
+			ROC = BaroROC;
+		}
+
+	if ( F.NavAltitudeHold && ( NavState != HoldingStation ) )
 	{
 		F.Hovering = false;
-		BaroAltitudeHold();
+		DoAltitudeHold(Altitude, ROC);
 	}
 	else // holding station
 	{
@@ -112,15 +144,15 @@ void AltitudeHold()
 		
 		if( F.Hovering )
 		{
-			if ( Abs(BaroROC) < BARO_HOVER_MAX_ROC_CMPS )
+			if ( Abs(ROC) < HOVER_MAX_ROC_CMPS )
 				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
-			BaroAltitudeHold();
+			DoAltitudeHold(Altitude, ROC);
 		}
 		else	
 		{
-			DesiredRelBaroAltitude = RelBaroAltitude;
-			BaroDSum = Decay1(BaroDSum);
-			BaroComp = Decay1(BaroComp);	
+			DesiredAltitude = Altitude;
+			AltDSum = Decay1(AltDSum);
+			AltComp = Decay1(AltComp);	
 		}
 	}
 } // AltitudeHold
@@ -330,7 +362,7 @@ void UpdateControls(void)
 
 		DesiredYaw = RC[YawC] - RC_NEUTRAL;
 
-		F.ReturnHome = RC[RTHC] > RC_NEUTRAL;
+		F.Navigate = RC[RTHC] > RC_NEUTRAL;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
@@ -422,7 +454,7 @@ void LightsAndSirens(void)
 				OutSignals();
 				if( mS[Clock] > Timeout )
 				{
-					if ( F.ReturnHome )
+					if ( F.Navigate )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;
@@ -442,7 +474,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.ReturnHome || 
+	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || 
 				( InitialThrottle >= RC_THRES_START) );
 
 	FirstPass = false;
@@ -462,7 +494,7 @@ void InitControl(void)
 {
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
-	BaroComp = 0;
+	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
 	AE = AltSum = 0;
 } // InitControl

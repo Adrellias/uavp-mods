@@ -1,6 +1,7 @@
 // EXPERIMENTAL
 
-//#define HAVE_CUTOFF_SW					// Ground PortC Bit 0 (Pin 11) for landing cutoff.
+//#define INC_JOURNEY					// simple left circuit when engaging RTH
+//#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff.
 
 #define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
 
@@ -9,8 +10,8 @@
 
 #define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
 
-// Baro
-#define BARO_HOVER_MAX_ROC_CMPS		50L	// Must be changing altitude at less than this for hover to be detected
+// Altitude Hold
+#define HOVER_MAX_ROC_CMPS			50L	// Must be changing altitude at less than this for hover to be detected
 
 //#define TEMPORARY_BARO_SCALE		94L	// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
 #define TEMPORARY_BARO_SCALE		85L	// BMP085
@@ -28,8 +29,6 @@
 #define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
-
-#define BARO_INT_WINDUP_LIMIT		16L
 
 #define DEFAULT_TELEMETRY 			0	// 0 None, 1 GPS, 2 Data
 // Debugging
@@ -84,9 +83,9 @@
 
 #define GPS_TIMEOUT_MS			2000L	// mS.
 
-// Baro
+// Altitude Hold
 
-#define BARO_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
+#define ALT_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
 
 // Accelerometers
 
@@ -104,13 +103,13 @@
 
 // Altitude Hold
 
-#define BARO_ALT_BAND_CM			200L	// Cm.
+#define ALT_BAND_CM				200L	// Cm.
 
 // Throttle reduction/increase limits for Baro Alt Comp
 
-#define BARO_MAX_DESCENT_CMPS		-50L 	// Cm./Sec
-#define BARO_DESCENT_TRANS_CM		1500L	// Cm. Altitude at which final descent starts 
-#define BARO_LAND_CM				300L	// Cm. deemed to have landed when below this height
+#define MAX_DESCENT_CMPS			-50L 	// Cm./Sec
+#define DESCENT_TRANS_CM			1500L	// Cm. Altitude at which final descent starts 
+#define LAND_CM						300L	// Cm. deemed to have landed when below this height
 
 #define ALT_LOW_THR_COMP			-7L		// Stick units
 #define ALT_HIGH_THR_COMP			30L
@@ -127,7 +126,8 @@
 #define NAV_ACQUIRE_BEEPER
 
 #define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
-#define NAV_MAX_RADIUS			40L		// Metres
+#define NAV_MAX_RADIUS			90L		// Metres
+#define NAV_PROXIMITY_RADIUS	10L		// Metres
 
 // reads $GPGGA and $GPRMC sentences - all others discarded
 
@@ -379,7 +379,7 @@ typedef struct {
 #define Armed			(PORTAbits.RA4)
 
 #ifdef HAVE_CUTOFF_SW
-#define InTheAir		(PORTCbits.RC0) // micro switch to ground when closed
+#define InTheAir		(PORTCbits.RC0) // normally open micro switch to ground
 #else
 #define InTheAir		true	 
 #endif // HAVE_CUTOFF_SW
@@ -433,7 +433,7 @@ typedef struct {
 
 // ESC
 #define OUT_MINIMUM			1			// Required for PPM timing loops
-#define OUT_MAXIMUM			200			// ??
+#define OUT_MAXIMUM			200			// to reduce Rx capture and servo pulse output interaction
 #define OUT_NEUTRAL			105			// 1.503mS @ 105 16MHz
 #define OUT_HOLGER_MAXIMUM	225
 #define OUT_YGEI2C_MAXIMUM	240
@@ -487,7 +487,7 @@ typedef union {
 		AttitudeHold:1,
 		ThrottleMoving:1,
 		Hovering:1,
-		ReturnHome:1,
+		Navigate:1,
 		Proximity:1,
 		CloseProximity:1,
 
@@ -495,6 +495,7 @@ typedef union {
 		UsingRTHAutoDescend:1,
 		BaroAltitudeValid:1,
 		RangefinderAltitudeValid:1,
+		UsingRangefinderAlt:1,
 
 		// internal flags not really useful externally
 		ParametersValid:1,
@@ -515,8 +516,8 @@ typedef union {
 		NavComputed:1,
 		CheckThrottleMoved:1,
 		MotorsArmed:1,
-		RTHAltitudeHold:1,	// stick programmed
-		TurnToHome:1,		// stick programmed
+		NavAltitudeHold:1,	// stick programmed
+		TurnToWP:1,			// stick programmed
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
 		UsingXMode:1,
@@ -581,14 +582,14 @@ extern void InitNavigation(void);
 
 typedef struct { int24 N, E, A;} WayPoint; // cm
 
-enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, 
+enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, 
 	Terminating };
 enum FailStates { Waiting, Aborting, Returning, Terminated };
 
 extern near uint8 FailState;
 extern  WayPoint WP[];
-extern uint8 CurrWP;
-extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius; 
+extern uint8 CurrWP, FirstWP;
+extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
@@ -606,12 +607,12 @@ extern void InitBarometer(void);
 
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-extern int24 OriginBaroPressure, OriginBaroTemperature, BaroSum;
-extern int24 DesiredRelBaroAltitude, RelBaroAltitude, RelBaroAltitudeP;
-extern int16 BaroROC, BaroROCP, BaroDescentCmpS, BaroDiffSum, BaroDSum;
-extern i16u BaroPress, BaroTemp;
-extern int8 BaroSample;
-extern int16 BaroComp, BaroTempComp;
+extern int24 OriginBaroPressure, OriginBaroTemperature, BaroSum, CompBaroPress;
+extern int24 RelBaroAltitude, RelBaroAltitudeP;
+extern int16 BaroROC, BaroROCP;
+extern i16u	BaroPress, BaroTemp;
+extern int8	BaroSample;
+extern int16 BaroTempComp;
 extern uint8 BaroType;
 
 //______________________________________________________________________________________________
@@ -628,8 +629,8 @@ extern i16u Compass;
 
 // control.c
 
+extern void DoAltitudeHold(int24, int16);
 extern void AltitudeHold(void);
-extern void BaroAltitudeHold(void);
 
 extern void LimitRollSum(void);
 extern void LimitPitchSum(void);
@@ -657,7 +658,9 @@ extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPi
 extern int16 DesiredRollP, DesiredPitchP;
 extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
+extern int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
 extern int16 AttitudeHoldResetCount;
+extern int24 DesiredAltitude;
 extern boolean FirstPass;
 
 //______________________________________________________________________________________________
@@ -699,13 +702,14 @@ extern int32 GPSOriginLatitude, GPSOriginLongitude;
 extern int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 extern int24 GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
 extern int16 GPSLongitudeCorrection;
-extern int16 GPSVel;
+extern int16 GPSVel, GPSROC;
 extern uint8 GPSNoOfSats;
 extern uint8 GPSFix;
 extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
+extern int32 SumGPSRelAltitude, SumCompBaroPress;
 
 //______________________________________________________________________________________________
 
@@ -732,7 +736,7 @@ extern void ReceivingGPSOnly(uint8);
 
 enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, 
-	GPSTimeout, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+	GPSTimeout, GPSROCUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
 
@@ -855,7 +859,7 @@ enum Params {
 	PitchKp,			// 06
 	PitchKi,			// 07
 	PitchKd,			// 08
-	BaroKp,			// 09c
+	AltKp,				// 09c
 	PitchIntLimit,		// 10
 	
 	YawKp, 				// 11
@@ -876,12 +880,12 @@ enum Params {
 	MiddleFB,			// 25c
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	BaroKi,				// 28c 
+	AltKi,				// 28c 
 	NavRadius,			// 29
 	NavKi,				// 30
 	
-	GPSAltKp,			// 31
-	GPSAltKi,			// 32
+	unused1,			// 31
+	unused2,			// 32
 	NavRTHAlt,			// 33
 	NavMagVar,			// 34c
 	GyroType,			// 35c
@@ -898,7 +902,7 @@ enum Params {
 	MaxDescentRateDmpS,	// 46
 	DescentDelayS,		// 47c
 	NavIntLimit,		// 48
-	BaroIntLimit,		// 49
+	AltIntLimit,		// 49
 	GravComp,			// 50
 	CompSteps			// 51		
 	// 51 - 64 unused currently
@@ -945,7 +949,7 @@ extern int8 RMap[];
 extern void GetRangefinderAltitude(void);
 extern void InitRangefinder(void);
 
-extern int16 RangefinderAltitude;
+extern int16 RangefinderAltitude, RangefinderROC;
 
 //__________________________________________________________________________________________
 
@@ -983,7 +987,7 @@ extern void WriteStatsEE(void);
 extern void ShowStats(void);
 
 enum Statistics { 
-	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, MinBaroROCS, MaxBaroROCS, GPSVelS, 
+	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSBaroScaleS, MinBaroROCS, MaxBaroROCS, GPSVelS, 
 	RollRateS, PitchRateS, YawRateS, LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, 
 	GyroMidYawS, AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, 
 	MinHDiluteS, MaxHDiluteS, RCGlitchesS, MaxStats};
