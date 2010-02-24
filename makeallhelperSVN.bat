@@ -26,15 +26,6 @@ set NOW=%hour%%minutes%%ampm%
 set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder autonomous i2c outputs
 set ASRC=bootl18f
 
-set CC="C:\MCC18\bin\mcc18" 
-set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
-
-set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
-set AEXE="C:\MCC18\mpasm\mpasmwin.exe"
-
-set LCMD=/p%PROC% /l"C:\MCC18\lib" /k"C:\MCC18\lkr"
-set LEXE="C:\MCC18\bin\mplink.exe"
-
 rem Set all the name tokens for the HEX files
 set G=
 set E=
@@ -50,6 +41,15 @@ if "%RX%" == "RX6CH"	set R=-6CH
 if "%CLOCK%"    == "CLOCK_16MHZ"           set X=-16
 if "%CLOCK%"    == "CLOCK_40MHZ"           set X=-40
 if "%COFFSET%"    == "C90"           set O=-90D
+
+set CC="C:\MCC18\bin\mcc18" 
+set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+
+set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
+set AEXE="C:\MCC18\mpasm\mpasmwin.exe"
+
+set LCMD=/p%PROC% /l"C:\MCC18\lib" /k"C:\MCC18\lkr"
+set LEXE="C:\MCC18\bin\mplink.exe"
 
 rem Build the list of expected object files
 set F=

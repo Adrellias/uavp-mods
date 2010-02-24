@@ -26,15 +26,6 @@ set NOW=%hour%%minutes%%ampm%
 set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder autonomous i2c outputs
 set ASRC=bootl18f
 
-set CC="C:\MCC18\bin\mcc18" 
-set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
-
-set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
-set AEXE="C:\MCC18\mpasm\mpasmwin.exe"
-
-set LCMD=/p%PROC% /l"C:\MCC18\lib" /k"C:\MCC18\lkr"
-set LEXE="C:\MCC18\bin\mplink.exe"
-
 rem Set all the name tokens for the HEX files
 set G=
 set E=
@@ -51,6 +42,15 @@ if "%CLOCK%"    == "CLOCK_16MHZ"           set X=-16
 if "%CLOCK%"    == "CLOCK_40MHZ"           set X=-40
 if "%COFFSET%"    == "C90"           set O=-90D
 
+set CC="C:\MCC18\bin\mcc18" 
+set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+
+set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
+set AEXE="C:\MCC18\mpasm\mpasmwin.exe"
+
+set LCMD=/p%PROC% /l"C:\MCC18\lib" /k"C:\MCC18\lkr"
+set LEXE="C:\MCC18\bin\mplink.exe"
+
 rem Build the list of expected object files
 set F=
 for %%i in ( %CSRC% ) do set F=!F! %%i.o
@@ -61,19 +61,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.918gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.421gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX-V1.918gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo compiled - UAVX-V1.918gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX-V1.421gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo compiled - UAVX-V1.421gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX-V1.918gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo failed - UAVX-V1.918gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX-V1.421gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo failed - UAVX-V1.421gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

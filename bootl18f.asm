@@ -34,12 +34,12 @@
 
 		; need to include clock for baud calculation
 #ifdef CLOCK_16MHZ
-_BAUDRATE			equ		26 
+_BAUDRATE		equ		26 
 #else ; CLOCK_40MHZ
-_BAUDRATE			equ		65 
+_BAUDRATE		equ		65 
 #endif
 
-_RestoreVec			equ		0
+_RestoreVec		equ		0
 _MaxRxBuffer		equ		80	;normal max 64 hex chars + tags
 
 		; RAM variables all in Bank 0

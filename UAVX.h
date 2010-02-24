@@ -736,7 +736,7 @@ extern void ReceivingGPSOnly(uint8);
 
 enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, 
-	GPSTimeout, GPSROCUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+	GPSTimeout, GPSROCUpdate, ArduPilotUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
 
@@ -1010,6 +1010,7 @@ extern int16 DecayX(int16, int16);
 extern void CheckAlarms(void);
 extern void DumpTrace(void);
 extern void SendUAVXState(void);
+extern void ArduPilotTelemetry(void);
 
 enum TraceTags {
 	THE, TRelBaroAltitude,
