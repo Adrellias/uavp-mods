@@ -219,7 +219,7 @@ void ShowSetup(uint8 h)
 		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
 	if ( Armed && FirstPass ) 
 		TxString("\tUAVX is armed - disarm!\r\n");
-	if ( F.Navigate )
+	if ( F.Navigate || F.ReturnHome )
 		TxString("\tNavigate/RTH is selected - deselect!\r\n");
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - close throttle!\r\n");
@@ -357,6 +357,10 @@ void ProcessCommand(void)
 			case 'V' :	// analog test
 				AnalogTest();
 				ShowPrompt();
+				break;
+			case 'W' :	// set way point
+				LoadNavBlockEE();
+				//ShowPrompt();
 				break;
 			case 'X' :	// analog test
 				ShowStats();

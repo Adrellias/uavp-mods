@@ -117,7 +117,7 @@ void main(void)
 						InitHeading();						
 						LEDCycles = 1;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
-						Stats[RCGlitchesS].i16 = RCGlitches; // start of flight
+						Stats[RCGlitchesS] = RCGlitches; // start of flight
 						State = InFlight;	
 					}
 						
@@ -130,7 +130,7 @@ void main(void)
 							DesiredThrottle = IdleThrottle;
 						else
 						{		
-							Stats[RCGlitchesS].i16 = RCGlitches - Stats[RCGlitchesS].i16;	
+							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
 							State = Landed;
 						}

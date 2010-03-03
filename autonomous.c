@@ -23,12 +23,14 @@
 #include "uavx.h"
 
 void Navigate(int24, int24);
-void SetDesiredAltitude(int24);
+void SetDesiredAltitude(int16);
 void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
 void DoPPMFailsafe(void);
+void LoadNavBlockEE(void);
+void GetWayPointEE(uint8);
 void InitNavigation(void);
 
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
@@ -36,8 +38,37 @@ int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
-WayPoint WP[NAV_MAX_WAYPOINTS];
-uint8 CurrWP, FirstWP;
+#pragma udata ardupilot_waypoints
+typedef union { // Ardupilot uses 512 bytes - truncated to 256 for UAVX
+	uint8 b[256];
+	struct {
+		uint8 Config;
+		int16 AirspeedOffset;
+		int8 RollTrim;
+		int8 PitchTrim;
+		uint16 MaxAltitude;
+		uint16 MaxAirspeed;
+		uint8 NoOfWPs;
+		uint8 CurrWP;
+		uint8 Radius;
+		int16 OriginAltitude;
+		int32 OriginLatitude;
+		int32 OriginLongitude;
+		int16 OriginAltHoldAlt;
+		struct {
+			int32 Latitude;
+			int32 Longitude;
+			int16 Altitude;
+			} WP[23];
+		};
+	} ArduPilotNav;
+#pragma udata
+		
+uint8 	CurrWP;
+int8 	NoOfWayPoints;
+int24 	WPNorth, WPEast;
+int16	WPAltitude;
+uint8 	WPLoiter;
 
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, CompassOffset, NavRTHTimeoutmS;
 
@@ -46,12 +77,12 @@ int16 	NavSensitivity, RollPitchMax;
 int16 	AltSum, AE;
 int32	NavRTHTimeout;
 
-void SetDesiredAltitude(int24 NewDesiredAltitude) // Centimetres
+void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
 	if ( F.NavAltitudeHold )
 	{
 		DesiredThrottle = HoverThrottle;
-		DesiredAltitude = NewDesiredAltitude;
+		DesiredAltitude = NewDesiredAltitude * 100L;
 	}
 	else
 	{
@@ -84,7 +115,7 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-void Navigate(int24 GPSNorthWay, int24 GPSEastWay)
+void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 {	// F.GPSValid must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
@@ -281,14 +312,14 @@ void DoNavigation(void)
 {
 	switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 	case Touchdown:
-		Navigate(WP[0].N, WP[0].E);
+		Navigate(0, 0);
 		if ( F.Navigate )
 			DoFailsafeLanding();
 		else
 			AcquireHoldPosition();
 		break;
 	case Descending:
-		Navigate(WP[0].N, WP[0].E);
+		Navigate(0, 0);
 		if ( F.Navigate )
 			if ( RelBaroAltitude < LAND_CM )
 			{
@@ -301,30 +332,46 @@ void DoNavigation(void)
 			AcquireHoldPosition();
 		break;
 	case AtHome:
-		Navigate(WP[0].N, WP[0].E); // WP[0] @ Origin
-		if ( F.Navigate )
+		Navigate(0, 0); // Origin
+		if ( F.Navigate || F.ReturnHome )
 			if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
 				NavState = Descending;
 			else
-				SetDesiredAltitude(WP[0].A);
+				SetDesiredAltitude((int16)P[NavRTHAlt]);
+		else
+			AcquireHoldPosition();
+		break;
+	case Loitering:
+		Navigate(WPNorth, WPEast);
+		if ( F.Navigate || F.ReturnHome )
+		{
+			if ( mS[Clock] > mS[LoiterTimeout] )
+			{	
+				GetWayPointEE(++CurrWP);
+				NavState = Navigating;
+			}
+		}
 		else
 			AcquireHoldPosition();
 		break;
 	case Navigating:	
-		if ( F.Navigate )
+		if ( F.Navigate || F.ReturnHome )
 		{
-			SetDesiredAltitude(WP[CurrWP].A); // at least hold altitude!
+			SetDesiredAltitude(WPAltitude); // at least hold altitude!
 	 		if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT ) // nearly level to engage!
 			{
-				Navigate(WP[CurrWP].N, WP[CurrWP].E);
+				Navigate(WPNorth, WPEast);
 				if ( F.Proximity )
-					if ( CurrWP == 0 ) // @ Origin	
+					if ( CurrWP == 0)
 					{
-						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;					
+						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;				
 						NavState = AtHome;
 					}
 					else
-						CurrWP--;
+					{
+						mS[LoiterTimeout] = mS[Clock] + WPLoiter * 1000L;
+						NavState = Loitering;
+					}		
 			}
 		}
 		else
@@ -350,16 +397,19 @@ void DoNavigation(void)
 			
 		Navigate(GPSNorthHold, GPSEastHold);
 
-		if ( F.Navigate )
+		if ( F.ReturnHome )
 		{
 			AltSum = 0;
-			#ifdef INC_JOURNEY
-			CurrWP = FirstWP;
-			#else
-			CurrWP = 0; 
-			#endif // INC_JOURNEY
+			GetWayPointEE(0);
 			NavState = Navigating;
 		}
+		else
+			if ( F.Navigate )
+			{
+				AltSum = 0;
+				GetWayPointEE(1);
+				NavState = Navigating;
+			}		
 		break;
 	} // switch NavState
 
@@ -417,14 +467,14 @@ void DoPPMFailsafe(void)
 				LEDRed_ON;
 
 				F.NavAltitudeHold = true;
-				SetDesiredAltitude((int24)WP[0].A);
+				SetDesiredAltitude(WPAltitude);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
 					NavSensitivity = RC_NEUTRAL;	// 50% gain
 					F.Navigate = F.TurnToWP = true;
 					AltSum = 0;
-					CurrWP = 0; // Return to Origin
+					GetWayPointEE(0);
 					NavState = Navigating;
 					FailState = Returning;
 				#else
@@ -448,28 +498,69 @@ void DoPPMFailsafe(void)
 		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;			
 } // DoPPMFailsafe
 
-void SetWP(uint8 w, int24 E, int24 N, int24 A)
-{
-	WP[w].E = ConvertMToGPS(E); 
-	WP[w].N = ConvertMToGPS(N); 
-	WP[w].A = A*100L; 	// Centimetres
-} // SetWP
+#pragma udata eebuffer
+uint8 BufferEE[256];
+#pragma udata
+
+void LoadNavBlockEE(void)
+{ 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
+
+	static uint16 b;
+	static uint8 c;
+
+	c = RxChar();
+	LEDBlue_ON;
+
+	switch ( c ) {
+	case '0': // hello
+		break;
+	case '1': // write
+		for ( b = 0; b < 256; b++) // cannot write fast enough so buffer
+			BufferEE[b] = RxChar();
+		for ( b = 0; b < 256; b++)
+			WriteEE(NAV_ADDR_EE + b, BufferEE[b]);	
+		break;
+	case '2':
+		
+		// update origin info here
+
+		for ( b = 0; b < 256; b++)
+			TxChar(ReadEE(NAV_ADDR_EE + b));
+		break;
+	default:
+		break;
+	} // switch
+
+	TxChar(ACK);
+	LEDBlue_OFF;
+} // LoadNavBlockEE
+
+void GetWayPointEE(uint8 wp)
+{ 
+	static uint16 w;
+	
+	CurrWP = wp;
+	NoOfWayPoints = ReadEE(WP_NO_ADDR_EE);
+	if ( wp > NoOfWayPoints ) 
+	{  // force to Origin
+		WPEast = WPNorth = 0;
+		WPAltitude = (int16)P[NavRTHAlt];
+		CurrWP = 0;
+	}
+	else
+	{	
+		w = WP_ADDR_EE + (wp-1) * WAYPOINT_REC_SIZE;
+		WPEast = Read32EE(w) - GPSOriginLongitude;
+		WPNorth = Read32EE(w + 4) - GPSOriginLatitude;
+		WPAltitude = Read16EE(w + 8);
+		WPLoiter = 5; // 5Sec. Read16EE(w + 10);
+	}
+
+} // GetWaypointEE
 
 void InitNavigation(void)
 {
-	static uint8 w;
-
-	for (w = 0; w < NAV_MAX_WAYPOINTS; w++)
-		SetWP(w, 0,0, (int24)P[NavRTHAlt]);
-
-	FirstWP = CurrWP = 0;
-	#ifdef INC_JOURNEY // left hand circuit
-	SetWP(1, 30, 0, (int24)P[NavRTHAlt]);
-	SetWP(2, 0, 30, (int24)P[NavRTHAlt]);
-	SetWP(3, -30, 0, (int24)P[NavRTHAlt]);
-	SetWP(4, 0, -30, (int24)P[NavRTHAlt]);
-	FirstWP = 4;
-	#endif // INC_JOURNEY
+	static uint8 wp;
 
 	GPSNorthHold = GPSEastHold = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
@@ -480,5 +571,9 @@ void InitNavigation(void)
 	CurrMaxRollPitch = 0;
 	F.Proximity = F.CloseProximity = true;
 	F.NavComputed = false;
+	
+	WPNorth = WPEast = 0; WPAltitude = (int16)P[NavRTHAlt]; WPLoiter = 0;
+	CurrWP = 0;
+
 } // InitNavigation
 

@@ -362,7 +362,12 @@ void UpdateControls(void)
 
 		DesiredYaw = RC[YawC] - RC_NEUTRAL;
 
-		F.Navigate = RC[RTHC] > RC_NEUTRAL;
+		F.ReturnHome = F.Navigate = false;
+		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+			F.ReturnHome = true;
+		else
+			if ( RC[RTHC] > (RC_NEUTRAL/2) )
+				F.Navigate = true;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
@@ -454,7 +459,7 @@ void LightsAndSirens(void)
 				OutSignals();
 				if( mS[Clock] > Timeout )
 				{
-					if ( F.Navigate )
+					if ( F.Navigate || F.ReturnHome )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;
@@ -474,7 +479,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || 
+	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome ||
 				( InitialThrottle >= RC_THRES_START) );
 
 	FirstPass = false;

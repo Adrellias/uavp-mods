@@ -237,7 +237,7 @@ void SetGPSOrigin(void)
 		if ( !F.NavValid )
 		{
 			DoBeep100mSWithOutput(2,0);
-			Stats[NavValidS].i16 = true;
+			Stats[NavValidS] = true;
 			F.NavValid = true;
 		}
 		F.AcquireNewPosition = true;		
@@ -256,7 +256,7 @@ void ParseGPSSentence(void)
 
 	ParseGPGGASentence(); 
 
-	if ( State == InFlight ) Stats[GPSSentencesS].i16++;
+	if ( State == InFlight ) Stats[GPSSentencesS]++;
 
 	if ( F.GPSValid )
 	{
@@ -316,14 +316,14 @@ void ParseGPSSentence(void)
 				if ( GPSRelAltitude > MaxGPSAltitudeS )
 					MaxGPSAltitudeS = GPSRelAltitude;
 
-				if ( GPSVel > Stats[GPSVelS].i16 )
-					Stats[GPSVelS].i16 = GPSVel;
+				if ( GPSVel > Stats[GPSVelS] )
+					Stats[GPSVelS] = GPSVel;
 
-				if ( GPSHDilute > Stats[MaxHDiluteS].i16 ) 
-					Stats[MaxHDiluteS].i16 = GPSHDilute; 
+				if ( GPSHDilute > Stats[MaxHDiluteS] ) 
+					Stats[MaxHDiluteS] = GPSHDilute; 
 				else 
-					if ( GPSHDilute < Stats[MinHDiluteS].i16 ) 
-						Stats[MinHDiluteS].i16 = GPSHDilute;
+					if ( GPSHDilute < Stats[MinHDiluteS] ) 
+						Stats[MinHDiluteS] = GPSHDilute;
 
 				if (( GPSRelAltitude > 1000 ) && ( GPSRelAltitude < 2500 )) // 10-25M
 				{
@@ -336,7 +336,7 @@ void ParseGPSSentence(void)
 	else
 		if ( State == InFlight ) 
 		{
-			Stats[GPSInvalidS].i16++;
+			Stats[GPSInvalidS]++;
 			F.GPSFailure = true;
 		}
 

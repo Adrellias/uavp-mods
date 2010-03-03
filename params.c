@@ -191,13 +191,13 @@ void MapRC(void)
 void ReadParametersEE(void)
 {
 	uint8 i;
-	static uint16 addr;
+	static uint16 a;
 
 	if ( ParametersChanged )
 	{   // overkill if only a single parameter has changed but is not in flight loop
-		addr = (ParamSet - 1)* MAX_PARAMETERS;	
+		a = (ParamSet - 1)* MAX_PARAMETERS;	
 		for ( i = 0; i < MAX_PARAMETERS; i++)
-			P[i] = ReadEE(addr + i);
+			P[i] = ReadEE(a + i);
 
 		ESCMax = ESCLimits[P[ESCType]];
 		if ( P[ESCType] == ESCPPM )
@@ -374,7 +374,7 @@ void InitParameters(void)
 	ALL_LEDS_ON;
 	ParamSet = 1;
 
-	if ( ReadEE(TxRxType) == -1 )
+	if ( ReadEE((uint16)TxRxType) == -1 )
 		UseDefaultParameters();
 	
 	ParamSet = 1;

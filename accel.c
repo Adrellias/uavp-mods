@@ -201,7 +201,7 @@ void ReadAccelerations()
 
 	if ( ((r & 0xf0) != 0) && (State == InFlight) ) 
 	{
-		Stats[AccFailS].i16++;	// data over run - acc out of range
+		Stats[AccFailS]++;	// data over run - acc out of range
 		F.AccFailure = true;
 	}
 

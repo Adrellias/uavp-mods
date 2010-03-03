@@ -27,20 +27,20 @@ void ShowStats(void);
 
 #pragma udata stats
 int24 	MaxRelBaroAltitudeS, MaxGPSAltitudeS;
-i16u 	Stats[MaxStats];
+int16 	Stats[MAX_STATS];
 #pragma udata
 
 void ZeroStats(void)
 {
 	uint8 s;
 
-	for (s = 0 ; s < MaxStats ; s++ )
-		Stats[s].i16 = 0;
+	for (s = 0 ; s < MAX_STATS ; s++ )
+		Stats[s] = 0;
 
-	Stats[MinHDiluteS].i16 = 10000L;
-	Stats[MaxHDiluteS].i16 = 0;
-	Stats[MinBaroROCS].i16 = 10000L;
-	Stats[MaxBaroROCS].i16 = -10000L;
+	Stats[MinHDiluteS] = 10000L;
+	Stats[MaxHDiluteS] = 0;
+	Stats[MinBaroROCS] = 10000L;
+	Stats[MaxBaroROCS] = -10000L;
 	MaxGPSAltitudeS = MaxRelBaroAltitudeS = -10000L;
 
 } // ZeroStats
@@ -49,14 +49,11 @@ void ReadStatsEE(void)
 {
 	uint8 s;
 
-	for (s = 0 ; s < MaxStats ; s++ )
-	{
-		Stats[s].b0 = ReadEE(STATS_ADDR_EE + s*2);
-		Stats[s].b1 = ReadEE(STATS_ADDR_EE + s*2 + 1);
-	}
+	for (s = 0 ; s < MAX_STATS ; s++ )
+		Stats[s] = Read16EE(STATS_ADDR_EE + s*2);
 
-	MaxGPSAltitudeS = (int24)Stats[GPSAltitudeS].i16 * 10L;
-	MaxRelBaroAltitudeS = (int24)Stats[RelBaroAltitudeS].i16 * 10L;
+	MaxGPSAltitudeS = (int24)Stats[GPSAltitudeS] * 10L;
+	MaxRelBaroAltitudeS = (int24)Stats[RelBaroAltitudeS] * 10L;
 } // InitStats
 
 void WriteStatsEE()
@@ -64,20 +61,28 @@ void WriteStatsEE()
 	uint8 s;
 	int16 Temp;
 
-	Stats[GPSAltitudeS].i16 = (int16)(MaxGPSAltitudeS/10L);
-	Stats[RelBaroAltitudeS].i16 = (int16)(MaxRelBaroAltitudeS/10L);
+	Stats[GPSAltitudeS] = (int16)(MaxGPSAltitudeS/10L);
+	Stats[RelBaroAltitudeS] = (int16)(MaxRelBaroAltitudeS/10L);
 
 	if ( SumCompBaroPress != 0 )
-		Stats[GPSBaroScaleS].i16 = (SumGPSRelAltitude * 16)/(-SumCompBaroPress); 
+		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * 16)/(-SumCompBaroPress); 
 
-	for (s = 0 ; s < MaxStats ; s++ )
-	{
-		WriteEE(STATS_ADDR_EE + s*2, Stats[s].b0);
-		WriteEE(STATS_ADDR_EE + s*2 + 1, Stats[s].b1);
-	}
+	for (s = 0 ; s < MAX_STATS ; s++ )
+		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
 
 	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);
 	WriteEE(PercentHoverThr, Temp);
+
+	Write16EE(NAV_ADDR_EE + 5, (int16)(MaxGPSAltitudeS/100));
+	Write16EE(NAV_ADDR_EE + 7, GPSVel);
+	if ( F.NavValid )
+	{
+		Write16EE(NAV_ADDR_EE + 12, (int16)(GPSAltitude/100));
+		Write16EE(NAV_ADDR_EE + 14, GPSLatitude);
+		Write16EE(NAV_ADDR_EE + 18, GPSLongitude);
+	}
+	Write16EE(NAV_ADDR_EE + 22, (int16)P[NavRTHAlt]);
+
 } // WriteStatsEE
 
 void ShowStats(void)
@@ -93,43 +98,32 @@ void ShowStats(void)
 
 	TxString("\r\nFlight Statistics\r\n");
 
-	#ifdef STATS_INC_GYRO_ACC
-	TxString("\r\nInertial\r\n");
-	TxString("Roll:     \t"); TxVal32((int32)(Stats[RollRateS].i16 - Stats[GyroMidRollS].i16), 0,'/'); TxString("512\r\n");
-	TxString("Pitch:    \t"); TxVal32((int32)(Stats[PitchRateS].i16 - Stats[GyroMidPitchS].i16), 0,'/'); TxString("512\r\n");
-	TxString("Yaw:      \t"); TxVal32((int32)(Stats[YawRateS].i16 - Stats[GyroMidYawS].i16), 0,'/'); TxString("512\r\n");
-
-	TxString("\r\nLRAcc:    \t"); TxVal32(((int32)Stats[LRAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine(); 
-	TxString("FBAcc:    \t"); TxVal32(((int32)Stats[FBAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine();
-	TxString("DUAcc:    \t"); TxVal32(((int32)Stats[DUAccS].i16 * 1000L)/1024L, 3, 'G'); TxNextLine();
-	#endif // STATS_INC_GYRO_ACC
-
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
-	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS].i16, 0, 0); TxNextLine();
-	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS].i16, 0, 0); TxNextLine();
-	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS].i16,0 , 0); TxNextLine();
-	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS].i16,0,' '); TxNextLine(); 
+	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS], 0, 0); TxNextLine();
+	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS], 0, 0); TxNextLine();
+	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS],0 , 0); TxNextLine();
+	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
 
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
-	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS].i16, 1, ' '); TxString("M (");
-	TxVal32((int32)Stats[RelBaroPressureS].i16, 0, ' '); TxString("clicks)\r\n");
-	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS].i16, 2, ' '); 
-							TxVal32((int32)Stats[MaxBaroROCS].i16, 2, ' '); TxString("M/S\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS], 1, ' '); TxString("M (");
+	TxVal32((int32)Stats[RelBaroPressureS], 0, ' '); TxString("clicks)\r\n");
+	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 2, ' '); 
+							TxVal32((int32)Stats[MaxBaroROCS], 2, ' '); TxString("M/S\r\n");
 
-	if ( Stats[GPSBaroScaleS].i16 !=0 )
+	if ( Stats[GPSBaroScaleS] !=0 )
 	{
-		TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS].i16, 0, ' '); TxString("UAVPSet?\r\n");
+		TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxString("UAVPSet?\r\n");
 	}
 
 	TxString("\r\nGPS\r\n");
-	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS].i16, 1,' '); TxString("M\r\n"); 
+	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 
-	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS].i16), 0, ' '); TxString("M/S\r\n"); 
+	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 0, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
-	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS].i16, 2, ' ');
-	TxVal32((int32)Stats[MaxHDiluteS].i16, 2, 0); TxNextLine();
-	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS].i16*(int32)1000000L)/(int32)Stats[GPSSentencesS].i16, 4, '%'); TxNextLine();
-	if ( Stats[NavValidS].i16 )
+	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
+	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
+	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS]*(int32)1000000L)/(int32)Stats[GPSSentencesS], 4, '%'); TxNextLine();
+	if ( Stats[NavValidS] )
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");

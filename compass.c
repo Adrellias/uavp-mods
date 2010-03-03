@@ -67,7 +67,7 @@ void InitCompass(void)
 	return;
 CTerror:
 	F.CompassValid = false;
-	Stats[CompassFailS].i16++;
+	Stats[CompassFailS]++;
 	F.CompassFailure = true;
 	
 	I2CStop();
@@ -95,7 +95,7 @@ void GetHeading(void)
 		Temp = ConvertDDegToMPi(Compass.i16) - CompassOffset;
 		Heading = Make2Pi((int16) Temp);
 
-		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS].i16++;	
+		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
 	}
 	else
 		Heading = 0;

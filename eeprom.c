@@ -20,14 +20,19 @@
 
 #include "uavx.h"
 
-int8 ReadEE(uint8);
-void WriteEE(uint8, int8);
+int8 ReadEE(uint16);
+int16 Read16EE(uint16);
+int32 Read32EE(uint16);
+void WriteEE(uint16, int8);
+void Write16EE(uint16, int16);
+void Write32EE(uint16, int32);
 
-int8 ReadEE(uint8 addr)
+int8 ReadEE(uint16 a)
 {
 	static int8 b;
 
-	EEADR = addr;
+	EEADR = a;
+	EEADRH = a>>8;
 	EECON1bits.EEPGD = false;
 	EECON1bits.RD = true;
 	b=EEDATA;
@@ -35,16 +40,39 @@ int8 ReadEE(uint8 addr)
 	return(b);	
 } // ReadEE
 
-void WriteEE(uint8 addr, int8 d)
+int16 Read16EE(uint16 a)
+{
+	static i16u Temp16;
+
+	Temp16.b0 = ReadEE(a + 0);
+	Temp16.b1 = ReadEE(a + 1);
+
+	return ( Temp16.i16 );
+} // Read32EE
+
+int32 Read32EE(uint16 a)
+{
+	static i32u Temp32;
+
+	Temp32.b0 = ReadEE(a + 0);
+	Temp32.b1 = ReadEE(a + 1);
+	Temp32.b2 = ReadEE(a + 2);
+	Temp32.b3 = ReadEE(a + 3);
+
+	return ( Temp32.i32 );
+} // Read32EE
+
+void WriteEE(uint16 a, int8 d)
 {
 	int8 rd;
 	uint8 IntsWereEnabled;
 	
-	rd = ReadEE(addr);
+	rd = ReadEE(a);
 	if ( rd != d )						// avoid redundant writes
 	{
 		EEDATA = d;				
-		EEADR = addr;
+		EEADR = a;
+		EEADRH = a>>8;
 		EECON1bits.EEPGD = false;
 		EECON1bits.WREN = true;
 		
@@ -61,4 +89,25 @@ void WriteEE(uint8 addr, int8 d)
 	}
 } // WriteEE
 
+void Write16EE(uint16 a, int16 d)
+{
+	static i16u Temp16;
 
+	Temp16.i16 = d;
+	WriteEE(a, Temp16.b0);
+	WriteEE(a + 1, Temp16.b1);
+
+
+} // Write16EE
+
+void Write32EE(uint16 a, int32 d)
+{
+	static i32u Temp32;
+
+	Temp32.i32 = d;
+	WriteEE(a, Temp32.b0);
+	WriteEE(a + 1, Temp32.b1);
+	WriteEE(a + 2, Temp32.b2);
+	WriteEE(a + 3, Temp32.b3); 
+
+} // Write16EE

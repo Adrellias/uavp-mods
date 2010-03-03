@@ -1,6 +1,6 @@
 // EXPERIMENTAL
 
-//#define INC_JOURNEY					// simple left circuit when engaging RTH
+#define INC_JOURNEY					// simple left circuit when engaging RTH
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff.
 
 #define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
@@ -66,7 +66,6 @@
 
 //________________________________________________________________________________________________
 
-//#define STATS_INC_GYRO_ACC			// includes tracking of Accs/Gyros but takes time in main loop!
 #define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
 
 // Timeouts and Update Intervals
@@ -152,8 +151,6 @@
 #define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
 #define ATTITUDE_HOLD_RESET_INTERVAL	25L		// number of impulse cycles before GPS position is re-acquired
 
-#define NAV_MAX_WAYPOINTS		16		// Only WP[0] or Origin used
-
 //#define NAV_PPM_FAILSAFE_RTH			// PPM signal failure causes RTH with Signal sampled periodically
 
 // Throttle
@@ -178,8 +175,9 @@
 
 // Useful Constants
 #define NUL 	0
-#define SOH 1
-#define EOT 4
+#define SOH 	1
+#define EOT 	4
+#define ACK		6
 #define HT 		9
 #define LF 		10
 #define CR 		13
@@ -242,6 +240,12 @@ typedef union {
 	struct {
 		uint16 w0;
 		uint16 w1;
+	};
+	struct {
+		uint8 b0;
+		uint8 b1;
+		uint8 b2;
+		uint8 b3;
 	};
 } i32u;
 
@@ -445,6 +449,21 @@ typedef struct {
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
 
+// EEPROM
+
+#define PARAMS_ADDR_EE		0			// code assumes zero!
+#define MAX_PARAMETERS	64		// parameters in EEPROM start at zero
+
+#define STATS_ADDR_EE	 	( PARAMS_ADDR_EE + (MAX_PARAMETERS *2) )
+#define MAX_STATS			32
+
+// uses second Page of EEPROM
+#define NAV_ADDR_EE			256L
+#define WP_NO_ADDR_EE		(NAV_ADDR_EE + 9)	// number of waypoints 		
+#define WP_ADDR_EE			(NAV_ADDR_EE + 24)	// 24 is ArduPilot misc nav params
+#define WAYPOINT_REC_SIZE 	11					// 4 (Lat) + 4 (Lon) + 2 (Alt) + 1 Byte Loiter
+#define NAV_MAX_WAYPOINTS	((256 - 24)/WAYPOINT_REC_SIZE) 
+
 // Sanity checks
 
 // check the Rx and PPM ranges
@@ -488,6 +507,7 @@ typedef union {
 		ThrottleMoving:1,
 		Hovering:1,
 		Navigate:1,
+		ReturnHome:1,
 		Proximity:1,
 		CloseProximity:1,
 
@@ -518,6 +538,7 @@ typedef union {
 		MotorsArmed:1,
 		NavAltitudeHold:1,	// stick programmed
 		TurnToWP:1,			// stick programmed
+		WayPointsChanged:1,
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
 		UsingXMode:1,
@@ -571,24 +592,28 @@ extern void InitADC(void);
 // autonomous.c
 
 extern void Navigate(int24, int24);
-extern void SetDesiredAltitude(int24);
+extern void SetDesiredAltitude(int16);
 extern void DoFailsafeLanding(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
 extern void FakeFlight(void); 
 extern void DoPPMFailsafe(void);
+extern void WriteWayPointEE(uint8, int32, int32, int16, uint8);
+extern void LoadNavBlockEE(void);
+extern void GetWayPointEE(uint8);
 extern void InitNavigation(void);
 
-typedef struct { int24 N, E, A;} WayPoint; // cm
+typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
-enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, 
+enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, Loitering,
 	Terminating };
 enum FailStates { Waiting, Aborting, Returning, Terminated };
 
 extern near uint8 FailState;
-extern  WayPoint WP[];
-extern uint8 CurrWP, FirstWP;
+extern WayPoint WP;
+extern uint8 CurrWP;
+extern int8 NoOfWayPoints;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
@@ -667,8 +692,12 @@ extern boolean FirstPass;
 
 // eeprom.c
 
-extern int8 ReadEE(uint8);
-extern void WriteEE(uint8, int8);
+extern int8 ReadEE(uint16);
+extern int16 Read16EE(uint16);
+extern int32 Read32EE(uint16);
+extern void WriteEE(uint16, int8);
+extern void Write16EE(uint16, int16);
+extern void Write32EE(uint16, int32);
 
 //______________________________________________________________________________________________
 
@@ -735,7 +764,7 @@ extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 
 enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
-	FailsafeTimeout, AbortTimeout, RTHTimeout, LandingTimeout, LastValidRx, LastGPS, 
+	FailsafeTimeout, AbortTimeout, RTHTimeout, LoiterTimeout, LandingTimeout, LastValidRx, LastGPS, 
 	GPSTimeout, GPSROCUpdate, ArduPilotUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
@@ -849,8 +878,8 @@ enum TxRxTypes {
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { ADXRS300, ADXRS150, IDG300};
-#define MAX_PARAMETERS	64		// parameters in EEPROM start at zero
-enum Params {
+
+enum Params { // MAX 64
 	RollKp, 			// 01
 	RollKi,				// 02
 	RollKd,				// 03
@@ -929,8 +958,6 @@ enum Params {
 
 // bit 7 unusable in UAVPSet
 
-#define STATS_ADDR_EE	 	( MAX_PARAMETERS *2 )
-
 extern const rom int8 ComParms[];
 extern const rom int8 DefaultParams[];
 extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
@@ -964,6 +991,7 @@ extern void TxNibble(uint8);
 extern void TxValH(uint8);
 extern void TxValH16(uint16);
 extern uint8 PollRxChar(void);
+extern uint8 RxChar(void);
 extern uint8 RxNumU(void);
 extern int8 RxNumS(void);
 extern void TxVal32(int32, int8, uint8);
@@ -987,13 +1015,12 @@ extern void WriteStatsEE(void);
 extern void ShowStats(void);
 
 enum Statistics { 
-	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSBaroScaleS, MinBaroROCS, MaxBaroROCS, GPSVelS, 
-	RollRateS, PitchRateS, YawRateS, LRAccS, FBAccS,DUAccS, GyroMidRollS, GyroMidPitchS, 
-	GyroMidYawS, AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, MaxStats};
+	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSBaroScaleS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
+	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, 
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS}; // NO MORE THAN 16 or 32 bytes
 
 extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
-extern i16u Stats[];
+extern int16 Stats[];
 //______________________________________________________________________________________________
 
 // utils.c

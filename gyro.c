@@ -48,24 +48,12 @@ void GetRollPitchGyroValues(void)
 
 	RollRate += NewRollRate;
 	PitchRate += NewPitchRate;
-
-	#ifdef STATS_INC_GYRO_ACC
-	if ( State == InFlight )
-	{
-		if ( NewRollRate > Stats[RollRateS].i24 ) Stats[RollRateS].i24 = NewRollRate;
-		if ( NewPitchRate > Stats[PitchRateS].i24 ) Stats[PitchRateS].i24 = NewPitchRate;
-	}
-	#endif // STATS_INC_GYRO_ACC
 } // GetRollPitchGyroValues
 
 void GetYawGyroValue(void)
 {
 	YawRate = ADC(ADCYawChan);
 	YawRate >>= 2;	// use only 8 bit A/D resolution
-	#ifdef STATS_INC_GYRO_ACC
-	if (( State == InFlight ) && (YawRate > Stats[YawRateS].i16) ) Stats[YawRateS].i16 = YawRate;
-	#endif // STATS_INC_GYRO_ACC
-
 } // GetYawGyroValue
 
 void ErectGyros(void)
@@ -101,12 +89,6 @@ void ErectGyros(void)
 	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
 	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
 	GyroMidYaw = (int16)((YawAv + 64) >> 7);
-
-	#ifdef STATS_INC_GYRO_ACC
-	Stats[RollRateS].i16 = Stats[GyroMidRollS].i16 = GyroMidRoll;
-	Stats[PitchRateS].i16 = Stats[GyroMidPitchS].i16 = GyroMidPitch;
-	Stats[YawRateS].i16 = Stats[GyroMidYawS].i16 = GyroMidYaw;
-	#endif // STATS_INC_GYRO_ACC
 
 	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;
@@ -145,15 +127,6 @@ void CompensateRollPitchGyros(void)
 		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
 		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);
 			
-		#ifdef STATS_INC_GYRO_ACC
-		if ( State == InFlight )
-		{
-			if ( LRAcc > Stats[LRAccS].i24 ) Stats[LRAccS].i24 = LRAcc; 
-			if ( FBAcc > Stats[FBAccS].i24 ) Stats[FBAccS].i24 = FBAcc; 
-			if ( DUAcc > Stats[DUAccS].i24 ) Stats[DUAccS].i24 = DUAcc;
-		}
-		#endif // STATS_INC_GYRO_ACC
-
 		// Roll
 
 		// static compensation due to Gravity

@@ -128,7 +128,7 @@ RVerror:
 	F.BaroAltitudeValid = F.Hovering = false;
 	if ( State == InFlight ) 
 	{
-		Stats[BaroFailS].i16++; 
+		Stats[BaroFailS]++; 
 		F.BaroFailure = true;
 	}
 	return;
@@ -191,15 +191,15 @@ void GetBaroAltitude(void)
 
 			if ( State == InFlight )
 			{
-				if ( BaroROC > Stats[MaxBaroROCS].i16 )
-					Stats[MaxBaroROCS].i16 = BaroROC;
+				if ( BaroROC > Stats[MaxBaroROCS] )
+					Stats[MaxBaroROCS] = BaroROC;
 				else
-					if ( BaroROC < Stats[MinBaroROCS].i16 )
-						Stats[MinBaroROCS].i16 = BaroROC;
+					if ( BaroROC < Stats[MinBaroROCS] )
+						Stats[MinBaroROCS] = BaroROC;
 				if ( RelBaroAltitude > MaxRelBaroAltitudeS ) 
 				{ 
 					MaxRelBaroAltitudeS = RelBaroAltitude;
-					Stats[RelBaroPressureS].i16 = CompBaroPress;
+					Stats[RelBaroPressureS] = CompBaroPress;
 				}
 			}
 			F.NewBaroValue = F.BaroAltitudeValid;
@@ -266,7 +266,7 @@ void InitBarometer(void)
 
 BAerror:
 	F.BaroAltitudeValid = F.Hovering = false;
-	Stats[BaroFailS].i16++;
+	Stats[BaroFailS]++;
 	I2CStop();
 } // InitBarometer
 

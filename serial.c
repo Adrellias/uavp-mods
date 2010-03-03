@@ -32,6 +32,7 @@ void TxValH(uint8);
 void TxValH16(uint16);
 uint8 RxChar(void);
 uint8 PollRxChar(void);
+uint8 RxChar(void);
 uint8 RxNumU(void);
 int8 RxNumS(void);
 void TxVal32(int32, int8, uint8);
@@ -132,6 +133,25 @@ uint8 PollRxChar(void)
 	return( NUL );	// nothing in buffer
 
 } // PollRxChar
+
+uint8 RxChar(void)
+{
+	uint8	ch;	
+
+	while ( !PIR1bits.RCIF );
+
+	if( RCSTAbits.OERR || RCSTAbits.FERR )	// overrun or framing error?
+	{
+		RCSTAbits.CREN = false;	// disable, then re-enable port to
+		RCSTAbits.CREN = true;	// reset OERR and FERR bit
+		ch = RCREG;	// dummy read
+	}
+	else
+		ch = RCREG;	// get the character
+	
+	return(ch);
+} // RxChar
+
 
 uint8 RxNumU(void)
 {
