@@ -243,6 +243,8 @@ void ReadParametersEE(void)
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
 
+		Write16EE(NAV_ALT_HOLD, (int16)P[NavRTHAlt]);
+
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);

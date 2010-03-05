@@ -455,15 +455,29 @@ typedef struct {
 #define MAX_PARAMETERS	64		// parameters in EEPROM start at zero
 
 #define STATS_ADDR_EE	 	( PARAMS_ADDR_EE + (MAX_PARAMETERS *2) )
-#define MAX_STATS			32
+#define MAX_STATS			64
 
 // uses second Page of EEPROM
 #define NAV_ADDR_EE			256L
-#define WP_NO_ADDR_EE		(NAV_ADDR_EE + 9)	// number of waypoints 		
-#define WP_ADDR_EE			(NAV_ADDR_EE + 24)	// 24 is ArduPilot misc nav params
-#define WAYPOINT_REC_SIZE 	11					// 4 (Lat) + 4 (Lon) + 2 (Alt) + 1 Byte Loiter
-#define NAV_MAX_WAYPOINTS	((256 - 24)/WAYPOINT_REC_SIZE) 
 
+#define NAV_CONFIG			(NAV_ADDR_EE)		// redundant
+#define NAV_AS_OFFSET		(NAV_ADDR_EE + 1)	// redundant
+#define NAV_ROLL_TRIM		(NAV_ADDR_EE + 3)	// redundant
+#define NAV_PITCH_TRIM		(NAV_ADDR_EE + 4)	// redundant
+#define NAV_MAX_ALT			(NAV_ADDR_EE + 5)  	// stats
+#define NAV_MAX_AS			(NAV_ADDR_EE + 7)  	// stats
+#define NAV_NO_WP			(NAV_ADDR_EE + 9)
+#define NAV_CURR_WP			(NAV_ADDR_EE + 10) 	// telemetry
+#define NAV_RADIUS			(NAV_ADDR_EE + 11)
+#define NAV_GPS_ALT			(NAV_ADDR_EE + 12)
+#define NAV_GPS_LAT			(NAV_ADDR_EE + 14)
+#define NAV_GPS_LON 		(NAV_ADDR_EE + 18)
+#define NAV_ALT_HOLD 		(NAV_ADDR_EE + 22)	// P[NavRTHAlt]
+#define NAV_WP_START		(NAV_ADDR_EE + 24)
+
+#define WAYPOINT_REC_SIZE 	(4 + 4 + 2 + 1)		// Lat + Lon + Alt + Loiter
+#define NAV_MAX_WAYPOINTS	((256 - 24 - 1)/WAYPOINT_REC_SIZE)
+	 
 // Sanity checks
 
 // check the Rx and PPM ranges

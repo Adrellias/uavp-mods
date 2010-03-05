@@ -506,32 +506,62 @@ void LoadNavBlockEE(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
 
 	static uint16 b;
-	static uint8 c;
+	static uint8 c, d, csum;
 
 	c = RxChar();
 	LEDBlue_ON;
 
 	switch ( c ) {
 	case '0': // hello
+		TxChar(ACK);
 		break;
 	case '1': // write
+		csum = 0;
 		for ( b = 0; b < 256; b++) // cannot write fast enough so buffer
-			BufferEE[b] = RxChar();
-		for ( b = 0; b < 256; b++)
-			WriteEE(NAV_ADDR_EE + b, BufferEE[b]);	
+		{
+			d = RxChar();
+			csum ^= d;
+			BufferEE[b] = d;
+		}
+		if ( csum == 0 )
+		{
+			for ( b = 0; b < 256; b++)
+				WriteEE(NAV_ADDR_EE + b, BufferEE[b]);
+			TxChar(ACK);
+		}
+		else
+			TxChar(NAK);	
 		break;
 	case '2':
-		
-		// update origin info here
-
+		csum = 0;
+		for ( b = 0; b < 255; b++)
+		{	
+			d = ReadEE(NAV_ADDR_EE + b);
+			csum ^= d;
+			BufferEE[b] = d;
+		}
+		BufferEE[255] = csum;
 		for ( b = 0; b < 256; b++)
-			TxChar(ReadEE(NAV_ADDR_EE + b));
+			TxChar(BufferEE[b]);
+		TxChar(ACK);
+		break;
+	case '3':
+		csum = 0;
+		for ( b = 0; b < 63; b++)
+		{	
+			d = ReadEE(STATS_ADDR_EE + b);
+			csum ^= d;
+			BufferEE[b] = d;
+		}
+		BufferEE[63] = csum;
+		for ( b = 0; b < 64; b++)
+			TxChar(BufferEE[b]);
+		TxChar(ACK);
 		break;
 	default:
 		break;
 	} // switch
 
-	TxChar(ACK);
 	LEDBlue_OFF;
 } // LoadNavBlockEE
 
@@ -540,20 +570,21 @@ void GetWayPointEE(uint8 wp)
 	static uint16 w;
 	
 	CurrWP = wp;
-	NoOfWayPoints = ReadEE(WP_NO_ADDR_EE);
+	NoOfWayPoints = ReadEE(NAV_NO_WP);
 	if ( wp > NoOfWayPoints ) 
 	{  // force to Origin
 		WPEast = WPNorth = 0;
 		WPAltitude = (int16)P[NavRTHAlt];
+		WPLoiter = 0;
 		CurrWP = 0;
 	}
 	else
 	{	
-		w = WP_ADDR_EE + (wp-1) * WAYPOINT_REC_SIZE;
+		w = NAV_WP_START + (wp-1) * WAYPOINT_REC_SIZE;
 		WPEast = Read32EE(w) - GPSOriginLongitude;
 		WPNorth = Read32EE(w + 4) - GPSOriginLatitude;
 		WPAltitude = Read16EE(w + 8);
-		WPLoiter = 5; // 5Sec. Read16EE(w + 10);
+		WPLoiter = Read16EE(w + 10);
 	}
 
 } // GetWaypointEE

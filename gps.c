@@ -234,6 +234,10 @@ void SetGPSOrigin(void)
 	
 		GPSOriginAltitude = GPSAltitude;
 
+		Write16EE(NAV_GPS_ALT, (int16)(GPSAltitude/100));
+		Write32EE(NAV_GPS_LAT, GPSLatitude);
+		Write32EE(NAV_GPS_LON, GPSLongitude);
+
 		if ( !F.NavValid )
 		{
 			DoBeep100mSWithOutput(2,0);
@@ -352,6 +356,10 @@ void InitGPS(void)
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
 	GPSAltitude = 0;
 	GPSEast = GPSNorth = GPSVel = 0;
+
+	Write32EE(NAV_GPS_LAT, 0);
+	Write32EE(NAV_GPS_LON, 0);
+	Write16EE(NAV_GPS_ALT, 0);
 
 	ValidGPSSentences = 0;
 

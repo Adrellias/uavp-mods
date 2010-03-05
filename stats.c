@@ -73,29 +73,13 @@ void WriteStatsEE()
 	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);
 	WriteEE(PercentHoverThr, Temp);
 
-	Write16EE(NAV_ADDR_EE + 5, (int16)(MaxGPSAltitudeS/100));
-	Write16EE(NAV_ADDR_EE + 7, GPSVel);
-	if ( F.NavValid )
-	{
-		Write16EE(NAV_ADDR_EE + 12, (int16)(GPSAltitude/100));
-		Write16EE(NAV_ADDR_EE + 14, GPSLatitude);
-		Write16EE(NAV_ADDR_EE + 18, GPSLongitude);
-	}
-	Write16EE(NAV_ADDR_EE + 22, (int16)P[NavRTHAlt]);
+	Write16EE(NAV_MAX_ALT, (int16)(MaxGPSAltitudeS/100)); // ??? temporary
+	Write16EE(NAV_MAX_AS, GPSVel); // ??? temporary
 
 } // WriteStatsEE
 
 void ShowStats(void)
 {
-	static int16 Scale;
-
-	Scale = 3000;
-	if ( P[GyroType] == IDG300 )
-		Scale = 5000;
-	else
-		if ( P[GyroType] == ADXRS150 )
-			Scale = 1500;
-
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
