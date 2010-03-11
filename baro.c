@@ -183,6 +183,7 @@ void GetBaroAltitude(void)
 			Temp = (int24)BaroSum + BaroTempComp;
 			CompBaroPress = BaroFilter(CompBaroPress, Temp);
 			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);
+
 			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
 			BaroROC = BaroROCFilter(BaroROCP, BaroROC);
 	
@@ -196,6 +197,7 @@ void GetBaroAltitude(void)
 				else
 					if ( BaroROC < Stats[MinBaroROCS] )
 						Stats[MinBaroROCS] = BaroROC;
+
 				if ( RelBaroAltitude > MaxRelBaroAltitudeS ) 
 				{ 
 					MaxRelBaroAltitudeS = RelBaroAltitude;
@@ -261,6 +263,7 @@ void InitBarometer(void)
 	StartBaroADC(true);
 
 	OriginBaroPressure = (int24)(BaroAverage >> 5);
+	RelBaroAltitudeP = 0;
 
 	return;
 

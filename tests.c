@@ -582,7 +582,7 @@ void GPSTest(void)
 void AnalogTest(void)
 {
 	int32 v;
-	uint8 c;
+	uint8 c, lv, hv;
 	int32 A[5];
 
 	A[ADCBattVoltsChan] = ((int24)ADC(ADCBattVoltsChan)* 61L + 102L)/205L; // resistive divider
@@ -594,12 +594,18 @@ void AnalogTest(void)
 
 	// Roll
 	if ( P[GyroType] == IDG300 )
+	{
+		lv = 10; hv = 20;
 		v = A[IDGADCRollChan];
+	}
 	else
-		v = A[NonIDGADCRollChan]; 
+	{
+		lv = 20; hv = 30;
+		v = A[NonIDGADCRollChan];
+	} 
 	TxString("Roll: \t"); 
 	TxVal32(v, 1, 'V');
-	if ( ( v < 20 ) || ( v > 30 ) )
+	if ( ( v < lv ) || ( v > hv ) )
 		TxString(" gyro NC or fault?");
 	TxNextLine();
 
@@ -610,7 +616,7 @@ void AnalogTest(void)
 		v = A[NonIDGADCPitchChan]; 
 	TxString("Pitch:\t");		
 	TxVal32(v, 1, 'V');
-	if ( ( v < 20 ) || ( v > 30 ) )
+	if ( ( v < lv ) || ( v > hv ) )
 		TxString(" gyro NC or fault?");
 	
 	TxNextLine();

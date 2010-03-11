@@ -47,7 +47,9 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"S..Setup\r\n"
 	"T..All LEDs and buzzer test\r\n"
 	"V..Analog input test\r\n"
+	#ifdef TESTS_FULL_STATS
 	"X..Flight stats\r\n"
+	#endif // TESTS_FULL_STATS
 	"Y..Program YGE I2C ESC\r\n"
 //	"Z..Continuously display compass(Use HyperTerm)\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet

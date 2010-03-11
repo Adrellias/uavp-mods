@@ -70,11 +70,11 @@ int24 	WPNorth, WPEast;
 int16	WPAltitude;
 uint8 	WPLoiter;
 
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, CompassOffset, NavRTHTimeoutmS;
+int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude, CompassOffset, NavRTHTimeoutmS;
 
 uint8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
-int16 	AltSum, AE;
+int16 	AltSum;
 int32	NavRTHTimeout;
 
 void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
@@ -145,7 +145,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
 
-			F.Proximity = Max(Abs(NorthDiff), Abs(EastDiff)) < NavProximityRadius;
+			F.Proximity = (Max(Abs(NorthDiff), Abs(EastDiff)) < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
 	
 			// East
 			if ( Abs(EastDiff) < NavClosingRadius )

@@ -228,6 +228,7 @@ void ReadParametersEE(void)
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
 		NavProximityRadius = ConvertMToGPS(NAV_PROXIMITY_RADIUS);
+		NavProximityAltitude = NAV_PROXIMITY_RADIUS * 10L;
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;

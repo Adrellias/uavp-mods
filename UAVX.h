@@ -36,6 +36,7 @@
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+//#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -126,7 +127,8 @@
 
 #define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS			90L		// Metres
-#define NAV_PROXIMITY_RADIUS	10L		// Metres
+#define NAV_PROXIMITY_RADIUS	5L		// Metres
+#define NAV_PROXIMITY_ALT		2L		// Metres
 
 // reads $GPGGA and $GPRMC sentences - all others discarded
 
@@ -459,16 +461,11 @@ typedef struct {
 
 // uses second Page of EEPROM
 #define NAV_ADDR_EE			256L
+// 0 - 8 not used
 
-#define NAV_CONFIG			(NAV_ADDR_EE)		// redundant
-#define NAV_AS_OFFSET		(NAV_ADDR_EE + 1)	// redundant
-#define NAV_ROLL_TRIM		(NAV_ADDR_EE + 3)	// redundant
-#define NAV_PITCH_TRIM		(NAV_ADDR_EE + 4)	// redundant
-#define NAV_MAX_ALT			(NAV_ADDR_EE + 5)  	// stats
-#define NAV_MAX_AS			(NAV_ADDR_EE + 7)  	// stats
 #define NAV_NO_WP			(NAV_ADDR_EE + 9)
-#define NAV_CURR_WP			(NAV_ADDR_EE + 10) 	// telemetry
-#define NAV_RADIUS			(NAV_ADDR_EE + 11)
+#define NAV_PROX_ALT		(NAV_ADDR_EE + 10) 	
+#define NAV_PROX_RADIUS		(NAV_ADDR_EE + 11)
 #define NAV_GPS_ALT			(NAV_ADDR_EE + 12)
 #define NAV_GPS_LAT			(NAV_ADDR_EE + 14)
 #define NAV_GPS_LON 		(NAV_ADDR_EE + 18)
@@ -628,12 +625,12 @@ extern near uint8 FailState;
 extern WayPoint WP;
 extern uint8 CurrWP;
 extern int8 NoOfWayPoints;
-extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius; 
+extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int32 NavRTHTimeout;
-extern int16 AltSum, AE;
+extern int16 AltSum;
 
 //______________________________________________________________________________________________
 
@@ -699,7 +696,8 @@ extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
 extern int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
 extern int16 AttitudeHoldResetCount;
-extern int24 DesiredAltitude;
+extern int24 DesiredAltitude, Altitude;
+extern int16 ROC;
 extern boolean FirstPass;
 
 //______________________________________________________________________________________________
@@ -1029,9 +1027,9 @@ extern void WriteStatsEE(void);
 extern void ShowStats(void);
 
 enum Statistics { 
-	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSBaroScaleS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
-	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSSentencesS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS}; // NO MORE THAN 16 or 32 bytes
+	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
+	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, BatteryS}; // NO MORE THAN 32 or 64 bytes
 
 extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern int16 Stats[];

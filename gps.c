@@ -193,7 +193,22 @@ void ParseGPGGASentence(void)
     //UpdateField();   // GHeight 
     //UpdateField();   // GHeightUnit 
  
-    F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );  
+    F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );
+
+	if ( State == InFlight )
+	{
+		if ( GPSHDilute > Stats[MaxHDiluteS] ) 
+			Stats[MaxHDiluteS] = GPSHDilute; 
+		else 
+			if ( GPSHDilute < Stats[MinHDiluteS] ) 
+				Stats[MinHDiluteS] = GPSHDilute;
+
+		if ( GPSNoOfSats > Stats[GPSMaxSatsS] )
+			Stats[GPSMaxSatsS] = GPSNoOfSats;
+		else
+			if ( GPSNoOfSats < Stats[GPSMinSatsS] )
+				Stats[GPSMinSatsS] = GPSNoOfSats; 
+	}
 
 	if ( F.GPSTestActive )
 	{
@@ -260,8 +275,6 @@ void ParseGPSSentence(void)
 
 	ParseGPGGASentence(); 
 
-	if ( State == InFlight ) Stats[GPSSentencesS]++;
-
 	if ( F.GPSValid )
 	{
 	    if ( ValidGPSSentences <  GPS_INITIAL_SENTENCES )
@@ -299,8 +312,8 @@ void ParseGPSSentence(void)
 			GPSEastDiff = GPSEast - GPSEastP;
 			GPSNorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
-			GPSVel = int32sqrt(GPSEastDiff*GPSEastDiff + GPSNorthDiff*GPSNorthDiff);
-			GPSVel = ((int32)GPSVel * 1000L)/GPSInterval;
+			Temp = int32sqrt(GPSEastDiff*GPSEastDiff + GPSNorthDiff*GPSNorthDiff);
+			GPSVel = ConvertGPSToM( (Temp * GPSInterval) / 100L );
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
 			GPSNorthP = GPSNorth;
@@ -322,12 +335,6 @@ void ParseGPSSentence(void)
 
 				if ( GPSVel > Stats[GPSVelS] )
 					Stats[GPSVelS] = GPSVel;
-
-				if ( GPSHDilute > Stats[MaxHDiluteS] ) 
-					Stats[MaxHDiluteS] = GPSHDilute; 
-				else 
-					if ( GPSHDilute < Stats[MinHDiluteS] ) 
-						Stats[MinHDiluteS] = GPSHDilute;
 
 				if (( GPSRelAltitude > 1000 ) && ( GPSRelAltitude < 2500 )) // 10-25M
 				{

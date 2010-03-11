@@ -54,7 +54,8 @@ int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
 int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
-int24 DesiredAltitude;
+int24 DesiredAltitude, Altitude;
+int16 ROC;
 
 boolean	FirstPass;
 
@@ -104,9 +105,6 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 
 void AltitudeHold()
 {
-	static int24 Altitude;
-	static int16 ROC;
-
 	// relies upon good cross calibration of baro and rangefinder!!!!!!
 
 	if ( F.RangefinderAltitudeValid ) // some hysteresis
@@ -501,7 +499,7 @@ void InitControl(void)
 	RollTrim = PitchTrim = YawTrim = 0;
 	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
-	AE = AltSum = 0;
+	AltSum = 0;
 } // InitControl
 
 

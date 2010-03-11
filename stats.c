@@ -37,11 +37,13 @@ void ZeroStats(void)
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Stats[s] = 0;
 
-	Stats[MinHDiluteS] = 10000L;
+	Stats[MinHDiluteS] = 1000L;
 	Stats[MaxHDiluteS] = 0;
-	Stats[MinBaroROCS] = 10000L;
-	Stats[MaxBaroROCS] = -10000L;
-	MaxGPSAltitudeS = MaxRelBaroAltitudeS = -10000L;
+	Stats[MinBaroROCS] = 0;
+	Stats[MaxBaroROCS] = 0;
+	Stats[GPSMinSatsS] = 50;
+	Stats[GPSMaxSatsS] = 0;
+	MaxGPSAltitudeS = MaxRelBaroAltitudeS = 0;
 
 } // ZeroStats
 
@@ -73,13 +75,11 @@ void WriteStatsEE()
 	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);
 	WriteEE(PercentHoverThr, Temp);
 
-	Write16EE(NAV_MAX_ALT, (int16)(MaxGPSAltitudeS/100)); // ??? temporary
-	Write16EE(NAV_MAX_AS, GPSVel); // ??? temporary
-
 } // WriteStatsEE
 
 void ShowStats(void)
 {
+	#ifdef TESTS_FULL_STATS	
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
@@ -93,24 +93,18 @@ void ShowStats(void)
 	TxVal32((int32)Stats[RelBaroPressureS], 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 2, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS], 2, ' '); TxString("M/S\r\n");
-
-	if ( Stats[GPSBaroScaleS] !=0 )
-	{
-		TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxString("UAVPSet?\r\n");
-	}
-
 	TxString("\r\nGPS\r\n");
-	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1,' '); TxString("M\r\n"); 
 	#ifdef GPS_INC_GROUNDSPEED 
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 0, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
-	TxString("Invalid:  \t");TxVal32(((int32)Stats[GPSInvalidS]*(int32)1000000L)/(int32)Stats[GPSSentencesS], 4, '%'); TxNextLine();
+	TxString("Invalid:  \t");TxVal32((int32)Stats[GPSInvalidS],0,0); TxNextLine();
 	if ( Stats[NavValidS] )
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
+	#endif // TESTS_FULL_STATS
 
 } // ShowStats
 
