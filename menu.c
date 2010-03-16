@@ -360,8 +360,8 @@ void ProcessCommand(void)
 				AnalogTest();
 				ShowPrompt();
 				break;
-			case 'W' :	// set way point
-				LoadNavBlockEE();
+			case 'W' :	// comms with UAVXNav utility NOT UAVPSet
+				UAVXNavCommand();
 				//ShowPrompt();
 				break;
 			case 'X' :	// analog test

@@ -94,10 +94,9 @@ void main(void)
 				case Starting:	// this state executed once only after arming
 
 					LEDYellow_OFF;
-					ZeroStats();
+
 					InitControl();
 					CaptureTrims();
-
 					InitHeading();
 					InitGPS();
 					InitNavigation();
@@ -105,6 +104,7 @@ void main(void)
 					DesiredThrottle = 0;
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
 					InitBarometer(); 			// as late as possible to allow some warmup
+					ZeroStats();
 					DoStartingBeepsWithOutput(3);
 
 					State = Landed;

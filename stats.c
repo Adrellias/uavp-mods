@@ -83,6 +83,7 @@ void ShowStats(void)
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
+	TxString("GPS:      \t");TxVal32((int32)Stats[GPSInvalidS],0,0); TxNextLine();
 	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS], 0, 0); TxNextLine();
 	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS], 0, 0); TxNextLine();
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS],0 , 0); TxNextLine();
@@ -93,13 +94,14 @@ void ShowStats(void)
 	TxVal32((int32)Stats[RelBaroPressureS], 0, ' '); TxString("clicks)\r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 2, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS], 2, ' '); TxString("M/S\r\n");
+	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();
+
 	TxString("\r\nGPS\r\n");
 	#ifdef GPS_INC_GROUNDSPEED 
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 0, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
-	TxString("Invalid:  \t");TxVal32((int32)Stats[GPSInvalidS],0,0); TxNextLine();
 	if ( Stats[NavValidS] )
 		TxString("Navigation ENABLED\r\n");	
 	else

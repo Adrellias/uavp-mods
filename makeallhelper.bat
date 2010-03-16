@@ -23,7 +23,7 @@ for /f "tokens=2 delims=: " %%m in ('time /T') do set minutes=%%m
 for /f "tokens=3 delims=: " %%a in ('time /T') do set ampm=%%a
 set NOW=%hour%%minutes%%ampm%
 
-set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder autonomous i2c outputs
+set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder telemetry autonomous i2c outputs
 set ASRC=bootl18f
 
 rem Set all the name tokens for the HEX files
@@ -61,19 +61,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.428gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.431gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX-V1.428gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo compiled - UAVX-V1.428gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX-V1.431gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo compiled - UAVX-V1.431gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX-V1.428gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo failed - UAVX-V1.428gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX-V1.431gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo failed - UAVX-V1.431gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

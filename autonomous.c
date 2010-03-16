@@ -29,7 +29,7 @@ void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
 void DoPPMFailsafe(void);
-void LoadNavBlockEE(void);
+void UAVXNavCommand(void);
 void GetWayPointEE(uint8);
 void InitNavigation(void);
 
@@ -38,30 +38,31 @@ int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
-#pragma udata ardupilot_waypoints
-typedef union { // Ardupilot uses 512 bytes - truncated to 256 for UAVX
+#pragma udata uavxnav_waypoints
+typedef union { 
 	uint8 b[256];
 	struct {
-		uint8 Config;
-		int16 AirspeedOffset;
-		int8 RollTrim;
-		int8 PitchTrim;
-		uint16 MaxAltitude;
-		uint16 MaxAirspeed;
+		uint8 u0;
+		int16 u1;
+		int8 u3;
+		int8 u4;
+		uint16 u5;
+		uint16 u6;
 		uint8 NoOfWPs;
-		uint8 CurrWP;
-		uint8 Radius;
+		uint8 ProximityAltitude;
+		uint8 ProximityRadius;
 		int16 OriginAltitude;
 		int32 OriginLatitude;
 		int32 OriginLongitude;
-		int16 OriginAltHoldAlt;
+		int16 RTHAltitude;
 		struct {
 			int32 Latitude;
 			int32 Longitude;
 			int16 Altitude;
+			int8 Loiter;
 			} WP[23];
 		};
-	} ArduPilotNav;
+	} UAVXNav;
 #pragma udata
 		
 uint8 	CurrWP;
@@ -69,6 +70,7 @@ int8 	NoOfWayPoints;
 int24 	WPNorth, WPEast;
 int16	WPAltitude;
 uint8 	WPLoiter;
+int16	WayHeading;
 
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude, CompassOffset, NavRTHTimeoutmS;
 
@@ -124,7 +126,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 
 	static int16 SinHeading, CosHeading;
 	static int24 Temp, EastDiff, NorthDiff;
-	static int16 WayHeading, RelHeading;
+	static int16 RelHeading;
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
@@ -502,7 +504,7 @@ void DoPPMFailsafe(void)
 uint8 BufferEE[256];
 #pragma udata
 
-void LoadNavBlockEE(void)
+void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
 
 	static uint16 b;
@@ -530,7 +532,10 @@ void LoadNavBlockEE(void)
 			TxChar(ACK);
 		}
 		else
-			TxChar(NAK);	
+			TxChar(NAK);
+
+		InitNavigation();
+	
 		break;
 	case '2':
 		csum = 0;
@@ -563,14 +568,13 @@ void LoadNavBlockEE(void)
 	} // switch
 
 	LEDBlue_OFF;
-} // LoadNavBlockEE
+} // UAVXNavCommand
 
 void GetWayPointEE(uint8 wp)
 { 
 	static uint16 w;
-	
-	CurrWP = wp;
-	NoOfWayPoints = ReadEE(NAV_NO_WP);
+
+	CurrWP = wp;	
 	if ( wp > NoOfWayPoints ) 
 	{  // force to Origin
 		WPEast = WPNorth = 0;
@@ -587,13 +591,17 @@ void GetWayPointEE(uint8 wp)
 		WPLoiter = Read16EE(w + 10);
 	}
 
+	#ifdef NAV_ENFORCE_ALTITUDE_LIMIT
+	WPAltitude = Limit(WPAltitude, 0, 91); // 300 feet
+	#endif // NAV_ENFORCE_ALTITUDE_LIMIT
+
 } // GetWaypointEE
 
 void InitNavigation(void)
 {
 	static uint8 wp;
 
-	GPSNorthHold = GPSEastHold = 0;
+	GPSNorthHold = GPSEastHold = WayHeading = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
 	EastDiffP, NorthDiffP = 0;
 
@@ -602,9 +610,16 @@ void InitNavigation(void)
 	CurrMaxRollPitch = 0;
 	F.Proximity = F.CloseProximity = true;
 	F.NavComputed = false;
-	
-	WPNorth = WPEast = 0; WPAltitude = (int16)P[NavRTHAlt]; WPLoiter = 0;
-	CurrWP = 0;
+
+	NavProximityRadius = ConvertMToGPS(Read16EE(NAV_PROX_RADIUS));
+	NavProximityAltitude = Read16EE(NAV_PROX_ALT);
+
+	NoOfWayPoints = ReadEE(NAV_NO_WP);
+	if ( NoOfWayPoints <= 0 )
+		CurrWP = 0;
+	else
+		CurrWP = 1;
+	GetWayPointEE(CurrWP);
 
 } // InitNavigation
 

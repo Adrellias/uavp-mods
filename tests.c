@@ -479,6 +479,8 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
+	#ifdef TESTS_FULL
+
 	uint8 s, m, mask, LEDSave;
 
 	LEDSave = LEDShadow;
@@ -514,7 +516,10 @@ void LEDsAndBuzzer(void)
 	}
 	LEDShadow  = LEDSave;
 	SendLEDs();	
-	TxString("Test Finished\r\n");		
+	TxString("Test Finished\r\n");
+	#else
+	TxString("Test not available\r\n");
+	#endif // TESTS_FULL		
 } // PowerOutput
 
 void GPSTest(void)

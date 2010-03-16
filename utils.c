@@ -31,11 +31,10 @@ int16 SlewLimit(int16, int16, int16);
 int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 void DumpTrace(void);
-void SendUAVXState(void);
 
 int16 Trace[TopTrace+1];
-uint8 UAVXCurrPacketTag;
 int8 BatteryVolts;
+int16 BatteryVoltsADC;
 
 void InitPorts(void)
 {
@@ -157,10 +156,11 @@ void DoStartingBeepsWithOutput(uint8 b)
 
 void CheckAlarms(void)
 {
-	static int16 NewBatteryVolts;
+	static int16 Temp;
 
-	NewBatteryVolts = ADC(ADCBattVoltsChan) >> 3; 
-	BatteryVolts = SoftFilter(BatteryVolts, NewBatteryVolts);
+	Temp = ADC(ADCBattVoltsChan);
+	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
+	BatteryVolts = BatteryVoltsADC >> 3; 
 	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel;
@@ -170,7 +170,7 @@ void CheckAlarms(void)
 		if( F.LowBatt ) // repeating beep
 			if( ((int16)mS[Clock] & 0x0200) == 0 )
 			{
-				Stats[BatteryS] = true;
+				Stats[BatteryS] = BatteryVolts;
 				Beeper_ON;
 				LEDRed_ON;
 			}
@@ -257,238 +257,5 @@ void DumpTrace(void)
 	#endif // DEBUG_SENSORS
 } // DumpTrace
 
-void SendUAVXState(void) // 925uS at 16MHz
-{
-	uint8 b;
-	i32u Temp;
 
-	// packet must be shorter than GPS shortest valid packet ($GPGGA)
-	// which is ~64 characters - so limit to 48?.
-
-	for (b=10;b;b--) 
-		SendByte(0x55);
-	      
-	SendByte(0xff); // synchronisation to "jolt" USART
-	
-	SendByte(SOH);
-	
-	TxCheckSum = 0;
-	
-	switch ( UAVXCurrPacketTag ) {
-	case UAVXFlightPacketTag:
-		SendESCByte(UAVXFlightPacketTag);
-		SendESCByte(32 + FLAG_BYTES);
-		for ( b = 0; b < FLAG_BYTES; b++ )
-			SendESCByte(F.AllFlags[b]); 
-		
-		SendESCByte(State);
-	
-		SendESCByte(BatteryVolts);
-		SendESCWord(0); 						// Battery Current
-		SendESCWord(RCGlitches);
-			
-		SendESCWord(DesiredThrottle);
-		SendESCWord(DesiredRoll);
-		SendESCWord(DesiredPitch);
-		SendESCWord(DesiredYaw);
-		SendESCWord(RollRate);
-		SendESCWord(PitchRate);
-		SendESCWord(YawRate);
-		SendESCWord(RollSum);
-		SendESCWord(PitchSum);
-		SendESCWord(YawSum);
-		SendESCWord(LRAcc);
-		SendESCWord(FBAcc);
-		SendESCWord(DUAcc);
-			
-		UAVXCurrPacketTag = UAVXNavPacketTag;
-		break;
-	
-	case UAVXNavPacketTag:
-		SendESCByte(UAVXNavPacketTag);
-		SendESCByte(30);
-	
-		SendESCByte(NavState);
-		SendESCByte(FailState);
-		SendESCByte(GPSNoOfSats);
-		SendESCByte(GPSFix);
-
-		SendESCByte(CurrWP);	
-		SendESCByte(0); // padding
-
-		SendESCWord(GPSVel);
-		Temp.i32 = RelBaroAltitude;
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-
-		SendESCWord(BaroROC); // cm/S 
-		SendESCWord(GPSHDilute);
-		SendESCWord(Heading);
-
-		Temp.i32 = GPSRelAltitude; // cm
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-
-		Temp.i32 = GPSLongitude; // 5 decimal minute units
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-	
-		Temp.i32 = GPSLatitude;
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-	
-		UAVXCurrPacketTag = UAVXFlightPacketTag;
-		break;
-	
-	default:
-		UAVXCurrPacketTag = UAVXFlightPacketTag;
-		break;		
-	}
-		
-	SendESCByte(TxCheckSum);
-	
-	SendByte(EOT);
-	
-	SendByte(CR);
-	SendByte(LF);  
-	
-} // SendUAVXState
-
-#ifdef ARDUPILOT_TELEMETRY
-
-void ArduPilotTelemetry(void)
-{
-	/*      
-	Definitions of the low rate telemetry (1Hz):
-    LAT: Latitude
-    LON: Longitude
-    SPD: Speed over ground from GPS
-    CRT: Climb Rate in M/S
-    ALT: Altitude in meters
-    ALH: The altitude is trying to hold
-    CRS: Course over ground in degrees.
-    BER: Bearing is the heading you want to go
-    WPN: Waypoint number, where WP0 is home.
-    DST: Distance from Waypoint
-    BTV: Battery Voltage.
-    RSP: Roll setpoint used to debug, (not displayed here).
-    
-    Definitions of the high rate telemetry (4Hz):
-    ASP: Airspeed, right now is the raw data.
-    TTH: Throttle in 100% the autopilot is applying.
-    RLL: Roll in degrees + is right - is left
-    PCH: Pitch in degrees
-    SST: Switch Status, used for debugging, but is disabled in the current version.
-	*/
-
-	static uint32 timer1=0;
-	static uint8 counter;
-  
-	if ( mS[Clock] > mS[ArduPilotUpdate] )
-	{
-		mS[ArduPilotUpdate] = mS[Clock] + 1000;	   
-//     digitalWrite(13,HIGH); // turns on link GKE?
-    if( true )//counter >= POSITION_RATE_OUTPUT)//If to repeat every second.... 
-    {
-
-
-		TxString("!!!");
-		TxString("LAT:");
-		TxVal32(GPSLatitude, 0,0);
-		TxString(",LON:");
-		TxVal32(GPSLongitude, 0, 0); //wp_current_lat
-      //TxVal32(",WLA:");
-      //TxVal32((long)((float)wp_current_lat*(float)t7));
-      //TxVal32(",WLO:");
-      //TxVal32((long)((float)wp_current_lon*(float)t7));
-      
-		TxString(",SPD:");
-		TxVal32(12, 0, 0);    
-		TxString(",CRT:");
-		TxVal32(GPSROC, 0, 0);
-		TxString(",ALT:");
-		TxVal32(100,0,0);
-		TxString(",ALH:");
-		TxVal32(DesiredAltitude, 2, 0);
-		TxString(",MSL:");
-		TxVal32(0,0,0);//alt_MSL);
-		TxString(",CRS:");
-		TxVal32(Heading, 0, 0);//ground_course);
-		TxString(",BER:");
-		TxVal32(0, 0, 0);//wp_bearing);
-		TxString(",WPN:");
-		TxVal32(5,0,0);//This the TO waypoint.
-		TxString(",DST:");
-		TxVal32(0, 0, 0);//wp_distance);
-		TxString(",BTV:");
-		TxVal32(BatteryVolts, 0, 0);
-		//TxVal32(read_Ch1());
-		TxString(",RSP:");
-		TxVal32(DesiredRoll, 0, 0);
- /*
-     TxString(",GPS:");
-     TxVal32(gpsFix);
-     TxVal32(read_Ch2());
-     TxString(",STT:");
-     TxVal32((int)Tx_Switch_Status());
-     TxString(",RST:");
-     TxVal32((int)wpreset_flag);
-     TxString(",WLF:");
-     TxVal32((int)wplist_flag);
-     TxString(",CWP:");
-     TxVal32((int)current_wp);
-     TxString(",NWP:");
-     TxVal32((int)wp_number);
- */
-      TxString(",***\r\n");
-      counter=0;
-      
-      //TxVal32ln(refresh_rate);
- //     refresh_rate=0;
-    }
-    else
-    {
-    counter++;
-    
-    TxString("+++");
-/*  TxVal32("ASO:");
-		TxVal32((int)air_speed_offset);
-		TxVal32(",AN3:");
-		TxVal32((int)analog3); */
-		TxString(",ASP:");
-		TxVal32(GPSVel, 0,0);
-		TxString("THH:");
-		TxVal32(DesiredThrottle,0,0);
-		TxString(",RLL:");
-		TxVal32(RollSum,0,0);
-		//TxVal32(Roll);
-		TxString(",PCH:");
-		TxVal32(PitchSum,0,0);
-  
-		TxString(",STT:");
-		TxVal32(F.Navigate,0,0);
-
-		/*
-		TxVal32(",");
-		TxString("rER:");
-		TxVal32((int)roll_set_point);
-		TxString(",Mir:");
-		TxVal32(max_ir);
-		TxVal32(",");
-		TxString("CH1:");
-		TxVal32(read_Ch1()/16);
-		TxVal32(",");
-		TxString("CH2:");
-		TxVal32(read_Ch2()/16);
-		TxString(",PSET:");
-		TxVal32(DesiredPitch);
-		*/
-		TxString(",***\r\n");
-    }
-  //  timer1=millis(); 
- //   digitalWrite(13,LOW);
-  } 
-} // ArduPilotTelemetry
-
-#endif // ARDUPILOT_TELEMETRY
 

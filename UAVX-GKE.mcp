@@ -48,6 +48,7 @@ file_020=.
 file_021=.
 file_022=.
 file_023=.
+file_024=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -73,6 +74,7 @@ file_020=no
 file_021=no
 file_022=no
 file_023=no
+file_024=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -98,6 +100,7 @@ file_020=no
 file_021=no
 file_022=no
 file_023=no
+file_024=no
 [FILE_INFO]
 file_000=utils.c
 file_001=accel.c
@@ -122,7 +125,8 @@ file_019=tests.c
 file_020=UAVX.c
 file_021=bootl18f.asm
 file_022=rangefinder.c
-file_023=UAVX.h
+file_023=telemetry.c
+file_024=UAVX.h
 [SUITE_INFO]
 suite_guid={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 suite_state=

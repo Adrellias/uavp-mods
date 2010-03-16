@@ -249,9 +249,9 @@ void SetGPSOrigin(void)
 	
 		GPSOriginAltitude = GPSAltitude;
 
-		Write16EE(NAV_GPS_ALT, (int16)(GPSAltitude/100));
-		Write32EE(NAV_GPS_LAT, GPSLatitude);
-		Write32EE(NAV_GPS_LON, GPSLongitude);
+		Write16EE(NAV_ORIGIN_ALT, (int16)(GPSAltitude/100));
+		Write32EE(NAV_ORIGIN_LAT, GPSLatitude);
+		Write32EE(NAV_ORIGIN_LON, GPSLongitude);
 
 		if ( !F.NavValid )
 		{
@@ -364,9 +364,9 @@ void InitGPS(void)
 	GPSAltitude = 0;
 	GPSEast = GPSNorth = GPSVel = 0;
 
-	Write32EE(NAV_GPS_LAT, 0);
-	Write32EE(NAV_GPS_LON, 0);
-	Write16EE(NAV_GPS_ALT, 0);
+	Write32EE(NAV_ORIGIN_LAT, 0);
+	Write32EE(NAV_ORIGIN_LON, 0);
+	Write16EE(NAV_ORIGIN_ALT, 0);
 
 	ValidGPSSentences = 0;
 
@@ -391,7 +391,7 @@ void UpdateGPS(void)
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
 		}
 
-		if ( !F.GPSTestActive )			SendUAVXState();	// Tx overlapped with next GPS packet Rx
+		if ( !F.GPSTestActive )			SendTelemetry();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

@@ -227,8 +227,7 @@ void ReadParametersEE(void)
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
-		NavProximityRadius = ConvertMToGPS(NAV_PROXIMITY_RADIUS);
-		NavProximityAltitude = NAV_PROXIMITY_RADIUS * 10L;
+
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
@@ -244,15 +243,13 @@ void ReadParametersEE(void)
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
 
-		Write16EE(NAV_ALT_HOLD, (int16)P[NavRTHAlt]);
-
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 		DescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
-		BatteryVolts = (int16)P[LowVoltThres];
+		BatteryVoltsADC = (int16)P[LowVoltThres];
 		
 		ParametersChanged = false;
 	}

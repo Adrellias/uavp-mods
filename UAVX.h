@@ -125,6 +125,8 @@
 
 #define NAV_ACQUIRE_BEEPER
 
+#define NAV_ENFORCE_ALTITUDE_LIMIT		// limit all autonomous altitudes to 300 feet
+
 #define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS			90L		// Metres
 #define NAV_PROXIMITY_RADIUS	5L		// Metres
@@ -466,10 +468,10 @@ typedef struct {
 #define NAV_NO_WP			(NAV_ADDR_EE + 9)
 #define NAV_PROX_ALT		(NAV_ADDR_EE + 10) 	
 #define NAV_PROX_RADIUS		(NAV_ADDR_EE + 11)
-#define NAV_GPS_ALT			(NAV_ADDR_EE + 12)
-#define NAV_GPS_LAT			(NAV_ADDR_EE + 14)
-#define NAV_GPS_LON 		(NAV_ADDR_EE + 18)
-#define NAV_ALT_HOLD 		(NAV_ADDR_EE + 22)	// P[NavRTHAlt]
+#define NAV_ORIGIN_ALT		(NAV_ADDR_EE + 12)
+#define NAV_ORIGIN_LAT		(NAV_ADDR_EE + 14)
+#define NAV_ORIGIN_LON 		(NAV_ADDR_EE + 18)
+#define NAV_RTH_ALT_HOLD 	(NAV_ADDR_EE + 22)	// P[NavRTHAlt]
 #define NAV_WP_START		(NAV_ADDR_EE + 24)
 
 #define WAYPOINT_REC_SIZE 	(4 + 4 + 2 + 1)		// Lat + Lon + Alt + Loiter
@@ -554,6 +556,7 @@ typedef union {
 		UsingTxMode2:1,
 		UsingXMode:1,
 		UsingTelemetry:1,
+		TxToBuffer:1,
 		NewBaroValue:1,
 		BeeperInUse:1, 
 		AcquireNewPosition:1, 
@@ -611,7 +614,7 @@ extern void DoNavigation(void);
 extern void FakeFlight(void); 
 extern void DoPPMFailsafe(void);
 extern void WriteWayPointEE(uint8, int32, int32, int16, uint8);
-extern void LoadNavBlockEE(void);
+extern void UAVXNavCommand(void);
 extern void GetWayPointEE(uint8);
 extern void InitNavigation(void);
 
@@ -625,6 +628,7 @@ extern near uint8 FailState;
 extern WayPoint WP;
 extern uint8 CurrWP;
 extern int8 NoOfWayPoints;
+extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
@@ -777,7 +781,7 @@ extern void ReceivingGPSOnly(uint8);
 
 enum { Clock, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, RTHTimeout, LoiterTimeout, LandingTimeout, LastValidRx, LastGPS, 
-	GPSTimeout, GPSROCUpdate, ArduPilotUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+	GPSTimeout, GPSROCUpdate, ArduStationUpdate, RangefinderROCUpdate, NavActiveTime, ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
 
@@ -1033,6 +1037,24 @@ enum Statistics {
 
 extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern int16 Stats[];
+
+//______________________________________________________________________________________________
+
+// telemetry.c
+
+extern void SendTelemetry(void);
+extern void SendUAVXNav(void);
+extern void SendArduStation(void);
+
+extern uint8 UAVXCurrPacketTag;
+
+enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
+	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
+	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
+	UAVXNavPacketTag};
+
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry };
+
 //______________________________________________________________________________________________
 
 // utils.c
@@ -1048,8 +1070,6 @@ extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 extern void CheckAlarms(void);
 extern void DumpTrace(void);
-extern void SendUAVXState(void);
-extern void ArduPilotTelemetry(void);
 
 enum TraceTags {
 	THE, TRelBaroAltitude,
@@ -1064,16 +1084,9 @@ enum TraceTags {
 	};
 #define TopTrace TMCamPitch
 
-enum PacketTags {UnknownPacketTag, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
-	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
-	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
-	UAVXNavPacketTag};
-
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, DataTelemetry };
-
 extern int16 Trace[];
 extern int8 BatteryVolts;
-extern uint8 UAVXCurrPacketTag;
+extern int16 BatteryVoltsADC;
 
 //______________________________________________________________________________________________
 

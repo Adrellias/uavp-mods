@@ -276,7 +276,8 @@ void high_isr_handler(void)
 		}
 		if ( Armed && !F.GPSTestActive  ) // piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
 			switch ( P[TelemetryType] ) {
-			case DataTelemetry:	
+			case UAVXTelemetry:
+			case ArduStationTelemetry:
 				if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
 				{
 					TXREG = TxQ.B[TxQ.Head];

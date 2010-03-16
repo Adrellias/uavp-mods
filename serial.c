@@ -36,7 +36,7 @@ uint8 RxChar(void);
 uint8 RxNumU(void);
 int8 RxNumS(void);
 void TxVal32(int32, int8, uint8);
-void SendByte(uint8);
+void TxChar(uint8);
 void SendESCByte(uint8);
 void SendWord(int16);
 void SendESCWord(int16);
@@ -55,8 +55,20 @@ void TxString(const rom uint8 *pch)
 
 void TxChar(uint8 ch)
 {
-	while( !PIR1bits.TXIF ) ;	// wait for transmit ready
-	TXREG = ch;		// put new char
+	uint8 NewTail;
+
+	if ( F.TxToBuffer )
+	{
+		TxCheckSum ^= ch;
+		NewTail=(TxQ.Tail+1) & TX_BUFF_MASK;
+	  	TxQ.B[NewTail]=ch;
+		TxQ.Tail = NewTail;
+	}
+	else
+	{
+		while( !PIR1bits.TXIF ) ;	// wait for transmit ready
+		TXREG = ch;		// put new char
+	}
 } // TxChar
 
 void TxValU(uint8 v)
@@ -214,8 +226,8 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 		TxChar('-');
 	    V=-V;
 	}
-	else
-		TxChar(' ');
+//	else
+//		TxChar(' ');
 	
 	c=0;
 	do
@@ -251,29 +263,19 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 		TxChar(Separator);
 } // TxVal32
 
-void SendByte(uint8 ch)
-{
-	uint8 NewTail;
-
-	TxCheckSum ^= ch;
-	NewTail=(TxQ.Tail+1) & TX_BUFF_MASK;
-  	TxQ.B[NewTail]=ch;
-	TxQ.Tail = NewTail;
-} // SendByte
-
 void SendESCByte(uint8 ch)
 {
   #ifndef SUPRESSBYTESTUFFING
   if ((ch==SOH)||(ch==EOT)||(ch==ESC))
-	SendByte(ESC);
+	TxChar(ESC);
   #endif
-  SendByte(ch);
+  TxChar(ch);
 } // 
 
 void SendWord(int16 v)
 {
-	SendByte(v >> 8);
-	SendByte(v);
+	TxChar(v >> 8);
+	TxChar(v);
 } // SendWord
 
 void SendESCWord(int16 v)

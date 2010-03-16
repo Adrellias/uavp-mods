@@ -3,7 +3,7 @@ rem ---------------------------------------------
 rem Delete all working files but not hex files
 rem ---------------------------------------------
 
-set CSRC=leds stats eeprom math params accel adc uavx irq lisl prog uavx-test compass baro gyro i2c serial menu-test menu control  gps autonomous utils tests outputs
+set CSRC=leds stats eeprom math params accel adc uavx irq lisl prog rangefinder compass baro gyro i2c serial telemetry menu control  gps autonomous utils tests outputs
 set ASRC=bootl18f
 
 rem compiler working files...

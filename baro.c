@@ -27,8 +27,8 @@ void ReadBaro(boolean);
 void GetBaroAltitude(void);
 void InitBarometer(void);
 
-#define BaroFilter NoFilter
-#define BaroROCFilter MediumFilter
+#define BaroFilter SoftFilter
+#define BaroROCFilter HardFilter
 
 // Baro (altimeter) sensor
 #define BARO_I2C_ID			0xee
@@ -186,12 +186,13 @@ void GetBaroAltitude(void)
 
 			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
 			BaroROC = BaroROCFilter(BaroROCP, BaroROC);
-	
+		
 			RelBaroAltitudeP = RelBaroAltitude;
 			BaroROCP = BaroROC;
 
 			if ( State == InFlight )
 			{
+
 				if ( BaroROC > Stats[MaxBaroROCS] )
 					Stats[MaxBaroROCS] = BaroROC;
 				else
