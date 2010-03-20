@@ -277,6 +277,9 @@ void UseDefaultParameters(void)
 	WriteParametersEE(1);
 	WriteParametersEE(2);
 	ParamSet = 1;
+
+	WriteEE(NAV_NO_WP, 0); // set NoOfWaypoints to zero
+
 	TxString("\r\nDefault Parameters Loaded\r\n");
 	TxString("Do a READ CONFIG to refresh the UAVPSet parameter display\r\n");	
 } // UseDefaultParameters

@@ -366,6 +366,8 @@ void UpdateControls(void)
 		else
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )
 				F.Navigate = true;
+		if ( (! F.Hovering) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+			DesiredAltitude = Altitude;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);

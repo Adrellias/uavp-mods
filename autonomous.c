@@ -67,7 +67,7 @@ typedef union {
 		
 uint8 	CurrWP;
 int8 	NoOfWayPoints;
-int24 	WPNorth, WPEast;
+int24 	WPNorth, WPEast, WPDistance;
 int16	WPAltitude;
 uint8 	WPLoiter;
 int16	WayHeading;
@@ -135,20 +135,24 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 		EastDiff = GPSEastWay - GPSEast;
 		NorthDiff = GPSNorthWay - GPSNorth;
 
-		F.CloseProximity = (Abs(EastDiff)<NavNeutralRadius )&&(Abs(NorthDiff) < NavNeutralRadius);
+		WPDistance = Max(Abs(EastDiff), Abs(NorthDiff));
+		if ( WPDistance < NavProximityRadius )
+			WPDistance = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
+ 
+		F.CloseProximity =  WPDistance < NavNeutralRadius;
+		F.Proximity = ( WPDistance < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
+
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - 
 		// 							CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 		EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
+		WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
 
 		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.CloseProximity )
 		{	// direct solution make North and East coordinate errors zero
-			WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
-	
+
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
 
-			F.Proximity = (Max(Abs(NorthDiff), Abs(EastDiff)) < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
-	
 			// East
 			if ( Abs(EastDiff) < NavClosingRadius )
 			{
@@ -575,7 +579,7 @@ void GetWayPointEE(uint8 wp)
 	static uint16 w;
 
 	CurrWP = wp;	
-	if ( wp > NoOfWayPoints ) 
+	if ( ( wp == 0 ) || ( wp > NoOfWayPoints ) ) 
 	{  // force to Origin
 		WPEast = WPNorth = 0;
 		WPAltitude = (int16)P[NavRTHAlt];
@@ -588,13 +592,15 @@ void GetWayPointEE(uint8 wp)
 		WPEast = Read32EE(w) - GPSOriginLongitude;
 		WPNorth = Read32EE(w + 4) - GPSOriginLatitude;
 		WPAltitude = Read16EE(w + 8);
+		#ifdef NAV_ENFORCE_ALTITUDE_CEILING
+		if ( WPAltitude > NAV_CEILING )
+		{
+			WPAltitude = NAV_CEILING;
+			Write16EE(w + 8, NAV_CEILING);
+		}
+		#endif // NAV_ENFORCE_ALTITUDE_CEILING
 		WPLoiter = Read16EE(w + 10);
 	}
-
-	#ifdef NAV_ENFORCE_ALTITUDE_LIMIT
-	WPAltitude = Limit(WPAltitude, 0, 91); // 300 feet
-	#endif // NAV_ENFORCE_ALTITUDE_LIMIT
-
 } // GetWaypointEE
 
 void InitNavigation(void)
@@ -614,6 +620,7 @@ void InitNavigation(void)
 	NavProximityRadius = ConvertMToGPS(Read16EE(NAV_PROX_RADIUS));
 	NavProximityAltitude = Read16EE(NAV_PROX_ALT);
 
+	WPDistance = 0;
 	NoOfWayPoints = ReadEE(NAV_NO_WP);
 	if ( NoOfWayPoints <= 0 )
 		CurrWP = 0;

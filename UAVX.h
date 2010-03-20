@@ -36,7 +36,7 @@
 //#define FAKE_FLIGHT					// For testing Nav on the GROUND!
 
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-//#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
+#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -125,8 +125,8 @@
 
 #define NAV_ACQUIRE_BEEPER
 
-#define NAV_ENFORCE_ALTITUDE_LIMIT		// limit all autonomous altitudes to 300 feet
-
+#define NAV_ENFORCE_ALTITUDE_CEILING	// limit all autonomous altitudes
+#define NAV_CEILING				120L	// 400 feet
 #define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS			90L		// Metres
 #define NAV_PROXIMITY_RADIUS	5L		// Metres
@@ -505,25 +505,27 @@ typedef union {
 	uint8 AllFlags[FLAG_BYTES];
 	struct { // Order of these flags subject to change
 		uint8
-		Signal:1,
-		RCFrameOK:1, 
+		NavAltitudeHold:1,	// stick programmed
+		TurnToWP:1,			// stick programmed
+		MotorsArmed:1,
 		LostModel:1,
 		Failsafe:1,
-
 		LowBatt:1,
+		GPSValid:1,
+		NavValid:1,
+
 		BaroFailure:1,
 		AccFailure:1,
 		CompassFailure:1,
 		GPSFailure:1,
-
 		AttitudeHold:1,
 		ThrottleMoving:1,
 		Hovering:1,
 		Navigate:1,
+
 		ReturnHome:1,
 		Proximity:1,
 		CloseProximity:1,
-
 		UsingGPSAlt:1,
 		UsingRTHAutoDescend:1,
 		BaroAltitudeValid:1,
@@ -531,37 +533,32 @@ typedef union {
 		UsingRangefinderAlt:1,
 
 		// internal flags not really useful externally
+		Signal:1,
+		RCFrameOK:1, 
 		ParametersValid:1,
-
 		RCNewValues:1,
 		NewCommands:1,
-
 		AccelerationsValid:1,
 		CompassValid:1,
 		CompassMissRead:1,
-		GyrosErected:1,
 
+		GyrosErected:1,
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
-		GPSValid:1,
-		NavValid:1,
-
 		NavComputed:1,
-		CheckThrottleMoved:1,
-		MotorsArmed:1,
-		NavAltitudeHold:1,	// stick programmed
-		TurnToWP:1,			// stick programmed
+		CheckThrottleMoved:1,		
 		WayPointsChanged:1,
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
+
 		UsingXMode:1,
 		UsingTelemetry:1,
 		TxToBuffer:1,
 		NewBaroValue:1,
 		BeeperInUse:1, 
 		AcquireNewPosition:1, 
-		GPSTestActive:1;
-
+		GPSTestActive:1,
+		unused:1;
 		};
 } Flags;
 
@@ -632,6 +629,7 @@ extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
+extern int24 	WPNorth, WPEast, WPDistance;
 extern int16 NavSensitivity, RollPitchMax;
 extern int32 NavRTHTimeout;
 extern int16 AltSum;
@@ -1012,9 +1010,9 @@ extern uint8 RxNumU(void);
 extern int8 RxNumS(void);
 extern void TxVal32(int32, int8, uint8);
 extern void SendByte(uint8);
-extern void SendESCByte(uint8);
-extern void SendWord(int16);
-extern void SendESCWord(int16);
+extern void TxESCu8(uint8);
+extern void TxESCi16(int16);
+extern void TxESCi32(int32);
 extern void SendPacket(uint8, uint8, uint8 *, boolean);
 
 #define TX_BUFF_MASK	127

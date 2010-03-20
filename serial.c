@@ -37,9 +37,10 @@ uint8 RxNumU(void);
 int8 RxNumS(void);
 void TxVal32(int32, int8, uint8);
 void TxChar(uint8);
-void SendESCByte(uint8);
-void SendWord(int16);
-void SendESCWord(int16);
+void TxESCu8(uint8);
+void Sendi16(int16);
+void TxESCi16(int16);
+void TxESCi32(int32);
 void SendPacket(uint8, uint8, uint8 *, boolean);
 
 #pragma udata txbuffer
@@ -263,24 +264,37 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 		TxChar(Separator);
 } // TxVal32
 
-void SendESCByte(uint8 ch)
+void TxESCu8(uint8 ch)
 {
-  #ifndef SUPRESSBYTESTUFFING
   if ((ch==SOH)||(ch==EOT)||(ch==ESC))
 	TxChar(ESC);
-  #endif
   TxChar(ch);
-} // 
+} // TxESCu8
 
-void SendWord(int16 v)
+void Sendi16(int16 v)
 {
-	TxChar(v >> 8);
-	TxChar(v);
-} // SendWord
+	i16u Temp;
 
-void SendESCWord(int16 v)
+	Temp.i16 = v;
+	TxChar(Temp.b0);
+	TxChar(Temp.b1);
+} // Sendi16
+
+void TxESCi16(int16 v)
 {
-	SendESCByte(v >> 8);
-	SendESCByte(v);
-} // SendWord
+	i16u Temp;
+
+	Temp.i16 = v;
+	TxESCu8(Temp.b0);
+	TxESCu8(Temp.b1);
+} // Sendi16
+
+void TxESCi32(int32 v)
+{
+	i32u Temp;
+
+	Temp.i32 = v;
+	TxESCi16(Temp.w0);
+	TxESCi16(Temp.w1);
+} // TxESCi32
 

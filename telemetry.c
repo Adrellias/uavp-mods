@@ -36,7 +36,7 @@ void SendTelemetry(void)
 
 void SendUAVXNav(void) // 800uS at 40MHz
 {
-	uint8 b;
+	uint8 b, x; //zzz
 	i32u Temp;
 
 	// packet must be shorter than GPS shortest valid packet ($GPGGA)
@@ -54,73 +54,67 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 
-		SendESCByte(UAVXFlightPacketTag);
-		SendESCByte(32 + FLAG_BYTES);
+		TxESCu8(UAVXFlightPacketTag);
+		TxESCu8(33 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
-			SendESCByte(F.AllFlags[b]); 
+			TxESCu8(F.AllFlags[b]); 
 		
-		SendESCByte(State);
-	
-		SendESCByte(BatteryVolts);
-		SendESCWord(0); 						// Battery Current
-		SendESCWord(RCGlitches);
-			
-		SendESCWord(DesiredThrottle);
-		SendESCWord(DesiredRoll);
-		SendESCWord(DesiredPitch);
-		SendESCWord(DesiredYaw);
-		SendESCWord(RollRate);
-		SendESCWord(PitchRate);
-		SendESCWord(YawRate);
-		SendESCWord(RollSum);
-		SendESCWord(PitchSum);
-		SendESCWord(YawSum);
-		SendESCWord(LRAcc);
-		SendESCWord(FBAcc);
-		SendESCWord(DUAcc);
-			
+		TxESCu8(State);				// 8	
+		TxESCi16(BatteryVoltsADC);	// 9
+
+		TxESCi16(0); 				// 11 Battery Current
+		TxESCi16(RCGlitches);			
+		TxESCi16(DesiredThrottle);
+		TxESCi16(DesiredRoll);
+		TxESCi16(DesiredPitch);
+		TxESCi16(DesiredYaw);
+		TxESCi16(RollRate);
+		TxESCi16(PitchRate);
+		TxESCi16(YawRate);
+		TxESCi16(RollSum);
+		TxESCi16(PitchSum);
+		TxESCi16(YawSum);
+		TxESCi16(LRAcc);
+		TxESCi16(FBAcc);
+		TxESCi16(DUAcc);
+		
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
 	
 	case UAVXNavPacketTag:
 		F.TxToBuffer = true;
-		SendESCByte(UAVXNavPacketTag);
-		SendESCByte(38);
+		TxESCu8(UAVXNavPacketTag);
+		TxESCu8(46);
 	
-		SendESCByte(NavState);
-		SendESCByte(FailState);
-		SendESCByte(GPSNoOfSats);
-		SendESCByte(GPSFix);
+		TxESCu8(NavState);
+		TxESCu8(FailState);
+		TxESCu8(GPSNoOfSats);
+		TxESCu8(GPSFix);
 
-		SendESCByte(CurrWP);	
-		SendESCByte(0); // padding
+		TxESCu8(CurrWP);	
+		TxESCu8(0); // padding
 
-		SendESCWord(BaroROC); // cm/S
-		Temp.i32 = RelBaroAltitude;
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
+		TxESCi16(BaroROC); // cm/S
+		TxESCi32(RelBaroAltitude);
 
-		SendESCWord(RangefinderROC); // cm/S 
-		SendESCWord(RangefinderAltitude); // cm
+		TxESCi16(RangefinderROC); // cm/S 
+		TxESCi16(RangefinderAltitude); // cm
 
-		SendESCWord(GPSHDilute);
-		SendESCWord(Heading);
-		SendESCWord(WayHeading);
+		TxESCi16(GPSHDilute);
+		TxESCi16(Heading);
+		TxESCi16(WayHeading);
 
-		SendESCWord(GPSVel);
-		SendESCWord(GPSROC); // cm/S
-		Temp.i32 = GPSRelAltitude; // cm
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
+		TxESCi16(GPSVel);
+		TxESCi16(GPSROC); // cm/S
 
-		Temp.i32 = GPSLongitude; // 5 decimal minute units
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-	
-		Temp.i32 = GPSLatitude;
-		SendESCWord(Temp.w0);
-		SendESCWord(Temp.w1);
-	
+		TxESCi32(GPSRelAltitude); // cm
+
+		TxESCi32(GPSLongitude); // 5 decimal minute units
+		TxESCi32(GPSLatitude);
+
+		TxESCi32(DesiredAltitude);
+		TxESCi32(WPDistance);
+
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
 	
@@ -129,7 +123,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		break;		
 	}
 		
-	SendESCByte(TxCheckSum);
+	TxESCu8(TxCheckSum);
 	
 	TxChar(EOT);
 	

@@ -72,7 +72,6 @@ void main(void)
 		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
-		F.MotorsArmed = true;
 
 		#ifdef FAKE_FLIGHT 
 
@@ -129,13 +128,15 @@ void main(void)
 						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;
 						else
-						{		
+						{
+							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
 							State = Landed;
 						}
 					break;
 				case InFlight:
+					F.MotorsArmed = true;
 					if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands 
 						&& ( mS[Clock] > mS[NavActiveTime]) )
 						DoNavigation();
