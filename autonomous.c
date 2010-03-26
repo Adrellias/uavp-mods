@@ -436,7 +436,7 @@ void DoPPMFailsafe(void)
 				{
 					LEDRed_OFF;
 					LEDGreen_ON;
-					FailState = Waiting;
+					FailState = MonitoringRx;
 				}
 				else
 					mS[AbortTimeout] += ABORT_UPDATE_MS;
@@ -453,7 +453,7 @@ void DoPPMFailsafe(void)
 					{
 						LEDRed_OFF;
 						LEDGreen_ON;
-						FailState = Waiting;
+						FailState = MonitoringRx;
 					}
 					else
 						mS[AbortTimeout] += ABORT_UPDATE_MS;
@@ -489,7 +489,7 @@ void DoPPMFailsafe(void)
 				#endif // PPM_FAILSAFE_RTH
 			}
 			break;
-		case Waiting:
+		case MonitoringRx:
 			if ( mS[Clock] > mS[FailsafeTimeout] ) 
 			{
 				LEDRed_ON;

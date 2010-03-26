@@ -491,7 +491,7 @@ void LightsAndSirens(void)
 	F.LostModel = false;
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 	mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
-	FailState = Waiting;
+	FailState = MonitoringRx;
 
 } // LightsAndSirens
 

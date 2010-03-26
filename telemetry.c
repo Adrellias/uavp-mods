@@ -36,7 +36,7 @@ void SendTelemetry(void)
 
 void SendUAVXNav(void) // 800uS at 40MHz
 {
-	uint8 b, x; //zzz
+	uint8 b;
 	i32u Temp;
 
 	// packet must be shorter than GPS shortest valid packet ($GPGGA)

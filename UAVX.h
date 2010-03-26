@@ -619,7 +619,7 @@ typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
 enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, Loitering,
 	Terminating };
-enum FailStates { Waiting, Aborting, Returning, Terminated };
+enum FailStates { MonitoringRx, Aborting, Returning, Terminated };
 
 extern near uint8 FailState;
 extern WayPoint WP;

@@ -152,7 +152,7 @@ void main(void)
 				} // Switch State
 				F.LostModel = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-				FailState = Waiting;
+				FailState = MonitoringRx;
 			}
 			else
 				DoPPMFailsafe();
