@@ -249,7 +249,7 @@ void ReadParametersEE(void)
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 		DescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
-		BatteryVoltsADC = (int16)P[LowVoltThres];
+		BatteryVoltsADC = (int16)P[LowVoltThres] << 3;
 		
 		ParametersChanged = false;
 	}
