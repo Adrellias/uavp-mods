@@ -176,7 +176,7 @@ void InertialDamping(void)
 	// Lateral compensation only when hovering?	
 	if ( F.Hovering && F.AttitudeHold ) 
 	{
- 		if ( F.CloseProximity )
+ 		if ( F.WayPointCentred )
 		{
 			// Left - Right
 			LRVel += LRAcc;
@@ -362,10 +362,15 @@ void UpdateControls(void)
 
 		F.ReturnHome = F.Navigate = false;
 		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+			#ifdef DEBUG_FORCE_NAV
+			F.Navigate = true;
+			#else
 			F.ReturnHome = true;
+			#endif // DEBUG_FORCE_NAV
 		else
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )
 				F.Navigate = true;
+
 		if ( (! F.Hovering) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 			DesiredAltitude = Altitude;
 

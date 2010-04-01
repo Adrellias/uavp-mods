@@ -98,7 +98,7 @@ void ShowStats(void)
 
 	TxString("\r\nGPS\r\n");
 	#ifdef GPS_INC_GROUNDSPEED 
-	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 0, ' '); TxString("M/S\r\n"); 
+	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();

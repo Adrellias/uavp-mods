@@ -1,6 +1,5 @@
 // EXPERIMENTAL
 
-#define INC_JOURNEY					// simple left circuit when engaging RTH
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff.
 
 #define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
@@ -30,14 +29,16 @@
 #define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
 
-#define DEFAULT_TELEMETRY 			0	// 0 None, 1 GPS, 2 Data
 // Debugging
 
-//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
-
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
+
+#ifdef CLOCK_16MHZ
+	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
+#endif // CLOCK_16MHZ
+
+//#define DEBUG_FORCE_NAV				// overrides RTH and forces navigate all WPs
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -87,10 +88,6 @@
 
 #define ALT_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
 
-// Accelerometers
-
-#define USE_ACCELEROMETER				// Use the Accelerometer sensor 			
-
 // Gyros
 
 // Adds a delay between gyro neutral acquisition samples (16)
@@ -132,7 +129,7 @@
 #define NAV_PROXIMITY_RADIUS	5L		// Metres
 #define NAV_PROXIMITY_ALT		2L		// Metres
 
-// reads $GPGGA and $GPRMC sentences - all others discarded
+// reads $GPGGA sentence - all others discarded
 
 #define	GPS_MIN_SATELLITES		6		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX				1		// must be 1 or 2 
@@ -524,8 +521,8 @@ typedef union {
 		Navigate:1,
 
 		ReturnHome:1,
-		Proximity:1,
-		CloseProximity:1,
+		WayPointAchieved:1,
+		WayPointCentred:1,
 		UsingGPSAlt:1,
 		UsingRTHAutoDescend:1,
 		BaroAltitudeValid:1,
@@ -602,7 +599,7 @@ extern void InitADC(void);
 
 // autonomous.c
 
-extern void Navigate(int24, int24);
+extern void Navigate(int32, int32);
 extern void SetDesiredAltitude(int16);
 extern void DoFailsafeLanding(void);
 extern void AcquireHoldPosition(void);
@@ -625,14 +622,16 @@ extern near uint8 FailState;
 extern WayPoint WP;
 extern uint8 CurrWP;
 extern int8 NoOfWayPoints;
+extern int16 WPAltitude;
+extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset, NavRTHTimeoutmS;
 extern uint8 NavState;
-extern int24 	WPNorth, WPEast, WPDistance;
 extern int16 NavSensitivity, RollPitchMax;
 extern int32 NavRTHTimeout;
 extern int16 AltSum;
+
 
 //______________________________________________________________________________________________
 
@@ -741,9 +740,10 @@ extern const rom uint8 NMEATag[];
 
 extern int32 GPSMissionTime, GPSStartTime;
 extern int32 GPSLatitude, GPSLongitude;
-extern int32 GPSOriginLatitude, GPSOriginLongitude;
+extern int32 OriginLatitude, OriginLongitude;
 extern int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
-extern int24 GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+extern int32 DesiredLatitude, DesiredLongitude;
+extern int32 LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 extern int16 GPSLongitudeCorrection;
 extern int16 GPSVel, GPSROC;
 extern uint8 GPSNoOfSats;
@@ -1012,6 +1012,7 @@ extern void TxVal32(int32, int8, uint8);
 extern void SendByte(uint8);
 extern void TxESCu8(uint8);
 extern void TxESCi16(int16);
+extern void TxESCi24(int24);
 extern void TxESCi32(int32);
 extern void SendPacket(uint8, uint8, uint8 *, boolean);
 
@@ -1102,7 +1103,6 @@ extern uint8 ScanI2CBus(void);
 extern void ReceiverTest(void);
 extern void GetCompassParameters(void);
 extern void DoCompassTest(void);
-extern void CompassRun(void);
 extern void CalibrateCompass(void);
 extern void BaroTest(void);
 extern void PowerOutput(int8);

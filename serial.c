@@ -40,6 +40,7 @@ void TxChar(uint8);
 void TxESCu8(uint8);
 void Sendi16(int16);
 void TxESCi16(int16);
+void TxESCi24(int24);
 void TxESCi32(int32);
 void SendPacket(uint8, uint8, uint8 *, boolean);
 
@@ -218,7 +219,7 @@ int8 RxNumS(void)
 
 void TxVal32(int32 V, int8 dp, uint8 Separator)
 {
-	uint8 S[12];
+	uint8 S[16];
 	int8 c, Rem, zeros, i;
 	int32 NewV;
 	 
@@ -287,6 +288,16 @@ void TxESCi16(int16 v)
 	Temp.i16 = v;
 	TxESCu8(Temp.b0);
 	TxESCu8(Temp.b1);
+} // Sendi16
+
+void TxESCi24(int24 v)
+{
+	i24u Temp;
+
+	Temp.i24 = v;
+	TxESCu8(Temp.b0);
+	TxESCu8(Temp.b1);
+	TxESCu8(Temp.b2);
 } // Sendi16
 
 void TxESCi32(int32 v)

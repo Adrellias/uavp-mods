@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void Navigate(int24, int24);
+void Navigate(int32, int32);
 void SetDesiredAltitude(int16);
 void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
@@ -67,9 +67,9 @@ typedef union {
 		
 uint8 	CurrWP;
 int8 	NoOfWayPoints;
-int24 	WPNorth, WPEast, WPDistance;
 int16	WPAltitude;
-uint8 	WPLoiter;
+int32 	WPLatitude, WPLongitude;
+int24 	WPLoiter;
 int16	WayHeading;
 
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude, CompassOffset, NavRTHTimeoutmS;
@@ -83,6 +83,7 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
 	if ( F.NavAltitudeHold )
 	{
+		AltSum = 0;
 		DesiredThrottle = HoverThrottle;
 		DesiredAltitude = NewDesiredAltitude * 100L;
 	}
@@ -110,44 +111,51 @@ void AcquireHoldPosition(void)
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr =  0;
 	F.NavComputed = false;
 
-	GPSNorthHold = GPSNorth;
-	GPSEastHold = GPSEast;
-	F.Proximity = F.CloseProximity = F.AcquireNewPosition = false;
+	HoldLatitude = GPSLatitude;
+	HoldLongitude = GPSLongitude;
+	F.WayPointAchieved = F.WayPointCentred = F.AcquireNewPosition = false;
 
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
+void Navigate(int32 NavLatitude, int32 NavLongitude )
 {	// F.GPSValid must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
 
-	static int16 SinHeading, CosHeading;
-	static int24 Temp, EastDiff, NorthDiff;
+	static int16 SinHeading, CosHeading, Radius;
+	static int24 Temp;
+	static int32 EastDiff, NorthDiff;
 	static int16 RelHeading;
+
+	DesiredLatitude = NavLatitude;
+	DesiredLongitude = NavLongitude;
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
 	if ( !F.NavComputed ) 
 	{
-		EastDiff = GPSEastWay - GPSEast;
-		NorthDiff = GPSNorthWay - GPSNorth;
+		EastDiff = DesiredLongitude - GPSLongitude;
+		// EastDiff = SRS32((int32)EastDiff * GPSLongitudeCorrection, 8);
+		NorthDiff = DesiredLatitude - GPSLatitude;
 
-		WPDistance = Max(Abs(EastDiff), Abs(NorthDiff));
-		if ( WPDistance < NavProximityRadius )
-			WPDistance = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
- 
-		F.CloseProximity =  WPDistance < NavNeutralRadius;
-		F.Proximity = ( WPDistance < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
+		Radius = Max(Abs(EastDiff), Abs(NorthDiff));
+		if ( Radius < NavClosingRadius ) 
+			Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
+		else
+			Radius = NavClosingRadius;
+
+		F.WayPointCentred =  Radius < NavNeutralRadius;
+		F.WayPointAchieved = ( Radius < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
 
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - 
 		// 							CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
 		EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
 		WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
 
-		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.CloseProximity )
+		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.WayPointCentred )
 		{	// direct solution make North and East coordinate errors zero
 
 			SinHeading = int16sin(Heading);
@@ -215,7 +223,7 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 			NavPCorrP = NavPCorr;
 				
 			// Yaw
-			if ( F.TurnToWP && !F.Proximity )
+			if ( F.TurnToWP && !F.WayPointAchieved )
 			{
 				RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 				NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
@@ -240,79 +248,6 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 	F.NavComputed = true;
 
 } // Navigate
-
-void FakeFlight()
-{
-	#ifdef FAKE_FLIGHT
-
-	static int16 CosH, SinH, A;
-
-	#define FAKE_NORTH_WIND 	20L
-	#define FAKE_EAST_WIND 		0L
-    #define SCALE_VEL			256L
-
-	if ( Armed )
-	{
-		Heading = MILLIPI;
-	
-		GPSEast = 5000L; GPSNorth = 5000L;
-		InitNavigation();
-
-		TxString(" Sens MRP Eff East North Head DRoll DPitch DYaw ");
-		TxString("EP EI ES ED EC | NP NI NS ND NC | RC PC | P CP\r\n");
-	
-		while ( Armed )
-		{
-			UpdateControls();
-
-			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			Heading += DesiredYaw / 5;
-
-			F.GPSValid = F.NavValid = F.CompassValid = true;
-			F.NavComputed = false;
-			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F.NewCommands )
-			{
-				Navigate(0,0);
-
-				Delay100mSWithOutput(5);
-				CosH = int16cos(Heading);
-				SinH = int16sin(Heading);
-				GPSEast += ((int32)(-DesiredPitch) * SinH * 10L) / SCALE_VEL;
-				GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L) / SCALE_VEL;
-				
-				A = Make2Pi(Heading + HALFMILLIPI);
-				CosH = int16cos(A);
-				SinH = int16sin(A);
-				GPSEast += ((int32)DesiredRoll * SinH * 10L) / SCALE_VEL;
-				GPSEast += FAKE_EAST_WIND; // wind	
-				GPSNorth += ((int32)DesiredRoll * CosH * 10L) / SCALE_VEL;
-				GPSNorth += FAKE_NORTH_WIND; // wind
-			
-				TxVal32((int32)NavSensitivity,0,' ');
-				TxVal32((int32)CurrMaxRollPitch,0,' ');
-				TxVal32((int32)EffNavSensitivity,0,' ');
-				TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
-				TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); 
-				TxVal32((int32)DesiredYaw, 0, ' ');
-				TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); 
-				TxVal32((int32)EastDiffSum, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
-				TxVal32((int32)EastCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); 
-				TxVal32((int32)NorthDiffSum, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
-				TxVal32((int32)NorthCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)NavRCorr, 0, ' ');
-				TxVal32((int32)NavPCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)F.Proximity, 0, ' ');
-				TxVal32((int32)F.CloseProximity, 0, ' ');	
-				TxNextLine();
-			}
-		}
-	}
-	#endif // FAKE_FLIGHT
-} // FakeFlight
 
 void DoNavigation(void)
 {
@@ -348,12 +283,13 @@ void DoNavigation(void)
 			AcquireHoldPosition();
 		break;
 	case Loitering:
-		Navigate(WPNorth, WPEast);
+		Navigate(WPLatitude, WPLongitude);
 		if ( F.Navigate || F.ReturnHome )
 		{
-			if ( mS[Clock] > mS[LoiterTimeout] )
+			if ( F.WayPointAchieved && (mS[Clock] > mS[LoiterTimeout]) )
 			{	
 				GetWayPointEE(++CurrWP);
+				SetDesiredAltitude(WPAltitude);
 				NavState = Navigating;
 			}
 		}
@@ -363,21 +299,22 @@ void DoNavigation(void)
 	case Navigating:	
 		if ( F.Navigate || F.ReturnHome )
 		{
-			SetDesiredAltitude(WPAltitude); // at least hold altitude!
 	 		if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT ) // nearly level to engage!
 			{
-				Navigate(WPNorth, WPEast);
-				if ( F.Proximity )
+				Navigate(WPLatitude, WPLongitude);
+				if ( F.WayPointAchieved )
+				{
 					if ( CurrWP == 0)
 					{
-						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;				
+						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;			
 						NavState = AtHome;
 					}
 					else
 					{
-						mS[LoiterTimeout] = mS[Clock] + WPLoiter * 1000L;
+						mS[LoiterTimeout] = mS[Clock] + WPLoiter;
 						NavState = Loitering;
-					}		
+					}
+				}		
 			}
 		}
 		else
@@ -401,21 +338,23 @@ void DoNavigation(void)
 		else
 			F.AcquireNewPosition = true;
 			
-		Navigate(GPSNorthHold, GPSEastHold);
+		Navigate(HoldLatitude, HoldLongitude);
 
-		if ( F.ReturnHome )
-		{
-			AltSum = 0;
-			GetWayPointEE(0);
-			NavState = Navigating;
-		}
-		else
-			if ( F.Navigate )
+		if ( F.NavValid )  // Origin must be valid for ANY navigation!
+			if ( F.ReturnHome )
 			{
-				AltSum = 0;
-				GetWayPointEE(1);
+				GetWayPointEE(0);
+				SetDesiredAltitude(WPAltitude);
 				NavState = Navigating;
-			}		
+			}
+			else
+				if ( F.Navigate )
+				{
+					GetWayPointEE(CurrWP); // resume from previous WP
+					SetDesiredAltitude(WPAltitude);
+
+					NavState = Navigating;
+				}		
 		break;
 	} // switch NavState
 
@@ -441,7 +380,6 @@ void DoPPMFailsafe(void)
 				else
 					mS[AbortTimeout] += ABORT_UPDATE_MS;
 			break;
-		#ifdef NAV_PPM_FAILSAFE_RTH
 		case Returning:
 			DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 			F.NewCommands = true;
@@ -464,7 +402,6 @@ void DoPPMFailsafe(void)
 				FailState = Terminated;
 			}
 			break;
-		#endif // PPM_FAILSAFE_RTH
 		case Aborting:
 			if( mS[Clock] > mS[AbortTimeout] )
 			{
@@ -473,20 +410,24 @@ void DoPPMFailsafe(void)
 				LEDRed_ON;
 
 				F.NavAltitudeHold = true;
-				SetDesiredAltitude(WPAltitude);
 				mS[AbortTimeout] += ABORT_TIMEOUT_MS;
 
 				#ifdef NAV_PPM_FAILSAFE_RTH
+				if ( F.NavValid )
+				{
 					NavSensitivity = RC_NEUTRAL;	// 50% gain
 					F.Navigate = F.TurnToWP = true;
-					AltSum = 0;
 					GetWayPointEE(0);
+					SetDesiredAltitude(WPAltitude);
 					NavState = Navigating;
 					FailState = Returning;
-				#else
+				}
+				else
+				#endif // NAV_PPM_FAILSAFE_RTH
+				{
 					mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 					FailState = Terminated;
-				#endif // PPM_FAILSAFE_RTH
+				}
 			}
 			break;
 		case MonitoringRx:
@@ -577,21 +518,22 @@ void UAVXNavCommand(void)
 void GetWayPointEE(uint8 wp)
 { 
 	static uint16 w;
-
-	CurrWP = wp;	
+	
 	if ( ( wp == 0 ) || ( wp > NoOfWayPoints ) ) 
 	{  // force to Origin
-		WPEast = WPNorth = 0;
+		WPLatitude = OriginLatitude;
+		WPLongitude = OriginLongitude;
 		WPAltitude = (int16)P[NavRTHAlt];
 		WPLoiter = 0;
-		CurrWP = 0;
+		CurrWP = 1;
 	}
 	else
 	{	
 		w = NAV_WP_START + (wp-1) * WAYPOINT_REC_SIZE;
-		WPEast = Read32EE(w) - GPSOriginLongitude;
-		WPNorth = Read32EE(w + 4) - GPSOriginLatitude;
+		WPLatitude = Read32EE(w + 0);
+		WPLongitude = Read32EE(w + 4);			
 		WPAltitude = Read16EE(w + 8);
+
 		#ifdef NAV_ENFORCE_ALTITUDE_CEILING
 		if ( WPAltitude > NAV_CEILING )
 		{
@@ -599,28 +541,30 @@ void GetWayPointEE(uint8 wp)
 			Write16EE(w + 8, NAV_CEILING);
 		}
 		#endif // NAV_ENFORCE_ALTITUDE_CEILING
-		WPLoiter = Read16EE(w + 10);
+		WPLoiter = Read16EE(w + 10) * 1000;
 	}
+
+	F.WayPointCentred =  F.WayPointAchieved = false;
+
 } // GetWaypointEE
 
 void InitNavigation(void)
 {
 	static uint8 wp;
 
-	GPSNorthHold = GPSEastHold = WayHeading = 0;
+	HoldLatitude = HoldLongitude = WayHeading = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
 	EastDiffP, NorthDiffP = 0;
 
 	NavState = HoldingStation;
 	AttitudeHoldResetCount = 0;
 	CurrMaxRollPitch = 0;
-	F.Proximity = F.CloseProximity = true;
+	F.WayPointAchieved = F.WayPointCentred = false;
 	F.NavComputed = false;
 
 	NavProximityRadius = ConvertMToGPS(Read16EE(NAV_PROX_RADIUS));
 	NavProximityAltitude = Read16EE(NAV_PROX_ALT);
 
-	WPDistance = 0;
 	NoOfWayPoints = ReadEE(NAV_NO_WP);
 	if ( NoOfWayPoints <= 0 )
 		CurrWP = 0;

@@ -47,6 +47,9 @@ void GetRangefinderAltitude(void)
 
 void InitRangefinder(void)
 {
-	F.RangefinderAltitudeValid = ADC(ADCAltChan) < 400;
+	static int16 Temp;
+
+	Temp = ADC(ADCAltChan);
+	F.RangefinderAltitudeValid = !(Temp > 573) && (Temp < 778); // 2.8-3.8V => supply not RF
 	GetRangefinderAltitude();
 } // InitRangefinder

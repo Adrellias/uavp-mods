@@ -29,8 +29,8 @@ uint8 UAVXCurrPacketTag;
 void SendTelemetry(void)
 {
 	switch ( P[TelemetryType] ) {
-	case UAVXTelemetry: SendUAVXNav(); break;
-	case ArduStationTelemetry: SendArduStation(); break;
+		case UAVXTelemetry: SendUAVXNav(); break;
+		case ArduStationTelemetry: SendArduStation(); break;
 	}
 } // SendTelemetry
 
@@ -92,10 +92,9 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCu8(GPSFix);
 
 		TxESCu8(CurrWP);	
-		TxESCu8(0); // padding
 
 		TxESCi16(BaroROC); // cm/S
-		TxESCi32(RelBaroAltitude);
+		TxESCi24(RelBaroAltitude);
 
 		TxESCi16(RangefinderROC); // cm/S 
 		TxESCi16(RangefinderAltitude); // cm
@@ -105,16 +104,16 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(WayHeading);
 
 		TxESCi16(GPSVel);
-		TxESCi16(GPSROC); // cm/S
+		TxESCi16(GPSROC); // dM/S
 
-		TxESCi32(GPSRelAltitude); // cm
+		TxESCi24(GPSRelAltitude); // cm
+		TxESCi32(GPSLatitude); // 5 decimal minute units
+		TxESCi32(GPSLongitude); 
 
-		TxESCi32(GPSLongitude); // 5 decimal minute units
-		TxESCi32(GPSLatitude);
-
-		TxESCi32(DesiredAltitude);
-		TxESCi32(WPDistance);
-
+		TxESCi24(DesiredAltitude);
+		TxESCi32(DesiredLatitude); 
+		TxESCi32(DesiredLongitude);
+		
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
 	
@@ -174,8 +173,8 @@ void SendArduStation(void)
 		TxString(",ALT:"); TxVal32(Altitude / 100,0,0);
 		//TxString(",ALH:"); TxVal32(DesiredAltitude / 100, 0, 0);
 		//TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
-		TxString(",CRS:"); TxVal32(((int24)Heading*180) / MILLIPI, 0, 0); // scaling to degrees?
-		TxString(",BER:"); TxVal32(((int24)WayHeading*180) / MILLIPI, 0, 0);
+		TxString(",CRS:"); TxVal32(((int24)Heading * 180) / MILLIPI, 0, 0); // scaling to degrees?
+		TxString(",BER:"); TxVal32(((int24)WayHeading * 180) / MILLIPI, 0, 0);
 		//TxString(",SPD:"); TxVal32(GPSVel, 0, 0);    
 		TxString(",WPN:"); TxVal32(CurrWP,0,0);
 		//TxString(",DST:"); TxVal32(0, 0, 0); // distance to WP
@@ -190,7 +189,7 @@ void SendArduStation(void)
 		TxString("ASP:"); TxVal32(GPSVel / 100, 0, 0);
 		TxString(",RLL:"); TxVal32(RollSum / 35, 0, 0); // scale to degrees?
 		TxString(",PCH:"); TxVal32(PitchSum / 35, 0, 0);
-		TxString(",THH:"); TxVal32( ((int24)DesiredThrottle * 100) / RC_MAXIMUM, 0, 0);
+		TxString(",THH:"); TxVal32( ((int24)DesiredThrottle * 100L) / RC_MAXIMUM, 0, 0);
 	}
 
 	TxString(",***\r\n");

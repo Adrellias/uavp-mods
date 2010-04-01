@@ -27,7 +27,7 @@
 #include "uavx.h"
 
 Flags 	F;
-  
+ 
 void main(void)
 {
 	static int16	Temp;
@@ -72,12 +72,6 @@ void main(void)
 		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
-
-		#ifdef FAKE_FLIGHT 
-
-		FakeFlight();
-
-		#else
 
 		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
@@ -137,7 +131,7 @@ void main(void)
 					break;
 				case InFlight:
 					F.MotorsArmed = true;
-					if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands 
+					if ( F.GPSValid && F.CompassValid  && F.NewCommands 
 						&& ( mS[Clock] > mS[NavActiveTime]) )
 						DoNavigation();
 
@@ -178,7 +172,6 @@ void main(void)
 			DumpTrace();
 		
 		} // flight while armed
-		#endif // FAKE_FLIGHT
 	}
 } // main
 

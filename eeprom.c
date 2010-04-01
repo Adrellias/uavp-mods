@@ -44,17 +44,17 @@ int16 Read16EE(uint16 a)
 {
 	static i16u Temp16;
 
-	Temp16.b0 = ReadEE(a + 0);
+	Temp16.b0 = ReadEE(a);
 	Temp16.b1 = ReadEE(a + 1);
 
 	return ( Temp16.i16 );
-} // Read32EE
+} // Read16EE
 
 int32 Read32EE(uint16 a)
 {
 	static i32u Temp32;
 
-	Temp32.b0 = ReadEE(a + 0);
+	Temp32.b0 = ReadEE(a);
 	Temp32.b1 = ReadEE(a + 1);
 	Temp32.b2 = ReadEE(a + 2);
 	Temp32.b3 = ReadEE(a + 3);
