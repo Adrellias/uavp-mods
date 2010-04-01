@@ -134,12 +134,9 @@ RVerror:
 	return;
 } // ReadBaro
 
-#define BARO_BMP085_TEMP_COEFF		62L 	
+#define BARO_BMP085_TEMP_COEFF		9L 			//62L 	
 #define BARO_SMD500_TEMP_COEFF		81L
 
-#define NEW_BARO
-
-#ifdef NEW_BARO
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
 	static int24 Temp, RelPressSample;
@@ -159,20 +156,17 @@ void GetBaroAltitude(void)
 			else
 				StartBaroADC(true);
 	
-			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1); // must be 8 entries in the BaroQ
-			BaroSum -= (int24)BaroQ.B[BaroQ.Head];
-		
-			RelPressSample = (int24)((int24)BaroPress.u16 - OriginBaroPressure); 
-			BaroSum += RelPressSample;
-			BaroQ.Tail = (BaroQ.Tail + 1) & (BARO_BUFF_SIZE -1);
-			BaroQ.B[BaroQ.Tail] = (int16)RelPressSample;
+			BaroSum -= (int24)BaroQ.B[BaroQ.Head];		
+			BaroQ.B[BaroQ.Head] = (int24)((int24)BaroPress.u16 - OriginBaroPressure);
+			BaroQ.Tail = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);
+			BaroSum += BaroQ.B[BaroQ.Head];
 		}
 		else
 		{
 			ReadBaro(false);
 			RelTemp = (int32)BaroTemp.u16 - OriginBaroTemperature;
 			if ( BaroType == BARO_ID_BMP085 )
-				BaroTempComp = SRS32(RelTemp * BARO_BMP085_TEMP_COEFF, 4);
+				BaroTempComp = SRS32(RelTemp * 9 , 4);//zzzBARO_BMP085_TEMP_COEFF, 4);
 			else
 				BaroTempComp = SRS32(RelTemp * BARO_SMD500_TEMP_COEFF, 2);
 			StartBaroADC(true);
@@ -195,11 +189,13 @@ void GetBaroAltitude(void)
 
 			if ( State == InFlight )
 			{
-
+/*
 TxVal32(BaroTempComp, 0, ' ');
-TxVal32(BaroSum, 2, ' ');
+TxVal32(RelTemp, 0, ' ');
+TxVal32(BaroSum, 0, ' ');
 TxVal32(RelBaroAltitude, 2, ' '); 
 TxNextLine(); // zzz
+*/
 				if ( BaroROC > Stats[MaxBaroROCS] )
 					Stats[MaxBaroROCS] = BaroROC;
 				else
@@ -221,93 +217,6 @@ TxNextLine(); // zzz
 		}
 	}
 }// GetBaroAltitude
-
-#else
-
-void GetBaroAltitude(void)
-{ 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
-	static int24 Temp, RelPressSample;
-	static int32 RelTemp;
-	// SMD500 9.5mS (T) 34mS (P)  
-	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
-	// Use 50mS => 5 samples per altitude hold update
-
-	if ( mS[Clock] >= mS[BaroUpdate] ) // 5 pressure readings and 1 temperature reading
-	{
-		BaroSample++;
-		if ( BaroSample < 6)		
-		{
-			ReadBaro(true);
-			if ( BaroSample == 5 )
-				StartBaroADC(false);
-			else
-				StartBaroADC(true);
-	
-			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1); // must be 8 entries in the BaroQ
-			BaroSum -= (int24)BaroQ.B[BaroQ.Head];
-		
-			RelPressSample = (int24)((int24)BaroPress.u16 - OriginBaroPressure); 
-			BaroSum += RelPressSample;
-			BaroQ.Tail = (BaroQ.Tail + 1) & (BARO_BUFF_SIZE -1);
-			BaroQ.B[BaroQ.Tail] = (int16)RelPressSample;
-		}
-		else
-		{
-			ReadBaro(false);
-			RelTemp = (int32)BaroTemp.u16 - OriginBaroTemperature;
-			if ( BaroType == BARO_ID_BMP085 )
-				BaroTempComp = SRS32(RelTemp * BARO_BMP085_TEMP_COEFF, 4);
-			else
-				BaroTempComp = SRS32(RelTemp * BARO_SMD500_TEMP_COEFF, 2);
-			StartBaroADC(true);
-		}
-
-		if ( BaroSample == 6 ) // time BARO_PRESS_TIME_MS intervals
-		{
-			// decreasing pressure is increase in altitude
-			// negate and rescale to cm altitude
-
-			Temp = (int24)BaroSum + BaroTempComp;
-			CompBaroPress = BaroFilter(CompBaroPress, Temp);
-			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);
-
-			BaroROC = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
-			BaroROC = BaroROCFilter(BaroROCP, BaroROC);
-		
-			RelBaroAltitudeP = RelBaroAltitude;
-			BaroROCP = BaroROC;
-
-			if ( State == InFlight )
-			{
-
-TxVal32(BaroTempComp, 0, ' ');
-TxVal32(BaroSum, 2, ' ');
-TxVal32(RelBaroAltitude, 2, ' '); 
-TxNextLine(); // zzz
-
-				if ( BaroROC > Stats[MaxBaroROCS] )
-					Stats[MaxBaroROCS] = BaroROC;
-				else
-					if ( BaroROC < Stats[MinBaroROCS] )
-						Stats[MinBaroROCS] = BaroROC;
-
-				if ( RelBaroAltitude > MaxRelBaroAltitudeS ) 
-				{ 
-					MaxRelBaroAltitudeS = RelBaroAltitude;
-					Stats[RelBaroPressureS] = CompBaroPress;
-				}
-			}
-			F.NewBaroValue = F.BaroAltitudeValid;
-			BaroSample = 0;
-
-			#ifdef DEBUG_SENSORS	
-			Trace[TRelBaroAltitude] = RelBaroAltitude/10L;
-			#endif
-		}
-	}
-}// GetBaroAltitude
-
-#endif // NEW_BARO
 
 void InitBarometer(void)
 {	

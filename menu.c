@@ -42,8 +42,8 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"D..Load default parameter set\r\n"
 	#ifdef TESTS_ALL
 	"G..GPS test (Use HyperTerm)\r\n"
-	"H..Barometer/Rangefinder test\r\n"
 	#endif // TESTS_ALL
+	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"

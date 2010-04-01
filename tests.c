@@ -396,8 +396,6 @@ CCerror:
 
 void BaroTest(void)
 {
-	#ifdef TESTS_ALL
-
 	TxString("\r\nAltitude test\r\n");
 	if ( !F.BaroAltitudeValid ) goto BAerror;
 
@@ -441,7 +439,6 @@ void BaroTest(void)
 	return;
 BAerror:
 	TxString("FAIL\r\n");
-	#endif // TESTS_ALL
 
 } // BaroTest
 
