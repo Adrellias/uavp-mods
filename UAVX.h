@@ -262,7 +262,7 @@ typedef struct {
 
 typedef struct {
 	uint8 Head, Tail;
-	int32 B[128];
+	int32 B[4];
 	} int32Q;	
 
 // Macros

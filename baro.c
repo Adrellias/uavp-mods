@@ -134,8 +134,8 @@ RVerror:
 	return;
 } // ReadBaro
 
-#define BARO_BMP085_TEMP_COEFF		9L 			//62L 	
-#define BARO_SMD500_TEMP_COEFF		81L
+#define BARO_BMP085_TEMP_COEFF		17L	
+#define BARO_SMD500_TEMP_COEFF		23L
 
 void GetBaroAltitude(void)
 { 	// Use sum of 8 samples as the "pressure" to give some noise cancellation	
@@ -158,7 +158,7 @@ void GetBaroAltitude(void)
 	
 			BaroSum -= (int24)BaroQ.B[BaroQ.Head];		
 			BaroQ.B[BaroQ.Head] = (int24)((int24)BaroPress.u16 - OriginBaroPressure);
-			BaroQ.Tail = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);
+			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);
 			BaroSum += BaroQ.B[BaroQ.Head];
 		}
 		else
@@ -166,9 +166,9 @@ void GetBaroAltitude(void)
 			ReadBaro(false);
 			RelTemp = (int32)BaroTemp.u16 - OriginBaroTemperature;
 			if ( BaroType == BARO_ID_BMP085 )
-				BaroTempComp = SRS32(RelTemp * 9 , 4);//zzzBARO_BMP085_TEMP_COEFF, 4);
+				BaroTempComp = SRS32(RelTemp * BARO_BMP085_TEMP_COEFF, 5);
 			else
-				BaroTempComp = SRS32(RelTemp * BARO_SMD500_TEMP_COEFF, 2);
+				BaroTempComp = SRS32(RelTemp * BARO_SMD500_TEMP_COEFF, 3);
 			StartBaroADC(true);
 		}
 
@@ -194,7 +194,7 @@ TxVal32(BaroTempComp, 0, ' ');
 TxVal32(RelTemp, 0, ' ');
 TxVal32(BaroSum, 0, ' ');
 TxVal32(RelBaroAltitude, 2, ' '); 
-TxNextLine(); // zzz
+TxNextLine(); 
 */
 				if ( BaroROC > Stats[MaxBaroROCS] )
 					Stats[MaxBaroROCS] = BaroROC;

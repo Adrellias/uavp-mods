@@ -64,6 +64,7 @@ int16 	GPSVel, GPSROC;
 uint8 	GPSNoOfSats;
 uint8 	GPSFix;
 int16 	GPSHDilute;
+int32Q	GPSQ32;
 #pragma udata
 
 #pragma udata gpsvars1
