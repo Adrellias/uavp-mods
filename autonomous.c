@@ -253,15 +253,15 @@ void DoNavigation(void)
 {
 	switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 	case Touchdown:
-		Navigate(0, 0);
-		if ( F.Navigate )
+		Navigate(OriginLatitude, OriginLongitude);
+		if ( F.ReturnHome )
 			DoFailsafeLanding();
 		else
 			AcquireHoldPosition();
 		break;
 	case Descending:
-		Navigate(0, 0);
-		if ( F.Navigate )
+		Navigate( OriginLatitude, OriginLongitude );
+		if ( F.ReturnHome )
 			if ( RelBaroAltitude < LAND_CM )
 			{
 				mS[LandingTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
@@ -273,49 +273,54 @@ void DoNavigation(void)
 			AcquireHoldPosition();
 		break;
 	case AtHome:
-		Navigate(0, 0); // Origin
-		if ( F.Navigate || F.ReturnHome )
+		Navigate(OriginLatitude, OriginLongitude);
+		SetDesiredAltitude((int16)P[NavRTHAlt]);
+		if ( F.ReturnHome )
+		{
 			if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[RTHTimeout] ) )
 				NavState = Descending;
-			else
-				SetDesiredAltitude((int16)P[NavRTHAlt]);
+		}
 		else
 			AcquireHoldPosition();
 		break;
+	case ReturningHome:		
+		Navigate(OriginLatitude, OriginLongitude);
+		SetDesiredAltitude((int16)P[NavRTHAlt]);
+		if ( F.ReturnHome )
+		{
+			if ( F.WayPointAchieved )
+			{
+				mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;			
+				NavState = AtHome;
+			}	
+		}
+		else
+			AcquireHoldPosition();					
+		break;
 	case Loitering:
 		Navigate(WPLatitude, WPLongitude);
-		if ( F.Navigate || F.ReturnHome )
+		SetDesiredAltitude(WPAltitude);
+		if ( F.Navigate )
 		{
 			if ( F.WayPointAchieved && (mS[Clock] > mS[LoiterTimeout]) )
 			{	
-				GetWayPointEE(++CurrWP);
-				SetDesiredAltitude(WPAltitude);
+				GetWayPointEE(++CurrWP); // wrap around through origin and repeat
 				NavState = Navigating;
 			}
 		}
 		else
 			AcquireHoldPosition();
 		break;
-	case Navigating:	
-		if ( F.Navigate || F.ReturnHome )
+	case Navigating:
+		Navigate(WPLatitude, WPLongitude);
+		SetDesiredAltitude(WPAltitude);			
+		if ( F.Navigate )
 		{
-	 		if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT ) // nearly level to engage!
+			if ( F.WayPointAchieved )
 			{
-				Navigate(WPLatitude, WPLongitude);
-				if ( F.WayPointAchieved )
-				{
-					if ( CurrWP == 0)
-					{
-						mS[RTHTimeout] = mS[Clock] + NavRTHTimeout;			
-						NavState = AtHome;
-					}
-					else
-					{
-						mS[LoiterTimeout] = mS[Clock] + WPLoiter;
-						NavState = Loitering;
-					}
-				}		
-			}
+				mS[LoiterTimeout] = mS[Clock] + WPLoiter;
+				NavState = Loitering;
+			}		
 		}
 		else
 			AcquireHoldPosition();					
@@ -341,20 +346,18 @@ void DoNavigation(void)
 		Navigate(HoldLatitude, HoldLongitude);
 
 		if ( F.NavValid )  // Origin must be valid for ANY navigation!
-			if ( F.ReturnHome )
-			{
-				GetWayPointEE(0);
-				SetDesiredAltitude(WPAltitude);
-				NavState = Navigating;
-			}
+		{
+			F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
+			if ( F.ReturnHome && F.NearLevel )
+				NavState = ReturningHome;
 			else
-				if ( F.Navigate )
+				if ( F.Navigate && F.NearLevel )
 				{
 					GetWayPointEE(CurrWP); // resume from previous WP
 					SetDesiredAltitude(WPAltitude);
-
 					NavState = Navigating;
-				}		
+				}
+		}		
 		break;
 	} // switch NavState
 
@@ -519,13 +522,14 @@ void GetWayPointEE(uint8 wp)
 { 
 	static uint16 w;
 	
-	if ( ( wp == 0 ) || ( wp > NoOfWayPoints ) ) 
+	if ( wp > NoOfWayPoints )
+		CurrWP = wp = 0;
+	if ( wp == 0 ) 
 	{  // force to Origin
 		WPLatitude = OriginLatitude;
 		WPLongitude = OriginLongitude;
 		WPAltitude = (int16)P[NavRTHAlt];
-		WPLoiter = 0;
-		CurrWP = 1;
+		WPLoiter = 30000;
 	}
 	else
 	{	
@@ -536,10 +540,7 @@ void GetWayPointEE(uint8 wp)
 
 		#ifdef NAV_ENFORCE_ALTITUDE_CEILING
 		if ( WPAltitude > NAV_CEILING )
-		{
 			WPAltitude = NAV_CEILING;
-			Write16EE(w + 8, NAV_CEILING);
-		}
 		#endif // NAV_ENFORCE_ALTITUDE_CEILING
 		WPLoiter = Read16EE(w + 10) * 1000;
 	}
@@ -570,7 +571,7 @@ void InitNavigation(void)
 		CurrWP = 0;
 	else
 		CurrWP = 1;
-	GetWayPointEE(CurrWP);
+	GetWayPointEE(0);
 
 } // InitNavigation
 

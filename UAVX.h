@@ -506,7 +506,7 @@ typedef union {
 		TurnToWP:1,			// stick programmed
 		MotorsArmed:1,
 		LostModel:1,
-		Failsafe:1,
+		NearLevel:1,
 		LowBatt:1,
 		GPSValid:1,
 		NavValid:1,
@@ -614,7 +614,7 @@ extern void InitNavigation(void);
 
 typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
-enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, Loitering,
+enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering,
 	Terminating };
 enum FailStates { MonitoringRx, Aborting, Returning, Terminated };
 
