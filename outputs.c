@@ -27,56 +27,49 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 
-// For K1-K4 Connectors
-#define	PulseFront		0
-#define	PulseLeft		1
-#define	PulseRight		2
-#define	PulseBack		3
-
-#define	PulseCamRoll	4
-#define	PulseCamPitch	5
-
 boolean OutToggle;
-int16 Motor[NoOfMotors];
-boolean ESCI2CFail[NoOfMotors];
+int16 PWM[6];
+boolean ESCI2CFail[4];
 
 #pragma udata access outputvars
-near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
+near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
 near uint8 ESCMin, ESCMax;
 near boolean ServoToggle;
 #pragma udata
+
+#ifndef HELI
 
 void DoMix(int16 CurrThrottle)
 {
 	static int16 Temp;
 
-	Motor[Front] = Motor[Left] = Motor[Right] = CurrThrottle;
+	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 	#ifndef TRICOPTER
-	Motor[Back] = CurrThrottle;
+	PWM[BackC] = CurrThrottle;
 	#endif // !TRICOPTER
 
 	#ifndef TRICOPTER
 	if( F.UsingXMode )
 	{	// "Cross" Mode
-		Motor[Left] +=   Pl - Rl - Yl;
-		Motor[Right] += -Pl + Rl - Yl;
-		Motor[Front] += -Pl - Rl + Yl;
-		Motor[Back] +=   Pl + Rl + Yl; 
+		PWM[LeftC] +=   Pl - Rl - Yl;
+		PWM[RightC] += -Pl + Rl - Yl;
+		PWM[FrontC] += -Pl - Rl + Yl;
+		PWM[BackC] +=   Pl + Rl + Yl; 
 	}
 	else
 	{	// Normal "Plus" Mode
-		Motor[Left]  += -Rl - Yl;	
-		Motor[Right] +=  Rl - Yl;
-		Motor[Front] += -Pl + Yl;
-		Motor[Back]  +=  Pl + Yl;
+		PWM[LeftC]  += -Rl - Yl;	
+		PWM[RightC] +=  Rl - Yl;
+		PWM[FrontC] += -Pl + Yl;
+		PWM[BackC]  +=  Pl + Yl;
 	}
 
 	#else	// TRICOPTER
 	Temp = SRS16(Rl - Pl, 1); 
-	Motor[Front] += Pl ;				// front motor
-	Motor[Left]  += Temp;				// rear left
-	Motor[Right] -= Temp; 				// rear right
-	Motor[Back]   = Yl + RC_NEUTRAL;	// yaw servo
+	PWM[FrontC] += Pl ;				// front motor
+	PWM[LeftC]  += Temp;				// rear left
+	PWM[RightC] -= Temp; 				// rear right
+	PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
 	#endif
 
 } // DoMix
@@ -88,10 +81,10 @@ void CheckDemand(int16 CurrThrottle)
 	static int8 s;
 	static int24 Scale, ScaleHigh, ScaleLow, MaxMotor, DemandSwing;
 
-	MaxMotor = Max(Motor[Front], Motor[Left]);
-	MaxMotor = Max(MaxMotor, Motor[Right]);
+	MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
+	MaxMotor = Max(MaxMotor, PWM[RightC]);
 	#ifndef TRICOPTER
-	MaxMotor = Max(MaxMotor, Motor[Back]);
+	MaxMotor = Max(MaxMotor, PWM[BackC]);
 	#endif // TRICOPTER
 
 	DemandSwing = MaxMotor - CurrThrottle;
@@ -116,9 +109,20 @@ void CheckDemand(int16 CurrThrottle)
 
 } // CheckDemand
 
+#endif // !HELI
+
 void MixAndLimitMotors(void)
 { 	// expensive ~400uSec @16MHz
     static int16 Temp, CurrThrottle;
+
+	#ifdef HELI
+
+	PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
+	PWM[AileronC] = Limit(PWM_AILERON_SENSE * Rl, ESCMin, ESCMax);
+	PWM[ElevatorC] = Limit(PWM_ELEVATOR_SENSE * Pl, ESCMin, ESCMax);
+	PWM[RudderC] = Limit(PWM_RUDDER_SENSE * Yl, ESCMin, ESCMax);
+
+	#else
 
 	if ( DesiredThrottle < IdleThrottle )
 		CurrThrottle = 0;
@@ -138,13 +142,15 @@ void MixAndLimitMotors(void)
 			DoMix(CurrThrottle);
 	}
 	else
-		Motor[Front] = Motor[Back] = 
-		Motor[Left] = Motor[Right] = CurrThrottle;
+		PWM[FrontC] = PWM[BackC] = 
+		PWM[LeftC] = PWM[RightC] = CurrThrottle;
 
-	Motor[Front] = Limit(Motor[Front], ESCMin, ESCMax);
-	Motor[Back] = Limit(Motor[Back], ESCMin, ESCMax);
-	Motor[Left] = Limit(Motor[Left], ESCMin, ESCMax);
-	Motor[Right] = Limit(Motor[Right], ESCMin, ESCMax);
+	PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
+	PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
+	PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
+	PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
+
+	#endif // HELI
 
 } // MixAndLimitMotors
 
@@ -159,8 +165,8 @@ void MixAndLimitCam(void)
 	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8);
 	Cp += DesiredCamPitchTrim + OUT_NEUTRAL; 			
 
-	MT = Limit(Cr, 1, OUT_MAXIMUM);
-	ME = Limit(Cp, 1, OUT_MAXIMUM);
+	PWM[CamRollC] = Limit(Cr, 1, OUT_MAXIMUM);
+	PWM[CamPitchC] = Limit(Cp, 1, OUT_MAXIMUM);
 
 } // MixAndLimitCam
 
@@ -183,21 +189,27 @@ void OutSignals(void)
 	Trace[TDesiredPitch] = DesiredPitch;
 	Trace[TDesiredYaw] = DesiredYaw;
 
-	Trace[TMFront] = Motor[Front];
-	Trace[TMBack] = Motor[Back];
-	Trace[TMLeft] = Motor[Left];
-	Trace[TMRight] = Motor[Right];
+	Trace[TMFront] = PWM[FrontC];
+	Trace[TMBack] = PWM[BackC];
+	Trace[TMLeft] = PWM[LeftC];
+	Trace[TMRight] = PWM[RightC];
 
-	Trace[TMCamRoll] = MT;
-	Trace[TMCamPitch] = ME;
+	Trace[TMCamRoll] = PWM[CamRollC];
+	Trace[TMCamPitch] = PWM[CamPitchC];
 
 	#else // !DEBUG_SENSORS
 
 	if ( !F.MotorsArmed )
 	{
-		Motor[Front] = Motor[Back] = 
-		Motor[Left] = Motor[Right] = ESCMin;
-		MT = ME = OUT_NEUTRAL;
+		#ifdef HELI
+		PWM[ThrottleC] = ESCMin;
+		PWM[AileronC] = PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
+		#else
+		PWM[FrontC] = PWM[BackC] = 
+		PWM[LeftC] = PWM[RightC] = ESCMin;
+		#endif // HELI
+
+		PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 	}
 
 	// Save TMR0 and reset
@@ -218,10 +230,20 @@ void OutSignals(void)
 		_endasm	
 		PORTB |= 0x0f;
 	
-		MF = Motor[Front];
-		MB = Motor[Back];
-		ML = Motor[Left];
-		MR = Motor[Right];
+		#ifdef HELI
+		PWM0 = PWM[ThrottleC];
+		PWM1 = PWM[AileronC];
+		PWM2 = PWM[ElevatorC];
+		PWM3 = PWM[RudderC];
+		#else
+		PWM0 = PWM[FrontC];
+		PWM1 = PWM[LeftC];
+		PWM2 = PWM[RightC];
+		PWM3 = PWM[BackC];
+		#endif // HELI
+
+		PWM4 = PWM[CamRollC];
+		PWM5 = PWM[CamPitchC];
 
 		SyncToTimer0AndDisableInterrupts();
 
@@ -247,25 +269,25 @@ OS005:
 		ANDLW	0x0f
 		BZ		OS006
 			
-		DECFSZ	MF,1,1				
+		DECFSZ	PWM0,1,1				
 		GOTO	OS007
 					
-		BCF		SHADOWB,PulseFront,1
+		BCF		SHADOWB,0,1
 OS007:
-		DECFSZ	ML,1,1		
+		DECFSZ	PWM1,1,1		
 		GOTO	OS008
 					
-		BCF		SHADOWB,PulseLeft,1
+		BCF		SHADOWB,1,1
 OS008:
-		DECFSZ	MR,1,1
+		DECFSZ	PWM2,1,1
 		GOTO	OS009
 					
-		BCF		SHADOWB,PulseRight,1
+		BCF		SHADOWB,2,1
 OS009:
-		DECFSZ	MB,1,1	
+		DECFSZ	PWM3,1,1	
 		GOTO	OS010
 						
-		BCF		SHADOWB,PulseBack,1			
+		BCF		SHADOWB,3,1			
 
 OS010:
 		_endasm
@@ -298,24 +320,25 @@ OS006:
 			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
 		}
 		
+		#ifndef HELI
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible.
 		// All motors driven with fourth motor ignored for Tricopter.	
 		if ( P[ESCType] ==  ESCHolger )
-			for ( m = 0 ; m < NoOfMotors ; m++ )
+			for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
-				r = SendESCI2CByte( Motor[m] );
+				r = SendESCI2CByte( PWM[m] );
 				ESCI2CStop();
 			}
 		else
 			if ( P[ESCType] == ESCYGEI2C )
-				for ( m = 0 ; m < NoOfMotors ; m++ )
+				for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 				{
 					ESCI2CStart();
 					r = SendESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
-					r = SendESCI2CByte( Motor[m]>>1 );
+					r = SendESCI2CByte( PWM[m]>>1 );
 					ESCI2CStop();
 				}
 			else
@@ -323,12 +346,13 @@ OS006:
 				{
 					ESCI2CStart();
 					r = SendESCI2CByte(0x10);			// one command, 4 data bytes
-					r = SendESCI2CByte( Motor[Front] ); 
-					r = SendESCI2CByte( Motor[Back] );
-					r = SendESCI2CByte( Motor[Left] );
-					r = SendESCI2CByte( Motor[Right] );
+					r = SendESCI2CByte( PWM[FrontC] ); 
+					r = SendESCI2CByte( PWM[BackC] );
+					r = SendESCI2CByte( PWM[LeftC] );
+					r = SendESCI2CByte( PWM[RightC] );
 					ESCI2CStop();
 				}
+		#endif // HELI
 	}
 
 	if ( ServoToggle )
@@ -341,15 +365,15 @@ OS001:
 		ANDLW	0x30		
 		BZ		OS002	
 	
-		DECFSZ	MT,1,1
+		DECFSZ	PWM4,1,1
 		GOTO	OS003
 	
-		BCF		SHADOWB,PulseCamRoll,1
+		BCF		SHADOWB,4,1
 OS003:
-		DECFSZ	ME,1,1
+		DECFSZ	PWM5,1,1
 		GOTO	OS004
 	
-		BCF		SHADOWB,PulseCamPitch,1
+		BCF		SHADOWB,5,1
 OS004:
 		_endasm
 	
@@ -396,9 +420,11 @@ void InitI2CESCs(void)
 {
 	static uint8 m;
 	static boolean r;
+	
+	#ifndef HELI
 
 	if ( P[ESCType] ==  ESCHolger )
-		for ( m = 0 ; m < NoOfMotors ; m++ )
+		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 		{
 			ESCI2CStart();
 			r = SendESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
@@ -408,7 +434,7 @@ void InitI2CESCs(void)
 		}
 	else
 		if ( P[ESCType] == ESCYGEI2C )
-			for ( m = 0 ; m < NoOfMotors ; m++ )
+			for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
@@ -428,4 +454,5 @@ void InitI2CESCs(void)
 				ESCI2CFail[0] |= r;
 				ESCI2CStop();
 			}
+	#endif // !HELI
 } // InitI2CESCs

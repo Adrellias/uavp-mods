@@ -679,7 +679,7 @@ void ConfigureESCs(void)
 	if ( P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
-		for ( m = 0 ; m < NoOfMotors ; m++ )
+		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 		{
 			TxString("Connect ONLY ");
 			switch( m )

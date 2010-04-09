@@ -84,7 +84,7 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 	if ( F.NavAltitudeHold )
 	{
 		AltSum = 0;
-		DesiredThrottle = HoverThrottle;
+		DesiredThrottle = CruiseThrottle;
 		DesiredAltitude = NewDesiredAltitude * 100L;
 	}
 	else
@@ -103,7 +103,7 @@ void DoFailsafeLanding(void)
 		StopMotors();
 	}
 	else
-		DesiredThrottle = HoverThrottle;
+		DesiredThrottle = CruiseThrottle;
 } // DoFailsafeLanding
 
 void AcquireHoldPosition(void)
@@ -135,6 +135,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
+
+
 	if ( !F.NavComputed ) 
 	{
 		EastDiff = DesiredLongitude - GPSLongitude;
@@ -156,7 +158,22 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		WayHeading = int32atan2((int32)EastDiff, (int32)NorthDiff);
 
 		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.WayPointCentred )
-		{	// direct solution make North and East coordinate errors zero
+		{	
+
+			#ifdef FIXED_WING
+		
+			// no Nav for conventional aircraft - yet!
+
+			// Just use simple rudder only for now.
+			if ( !F.WayPointAchieved )
+			{
+				RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
+				NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
+				NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
+			}
+			#else
+
+			// direct solution make North and East coordinate errors zero
 
 			SinHeading = int16sin(Heading);
 			CosHeading = int16cos(Heading);
@@ -230,7 +247,9 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
 			}
 			else
-				NavYCorr = 0;	
+				NavYCorr = 0;
+
+			#endif // FIXED_WING	
 		}	
 		else 
 		{
@@ -245,6 +264,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	DesiredRoll = DesiredRoll + NavRCorr;
 	DesiredPitch = DesiredPitch + NavPCorr;
 	DesiredYaw += NavYCorr;
+
 	F.NavComputed = true;
 
 } // Navigate
@@ -371,8 +391,12 @@ void DoPPMFailsafe(void)
 	if ( State == InFlight )
 		switch ( FailState ) {
 		case Terminated:
+			#ifdef FIXED_WING
+			DesiredRoll = DesiredPitch = DesiredYaw = 0; // zzz need spin/stall down
+			#else
 			DesiredRoll = DesiredPitch = DesiredYaw = 0;
 			DoFailsafeLanding();
+			#endif // FIXED_WING
 			if ( mS[Clock ] > mS[AbortTimeout] )
 				if ( F.Signal )
 				{

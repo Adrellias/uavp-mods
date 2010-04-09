@@ -10,7 +10,7 @@
 #define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
 
 // Altitude Hold
-#define HOVER_MAX_ROC_CMPS			50L	// Must be changing altitude at less than this for hover to be detected
+#define ALT_HOLD_MAX_ROC_CMPS			50L	// Must be changing altitude at less than this for alt. hold to be detected
 
 //#define TEMPORARY_BARO_SCALE		94L	// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
 #define TEMPORARY_BARO_SCALE		85L	// BMP085
@@ -28,6 +28,13 @@
 #define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
+
+// Airframe
+//#define HELI
+//#define FIXED_WING
+#define PWM_AILERON_SENSE			1
+#define PWM_ELEVATOR_SENSE			1
+#define PWM_RUDDER_SENSE			1
 
 // Debugging
 
@@ -77,7 +84,7 @@
 #define ABORT_UPDATE_MS			2000L	// mS. retry period for RC Signal and restore Pilot in Control
 
 #define THROTTLE_LOW_DELAY_MS	1000L	// mS. that motor runs at idle after the throttle is closed
-#define THROTTLE_UPDATE_MS		3000L	// mS. constant throttle time for hover
+#define THROTTLE_UPDATE_MS		3000L	// mS. constant throttle time for altitude hold
 
 #define NAV_ACTIVE_DELAY_MS		10000L	// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_LAND_TIMEOUT_MS	10000L	// mS. Shutdown throttle if descent lasts too long
@@ -86,7 +93,7 @@
 
 // Altitude Hold
 
-#define ALT_SCRATCHY_BEEPER			// Scratchy beeper noise on hover
+#define ALT_SCRATCHY_BEEPER			// Scratchy beeper noise on altitude hold
 
 // Gyros
 
@@ -146,7 +153,7 @@
 #define NAV_GAIN_6CH			80L		// Low GPS gain for 6ch Rx
 
 #define	NAV_YAW_LIMIT			10L		// yaw slew rate for RTH
-#define NAV_MAX_TRIM			20L		// max trim offset for hover hold
+#define NAV_MAX_TRIM			20L		// max trim offset for altitude hold
 #define NAV_CORR_SLEW_LIMIT		1L		// *5L maximum change in roll or pitch correction per GPS update
 
 #define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
@@ -158,7 +165,7 @@
 
 #define THROTTLE_SLEW_LIMIT		0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
 #define THROTTLE_MIDDLE			10  	// throttle stick dead zone for baro 
-#define THROTTLE_HOVER			75		// min throttle stick for altitude lock
+#define THROTTLE_MIN_ALT_HOLD	75		// min throttle stick for altitude lock
 
 //________________________________________________________________________________________
 
@@ -257,8 +264,8 @@ typedef struct {
 
 typedef struct {
 	uint8 Head, Tail;
-	int16 B[8];
-	} int16Q;	
+	int24 B[8];
+	} int24Q;	
 
 typedef struct {
 	uint8 Head, Tail;
@@ -517,7 +524,7 @@ typedef union {
 		GPSFailure:1,
 		AttitudeHold:1,
 		ThrottleMoving:1,
-		Hovering:1,
+		HoldingAlt:1,
 		Navigate:1,
 
 		ReturnHome:1,
@@ -638,18 +645,22 @@ extern int16 AltSum;
 // baro.c
 
 extern void StartBaroADC(boolean);
+extern int24 CompensatedPressure(int24, int24);
 extern void ReadBaro(boolean);
 extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
 
 #define BARO_ID_BMP085		((uint8)(0x55))
 
-extern int24 OriginBaroPressure, OriginBaroTemperature, BaroSum, CompBaroPress;
+//extern Baro24Q BaroPressQ;
+//extern Baro24Q BaroTempQ;
+
+extern int24 OriginBaroPressure, CompBaroPress;
+extern int24 BaroPressSum, BaroTempSum;
 extern int24 RelBaroAltitude, RelBaroAltitudeP;
-extern int16 BaroROC, BaroROCP;
-extern i16u	BaroPress, BaroTemp;
+extern int16 BaroROC;
+extern i16u	BaroVal;
 extern int8	BaroSample;
-extern int16 BaroTempComp;
 extern uint8 BaroType;
 
 //______________________________________________________________________________________________
@@ -690,7 +701,7 @@ extern int16 RollSum, PitchSum, YawSum;			// integral/angle
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
-extern int16 HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
+extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 extern int16 DesiredRollP, DesiredPitchP;
 extern int16 CurrMaxRollPitch;
@@ -822,7 +833,7 @@ extern void LEDsOff(uint8);
 extern void LEDGame(void);
 
 extern uint8 LEDShadow;		// shadow register
-extern uint8 LEDCycles;		// for hover light display
+extern uint8 LEDCycles;		// for altitude hold light display
 
 //______________________________________________________________________________________________
 
@@ -866,12 +877,13 @@ extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void InitI2CESCs(void);
 
-enum MotorTags {Front=0, Back, Right, Left}; // order is important for X3D & Holger ESCs
-#define NoOfMotors 		4
+enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
+enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
+#define NoOfPWMOutputs 		4
 
-extern int16 Motor[NoOfMotors];
-extern boolean ESCI2CFail[NoOfMotors];
-extern near uint8 SHADOWB, MF, MB, ML, MR, MT, ME;
+extern int16 PWM[6];
+extern boolean ESCI2CFail[4];
+extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near uint8 ESCMin, ESCMax;
 extern near boolean ServoToggle;
 
@@ -914,7 +926,7 @@ enum Params { // MAX 64
 	TimeSlots,			// 17c
 	LowVoltThres,		// 18c
 	CamRollKp,			// 19
-	PercentHoverThr,	// 20c 
+	PercentCruiseThr,	// 20c 
 	
 	VertDampKp,			// 21c
 	MiddleDU,			// 22c

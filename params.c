@@ -59,7 +59,7 @@ const rom int8 DefaultParams[] = {
 	4, 				// TimeSlots,		17c
 	48, 			// LowVoltThres,	18c
 	24, 			// CamRollKp,		19
-	45, 			// PercentHoverThr,	20c 
+	45, 			// PercentCruiseThr,20c 
 	
 	-1, 			// VertDampKp,		21c
 	0, 				// MiddleDU,		22c
@@ -205,7 +205,7 @@ void ReadParametersEE(void)
 		else
 		{
 			ESCMin = 0;
-			for ( i = 0; i < NoOfMotors; i++ )
+			for ( i = 0; i < NoOfPWMOutputs; i++ )
 				ESCI2CFail[i] = false;
 			InitI2CESCs();
 		}
@@ -219,7 +219,7 @@ void ReadParametersEE(void)
 	
 		IdleThrottle = ((int16)P[PercentIdleThr] * OUT_MAXIMUM )/100L;
 		IdleThrottle = Max( IdleThrottle, RC_THRES_STOP );
-		HoverThrottle = ((int16)P[PercentHoverThr] * OUT_MAXIMUM )/100L;
+		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 	
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;

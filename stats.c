@@ -72,14 +72,14 @@ void WriteStatsEE()
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
 
-	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);
-	WriteEE(PercentHoverThr, Temp);
+	Temp = ToPercent(CruiseThrottle, OUT_MAXIMUM);
+	WriteEE(PercentCruiseThr, Temp);
 
 } // WriteStatsEE
 
 void ShowStats(void)
 {
-	#ifdef TESTS_FULL_STATS	
+	#ifdef TESTS_ALL	
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
@@ -106,7 +106,7 @@ void ShowStats(void)
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
-	#endif // TESTS_FULL_STATS
+	#endif // TESTS_ALL
 
 } // ShowStats
 

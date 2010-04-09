@@ -143,7 +143,7 @@ void ShowSetup(uint8 h)
 
 	if ( P[ESCType] != ESCPPM )
 	{
-		for ( i = 0; i < NoOfMotors; i++ )
+		for ( i = 0; i < NoOfPWMOutputs; i++ )
 			if ( ESCI2CFail[i] )
 				TxString(" Fail");
 			else

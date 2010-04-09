@@ -45,7 +45,7 @@ int16 RollTrim, PitchTrim, YawTrim;
 int16 HoldYaw;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
-int16 HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
+int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 int16 DesiredRollP, DesiredPitchP;
 int16 CurrMaxRollPitch;
@@ -133,17 +133,17 @@ void AltitudeHold()
 
 	if ( F.NavAltitudeHold && ( NavState != HoldingStation ) )
 	{
-		F.Hovering = false;
+		F.HoldingAlt = false;
 		DoAltitudeHold(Altitude, ROC);
 	}
 	else // holding station
 	{
-		F.Hovering = !F.ThrottleMoving; 
+		F.HoldingAlt = !F.ThrottleMoving; 
 		
-		if( F.Hovering )
+		if( F.HoldingAlt )
 		{
-			if ( Abs(ROC) < HOVER_MAX_ROC_CMPS )
-				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
+			if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS )
+				CruiseThrottle = HardFilter(CruiseThrottle, DesiredThrottle);
 			DoAltitudeHold(Altitude, ROC);
 		}
 		else	
@@ -156,7 +156,7 @@ void AltitudeHold()
 } // AltitudeHold
 
 void InertialDamping(void)
-{ // Uses accelerometer to damp disturbances while hovering
+{ // Uses accelerometer to damp disturbances while holding altitude
 
 	static int16 Temp;
 
@@ -173,8 +173,8 @@ void InertialDamping(void)
 	DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
 	DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
 
-	// Lateral compensation only when hovering?	
-	if ( F.Hovering && F.AttitudeHold ) 
+	// Lateral compensation only when holding altitude?	
+	if ( F.HoldingAlt && F.AttitudeHold ) 
 	{
  		if ( F.WayPointCentred )
 		{
@@ -371,7 +371,7 @@ void UpdateControls(void)
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )
 				F.Navigate = true;
 
-		if ( (! F.Hovering) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+		if ( (! F.HoldingAlt) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 			DesiredAltitude = Altitude;
 
 		HoldRoll = DesiredRoll - RollTrim;
@@ -413,10 +413,15 @@ void StopMotors(void)
 {
 	static uint8 m;
 
-	for (m = 0; m < NoOfMotors; m++)
-		Motor[m] = ESCMin;
+	#ifdef HELI
+	PWM[ThrottleC] = ESCMin;
+	PWM[AileronC], PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
+	#else
+	for (m = 0; m < NoOfPWMOutputs; m++)
+		PWM[m] = ESCMin;
+	#endif // HELI
 
-	ME = ME = OUT_NEUTRAL;
+	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 
 	F.MotorsArmed = false;
 } // StopMotors
@@ -428,7 +433,7 @@ void CheckThrottleMoved(void)
 	else
 	{
 		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
-		ThrLow = Max(ThrLow, THROTTLE_HOVER);
+		ThrLow = Max(ThrLow, THROTTLE_MIN_ALT_HOLD);
 		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
 		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
 		{
