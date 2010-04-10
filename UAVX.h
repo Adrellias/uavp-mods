@@ -29,12 +29,7 @@
 #define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
 
-// Airframe
-//#define HELI
-//#define FIXED_WING
-#define PWM_AILERON_SENSE			1
-#define PWM_ELEVATOR_SENSE			1
-#define PWM_RUDDER_SENSE			1
+
 
 // Debugging
 
@@ -42,7 +37,7 @@
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 #ifdef CLOCK_16MHZ
-	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
+//zzz	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
 #endif // CLOCK_16MHZ
 
 //#define DEBUG_FORCE_NAV				// overrides RTH and forces navigate all WPs
@@ -71,9 +66,26 @@
 //#define TRICOPTER						
 //#define RX6CH 						// 6ch Receivers
 //#define DEBUG_SENSORS					// Debug sensors with UAVPset - no motors
+#define QUADROCOPTER
 #endif // !BATCHMODE
 
 //________________________________________________________________________________________________
+
+// Airframe
+
+#if ( defined TRICOPTER || defined QUADROCOPTER || defined HEXACOPTER )
+	#define MULTICOPTER
+#endif
+
+#if ( defined HELICOPTER | defined FIXEDWING | defined DELTAWING )
+	#define PWM_AILERON_SENSE			1
+	#define PWM_ELEVATOR_SENSE			1
+	#define PWM_RUDDER_SENSE			1
+	
+	#if ( defined FIXEDWING | defined DELTAWING )
+		#define NAV_WING
+	#endif
+#endif
 
 #define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
 
@@ -484,7 +496,7 @@ typedef struct {
 // Sanity checks
 
 // check the Rx and PPM ranges
-#if OUT_MINIMUM >= OUT_MAXIMUM
+#if ( OUT_MINIMUM >= OUT_MAXIMUM )
 #error OUT_MINIMUM < OUT_MAXIMUM!
 #endif
 #if (OUT_MAXIMUM < OUT_NEUTRAL)

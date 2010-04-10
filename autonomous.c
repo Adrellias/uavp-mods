@@ -160,7 +160,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.WayPointCentred )
 		{	
 
-			#ifdef FIXED_WING
+			#ifdef NAV_WING
 		
 			// no Nav for conventional aircraft - yet!
 
@@ -171,7 +171,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
 				NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
 			}
-			#else
+			#else // MULTICOPTER
 
 			// direct solution make North and East coordinate errors zero
 
@@ -249,7 +249,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			else
 				NavYCorr = 0;
 
-			#endif // FIXED_WING	
+			#endif // NAV_WING	
 		}	
 		else 
 		{

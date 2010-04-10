@@ -76,14 +76,13 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		BE = DesiredAltitude - Altitude;
 		LimBE = Limit(BE, -ALT_BAND_CM, ALT_BAND_CM);
 
-		AltP = SRS16(LimBE * (int16)P[AltKp], 7);
+		AltP = SRS16(LimBE * (int16)P[AltKp], 8);
 		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		AltDiffSum += LimBE;
+		AltDiffSum += Sign(LimBE);
 		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
 		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
 		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
-		AltDiffSum = Decay1(AltDiffSum);
 		 
 		if ( ROC < DescentCmpS )
 		{
@@ -95,6 +94,19 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		NewAltComp = AltP + AltI + AltDSum;
 		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
 		AltComp = SlewLimit(AltComp, NewAltComp, 2);
+
+if ( State == InFlight )
+{
+TxVal32(mS[Clock],3,' ');
+TxVal32(BE,2,' ');
+TxVal32(AltP,0,' ');
+TxVal32(AltI,0,' ');
+TxVal32(AltDiffSum,0,' ');
+TxVal32(AltDSum,0,' ');
+TxVal32(NewAltComp,0,' ');
+TxVal32(AltComp,0,' ');
+TxNextLine();
+}
 
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
@@ -413,13 +425,14 @@ void StopMotors(void)
 {
 	static uint8 m;
 
-	#ifdef HELI
-	PWM[ThrottleC] = ESCMin;
-	PWM[AileronC], PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
-	#else
+	#ifdef MULTICOPTER
 	for (m = 0; m < NoOfPWMOutputs; m++)
 		PWM[m] = ESCMin;
-	#endif // HELI
+	#else
+	PWM[ThrottleC] = ESCMin;
+	PWM[AileronC], PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
+
+	#endif // MULTICOPTER
 
 	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 

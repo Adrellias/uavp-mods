@@ -47,7 +47,7 @@ const rom int8 DefaultParams[] = {
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	4, 				// AltKp,			09
+	24, 			// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -68,7 +68,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	24, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// AltKi,			28
+	12, 			// AltKi,			28
 	90, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 

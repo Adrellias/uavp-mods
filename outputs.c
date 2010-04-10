@@ -37,7 +37,7 @@ near uint8 ESCMin, ESCMax;
 near boolean ServoToggle;
 #pragma udata
 
-#ifndef HELI
+#ifdef MULTICOPTER
 
 void DoMix(int16 CurrThrottle)
 {
@@ -78,7 +78,6 @@ boolean 	MotorDemandRescale;
 
 void CheckDemand(int16 CurrThrottle)
 {
-	static int8 s;
 	static int24 Scale, ScaleHigh, ScaleLow, MaxMotor, DemandSwing;
 
 	MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
@@ -109,21 +108,13 @@ void CheckDemand(int16 CurrThrottle)
 
 } // CheckDemand
 
-#endif // !HELI
+#endif // MULTICOPTER
 
 void MixAndLimitMotors(void)
 { 	// expensive ~400uSec @16MHz
     static int16 Temp, CurrThrottle;
 
-	#ifdef HELI
-
-	PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
-	PWM[AileronC] = Limit(PWM_AILERON_SENSE * Rl, ESCMin, ESCMax);
-	PWM[ElevatorC] = Limit(PWM_ELEVATOR_SENSE * Pl, ESCMin, ESCMax);
-	PWM[RudderC] = Limit(PWM_RUDDER_SENSE * Yl, ESCMin, ESCMax);
-
-	#else
-
+	#ifdef MULTICOPTER
 	if ( DesiredThrottle < IdleThrottle )
 		CurrThrottle = 0;
 	else
@@ -150,7 +141,14 @@ void MixAndLimitMotors(void)
 	PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
 	PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
 
-	#endif // HELI
+	#else
+
+	PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
+	PWM[AileronC] = Limit(PWM_AILERON_SENSE * Rl, ESCMin, ESCMax);
+	PWM[ElevatorC] = Limit(PWM_ELEVATOR_SENSE * Pl, ESCMin, ESCMax);
+	PWM[RudderC] = Limit(PWM_RUDDER_SENSE * Yl, ESCMin, ESCMax);
+
+	#endif // MULTICOPTER
 
 } // MixAndLimitMotors
 
@@ -201,13 +199,13 @@ void OutSignals(void)
 
 	if ( !F.MotorsArmed )
 	{
-		#ifdef HELI
+		#ifdef MULTICOPTER
+		PWM[FrontC] = PWM[BackC] = 
+		PWM[LeftC] = PWM[RightC] = ESCMin;	
+		#else
 		PWM[ThrottleC] = ESCMin;
 		PWM[AileronC] = PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
-		#else
-		PWM[FrontC] = PWM[BackC] = 
-		PWM[LeftC] = PWM[RightC] = ESCMin;
-		#endif // HELI
+		#endif // MULTICOPTER
 
 		PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 	}
@@ -230,17 +228,17 @@ void OutSignals(void)
 		_endasm	
 		PORTB |= 0x0f;
 	
-		#ifdef HELI
-		PWM0 = PWM[ThrottleC];
-		PWM1 = PWM[AileronC];
-		PWM2 = PWM[ElevatorC];
-		PWM3 = PWM[RudderC];
-		#else
+		#ifdef MULTICOPTER	
 		PWM0 = PWM[FrontC];
 		PWM1 = PWM[LeftC];
 		PWM2 = PWM[RightC];
 		PWM3 = PWM[BackC];
-		#endif // HELI
+		#else
+		PWM0 = PWM[ThrottleC];
+		PWM1 = PWM[AileronC];
+		PWM2 = PWM[ElevatorC];
+		PWM3 = PWM[RudderC];
+		#endif // MULTICOPTER
 
 		PWM4 = PWM[CamRollC];
 		PWM5 = PWM[CamPitchC];
@@ -320,7 +318,7 @@ OS006:
 			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
 		}
 		
-		#ifndef HELI
+		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible.
 		// All motors driven with fourth motor ignored for Tricopter.	
@@ -352,7 +350,7 @@ OS006:
 					r = SendESCI2CByte( PWM[RightC] );
 					ESCI2CStop();
 				}
-		#endif // HELI
+		#endif //  MULTICOPTER
 	}
 
 	if ( ServoToggle )
@@ -421,7 +419,7 @@ void InitI2CESCs(void)
 	static uint8 m;
 	static boolean r;
 	
-	#ifndef HELI
+	#ifdef MULTICOPTER
 
 	if ( P[ESCType] ==  ESCHolger )
 		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
@@ -454,5 +452,5 @@ void InitI2CESCs(void)
 				ESCI2CFail[0] |= r;
 				ESCI2CStop();
 			}
-	#endif // !HELI
+	#endif // MULTICOPTER
 } // InitI2CESCs

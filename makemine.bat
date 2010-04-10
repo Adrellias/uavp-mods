@@ -29,7 +29,7 @@ rem set PROC=18F2620
 rem set DBG=NO_DEBUG DEBUG_SENSORS 
 rem set RX=RX7CH RX6CH
 rem set CDEG=C270
-rem set CFG=QUAD TRICOPTER
+rem set CFG=QUADROCOPTER
 
 rem Personal choice
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
@@ -37,7 +37,7 @@ set PROC=18F2620
 set DBG=NO_DEBUG DEBUG_SENSORS
 set RX=RX7CH
 set CDEG=C270
-set CFG=QUAD
+set CFG=QUADROCOPTER
 
 rem Delete working files
 call makeclean.bat
