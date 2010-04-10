@@ -37,7 +37,7 @@
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 #ifdef CLOCK_16MHZ
-//zzz	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
+	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
 #endif // CLOCK_16MHZ
 
 //#define DEBUG_FORCE_NAV				// overrides RTH and forces navigate all WPs
