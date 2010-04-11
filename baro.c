@@ -205,13 +205,6 @@ void GetBaroAltitude(void)
 
 			if ( State == InFlight )
 			{
-
-/*
-TxVal32(BaroTempSum, 0, ' ');
-TxVal32(BaroPressSum, 0, ' ');
-TxVal32(RelBaroAltitude, 2, ' '); 
-TxNextLine(); 
-*/
 				if ( BaroROC > Stats[MaxBaroROCS] )
 					Stats[MaxBaroROCS] = BaroROC;
 				else

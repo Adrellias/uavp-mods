@@ -2,43 +2,9 @@
 
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff.
 
-#define ATTITUDE_FF_DIFF			24L	// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change						
-
-#define	ATTITUDE_ENABLE_DECAY			// enables decay to zero angle when roll/pitch is not in fact zero!
-// unfortunately there seems to be a leak which cause the roll/pitch to increase without the decay.
-
-#define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
-
-// Altitude Hold
-#define ALT_HOLD_MAX_ROC_CMPS			50L	// Must be changing altitude at less than this for alt. hold to be detected
-
-//#define TEMPORARY_BARO_SCALE		94L	// SMD500 Will be in UAVPSet later inc/dec to make Baro Alt match GPS Alt 
-#define TEMPORARY_BARO_SCALE		85L	// BMP085
-
-// Accelerometers
-#define DAMP_HORIZ_LIMIT 			3L	// equivalent stick units - no larger than 5
-
-#define DAMP_VERT_LIMIT_LOW			-5L	// maximum throttle reduction
-#define DAMP_VERT_LIMIT_HIGH		20L	// maximum throttle increase
-
-// Nav
-//#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
-
-#define NAV_MAX_ROLL_PITCH 			25L	// Rx stick units
-#define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
-#define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
-#define NAV_INT_WINDUP_LIMIT		64L	// ???
-
-
-
+#define XMODE_ACC_COMP					// if defined corrects Acc sensor adjustment for XMode flight
+						
 // Debugging
-
-//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-//#define TESTS_FULL					// increases information displayed in tests but increases code size
-
-#ifdef CLOCK_16MHZ
-	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
-#endif // CLOCK_16MHZ
 
 //#define DEBUG_FORCE_NAV				// overrides RTH and forces navigate all WPs
 
@@ -78,14 +44,22 @@
 #endif
 
 #if ( defined HELICOPTER | defined FIXEDWING | defined DELTAWING )
-	#define PWM_AILERON_SENSE			1
-	#define PWM_ELEVATOR_SENSE			1
-	#define PWM_RUDDER_SENSE			1
+	#define PWM1_SENSE			1		// Aileron or Right Elevon
+	#define PWM2_SENSE			1		// Elevator or Left Elevon
+	#define PWM3_SENSE			1		// Rudder
 	
 	#if ( defined FIXEDWING | defined DELTAWING )
 		#define NAV_WING
 	#endif
 #endif
+
+// Tests
+
+//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+//#define TESTS_FULL					// increases information displayed in tests but increases code size
+#ifdef CLOCK_16MHZ
+	#define TESTS_ALL					// show flight stats otherwise use UAVXNav
+#endif // CLOCK_16MHZ
 
 #define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
 
@@ -105,12 +79,25 @@
 
 // Altitude Hold
 
-#define ALT_SCRATCHY_BEEPER			// Scratchy beeper noise on altitude hold
+#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
+#define ALT_HOLD_MAX_ROC_CMPS	50L			// Must be changing altitude at less than this for alt. hold to be detected
+
+// Accelerometers
+
+#define DAMP_HORIZ_LIMIT 			3L		// equivalent stick units - no larger than 5
+#define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
+#define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
 
 // Gyros
 
+#define ATTITUDE_FF_DIFF		24L			// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
+
+#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
+											// unfortunately there seems to be a leak which cause the roll/pitch 
+											// to increase without the decay.
+
 // Adds a delay between gyro neutral acquisition samples (16)
-#define GYRO_ERECT_DELAY		1		// x 64 x 100mS 
+#define GYRO_ERECT_DELAY		1			// x 64 x 100mS 
 
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
@@ -119,27 +106,34 @@
 
 // Altitude Hold
 
-#define ALT_BAND_CM				200L	// Cm.
+#define ALT_BAND_CM				200L		// Cm.
 
-// Throttle reduction/increase limits for Baro Alt Comp
+#define MAX_DESCENT_CMPS		-50L 		// Cm./Sec
+#define DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
+#define LAND_CM					300L		// Cm. deemed to have landed when below this height
 
-#define MAX_DESCENT_CMPS			-50L 	// Cm./Sec
-#define DESCENT_TRANS_CM			1500L	// Cm. Altitude at which final descent starts 
-#define LAND_CM						300L	// Cm. deemed to have landed when below this height
+#define ALT_LOW_THR_COMP		-7L			// Stick units
+#define ALT_HIGH_THR_COMP		30L
 
-#define ALT_LOW_THR_COMP			-7L		// Stick units
-#define ALT_HIGH_THR_COMP			30L
-
-#define ALT_INT_WINDUP_LIMIT		4L
-#define ALT_INT_LIMIT				4L
-#define ALT_DIFF_LIMIT				4L
+#define ALT_INT_WINDUP_LIMIT	4L
+#define ALT_INT_LIMIT			4L
+#define ALT_DIFF_LIMIT			4L
 
 // the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM				500L	// Cm.
+#define GPS_ALT_BAND_CM			500L		// Cm.
 
 // Navigation
 
 #define NAV_ACQUIRE_BEEPER
+
+//#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
+
+#define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
+
+#define NAV_MAX_ROLL_PITCH 			25L	// Rx stick units
+#define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
+#define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
+#define NAV_INT_WINDUP_LIMIT		64L	// ???
 
 #define NAV_ENFORCE_ALTITUDE_CEILING	// limit all autonomous altitudes
 #define NAV_CEILING				120L	// 400 feet
@@ -637,6 +631,8 @@ enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, N
 	Terminating };
 enum FailStates { MonitoringRx, Aborting, Returning, Terminated };
 
+extern int16 NavRCorr, NavPCorr;
+
 extern near uint8 FailState;
 extern WayPoint WP;
 extern uint8 CurrWP;
@@ -891,7 +887,9 @@ extern void InitI2CESCs(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
+enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 #define NoOfPWMOutputs 		4
+#define NoOfI2CESCOutputs 		4 // zzz Hexacopter etc.
 
 extern int16 PWM[6];
 extern boolean ESCI2CFail[4];
@@ -1102,10 +1100,10 @@ enum TraceTags {
 	TLRIntCorr, TFBIntCorr,
 	TDesiredThrottle,
 	TDesiredRoll, TDesiredPitch, TDesiredYaw,
-	TMFront, TMBack, TMLeft, TMRight,
-	TMCamRoll, TMCamPitch
+	TPWM0, TPWM1, TPWM2, TPWM3,
+	TPWM4, TPWM5
 	};
-#define TopTrace TMCamPitch
+#define TopTrace TPWM5
 
 extern int16 Trace[];
 extern int8 BatteryVolts;

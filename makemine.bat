@@ -23,18 +23,18 @@ rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
 
 set VERSION=1_0m3_
 
-rem Add/Delete required combinations to these sets
+rem Personal choice
 rem set CLOCK=CLOCK_16MHZ
-rem set PROC=18F2620
-rem set DBG=NO_DEBUG DEBUG_SENSORS 
+rem set PROC=18F2520
+rem set DBG=NO_DEBUG DEBUG_SENSORS
 rem set RX=RX7CH RX6CH
-rem set CDEG=C270
-rem set CFG=QUADROCOPTER
+rem set CDEG=C90 C270
+rem set CFG=QUADROCOPTER TRICOPTER HELICOPTER FIXEDWING DELTAWING
 
 rem Personal choice
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
-set DBG=NO_DEBUG DEBUG_SENSORS
+set DBG=NO_DEBUG
 set RX=RX7CH
 set CDEG=C270
 set CFG=QUADROCOPTER

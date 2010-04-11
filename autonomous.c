@@ -135,8 +135,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
-
-
 	if ( !F.NavComputed ) 
 	{
 		EastDiff = DesiredLongitude - GPSLongitude;
@@ -171,6 +169,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
 				NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
 			}
+
 			#else // MULTICOPTER
 
 			// direct solution make North and East coordinate errors zero

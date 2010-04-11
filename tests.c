@@ -679,15 +679,19 @@ void ConfigureESCs(void)
 	if ( P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
-		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 		{
 			TxString("Connect ONLY ");
 			switch( m )
 			{
-				case 0 : TxString("Front"); break;
-				case 1 : TxString("Back");  break;
-				case 2 : TxString("Right"); break;
-				case 3 : TxString("Left");  break;
+				#ifdef HEXACOPTER
+					not yet!
+				#else
+					case 0 : TxString("Front"); break;
+					case 1 : TxString("Back");  break;
+					case 2 : TxString("Right"); break;
+					case 3 : TxString("Left");  break;
+				#endif // HEXACOPTER
 			}
 			TxString(" ESC, then press any key \r\n");
 			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button

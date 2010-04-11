@@ -34,18 +34,19 @@ set T=
 set R=
 set B=
 set C=
-rem if "%DBG%"   == "DEBUG_MOTORS"      set D=-Debug_MOTORS
-if "%DBG%"   == "DEBUG_SENSORS"     set D=-Debug_SENSORS
+rem if "%DBG%" == "DEBUG_MOTORS" 	set D=-Debug_MOTORS
+if "%DBG%" == "DEBUG_SENSORS"     	set D=-Debug_SENSORS
 
-if "%CFG%"    == "QUADROCOPTER"           set C=-QUAD
-if "%CFG%"    == "TRICOPTER"           set C=-TRI
-if "%CFG%" == "HELICOPTER"				set C=-HELI
-if "%CFG%" == "FIXEDWING"				set C=-WING
+if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
+if "%CFG%" == "TRICOPTER"           set C=-TRI
+if "%CFG%" == "HELICOPTER"			set C=-HELI
+if "%CFG%" == "FIXEDWING"			set C=-WING
+if "%CFG%" == "DELTAWING"			set C=-DELTA
 
 if "%RX%" == "RX6CH"	set R=-6CH
-if "%CLOCK%"    == "CLOCK_16MHZ"           set X=-16
-if "%CLOCK%"    == "CLOCK_40MHZ"           set X=-40
-if "%COFFSET%"    == "C90"           set O=-90D
+if "%CLOCK%" == "CLOCK_16MHZ"    	set X=-16
+if "%CLOCK%" == "CLOCK_40MHZ"     	set X=-40
+if "%COFFSET%" == "C90"           	set O=-90D
 
 
 set CC="C:\MCC18\bin\mcc18" 
@@ -67,19 +68,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.447gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.448gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX-V1.447gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo compiled - UAVX-V1.447gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX-V1.448gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo compiled - UAVX-V1.448gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX-V1.447gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
-echo failed - UAVX-V1.447gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX-V1.448gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo failed - UAVX-V1.448gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

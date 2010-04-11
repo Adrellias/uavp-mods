@@ -94,20 +94,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		NewAltComp = AltP + AltI + AltDSum;
 		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
 		AltComp = SlewLimit(AltComp, NewAltComp, 2);
-/*
-if ( State == InFlight )
-{
-TxVal32(mS[Clock],3,' ');
-TxVal32(BE,2,' ');
-TxVal32(AltP,0,' ');
-TxVal32(AltI,0,' ');
-TxVal32(AltDiffSum,0,' ');
-TxVal32(AltDSum,0,' ');
-TxVal32(NewAltComp,0,' ');
-TxVal32(AltComp,0,' ');
-TxNextLine();
-}
-*/
+
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
@@ -426,12 +413,11 @@ void StopMotors(void)
 	static uint8 m;
 
 	#ifdef MULTICOPTER
-	for (m = 0; m < NoOfPWMOutputs; m++)
-		PWM[m] = ESCMin;
+		for (m = 0; m < NoOfPWMOutputs; m++)
+			PWM[m] = ESCMin;
 	#else
-	PWM[ThrottleC] = ESCMin;
-	PWM[AileronC], PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
-
+		PWM[ThrottleC] = ESCMin;
+		PWM[1], PWM[2] = PWM[3] = OUT_NEUTRAL;
 	#endif // MULTICOPTER
 
 	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;

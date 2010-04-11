@@ -88,7 +88,7 @@ const rom int8 DefaultParams[] = {
 	1,				// HorizDampDecay	43c
 	70,				// BaroScale		44c
 	0,				// TelemetryType	45c
-	3,				// MaxDescentRateDmpS 	46
+	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	12,				// NavIntLimit		48
 	3,				// AltIntLimit		49
@@ -247,7 +247,7 @@ void ReadParametersEE(void)
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
-		DescentCmpS = -(int16)P[MaxDescentRateDmpS] * 10L; // cm/S
+		DescentCmpS = (int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
 		BatteryVoltsADC = (int16)P[LowVoltThres] << 3;
 		

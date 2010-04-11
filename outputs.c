@@ -112,42 +112,46 @@ void CheckDemand(int16 CurrThrottle)
 
 void MixAndLimitMotors(void)
 { 	// expensive ~400uSec @16MHz
-    static int16 Temp, CurrThrottle;
+    static int16 Temp, CurrThrottle, TempElevon, TempElevator;
 
 	#ifdef MULTICOPTER
-	if ( DesiredThrottle < IdleThrottle )
-		CurrThrottle = 0;
-	else
-		CurrThrottle = DesiredThrottle + (DUComp + AltComp); // vertical compensation not optional
-	
-	Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
-	CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
-	
-	if ( CurrThrottle > IdleThrottle )
-	{
-		DoMix(CurrThrottle);
-	
-		CheckDemand(CurrThrottle);
-	
-		if ( MotorDemandRescale )
+		if ( DesiredThrottle < IdleThrottle )
+			CurrThrottle = 0;
+		else
+			CurrThrottle = DesiredThrottle + (DUComp + AltComp); // vertical compensation not optional
+		
+		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
+		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
+		
+		if ( CurrThrottle > IdleThrottle )
+		{
 			DoMix(CurrThrottle);
-	}
-	else
-		PWM[FrontC] = PWM[BackC] = 
-		PWM[LeftC] = PWM[RightC] = CurrThrottle;
-
-	PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
-	PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
-	PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
-	PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
-
+		
+			CheckDemand(CurrThrottle);
+		
+			if ( MotorDemandRescale )
+				DoMix(CurrThrottle);
+		}
+		else
+			PWM[FrontC] = PWM[BackC] = 
+			PWM[LeftC] = PWM[RightC] = CurrThrottle;
+	
+		PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
+		PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
+		PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
+		PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
 	#else
-
-	PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
-	PWM[AileronC] = Limit(PWM_AILERON_SENSE * Rl, ESCMin, ESCMax);
-	PWM[ElevatorC] = Limit(PWM_ELEVATOR_SENSE * Pl, ESCMin, ESCMax);
-	PWM[RudderC] = Limit(PWM_RUDDER_SENSE * Yl, ESCMin, ESCMax);
-
+		PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
+		PWM[RudderC] = Limit(PWM3_SENSE * Yl, ESCMin, ESCMax);
+		#ifdef DELTAWING
+			TempElevon = PWM1_SENSE * Rl;
+			TempElevator = PWM2_SENSE * Pl;
+			PWM[RightElevonC] = Limit( TempElevator + TempElevon, ESCMin, ESCMax);
+			PWM[LeftElevonC] = Limit( TempElevator - TempElevon, ESCMin, ESCMax);			
+		#else
+			PWM[AileronC] = Limit(PWM1_SENSE * Rl, ESCMin, ESCMax);
+			PWM[ElevatorC] = Limit(PWM2_SENSE * Pl, ESCMin, ESCMax);
+		#endif
 	#endif // MULTICOPTER
 
 } // MixAndLimitMotors
@@ -187,13 +191,13 @@ void OutSignals(void)
 	Trace[TDesiredPitch] = DesiredPitch;
 	Trace[TDesiredYaw] = DesiredYaw;
 
-	Trace[TMFront] = PWM[FrontC];
-	Trace[TMBack] = PWM[BackC];
-	Trace[TMLeft] = PWM[LeftC];
-	Trace[TMRight] = PWM[RightC];
+	Trace[TPWM0] = PWM[0];
+	Trace[TPWM1] = PWM[1];
+	Trace[TPWM2] = PWM[2];
+	Trace[TPWM3] = PWM[3];
 
-	Trace[TMCamRoll] = PWM[CamRollC];
-	Trace[TMCamPitch] = PWM[CamPitchC];
+	Trace[TPWM4] = PWM[CamRollC];
+	Trace[TPWM5] = PWM[CamPitchC];
 
 	#else // !DEBUG_SENSORS
 
@@ -229,15 +233,22 @@ void OutSignals(void)
 		PORTB |= 0x0f;
 	
 		#ifdef MULTICOPTER	
-		PWM0 = PWM[FrontC];
-		PWM1 = PWM[LeftC];
-		PWM2 = PWM[RightC];
-		PWM3 = PWM[BackC];
+			PWM0 = PWM[FrontC];
+			PWM1 = PWM[LeftC];
+			PWM2 = PWM[RightC];
+			PWM3 = PWM[BackC];
 		#else
-		PWM0 = PWM[ThrottleC];
-		PWM1 = PWM[AileronC];
-		PWM2 = PWM[ElevatorC];
-		PWM3 = PWM[RudderC];
+			#ifdef DELTAWING
+				PWM0 = PWM[ThrottleC];
+				PWM1 = PWM[RightElevonC];
+				PWM2 = PWM[LeftElevonC];
+				PWM3 = PWM[RudderC];
+			#else
+				PWM0 = PWM[ThrottleC];
+				PWM1 = PWM[AileronC];
+				PWM2 = PWM[ElevatorC];
+				PWM3 = PWM[RudderC];
+			#endif
 		#endif // MULTICOPTER
 
 		PWM4 = PWM[CamRollC];
@@ -323,7 +334,7 @@ OS006:
 		// ACK (r) not checked as no recovery is possible.
 		// All motors driven with fourth motor ignored for Tricopter.	
 		if ( P[ESCType] ==  ESCHolger )
-			for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
@@ -332,7 +343,7 @@ OS006:
 			}
 		else
 			if ( P[ESCType] == ESCYGEI2C )
-				for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+				for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 				{
 					ESCI2CStart();
 					r = SendESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
@@ -348,6 +359,7 @@ OS006:
 					r = SendESCI2CByte( PWM[BackC] );
 					r = SendESCI2CByte( PWM[LeftC] );
 					r = SendESCI2CByte( PWM[RightC] );
+//  other ESCs if a Hexacopter
 					ESCI2CStop();
 				}
 		#endif //  MULTICOPTER
@@ -422,7 +434,7 @@ void InitI2CESCs(void)
 	#ifdef MULTICOPTER
 
 	if ( P[ESCType] ==  ESCHolger )
-		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 		{
 			ESCI2CStart();
 			r = SendESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor

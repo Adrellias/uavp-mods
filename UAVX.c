@@ -59,6 +59,26 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
+	/*
+	// San Antonio International
+	DesiredLatitude = 177149682;
+	DesiredLongitude = -590839506;
+	
+	GPSLatitude = 177146460;
+	GPSLongitude = -590839822; 
+	Heading = 3142;
+	NavSensitivity = 200;
+	
+	while ( true)
+	{
+		F.NavComputed = false;
+		Navigate(DesiredLatitude,DesiredLongitude); 
+		GPSLatitude += NavPCorr; // matches heading 3142
+		GPSLongitude -= NavRCorr;
+		ProcessCommand(); // IMPORTANT otherwise PIC will need a rewrite!!!
+	}
+	*/
+
 	ShowSetup(1);
 
 	FirstPass = true;
