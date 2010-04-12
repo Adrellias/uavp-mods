@@ -237,81 +237,11 @@ void Navigate(int24 GPSNorthWay, int24 GPSEastWay )
 
 } // Navigate
 
-void FakeFlight()
-{
-	#ifdef FAKE_FLIGHT
-
-	static int16 CosH, SinH, A;
-
-	#define FAKE_NORTH_WIND 	20L
-	#define FAKE_EAST_WIND 		0L
-    #define SCALE_VEL			256L
-
-	if ( Armed )
-	{
-		Heading = MILLIPI;
-	
-		GPSEast = 5000L; GPSNorth = 5000L;
-		InitNavigation();
-
-		TxString(" Sens MRP Eff East North Head DRoll DPitch DYaw ");
-		TxString("EP EI ES ED EC | NP NI NS ND NC | RC PC | P CP\r\n");
-	
-		while ( Armed )
-		{
-			UpdateControls();
-
-			DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			Heading += DesiredYaw / 5;
-
-			F.GPSValid = F.NavValid = F.CompassValid = true;
-			F.NavComputed = false;
-			if (( NavSensitivity > NAV_GAIN_THRESHOLD ) && F.NewCommands )
-			{
-				Navigate(0,0);
-
-				Delay100mSWithOutput(5);
-				CosH = int16cos(Heading);
-				SinH = int16sin(Heading);
-				GPSEast += ((int32)(-DesiredPitch) * SinH * 10L) / SCALE_VEL;
-				GPSNorth += ((int32)(-DesiredPitch) * CosH * 10L) / SCALE_VEL;
-				
-				A = Make2Pi(Heading + HALFMILLIPI);
-				CosH = int16cos(A);
-				SinH = int16sin(A);
-				GPSEast += ((int32)DesiredRoll * SinH * 10L) / SCALE_VEL;
-				GPSEast += FAKE_EAST_WIND; // wind	
-				GPSNorth += ((int32)DesiredRoll * CosH * 10L) / SCALE_VEL;
-				GPSNorth += FAKE_NORTH_WIND; // wind
-			
-				TxVal32((int32)NavSensitivity,0,' ');
-				TxVal32((int32)CurrMaxRollPitch,0,' ');
-				TxVal32((int32)EffNavSensitivity,0,' ');
-				TxVal32(GPSEast, 0, ' '); TxVal32(GPSNorth, 0, ' '); TxVal32(Heading, 0, ' '); 
-				TxVal32((int32)DesiredRoll, 0, ' '); TxVal32((int32)DesiredPitch, 0, ' '); 
-				TxVal32((int32)DesiredYaw, 0, ' ');
-				TxVal32((int32)EastP, 0, ' '); TxVal32((int32)EastI, 0, ' '); 
-				TxVal32((int32)EastDiffSum, 0, ' '); TxVal32((int32)EastD, 0, ' '); 
-				TxVal32((int32)EastCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)NorthP, 0, ' '); TxVal32((int32)NorthI, 0, ' '); 
-				TxVal32((int32)NorthDiffSum, 0, ' '); TxVal32((int32)NorthD, 0, ' ');
-				TxVal32((int32)NorthCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)NavRCorr, 0, ' ');
-				TxVal32((int32)NavPCorr, 0, ' ');
-				TxString("| ");
-				TxVal32((int32)F.Proximity, 0, ' ');
-				TxVal32((int32)F.CloseProximity, 0, ' ');	
-				TxNextLine();
-			}
-		}
-	}
-	#endif // FAKE_FLIGHT
-} // FakeFlight
-
 void DoNavigation(void)
 {
+
+	F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
+
 	switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 	case Touchdown:
 		Navigate(0, 0);
@@ -360,7 +290,7 @@ void DoNavigation(void)
 		if ( F.Navigate || F.ReturnHome )
 		{
 			SetDesiredAltitude(WPAltitude); // at least hold altitude!
-	 		if ( Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT ) // nearly level to engage!
+	 		if ( F.NearLevel ) // nearly level to engage!
 			{
 				Navigate(WPNorth, WPEast);
 				if ( F.Proximity )

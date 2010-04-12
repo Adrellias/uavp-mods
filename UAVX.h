@@ -33,10 +33,10 @@
 #define DEFAULT_TELEMETRY 			0	// 0 None, 1 GPS, 2 Data
 // Debugging
 
-//#define FAKE_FLIGHT					// For testing Nav on the GROUND!
-
 //#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-//#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
+#ifdef CLOCK_16MHZ
+	#define TESTS_FULL_STATS				// show flight stats otherwise use UAVXNav
+#endif 
 //#define TESTS_FULL					// increases information displayed in tests but increases code size
 
 // =================================================================================================
@@ -609,7 +609,6 @@ extern void DoFailsafeLanding(void);
 extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
-extern void FakeFlight(void); 
 extern void DoPPMFailsafe(void);
 extern void WriteWayPointEE(uint8, int32, int32, int16, uint8);
 extern void UAVXNavCommand(void);
@@ -618,7 +617,7 @@ extern void InitNavigation(void);
 
 typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
-enum NavStates { HoldingStation, AtHome, Descending, Touchdown, Navigating, Loitering,
+enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering,
 	Terminating };
 enum FailStates { Waiting, Aborting, Returning, Terminated };
 

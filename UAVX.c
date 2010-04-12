@@ -74,12 +74,6 @@ void main(void)
 		State = Starting;
 		F.MotorsArmed = true;
 
-		#ifdef FAKE_FLIGHT 
-
-		FakeFlight();
-
-		#else
-
 		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
 	
@@ -177,7 +171,6 @@ void main(void)
 			DumpTrace();
 		
 		} // flight while armed
-		#endif // FAKE_FLIGHT
 	}
 } // main
 
