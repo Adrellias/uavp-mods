@@ -61,19 +61,33 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
+<<<<<<< .mine
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.451gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
+=======
 %LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX-V1.455gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> log.lst 
+>>>>>>> .r458
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
+<<<<<<< .mine
+echo compiled - UAVX-V1.451gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo compiled - UAVX-V1.451gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+=======
 echo compiled - UAVX-V1.455gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
 echo compiled - UAVX-V1.455gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+>>>>>>> .r458
 call makeclean.bat
 goto FINISH
 
 :FAILED
+<<<<<<< .mine
+echo failed - UAVX-V1.451gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
+echo failed - UAVX-V1.451gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+=======
 echo failed - UAVX-V1.455gke-%PROC%%X%%R%%O%%C%%D%%T%.hex
 echo failed - UAVX-V1.455gke-%PROC%%X%%R%%O%%C%%D%%T%.hex >> gen.lst
+>>>>>>> .r458
 rem don't delete working files
 
 :FINISH
