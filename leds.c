@@ -74,7 +74,7 @@ void LEDGame(void)
 	if( --LEDCycles == 0 )
 	{
 		LEDCycles = (( 255 - DesiredThrottle ) >> 3) + 5;	// new setup
-		if( F.HoldingAlt )
+		if( F.Hovering )
 			AUX_LEDS_ON;	// baro locked, all Aux-LEDs on
 		else
 			if( LEDShadow & AUX1M )

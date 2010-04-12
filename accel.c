@@ -31,13 +31,8 @@ void InitLISL(void);
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
 
-//#ifdef CLOCK_16MHZ
-	#define SPI_HI_DELAY Delay10TCY()
-	#define SPI_LO_DELAY Delay10TCY()
-//#else // CLOCK_40MHZ
-//	#define SPI_HI_DELAY Delay10TCYx(2)
-//	#define SPI_LO_DELAY Delay10TCYx(2)
-//#endif // CLOCK_16MHZ
+#define SPI_HI_DELAY Delay10TCY()
+#define SPI_LO_DELAY Delay10TCY()
 
 // LISL-Register mapping
 
@@ -100,7 +95,7 @@ uint8 ReadLISL(uint8 c)
 {
 	static uint8 d;
 
-	//SPI_SDA = 1;	// very important!! really!! LIS3L likes it
+//	SPI_SDA = 1;	// very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
 	d=ReadLISLNext();
@@ -133,6 +128,7 @@ void WriteLISL(uint8 d, uint8 c)
 	static int8 s;
 
 	SendCommand(c);
+
 	for( s = 8; s; s-- )
 	{
 		SPI_SCL = 0;
@@ -160,9 +156,9 @@ void IsLISLActive(void)
 	r = ReadLISL(LISL_WHOAMI + LISL_READ);
 	if( r == 0x3A )	// a LIS03L sensor is there!
 	{
-		WriteLISL(0b11000111, LISL_CTRLREG_1); // on always, 40Hz, enable all axis
+		WriteLISL(0b11000111, LISL_CTRLREG_1); // startup, enable all axis
 		WriteLISL(0b00000000, LISL_CTRLREG_3);
-		WriteLISL(0b01000000, LISL_FF_CFG); // latch, no interrupts; 
+		WriteLISL(0b01001000, LISL_FF_CFG); // Y-axis is height
 		WriteLISL(0b00000000, LISL_FF_THS_L);
 		WriteLISL(0b11111100, LISL_FF_THS_H); // -0,5g threshold
 		WriteLISL(255, LISL_FF_DUR);
@@ -178,7 +174,7 @@ void InitLISL(void)
 	NeutralLR = 0;
 	NeutralFB = 0;
 	NeutralDU = 0;
-
+	#ifdef USE_ACCELEROMETER
 	IsLISLActive();	
 	if( F.AccelerationsValid )
 	{
@@ -186,28 +182,28 @@ void InitLISL(void)
 		GetNeutralAccelerations();
 		LEDYellow_OFF;
 	}
+	#endif  // USE_ACCELEROMETER
 } // InitLISL
 
 void ReadAccelerations()
 {
-	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == 0x3a; // Acc still there?
-	if ( F.AccelerationsValid ) 
+	static uint8 r;
+
+	r = ReadLISL(LISL_STATUS + LISL_READ);
+
+	Ax.b0  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
+	Ax.b1 = ReadLISLNext();
+	Ay.b0  = ReadLISLNext();
+	Ay.b1 = ReadLISLNext();
+	Az.b0  = ReadLISLNext();
+	Az.b1 = ReadLISLNext();
+	SPI_CS = DSEL_LISL;	// end transmission
+
+	if ( ((r & 0xf0) != 0) && (State == InFlight) ) 
 	{
-		Ax.b0  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
-		Ax.b1 = ReadLISLNext();
-		Ay.b0  = ReadLISLNext();
-		Ay.b1 = ReadLISLNext();
-		Az.b0  = ReadLISLNext();
-		Az.b1 = ReadLISLNext();
-		SPI_CS = DSEL_LISL;	// end transmission
+		Stats[AccFailS]++;	// data over run - acc out of range
+		F.AccFailure = true;
 	}
-	else
-		if ( State == InFlight )
-		{
-			Stats[AccFailS]++;	// data over run - acc out of range
-			// use neutral values!!!!
-			F.AccFailure = true;
-		}
 
 } // ReadAccelerations
 
@@ -237,6 +233,6 @@ void GetNeutralAccelerations(void)
 
 	NeutralLR = Limit(Rp, -99, 99);
 	NeutralFB = Limit(Pp, -99, 99);
-	NeutralDU = Limit(Yp - 1024, -99, 99); // -1g
+	NeutralDU = Limit(Yp-1024, -99, 99); // -1g
 } // GetNeutralAccelerations
 

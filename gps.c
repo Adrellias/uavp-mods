@@ -55,16 +55,14 @@ struct {
 #pragma udata gpsvars
 int32 	GPSMissionTime, GPSStartTime;
 int32 	GPSLatitude, GPSLongitude;
-int32 	OriginLatitude, OriginLongitude;
+int32 	GPSOriginLatitude, GPSOriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
-int32 	DesiredLatitude, DesiredLongitude;
-int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
+int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
 int16 	GPSLongitudeCorrection;
 int16 	GPSVel, GPSROC;
 uint8 	GPSNoOfSats;
 uint8 	GPSFix;
 int16 	GPSHDilute;
-int32Q	GPSQ32;
 #pragma udata
 
 #pragma udata gpsvars1
@@ -238,9 +236,9 @@ void SetGPSOrigin(void)
 	if ( ( ValidGPSSentences == GPS_INITIAL_SENTENCES ) && F.GPSValid )
 	{
 		GPSStartTime = GPSMissionTime;
-		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude;
-		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude;
-		GPSVel = 0;
+		GPSOriginLatitude = GPSLatitude;
+		GPSOriginLongitude = GPSLongitude;
+		GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
 		
 		mS[LastGPS] = mS[Clock];
 			
@@ -268,7 +266,7 @@ void SetGPSOrigin(void)
 void ParseGPSSentence(void)
 {
 	static int32 Temp;
-	static int24 LongitudeDiff, LatitudeDiff;
+	static int24 GPSEastDiff, GPSNorthDiff;
 	static int16 GPSVelP;
 	static int24 GPSInterval;
 
@@ -302,18 +300,24 @@ void ParseGPSSentence(void)
 
 			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
+			Temp = GPSLatitude - GPSOriginLatitude;
+			GPSNorth = GPSFilter(GPSNorth, Temp);
+
+			Temp = GPSLongitude - GPSOriginLongitude;
+			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
+			GPSEast = GPSFilter(GPSEast, Temp);
 
 			#ifdef GPS_INC_GROUNDSPEED
 			// nice to have but not essential 
-			LongitudeDiff = GPSLongitude - LongitudeP;
-			LatitudeDiff = GPSLatitude - LatitudeP;
+			GPSEastDiff = GPSEast - GPSEastP;
+			GPSNorthDiff = GPSNorth - GPSNorthP;
 			GPSVelP = GPSVel;
-			Temp = int32sqrt(LongitudeDiff*LongitudeDiff + LatitudeDiff*LatitudeDiff);
-			GPSVel = ConvertGPSToM( (Temp*GPSInterval) / 100L ); // dM/Sec.
+			Temp = int32sqrt(GPSEastDiff*GPSEastDiff + GPSNorthDiff*GPSNorthDiff);
+			GPSVel = ConvertGPSToM( (Temp * GPSInterval) / 100L );
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
 
-			LatitudeP = GPSLatitude;
-			LongitudeP = GPSLongitude;
+			GPSNorthP = GPSNorth;
+			GPSEastP = GPSEast;
 			#endif // GPS_INC_GROUNDSPEED			
 
 			Temp = GPSAltitude - GPSOriginAltitude;
@@ -358,10 +362,7 @@ void InitGPS(void)
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
 	GPSAltitude = 0;
-	GPSVel = 0;
-
-	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;
-	OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude = 0;
+	GPSEast = GPSNorth = GPSVel = 0;
 
 	Write32EE(NAV_ORIGIN_LAT, 0);
 	Write32EE(NAV_ORIGIN_LON, 0);

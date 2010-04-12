@@ -34,20 +34,13 @@ set T=
 set R=
 set B=
 set C=
-rem if "%DBG%" == "DEBUG_MOTORS" 	set D=-Debug_MOTORS
-if "%DBG%" == "DEBUG_SENSORS"     	set D=-Debug_SENSORS
-
-if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
-if "%CFG%" == "TRICOPTER"           set C=-TRI
-if "%CFG%" == "HELICOPTER"			set C=-HELI
-if "%CFG%" == "FIXEDWING"			set C=-WING
-if "%CFG%" == "DELTAWING"			set C=-DELTA
-
+rem if "%DBG%"   == "DEBUG_MOTORS"      set D=-Debug_MOTORS
+if "%DBG%"   == "DEBUG_SENSORS"     set D=-Debug_SENSORS
+if "%CFG%"    == "TRICOPTER"           set C=-TRI
 if "%RX%" == "RX6CH"	set R=-6CH
-if "%CLOCK%" == "CLOCK_16MHZ"    	set X=-16
-if "%CLOCK%" == "CLOCK_40MHZ"     	set X=-40
-if "%COFFSET%" == "C90"           	set O=-90D
-
+if "%CLOCK%"    == "CLOCK_16MHZ"           set X=-16
+if "%CLOCK%"    == "CLOCK_40MHZ"           set X=-40
+if "%COFFSET%"    == "C90"           set O=-90D
 
 set CC="C:\MCC18\bin\mcc18" 
 set CCMD=  -Oi -w1 -Opa- -DBATCHMODE

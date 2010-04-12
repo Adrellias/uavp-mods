@@ -26,6 +26,7 @@ uint8 ScanI2CBus(void);
 void ReceiverTest(void);
 void GetCompassParameters(void);
 void DoCompassTest(void);
+void CompassRun(void);
 void CalibrateCompass(void);
 void BaroTest(void);
 void PowerOutput(int8);
@@ -53,8 +54,6 @@ void DoLEDs(void)
 
 void LinearTest(void)
 {
-	#ifdef TESTS_ALL
-
 	TxString("\r\nAccelerometer test:\r\n");
 	TxString("Read once - no averaging\r\n");
 	if( F.AccelerationsValid )
@@ -88,7 +87,6 @@ void LinearTest(void)
 	}
 	else
 		TxString("\r\n(Acc. not present)\r\n");
-	#endif // TESTS_ALL
 } // LinearTest
 
 uint8 ScanI2CBus(void)
@@ -354,6 +352,29 @@ CTerror:
 	TxString("FAIL\r\n");
 } // DoCompassTest
 
+void CompassRun(void)
+{
+	#ifdef TESTS_FULL
+
+	int16 i, r, Temp;
+	static i16u Compass;	
+
+	for (i = 0; i < 32000; i++)
+	{
+		I2CStart();
+		F.CompassMissRead |= SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
+		Compass.b1 = RecvI2CByte(I2C_ACK);
+		Compass.b0 = RecvI2CByte(I2C_NACK);
+		I2CStop();
+		
+		TxVal32((int32) mS[Clock],3,' ');
+
+		TxVal32((int32) Compass.i16,1,' ');
+		TxNextLine();
+	}
+	#endif // TESTS_FULL
+} // CompassRun
+
 void CalibrateCompass(void)
 {	// calibrate the compass by rotating the ufo through 720 deg smoothly
 	TxString("\r\nCalib. compass - Press any key (x) to continue\r\n");	
@@ -431,15 +452,15 @@ void BaroTest(void)
 	{
 		GetRangefinderAltitude();
 		TxVal32((int32)RangefinderAltitude, 2, ' ');
-		TxString("M\r\n");
+		TxString("M");
 	}
 	else
-		TxString("no rangefinder\r\n");	
+		TxString("no range");	
+	TxNextLine();
 
 	return;
 BAerror:
 	TxString("FAIL\r\n");
-
 } // BaroTest
 
 void PowerOutput(int8 d)
@@ -497,13 +518,12 @@ void LEDsAndBuzzer(void)
 	SendLEDs();	
 	TxString("Test Finished\r\n");
 	#else
-	TxString("/r/nTest not available\r\n");
+	TxString("Test not available\r\n");
 	#endif // TESTS_FULL		
 } // PowerOutput
 
 void GPSTest(void)
 {
-	#ifdef TESTS_ALL
 	uint8 ch; 
 
 	TxString("\r\nGPS test\r\n");
@@ -541,12 +561,17 @@ void GPSTest(void)
 				TxChar(' ');
 			
 			TxString(" fx="); TxVal32(GPSFix, 0, ' ');
-			TxString("s="); TxVal32(GPSNoOfSats, 0, ' ');	
+	
+			TxString("s="); TxVal32(GPSNoOfSats, 0, ' ');
+	
 			TxString("hd="); TxVal32(GPSHDilute, 2, ' ');
+
 			SetGPSOrigin();
-			TxString("ra="); TxVal32(GPSRelAltitude, 2, 'M');	
-			TxString(" re="); TxVal32((int32)ConvertGPSToM(GPSLongitude-OriginLongitude) ,0 , 'M'); 	
-			TxString(" rn="); TxVal32((int32)ConvertGPSToM(GPSLatitude-OriginLatitude) ,0 ,'M');
+			TxString("ra="); TxVal32(GPSRelAltitude, 2, 'M');
+	
+			TxString(" re="); TxVal32((int32)ConvertGPSToM(GPSEast) ,0 , 'M'); 	
+			TxString(" rn="); TxVal32((int32)ConvertGPSToM(GPSNorth) ,0 ,'M');
+
 			TxNextLine();
 		}	
 		F.GPSValid = false;	
@@ -556,8 +581,6 @@ void GPSTest(void)
 	TxString("Set Baud Rate to 38.4Kb \r\n");
 	ReceivingGPSOnly(false);
  	F.GPSTestActive = false;
-
-	#endif // TESTS_ALL
 	
 } // GPSTest
 
@@ -679,19 +702,15 @@ void ConfigureESCs(void)
 	if ( P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
-		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
+		for ( m = 0 ; m < NoOfMotors ; m++ )
 		{
 			TxString("Connect ONLY ");
 			switch( m )
 			{
-				#ifdef HEXACOPTER
-					not yet!
-				#else
-					case 0 : TxString("Front"); break;
-					case 1 : TxString("Back");  break;
-					case 2 : TxString("Right"); break;
-					case 3 : TxString("Left");  break;
-				#endif // HEXACOPTER
+				case 0 : TxString("Front"); break;
+				case 1 : TxString("Back");  break;
+				case 2 : TxString("Right"); break;
+				case 3 : TxString("Left");  break;
 			}
 			TxString(" ESC, then press any key \r\n");
 			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button

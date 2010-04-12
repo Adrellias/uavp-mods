@@ -31,25 +31,17 @@ void GetRangefinderAltitude(void)
 {
 	static int16 Temp;
 
-	if ( F.RangefinderAltitudeValid )
+	Temp = ADC(ADCAltChan);
+	if ( mS[Clock] > mS[RangefinderROCUpdate] )
 	{
-		Temp = ADC(ADCAltChan);
-		if ( mS[Clock] > mS[RangefinderROCUpdate] )
-		{
-			mS[RangefinderROCUpdate] = mS[Clock] + 1000; // 1 Sec.
-			RangefinderROC = Temp - RangefinderAltitude;
-		}
-		RangefinderAltitude = Temp;
+		mS[RangefinderROCUpdate] = mS[Clock] + 1000; // 1 Sec.
+		RangefinderROC = Temp - RangefinderAltitude;
 	}
-	else
-		RangefinderAltitude = RangefinderROC = 0;
+	RangefinderAltitude = Temp;	
 } // GetRangefinderAltitude
 
 void InitRangefinder(void)
 {
-	static int16 Temp;
-
-	Temp = ADC(ADCAltChan);
-	F.RangefinderAltitudeValid = !(Temp > 573) && (Temp < 778); // 2.8-3.8V => supply not RF
 	GetRangefinderAltitude();
+	F.RangefinderAltitudeValid = RangefinderAltitude < 100; // old UAVP will be 3.3V or ~600 
 } // InitRangefinder

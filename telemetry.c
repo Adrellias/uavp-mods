@@ -55,7 +55,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	case UAVXFlightPacketTag:
 
 		TxESCu8(UAVXFlightPacketTag);
-		TxESCu8(33 + FLAG_BYTES);
+		TxESCu8(37 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			TxESCu8(F.AllFlags[b]); 
 		
@@ -77,12 +77,15 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);
 		TxESCi16(DUAcc);
+		TxESCi8((int8)LRComp);
+		TxESCi8((int8)FBComp);
+		TxESCi8((int8)DUComp);
+		TxESCi8((int8)AltComp);
 		
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
 	
 	case UAVXNavPacketTag:
-		F.TxToBuffer = true;
 		TxESCu8(UAVXNavPacketTag);
 		TxESCu8(46);
 	
@@ -111,8 +114,8 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi32(GPSLongitude); 
 
 		TxESCi24(DesiredAltitude);
-		TxESCi32(DesiredLatitude); 
-		TxESCi32(DesiredLongitude);
+		TxESCi32(GPSOriginLatitude + GPSNorth); 
+		TxESCi32(GPSOriginLongitude + GPSEast);
 		
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;

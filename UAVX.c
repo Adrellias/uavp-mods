@@ -27,7 +27,7 @@
 #include "uavx.h"
 
 Flags 	F;
- 
+  
 void main(void)
 {
 	static int16	Temp;
@@ -59,26 +59,6 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
-	/*
-	// San Antonio International
-	DesiredLatitude = 177149682;
-	DesiredLongitude = -590839506;
-	
-	GPSLatitude = 177146460;
-	GPSLongitude = -590839822; 
-	Heading = 3142;
-	NavSensitivity = 200;
-	
-	while ( true)
-	{
-		F.NavComputed = false;
-		Navigate(DesiredLatitude,DesiredLongitude); 
-		GPSLatitude += NavPCorr; // matches heading 3142
-		GPSLongitude -= NavRCorr;
-		ProcessCommand(); // IMPORTANT otherwise PIC will need a rewrite!!!
-	}
-	*/
-
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -92,6 +72,13 @@ void main(void)
 		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
+		F.MotorsArmed = true;
+
+		#ifdef FAKE_FLIGHT 
+
+		FakeFlight();
+
+		#else
 
 		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
@@ -142,16 +129,14 @@ void main(void)
 						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;
 						else
-						{
-							F.MotorsArmed = false;
+						{		
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
 							State = Landed;
 						}
 					break;
 				case InFlight:
-					F.MotorsArmed = true;
-					if ( F.GPSValid && F.CompassValid  && F.NewCommands 
+					if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands 
 						&& ( mS[Clock] > mS[NavActiveTime]) )
 						DoNavigation();
 
@@ -166,7 +151,7 @@ void main(void)
 				} // Switch State
 				F.LostModel = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-				FailState = MonitoringRx;
+				FailState = Waiting;
 			}
 			else
 				DoPPMFailsafe();
@@ -192,6 +177,7 @@ void main(void)
 			DumpTrace();
 		
 		} // flight while armed
+		#endif // FAKE_FLIGHT
 	}
 } // main
 

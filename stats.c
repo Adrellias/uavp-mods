@@ -72,14 +72,14 @@ void WriteStatsEE()
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
 
-	Temp = ToPercent(CruiseThrottle, OUT_MAXIMUM);
-	WriteEE(PercentCruiseThr, Temp);
+	Temp = ToPercent(HoverThrottle, OUT_MAXIMUM);
+	WriteEE(PercentHoverThr, Temp);
 
 } // WriteStatsEE
 
 void ShowStats(void)
 {
-	#ifdef TESTS_ALL	
+	#ifdef TESTS_FULL_STATS	
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
@@ -98,7 +98,7 @@ void ShowStats(void)
 
 	TxString("\r\nGPS\r\n");
 	#ifdef GPS_INC_GROUNDSPEED 
-	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
+	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 0, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
@@ -106,7 +106,7 @@ void ShowStats(void)
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
-	#endif // TESTS_ALL
+	#endif // TESTS_FULL_STATS
 
 } // ShowStats
 

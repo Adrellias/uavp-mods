@@ -39,6 +39,7 @@ void TxVal32(int32, int8, uint8);
 void TxChar(uint8);
 void TxESCu8(uint8);
 void Sendi16(int16);
+void TxESCi8(int8);
 void TxESCi16(int16);
 void TxESCi24(int24);
 void TxESCi32(int32);
@@ -270,6 +271,13 @@ void TxESCu8(uint8 ch)
   if ((ch==SOH)||(ch==EOT)||(ch==ESC))
 	TxChar(ESC);
   TxChar(ch);
+} // TxESCu8
+
+void TxESCi8(int8 b)
+{
+  if ((b==SOH)||(b==EOT)||(b==ESC))
+	TxChar(ESC);
+  TxChar(b);
 } // TxESCu8
 
 void Sendi16(int16 v)
