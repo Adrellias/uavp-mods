@@ -88,7 +88,7 @@ const rom int8 DefaultParams[] = {
 	1,				// HorizDampDecay	43c
 	70,				// BaroScale		44c
 	0,				// TelemetryType	45c
-	3,				// MaxDescentRateDmpS 	46
+	-10,			// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	12,				// NavIntLimit		48
 	3,				// AltIntLimit		49

@@ -505,7 +505,7 @@ void GetWayPointEE(uint8 wp)
 	static uint16 w;
 
 	CurrWP = wp;	
-	if ( wp > NoOfWayPoints ) 
+	if ( (wp == 0) || (wp > NoOfWayPoints) ) 
 	{  // force to Origin
 		WPEast = WPNorth = 0;
 		WPAltitude = (int16)P[NavRTHAlt];
