@@ -76,6 +76,9 @@ CTerror:
 void InitHeading(void)
 {
 	GetHeading();
+	#ifdef SIMULATE
+		FakeHeading = Heading = 0;
+	#endif // SIMULATE
 	DesiredHeading = Heading;
 	HEp = 0;
 } // InitHeading
@@ -99,5 +102,22 @@ void GetHeading(void)
 	}
 	else
 		Heading = 0;
+
+	#ifdef SIMULATE
+		#if ( defined FIXEDWING | defined DELTAWING )
+			if ( State == InFlight )
+				FakeHeading -= FakeDesiredRoll/5 + FakeDesiredYaw/5;
+		#else
+			if ( State == InFlight )
+			{
+				if ( Abs(FakeDesiredYaw) > 5 )
+					FakeHeading -= FakeDesiredYaw/5;
+			}
+	
+		FakeHeading = Make2Pi((int16)FakeHeading);
+		Heading = FakeHeading;
+		#endif // FIXEDWING | DELTAWING
+
+	#endif // SIMULATE
 } // GetHeading
 

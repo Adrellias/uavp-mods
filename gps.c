@@ -55,15 +55,21 @@ struct {
 #pragma udata gpsvars
 int32 	GPSMissionTime, GPSStartTime;
 int32 	GPSLatitude, GPSLongitude;
-int32 	GPSOriginLatitude, GPSOriginLongitude;
+int32 	OriginLatitude, OriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
-int24 	GPSNorth, GPSEast, GPSNorthP, GPSEastP, GPSNorthHold, GPSEastHold;
+int32 	DesiredLatitude, DesiredLongitude;
+int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
 int16 	GPSVel, GPSROC;
 uint8 	GPSNoOfSats;
 uint8 	GPSFix;
 int16 	GPSHDilute;
+int32Q	GPSQ32;
 #pragma udata
+
+#ifdef SIMULATE
+	int32 FakeGPSLongitude, FakeGPSLatitude;
+#endif // SIMULATE
 
 #pragma udata gpsvars1
 uint8 nll, cc, lo, hi;
@@ -197,8 +203,11 @@ void ParseGPGGASentence(void)
 
 	if ( State == InFlight )
 	{
-		if ( GPSHDilute > Stats[MaxHDiluteS] ) 
-			Stats[MaxHDiluteS] = GPSHDilute; 
+		if ( GPSHDilute > Stats[MaxHDiluteS] )
+		{ 
+			Stats[MaxHDiluteS] = GPSHDilute;
+			F.GPSFailure = GPSHDilute > 150; 
+		}
 		else 
 			if ( GPSHDilute < Stats[MinHDiluteS] ) 
 				Stats[MinHDiluteS] = GPSHDilute;
@@ -210,6 +219,7 @@ void ParseGPGGASentence(void)
 				Stats[GPSMinSatsS] = GPSNoOfSats; 
 	}
 
+	#ifdef TEST_GPS
 	if ( F.GPSTestActive )
 	{
 		TxString("$GPGGA ");
@@ -227,6 +237,7 @@ void ParseGPGGASentence(void)
 			TxString("invalid\r\n");
 		}
 	}
+	#endif // TEST_GPS
 } // ParseGPGGASentence
 
 void SetGPSOrigin(void)
@@ -236,10 +247,15 @@ void SetGPSOrigin(void)
 	if ( ( ValidGPSSentences == GPS_INITIAL_SENTENCES ) && F.GPSValid )
 	{
 		GPSStartTime = GPSMissionTime;
-		GPSOriginLatitude = GPSLatitude;
-		GPSOriginLongitude = GPSLongitude;
-		GPSNorthHold = GPSEastHold = GPSNorthP = GPSEastP = GPSVel = 0;
+		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude;
+		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude;
+		GPSVel = 0;
 		
+		#ifdef SIMULATE
+			FakeGPSLongitude = GPSLongitude;
+			FakeGPSLatitude = GPSLatitude;
+		#endif // SIMULATE
+
 		mS[LastGPS] = mS[Clock];
 			
 		Temp = GPSLatitude/600000L; // to degrees * 10
@@ -266,9 +282,18 @@ void SetGPSOrigin(void)
 void ParseGPSSentence(void)
 {
 	static int32 Temp;
-	static int24 GPSEastDiff, GPSNorthDiff;
+	static int24 LongitudeDiff, LatitudeDiff;
 	static int16 GPSVelP;
 	static int24 GPSInterval;
+
+ 
+	#ifdef SIMULATE
+	static int16 CosH, SinH, A;
+
+	#define FAKE_NORTH_WIND 	0L
+	#define FAKE_EAST_WIND 		0L
+    #define SCALE_VEL			128L
+	#endif // SIMULATE
 
 	cc = 0;
 	nll = NMEA.length;
@@ -300,27 +325,45 @@ void ParseGPSSentence(void)
 
 			// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 			// There is a lot of jitter in position - could use Kalman Estimator?
-			Temp = GPSLatitude - GPSOriginLatitude;
-			GPSNorth = GPSFilter(GPSNorth, Temp);
+		
+			#ifdef SIMULATE
+			if ( State == InFlight )
+			{
+				CosH = int16cos(Heading);
+				SinH = int16sin(Heading);
+				GPSLongitude = FakeGPSLongitude + ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
+				GPSLatitude = FakeGPSLatitude + ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
+								
+				A = Make2Pi(Heading + HALFMILLIPI);
+				CosH = int16cos(A);
+				SinH = int16sin(A);
+				GPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
+				GPSLongitude += FAKE_EAST_WIND; // wind	
+				GPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
+				GPSLatitude += FAKE_NORTH_WIND; // wind
+		
+				FakeGPSLongitude = GPSLongitude;
+				FakeGPSLatitude = GPSLatitude;
 
-			Temp = GPSLongitude - GPSOriginLongitude;
-			Temp = SRS32((int32)Temp * GPSLongitudeCorrection, 8);
-			GPSEast = GPSFilter(GPSEast, Temp);
+				GPSAltitude = RelBaroAltitude + GPSOriginAltitude;
+			}
+			#endif // SIMULATE
 
 			#ifdef GPS_INC_GROUNDSPEED
 			// nice to have but not essential 
-			GPSEastDiff = GPSEast - GPSEastP;
-			GPSNorthDiff = GPSNorth - GPSNorthP;
-			GPSVelP = GPSVel;
-			Temp = int32sqrt(GPSEastDiff*GPSEastDiff + GPSNorthDiff*GPSNorthDiff);
-			GPSVel = ConvertGPSToM( (Temp * GPSInterval) / 100L );
+			LongitudeDiff = GPSLongitude - LongitudeP;
+			LatitudeDiff = GPSLatitude - LatitudeP;
+			Temp = int32sqrt(LongitudeDiff*LongitudeDiff + LatitudeDiff*LatitudeDiff);
+			GPSVel = ConvertGPSToM( (Temp*GPSInterval) / 100L ); // dM/Sec.
 			GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
+			GPSVelP = GPSVel;
 
-			GPSNorthP = GPSNorth;
-			GPSEastP = GPSEast;
+			LatitudeP = GPSLatitude;
+			LongitudeP = GPSLongitude;
 			#endif // GPS_INC_GROUNDSPEED			
 
-			Temp = GPSAltitude - GPSOriginAltitude;
+			Temp = GPSAltitude - GPSOriginAltitude;	
+
 			if ( mS[Clock] > mS[GPSROCUpdate] )
 			{
 				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
@@ -346,10 +389,7 @@ void ParseGPSSentence(void)
 	}
 	else
 		if ( State == InFlight ) 
-		{
 			Stats[GPSInvalidS]++;
-			F.GPSFailure = true;
-		}
 
 } // ParseGPSSentence
 
@@ -362,7 +402,10 @@ void InitGPS(void)
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSRelAltitude = GPSFix = GPSNoOfSats = GPSHDilute = 0;
 	GPSAltitude = 0;
-	GPSEast = GPSNorth = GPSVel = 0;
+	GPSVel = 0;
+
+	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;
+	OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude = 0;
 
 	Write32EE(NAV_ORIGIN_LAT, 0);
 	Write32EE(NAV_ORIGIN_LON, 0);
@@ -389,6 +432,13 @@ void UpdateGPS(void)
 		{
 			F.NavComputed = false;
 			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
+		}
+		else
+		{
+			NavPCorr = DecayX(NavPCorr, 2);
+			NavRCorr = DecayX(NavRCorr, 2);
+			NavYCorr = 0;
+			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
 
 		if ( !F.GPSTestActive )			SendTelemetry();	// Tx overlapped with next GPS packet Rx

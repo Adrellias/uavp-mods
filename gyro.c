@@ -113,7 +113,7 @@ void CompensateRollPitchGyros(void)
 		NewLRAcc = Ax.i16;
 		NewDUAcc = Ay.i16;
 		NewFBAcc = Az.i16;
-		
+
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
@@ -128,6 +128,7 @@ void CompensateRollPitchGyros(void)
 		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
 		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);
 
+		#ifdef XMODE_ACC_COMP
 		if ( F.UsingXMode )
 		{
 			// "Real" LR =  0.707 * (LR + FB), FB = 0.707 * ( FB - LR )
@@ -136,6 +137,7 @@ void CompensateRollPitchGyros(void)
 			FBAcc = (FBAcc * 7L)/10L;
 			LRAcc = (Temp * 7L)/10L;
 		}
+		#endif // XMODE_ACC_COMP
 			
 		// Roll
 

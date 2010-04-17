@@ -34,7 +34,8 @@ void DumpTrace(void);
 
 int16 Trace[TopTrace+1];
 int8 BatteryVolts;
-int16 BatteryVoltsADC;
+int16 BatteryVoltsADC, BatteryCurrentADC;
+int32 BatteryCharge;
 
 void InitPorts(void)
 {
@@ -72,6 +73,8 @@ void InitMisc(void)
 		F.AllFlags[i] = 0;
 	F.BeeperInUse = F.GPSTestActive = false; 
 	F.NavAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
+
+	BatteryCharge = 0;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
 	IdleThrottle = RC_THRES_STOP;
@@ -158,9 +161,14 @@ void CheckAlarms(void)
 {
 	static int16 Temp;
 
+	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
+	//BatteryCurrentADC  = SoftFilter(BatteryCurrentADC, Temp);
+	BatteryCharge += BatteryCurrentADC * (mS[Clock] - mS[LastBattery]); // scaling at GS
+	mS[LastBattery] = mS[Clock];
+
 	Temp = ADC(ADCBattVoltsChan);
 	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
-	BatteryVolts = BatteryVoltsADC >> 3; 
+	BatteryVolts = BatteryVoltsADC >> 3; // still weird units from original UAVP
 	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel;

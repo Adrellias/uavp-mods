@@ -27,7 +27,9 @@
 #include "uavx.h"
 
 Flags 	F;
-  
+
+int16 i; // zzz
+
 void main(void)
 {
 	static int16	Temp;
@@ -59,6 +61,28 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
+/*
+//zzz
+    GPSLatitude = GPSLongitude = 0;
+
+	Heading = 0;
+
+
+while (true)
+{
+
+	for (i=-7000; i< 7000; i++ )
+	{
+TxVal32(i, 0, ' ');
+TxVal32(int16sin(i), 0, ' ');
+TxVal32(int16cos(i), 0, ' ');
+TxNextLine();
+
+	}
+		ProcessCommand();
+
+}
+*/
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -72,7 +96,6 @@ void main(void)
 		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
 	
 		State = Starting;
-		F.MotorsArmed = true;
 
 		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
@@ -123,17 +146,19 @@ void main(void)
 						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;
 						else
-						{		
+						{
+							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
 							State = Landed;
 						}
 					break;
 				case InFlight:
-					if ( F.NavValid && F.GPSValid && F.CompassValid  && F.NewCommands 
+					F.MotorsArmed = true;
+					if ( F.GPSValid && F.CompassValid  && F.NewCommands 
 						&& ( mS[Clock] > mS[NavActiveTime]) )
 						DoNavigation();
-
+					
 					LEDGame();
 					if ( DesiredThrottle < IdleThrottle )
 					{
@@ -145,7 +170,7 @@ void main(void)
 				} // Switch State
 				F.LostModel = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-				FailState = Waiting;
+				FailState = MonitoringRx;
 			}
 			else
 				DoPPMFailsafe();

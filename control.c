@@ -45,7 +45,7 @@ int16 RollTrim, PitchTrim, YawTrim;
 int16 HoldYaw;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
-int16 HoverThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
+int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 int16 DesiredRollP, DesiredPitchP;
 int16 CurrMaxRollPitch;
@@ -76,14 +76,13 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		BE = DesiredAltitude - Altitude;
 		LimBE = Limit(BE, -ALT_BAND_CM, ALT_BAND_CM);
 
-		AltP = SRS16(LimBE * (int16)P[AltKp], 7);
+		AltP = SRS16(LimBE * (int16)P[AltKp], 8);
 		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		AltDiffSum += LimBE;
+		AltDiffSum += Sign(LimBE);
 		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
 		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
 		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
-		AltDiffSum = Decay1(AltDiffSum);
 		 
 		if ( ROC < DescentCmpS )
 		{
@@ -133,17 +132,17 @@ void AltitudeHold()
 
 	if ( F.NavAltitudeHold && ( NavState != HoldingStation ) )
 	{
-		F.Hovering = false;
+		F.HoldingAlt = false;
 		DoAltitudeHold(Altitude, ROC);
 	}
 	else // holding station
 	{
-		F.Hovering = !F.ThrottleMoving; 
+		F.HoldingAlt = !F.ThrottleMoving; 
 		
-		if( F.Hovering )
+		if( F.HoldingAlt )
 		{
-			if ( Abs(ROC) < HOVER_MAX_ROC_CMPS )
-				HoverThrottle = HardFilter(HoverThrottle, DesiredThrottle);
+			if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS )
+				CruiseThrottle = HardFilter(CruiseThrottle, DesiredThrottle + AltComp);
 			DoAltitudeHold(Altitude, ROC);
 		}
 		else	
@@ -156,7 +155,7 @@ void AltitudeHold()
 } // AltitudeHold
 
 void InertialDamping(void)
-{ // Uses accelerometer to damp disturbances while hovering
+{ // Uses accelerometer to damp disturbances while holding altitude
 
 	static int16 Temp;
 
@@ -173,10 +172,10 @@ void InertialDamping(void)
 	DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
 	DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
 
-	// Lateral compensation only when hovering?	
-	if ( F.Hovering && F.AttitudeHold ) 
+	// Lateral compensation only when holding altitude?	
+	if ( F.HoldingAlt && F.AttitudeHold ) 
 	{
- 		if ( F.CloseProximity )
+ 		if ( F.WayPointCentred )
 		{
 			// Left - Right
 			LRVel += LRAcc;
@@ -273,7 +272,13 @@ void DoControl(void)
 {				
 	CalcGyroRates();
 	CompensateRollPitchGyros();	
-	InertialDamping();		
+	InertialDamping();
+
+	#ifdef SIMULATE
+		FakeDesiredPitch = DesiredPitch;
+		FakeDesiredRoll = DesiredRoll;
+		FakeDesiredYaw = DesiredYaw;
+	#endif // SIMULATE		
 
 	// Roll
 				
@@ -322,6 +327,8 @@ void DoControl(void)
 	YEp = YE;
 	HEp = HE;
 
+	F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
+
 	RollRate = PitchRate = 0;
 
 } // DoControl
@@ -361,8 +368,18 @@ void UpdateControls(void)
 		DesiredYaw = RC[YawC] - RC_NEUTRAL;
 
 		F.ReturnHome = F.Navigate = false;
-		if ( RC[RTHC] > (RC_NEUTRAL/2) )
+		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+			#ifdef DEBUG_FORCE_NAV
+			F.Navigate = true;
+			#else
 			F.ReturnHome = true;
+			#endif // DEBUG_FORCE_NAV
+		else
+			if ( RC[RTHC] > (RC_NEUTRAL/2) )
+				F.Navigate = true;
+
+		if ( (! F.HoldingAlt) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+			DesiredAltitude = Altitude;
 
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
@@ -403,10 +420,15 @@ void StopMotors(void)
 {
 	static uint8 m;
 
-	for (m = 0; m < NoOfMotors; m++)
-		Motor[m] = ESCMin;
+	#ifdef MULTICOPTER
+		for (m = 0; m < NoOfPWMOutputs; m++)
+			PWM[m] = ESCMin;
+	#else
+		PWM[ThrottleC] = ESCMin;
+		PWM[1], PWM[2] = PWM[3] = OUT_NEUTRAL;
+	#endif // MULTICOPTER
 
-	ME = ME = OUT_NEUTRAL;
+	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 
 	F.MotorsArmed = false;
 } // StopMotors
@@ -418,7 +440,7 @@ void CheckThrottleMoved(void)
 	else
 	{
 		ThrLow = ThrNeutral - THROTTLE_MIDDLE;
-		ThrLow = Max(ThrLow, THROTTLE_HOVER);
+		ThrLow = Max(ThrLow, THROTTLE_MIN_ALT_HOLD);
 		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
 		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
 		{
@@ -483,10 +505,12 @@ void LightsAndSirens(void)
 	LEDRed_OFF;
 	LEDGreen_ON;
 
-	F.LostModel = false;
+	mS[LastBattery] = mS[Clock];
 	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
 	mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
-	FailState = Waiting;
+
+	F.LostModel = false;
+	FailState = MonitoringRx;
 
 } // LightsAndSirens
 

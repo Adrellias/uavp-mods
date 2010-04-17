@@ -47,7 +47,7 @@ const rom int8 DefaultParams[] = {
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	4, 				// AltKp,			09
+	24, 			// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -59,7 +59,7 @@ const rom int8 DefaultParams[] = {
 	4, 				// TimeSlots,		17c
 	48, 			// LowVoltThres,	18c
 	24, 			// CamRollKp,		19
-	45, 			// PercentHoverThr,	20c 
+	45, 			// PercentCruiseThr,20c 
 	
 	-1, 			// VertDampKp,		21c
 	0, 				// MiddleDU,		22c
@@ -68,7 +68,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// MiddleFB,		25c
 	24, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	10, 			// AltKi,			28
+	12, 			// AltKi,			28
 	90, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -88,7 +88,7 @@ const rom int8 DefaultParams[] = {
 	1,				// HorizDampDecay	43c
 	70,				// BaroScale		44c
 	0,				// TelemetryType	45c
-	-10,			// MaxDescentRateDmpS 	46
+	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	12,				// NavIntLimit		48
 	3,				// AltIntLimit		49
@@ -205,7 +205,7 @@ void ReadParametersEE(void)
 		else
 		{
 			ESCMin = 0;
-			for ( i = 0; i < NoOfMotors; i++ )
+			for ( i = 0; i < NoOfPWMOutputs; i++ )
 				ESCI2CFail[i] = false;
 			InitI2CESCs();
 		}
@@ -219,7 +219,7 @@ void ReadParametersEE(void)
 	
 		IdleThrottle = ((int16)P[PercentIdleThr] * OUT_MAXIMUM )/100L;
 		IdleThrottle = Max( IdleThrottle, RC_THRES_STOP );
-		HoverThrottle = ((int16)P[PercentHoverThr] * OUT_MAXIMUM )/100L;
+		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 	
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
@@ -250,6 +250,7 @@ void ReadParametersEE(void)
 		DescentCmpS = (int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
 		BatteryVoltsADC = (int16)P[LowVoltThres] << 3;
+		BatteryCurrentADC = 0;
 		
 		ParametersChanged = false;
 	}
@@ -277,6 +278,9 @@ void UseDefaultParameters(void)
 	WriteParametersEE(1);
 	WriteParametersEE(2);
 	ParamSet = 1;
+
+	WriteEE(NAV_NO_WP, 0); // set NoOfWaypoints to zero
+
 	TxString("\r\nDefault Parameters Loaded\r\n");
 	TxString("Do a READ CONFIG to refresh the UAVPSet parameter display\r\n");	
 } // UseDefaultParameters

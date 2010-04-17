@@ -44,8 +44,10 @@ void SendUAVXNav(void) // 800uS at 40MHz
 
 	F.TxToBuffer = true;
 
+	#ifdef TELEMETRY_PREAMBLE
 	for (b=10;b;b--) 
 		TxChar(0x55);
+	#endif // TELEMETRY_PREAMBLE
 	      
 	TxChar(0xff); // synchronisation to "jolt" USART	
 	TxChar(SOH);	
@@ -53,16 +55,19 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
-
 		TxESCu8(UAVXFlightPacketTag);
-		TxESCu8(37 + FLAG_BYTES);
+		TxESCu8(39 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			TxESCu8(F.AllFlags[b]); 
 		
 		TxESCu8(State);				// 8	
 		TxESCi16(BatteryVoltsADC);	// 9
 
-		TxESCi16(0); 				// 11 Battery Current
+		TxESCi16(BatteryCurrentADC);
+
+		Temp.i32 = BatteryCharge;
+		TxESCi16(Temp.w1);
+ 
 		TxESCi16(RCGlitches);			
 		TxESCi16(DesiredThrottle);
 		TxESCi16(DesiredRoll);
@@ -71,15 +76,27 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(RollRate);
 		TxESCi16(PitchRate);
 		TxESCi16(YawRate);
+		#ifdef SIMULATE
+		TxESCi16(-FakeDesiredRoll<<5);
+		TxESCi16(-FakeDesiredPitch<<5);
+		TxESCi16(FakeDesiredYaw);
+		#else
 		TxESCi16(RollSum);
 		TxESCi16(PitchSum);
 		TxESCi16(YawSum);
+		#endif // SIMULATE
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);
 		TxESCi16(DUAcc);
-		TxESCi8((int8)LRComp);
-		TxESCi8((int8)FBComp);
-		TxESCi8((int8)DUComp);
+		#ifdef SIMULATE
+			TxESCi8((int8)NavRCorr);
+			TxESCi8((int8)NavPCorr);
+			TxESCi8((int8)NavYCorr);
+		#else
+			TxESCi8((int8)LRComp);
+			TxESCi8((int8)FBComp);
+			TxESCi8((int8)DUComp);
+		#endif // SIMULATE
 		TxESCi8((int8)AltComp);
 		
 		UAVXCurrPacketTag = UAVXNavPacketTag;
@@ -87,7 +104,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	
 	case UAVXNavPacketTag:
 		TxESCu8(UAVXNavPacketTag);
-		TxESCu8(46);
+		TxESCu8(49);
 	
 		TxESCu8(NavState);
 		TxESCu8(FailState);
@@ -114,8 +131,10 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi32(GPSLongitude); 
 
 		TxESCi24(DesiredAltitude);
-		TxESCi32(GPSOriginLatitude + GPSNorth); 
-		TxESCi32(GPSOriginLongitude + GPSEast);
+		TxESCi32(DesiredLatitude); 
+		TxESCi32(DesiredLongitude);
+
+		TxESCi24(mS[NavStateTimeout] - mS[Clock]); // mS
 		
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;

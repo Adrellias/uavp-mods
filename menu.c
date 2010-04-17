@@ -34,11 +34,15 @@ const rom uint8 SerHello[] = "\r\nUAVX " Version " Copyright 2008 G.K. Egan & 20
 
 #pragma idata menuhelp
 const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
+	#ifdef TESTS_ALL
 	"A..Accelerometer test\r\n"
+	#endif // TESTS_ALL
 	"B..Load UAVX hex file\r\n"
 	"C..Compass test\r\n"
 	"D..Load default parameter set\r\n"
+	#ifdef TESTS_GPS
 	"G..GPS test (Use HyperTerm)\r\n"
+	#endif // TESTS_GPS
 	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
@@ -47,11 +51,10 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"S..Setup\r\n"
 	"T..All LEDs and buzzer test\r\n"
 	"V..Analog input test\r\n"
-	#ifdef TESTS_FULL_STATS
+	#ifdef TESTS_ALL
 	"X..Flight stats\r\n"
-	#endif // TESTS_FULL_STATS
+	#endif // TESTS_ALL
 	"Y..Program YGE I2C ESC\r\n"
-//	"Z..Continuously display compass(Use HyperTerm)\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
@@ -140,7 +143,7 @@ void ShowSetup(uint8 h)
 
 	if ( P[ESCType] != ESCPPM )
 	{
-		for ( i = 0; i < NoOfMotors; i++ )
+		for ( i = 0; i < NoOfPWMOutputs; i++ )
 			if ( ESCI2CFail[i] )
 				TxString(" Fail");
 			else
@@ -402,10 +405,6 @@ void ProcessCommand(void)
 				LEDsAndBuzzer();
 				ShowPrompt();
 				break;
-			case 'Z': // Do compass run of 32K readings
-				// CompassRun();
-				break;
-
 			case '?'  :  // help
 				TxString(SerHelp);
 				ShowPrompt();

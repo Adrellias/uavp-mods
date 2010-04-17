@@ -81,7 +81,7 @@ int16 int16sin(int16 A)
 	static int16 	v;
 	static boolean	Negate;
 
-	Make2Pi(A);
+	A = Make2Pi(A);
 
 	Negate = A >= MILLIPI;
 	if ( Negate )
@@ -90,7 +90,7 @@ int16 int16sin(int16 A)
 	v = Table16(((int24)A * 256 + HALFMILLIPI)/MILLIPI, SineTable);
 
 	if ( Negate )
-		v= -v;
+		v = -v;
 
 	return(v);
 } // int16sin
