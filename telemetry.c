@@ -40,7 +40,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	i32u Temp;
 
 	// packet must be shorter than GPS shortest valid packet ($GPGGA)
-	// which is ~64 characters - so limit to 48?.
+	// which is ~64 characters - so limit to 48 for byte stuffing expansion?.
 
 	F.TxToBuffer = true;
 
@@ -60,8 +60,8 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			TxESCu8(F.AllFlags[b]); 
 		
-		TxESCu8(State);				// 8	
-		TxESCi16(BatteryVoltsADC);	// 9
+		TxESCu8(State);	
+		TxESCi16(BatteryVoltsADC);
 
 		TxESCi16(BatteryCurrentADC);
 
@@ -70,33 +70,31 @@ void SendUAVXNav(void) // 800uS at 40MHz
  
 		TxESCi16(RCGlitches);			
 		TxESCi16(DesiredThrottle);
+
 		TxESCi16(DesiredRoll);
 		TxESCi16(DesiredPitch);
 		TxESCi16(DesiredYaw);
+
 		TxESCi16(RollRate);
 		TxESCi16(PitchRate);
 		TxESCi16(YawRate);
+
 		#ifdef SIMULATE
-		TxESCi16(-FakeDesiredRoll<<5);
-		TxESCi16(-FakeDesiredPitch<<5);
-		TxESCi16(FakeDesiredYaw);
+			TxESCi16(-FakeDesiredRoll<<5);
+			TxESCi16(-FakeDesiredPitch<<5);
+			TxESCi16(FakeDesiredYaw);
 		#else
-		TxESCi16(RollSum);
-		TxESCi16(PitchSum);
-		TxESCi16(YawSum);
+			TxESCi16(RollSum);
+			TxESCi16(PitchSum);
+			TxESCi16(YawSum);
 		#endif // SIMULATE
+
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);
 		TxESCi16(DUAcc);
-		#ifdef SIMULATE
-			TxESCi8((int8)NavRCorr);
-			TxESCi8((int8)NavPCorr);
-			TxESCi8((int8)NavYCorr);
-		#else
-			TxESCi8((int8)LRComp);
-			TxESCi8((int8)FBComp);
-			TxESCi8((int8)DUComp);
-		#endif // SIMULATE
+		TxESCi8((int8)LRComp);
+		TxESCi8((int8)FBComp);
+		TxESCi8((int8)DUComp);
 		TxESCi8((int8)AltComp);
 		
 		UAVXCurrPacketTag = UAVXNavPacketTag;
@@ -144,8 +142,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		break;		
 	}
 		
-	TxESCu8(TxCheckSum);
-	
+	TxESCu8(TxCheckSum);	
 	TxChar(EOT);
 	
 	TxChar(CR);
@@ -190,14 +187,14 @@ void SendArduStation(void)
 	if ( ++Count == 4 ) // ~2.0mS @ 40MHz
 	{ // some fields suppressed to stay within 80 char GPS sentence length constraint
 		TxString("!!!");
-		TxString("LAT:"); TxVal32(GPSLatitude, 0, 0);
-		TxString(",LON:"); TxVal32(GPSLongitude, 0, 0); 
+		TxString("LAT:"); TxVal32(GPSLatitude / 6000, 3, 0);
+		TxString(",LON:"); TxVal32(GPSLongitude / 6000, 3, 0);
 		TxString(",ALT:"); TxVal32(Altitude / 100,0,0);
 		//TxString(",ALH:"); TxVal32(DesiredAltitude / 100, 0, 0);
 		//TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
 		TxString(",CRS:"); TxVal32(((int24)Heading * 180) / MILLIPI, 0, 0); // scaling to degrees?
 		TxString(",BER:"); TxVal32(((int24)WayHeading * 180) / MILLIPI, 0, 0);
-		//TxString(",SPD:"); TxVal32(GPSVel, 0, 0);    
+		//TxString(",SPD:"); TxVal32(GPSVel, 0, 0);
 		TxString(",WPN:"); TxVal32(CurrWP,0,0);
 		//TxString(",DST:"); TxVal32(0, 0, 0); // distance to WP
 		TxString(",BTV:"); TxVal32((BatteryVoltsADC * 61)/205, 1, 0);

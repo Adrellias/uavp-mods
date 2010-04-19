@@ -28,8 +28,6 @@
 
 Flags 	F;
 
-int16 i; // zzz
-
 void main(void)
 {
 	static int16	Temp;
@@ -61,28 +59,6 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
-/*
-//zzz
-    GPSLatitude = GPSLongitude = 0;
-
-	Heading = 0;
-
-
-while (true)
-{
-
-	for (i=-7000; i< 7000; i++ )
-	{
-TxVal32(i, 0, ' ');
-TxVal32(int16sin(i), 0, ' ');
-TxVal32(int16cos(i), 0, ' ');
-TxNextLine();
-
-	}
-		ProcessCommand();
-
-}
-*/
 	ShowSetup(1);
 
 	FirstPass = true;
@@ -152,6 +128,11 @@ TxNextLine();
 							WriteStatsEE();
 							State = Landed;
 						}
+					break;
+				case Shutdown:
+					// wait until arming switch is cycled
+					DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+					StopMotors();
 					break;
 				case InFlight:
 					F.MotorsArmed = true;

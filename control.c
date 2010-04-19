@@ -71,6 +71,34 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 
+		// #define BARO_LEGACY
+		#ifdef BARO_LEGACY
+	
+		Temp = HardFilter(AltP, Altitude);
+		BE = Temp - AltP;	// subtract new height to get delta
+		AltP = Temp;
+		
+		// strictly this is acting more like an integrator 
+		// bumping VBaroComp up and down proportional to the error?		
+		Temp = Limit(Altitude, -3, 8) * (int16)P[AltKp]; // was: +10 and -5
+		if( AltComp > Temp )
+			AltComp--;
+		else
+			if( AltComp < Temp )
+				AltComp++; // climb
+		if( AltComp > Temp )
+			AltComp--;
+		else
+			if( AltComp < Temp )
+				AltComp++;
+		
+		// Differentialanteil
+		BE = Limit(BE, -8, 8);
+		AltComp += BE * (int16)P[AltKi]; // should be AltKd	
+		AltComp = Limit(AltComp, -5, 15);
+
+		#else
+
 		F.NewBaroValue = false;
 	
 		BE = DesiredAltitude - Altitude;
@@ -92,8 +120,12 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		AltDSum = Decay1(AltDSum);
 	
 		NewAltComp = AltP + AltI + AltDSum;
-		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);	
+		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+		#ifdef ALT_SLEW_LIMIT	
 		AltComp = SlewLimit(AltComp, NewAltComp, 2);
+		#endif // ALT_SLEW_LIMIT
+
+		#endif // BARO_LEGACY
 
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;

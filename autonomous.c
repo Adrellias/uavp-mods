@@ -100,11 +100,11 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	DesiredAltitude = -200;
+	DesiredAltitude = -500;
 	if ( !InTheAir || (( mS[Clock] > mS[NavStateTimeout]) && ( NavState == Touchdown )) )
 	{
-		DesiredThrottle = 0;
-		StopMotors();
+		State = Shutdown;
+		StopMotors(); // redundant unless signal fails
 	}
 	else
 		DesiredThrottle = CruiseThrottle;
@@ -153,7 +153,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			Radius = NavClosingRadius;
 
 		F.WayPointCentred =  Radius < NavNeutralRadius;
-		F.WayPointAchieved = ( Radius < NavProximityRadius) && ( Abs(DesiredAltitude - Altitude) < NavProximityAltitude );
+		Temp = DesiredAltitude - Altitude;
+		F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(Temp) < NavProximityAltitude );
 
 		//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - 
 		// 							CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
@@ -264,32 +265,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			NavYCorr = 0;
 			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
-
-		//#define NAV_TRACE
-		#ifdef NAV_TRACE
-		if ( State == InFlight )
-		{
-			TxVal32(CurrWP, 0, ' '); 
-			TxVal32(Heading, 0, ' '); 
-			TxVal32(WayHeading, 0, ' '); 
-	
-			if ( mS[NavStateTimeout] >= mS[Clock])
-				TxVal32((mS[NavStateTimeout]-mS[Clock])/1000,0,' ');
-			else
-				TxVal32(0,0,' ');
-			 
-			TxVal32(ConvertGPSToM(GPSLongitude - OriginLongitude), 0, ' ');
-			TxVal32(ConvertGPSToM(GPSLatitude - OriginLatitude), 0, ' ');
-			
-			TxVal32(Altitude, 2, ' ');
-			TxVal32(DesiredAltitude, 2, ' ');
-			TxVal32(NavPCorr, 0, ' ');
-			TxVal32(NavRCorr, 0, ' ');
-			TxVal32(F.NavValid, 0, ' ');
-			TxVal32(F.GPSValid, 0, ' ');
-			TxNextLine(); 
-		}
-		#endif // NAV_TRACE
 	}
 
 	DesiredRoll = DesiredRoll + NavRCorr;
@@ -305,21 +280,27 @@ void DoNavigation(void)
 	switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 	case Touchdown:
 		Navigate(OriginLatitude, OriginLongitude);
-		if ( F.ReturnHome )
-			DoFailsafeLanding();
-		else
-			AcquireHoldPosition();
+		DoFailsafeLanding();
 		break;
 	case Descending:
 		Navigate( OriginLatitude, OriginLongitude );
 		if ( F.ReturnHome )
-			if ( RelBaroAltitude < LAND_CM )
+		#ifdef NAV_WING
+		{
+			// needs more thought - runway direction?
+			DoFailsafeLanding();
+			State = Shutdown;
+			StopMotors();
+		}
+		#else
+			if ( Altitude < LAND_CM )
 			{
 				mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 				NavState = Touchdown;
 			}
 			else
 				DoFailsafeLanding();
+		#endif // NAV_WING
 		else
 			AcquireHoldPosition();
 		break;

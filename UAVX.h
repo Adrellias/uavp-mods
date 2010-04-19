@@ -6,7 +6,9 @@
 						
 // Debugging
 
-#define DEBUG_FORCE_NAV // zzz				// overrides RTH and forces navigate all WPs
+#define ALT_SLEW_LIMIT					// removes slew limit of 2 for alt hold compensation
+
+// zzz #define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -140,31 +142,37 @@
 #define NAV_INT_WINDUP_LIMIT		64L	// ???
 
 #define NAV_ENFORCE_ALTITUDE_CEILING	// limit all autonomous altitudes
-#define NAV_CEILING				120L	// 400 feet
-#define NAV_MAX_NEUTRAL_RADIUS	3L		// Metres also minimum closing radius
-#define NAV_MAX_RADIUS			90L		// Metres
-#define NAV_PROXIMITY_RADIUS	5L		// Metres if there are no WPs
-#define NAV_PROXIMITY_ALTITUDE	3L	// Metres
+#define NAV_CEILING					120L	// 400 feet
+#define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
+#define NAV_MAX_RADIUS				99L		// Metres
+
+#ifdef NAV_WING
+	#define NAV_PROXIMITY_RADIUS	20L		// Metres if there are no WPs
+	#define NAV_PROXIMITY_ALTITUDE	5L		// Metres
+#else
+	#define NAV_PROXIMITY_RADIUS	5L		// Metres if there are no WPs
+	#define NAV_PROXIMITY_ALTITUDE	3L	// Metres
+#endif // NAV_WING
 
 // reads $GPGGA sentence - all others discarded
 
-#define	GPS_MIN_SATELLITES		6		// preferably > 5 for 3D fix
-#define GPS_MIN_FIX				1		// must be 1 or 2 
-#define GPS_INITIAL_SENTENCES 	30L		// Number of sentences needed with set HDilute
-#define GPS_MIN_HDILUTE			130L	// HDilute * 100
+#define	GPS_MIN_SATELLITES			6		// preferably > 5 for 3D fix
+#define GPS_MIN_FIX					1		// must be 1 or 2 
+#define GPS_INITIAL_SENTENCES 		30L		// Number of sentences needed with set HDilute
+#define GPS_MIN_HDILUTE				130L	// HDilute * 100
 	
 #ifdef C90
-	#define COMPASS_OFFSET_DEG	90L		// North degrees CW from Front - older compass
+	#define COMPASS_OFFSET_DEG		90L		// North degrees CW from Front - older compass
 #else
-	#define COMPASS_OFFSET_DEG	270L	// North degrees CW from Front
+	#define COMPASS_OFFSET_DEG		270L	// North degrees CW from Front
 #endif // COMPASS_OFFSET_90
 
-#define	NAV_GAIN_THRESHOLD 		40L		// Navigation disabled if Ch7 is less than this
-#define NAV_GAIN_6CH			80L		// Low GPS gain for 6ch Rx
+#define	NAV_GAIN_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
+#define NAV_GAIN_6CH				80L		// Low GPS gain for 6ch Rx
 
-#define	NAV_YAW_LIMIT			10L		// yaw slew rate for RTH
-#define NAV_MAX_TRIM			20L		// max trim offset for altitude hold
-#define NAV_CORR_SLEW_LIMIT		1L		// *5L maximum change in roll or pitch correction per GPS update
+#define	NAV_YAW_LIMIT				10L		// yaw slew rate for RTH
+#define NAV_MAX_TRIM				20L		// max trim offset for altitude hold
+#define NAV_CORR_SLEW_LIMIT			1L		// *5L maximum change in roll or pitch correction per GPS update
 
 #define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
 #define ATTITUDE_HOLD_RESET_INTERVAL	25L		// number of impulse cycles before GPS position is re-acquired
@@ -289,16 +297,16 @@ typedef struct {
 #define IsClear(S,b) 		((uint8)(!(S>>b)&1))
 #define Invert(S,b) 		((uint8)(S^=(1<<b)))
 
-#define Abs(i)				((i<0) ? -i : i)
-#define Sign(i)				((i<0) ? -1 : 1)
+#define Abs(i)				(((i)<0) ? -(i) : (i))
+#define Sign(i)				(((i)<0) ? -1 : 1)
 
 #define Max(i,j) 			((i<j) ? j : i)
 #define Min(i,j) 			((i<j) ? i : j )
-#define Decay1(i) 			((i < 0) ? i+1 : ((i > 0) ? i-1 : 0))
+#define Decay1(i) 			(((i) < 0) ? (i+1) : (((i) > 0) ? (i-1) : 0))
 
 #define USE_LIMIT_MACRO
 #ifdef USE_LIMIT_MACRO
-	#define Limit(i,l,u) 	((i < l) ? l : ((i > u) ? u : i))
+	#define Limit(i,l,u) 	(((i) < l) ? l : (((i) > u) ? u : (i)))
 #else
 	#define Limit			ProcLimit
 #endif
@@ -576,7 +584,7 @@ typedef union {
 		};
 } Flags;
 
-enum FlightStates { Starting, Landing, Landed, InFlight};
+enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
 extern near uint8 State;
 
@@ -1152,6 +1160,7 @@ extern void GPSTest(void);
 extern void AnalogTest(void);
 extern void ProgramSlaveAddress(uint8);
 extern void ConfigureESCs(void);
+
 
 
 

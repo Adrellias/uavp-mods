@@ -369,6 +369,7 @@ void ParseGPSSentence(void)
 				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
 				GPSROC = Temp - GPSRelAltitude;
 			}
+
 			GPSRelAltitude = Temp; 
 
 			if ( State == InFlight )
