@@ -79,15 +79,9 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(PitchRate);
 		TxESCi16(YawRate);
 
-		#ifdef SIMULATE
-			TxESCi16(-FakeDesiredRoll<<5);
-			TxESCi16(-FakeDesiredPitch<<5);
-			TxESCi16(FakeDesiredYaw);
-		#else
-			TxESCi16(RollSum);
-			TxESCi16(PitchSum);
-			TxESCi16(YawSum);
-		#endif // SIMULATE
+		TxESCi16(RollSum);
+		TxESCi16(PitchSum);
+		TxESCi16(YawSum);
 
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);

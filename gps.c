@@ -292,7 +292,7 @@ void ParseGPSSentence(void)
 
 	#define FAKE_NORTH_WIND 	0L
 	#define FAKE_EAST_WIND 		0L
-    #define SCALE_VEL			128L
+    #define SCALE_VEL			64L
 	#endif // SIMULATE
 
 	cc = 0;
@@ -327,8 +327,9 @@ void ParseGPSSentence(void)
 			// There is a lot of jitter in position - could use Kalman Estimator?
 		
 			#ifdef SIMULATE
+
 			if ( State == InFlight )
-			{
+			{  // don't bother with GPS longitude correction for now?
 				CosH = int16cos(Heading);
 				SinH = int16sin(Heading);
 				GPSLongitude = FakeGPSLongitude + ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
@@ -344,14 +345,26 @@ void ParseGPSSentence(void)
 		
 				FakeGPSLongitude = GPSLongitude;
 				FakeGPSLatitude = GPSLatitude;
-
-				GPSAltitude = RelBaroAltitude + GPSOriginAltitude;
 			}
+
+			GPSRelAltitude = RelBaroAltitude;
+			GPSROC = BaroROC;
+			
+			#else
+
+			Temp = GPSAltitude - GPSOriginAltitude;	
+			if ( mS[Clock] > mS[GPSROCUpdate] )
+			{
+				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
+				GPSROC = Temp - GPSRelAltitude;
+			}
+			GPSRelAltitude = Temp; 
+
 			#endif // SIMULATE
 
 			#ifdef GPS_INC_GROUNDSPEED
 			// nice to have but not essential 
-			LongitudeDiff = GPSLongitude - LongitudeP;
+			LongitudeDiff = SRS32((GPSLongitude - LongitudeP) * GPSLongitudeCorrection, 8);
 			LatitudeDiff = GPSLatitude - LatitudeP;
 			Temp = int32sqrt(LongitudeDiff*LongitudeDiff + LatitudeDiff*LatitudeDiff);
 			GPSVel = ConvertGPSToM( (Temp*GPSInterval) / 100L ); // dM/Sec.
@@ -361,16 +374,6 @@ void ParseGPSSentence(void)
 			LatitudeP = GPSLatitude;
 			LongitudeP = GPSLongitude;
 			#endif // GPS_INC_GROUNDSPEED			
-
-			Temp = GPSAltitude - GPSOriginAltitude;	
-
-			if ( mS[Clock] > mS[GPSROCUpdate] )
-			{
-				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
-				GPSROC = Temp - GPSRelAltitude;
-			}
-
-			GPSRelAltitude = Temp; 
 
 			if ( State == InFlight )
 			{

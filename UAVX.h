@@ -72,8 +72,9 @@
 // Timeouts and Update Intervals
 
 #define FAILSAFE_TIMEOUT_MS		1000L 	// mS. hold last "good" settings and then restore flight or abort
-#define ABORT_TIMEOUT_MS		3000L	// mS. autonomous RTH with GPS or Descend without. 
-#define ABORT_UPDATE_MS			2000L	// mS. retry period for RC Signal and restore Pilot in Control
+#define ABORT_TIMEOUT_GPS_MS	5000L	// mS. go to descend on position hold if GPS valid.
+#define ABORT_TIMEOUT_NO_GPS_MS	0L		// mS. go to descend on position hold if GPS valid.  
+#define ABORT_UPDATE_MS			1000L	// mS. retry period for RC Signal and restore Pilot in Control
 
 #define THROTTLE_LOW_DELAY_MS	1000L	// mS. that motor runs at idle after the throttle is closed
 #define THROTTLE_UPDATE_MS		3000L	// mS. constant throttle time for altitude hold
@@ -624,6 +625,7 @@ extern void InitADC(void);
 
 // autonomous.c
 
+extern void FailsafeHoldPosition(void);
 extern void Navigate(int32, int32);
 extern void SetDesiredAltitude(int16);
 extern void DoFailsafeLanding(void);
@@ -639,9 +641,8 @@ extern void InitNavigation(void);
 
 typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
-enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering,
-	Terminating };
-enum FailStates { MonitoringRx, Aborting, Returning, Terminated };
+enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering};
+enum FailStates { MonitoringRx, Aborting, Terminating, Terminated };
 
 extern int16 NavRCorr, NavPCorr;
 

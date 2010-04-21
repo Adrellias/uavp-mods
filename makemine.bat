@@ -33,7 +33,7 @@ rem set CDEG=C90 C270
 rem set CFG=QUADROCOPTER TRICOPTER HELICOPTER FIXEDWING DELTAWING
 
 rem Personal choice
-set CLOCK=CLOCK_16MHZ
+set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
 set RX=RX7CH
@@ -53,7 +53,7 @@ echo Starting makeall uavp > log.lst
 
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do call makeallhelper.bat %%x %%p %%d  %%r %%c %%o
 
-set CLOCK=CLOCK_16MHZ
+set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=SIMULATE 
 set RX=RX7CH RX6CH

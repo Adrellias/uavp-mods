@@ -307,10 +307,15 @@ void DoControl(void)
 	InertialDamping();
 
 	#ifdef SIMULATE
-		FakeDesiredPitch = DesiredPitch;
-		FakeDesiredRoll = DesiredRoll;
-		FakeDesiredYaw = DesiredYaw;
-	#endif // SIMULATE		
+
+	FakeDesiredPitch = DesiredPitch;
+	FakeDesiredRoll = DesiredRoll;
+	FakeDesiredYaw = DesiredYaw;
+	RollSum = SlewLimit(RollSum, -FakeDesiredRoll<<5, 4);
+	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch<<5, 4);
+	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4); 
+
+    #else
 
 	// Roll
 				
@@ -358,6 +363,8 @@ void DoControl(void)
 	PEp = PE;
 	YEp = YE;
 	HEp = HE;
+
+	#endif // SIMULATE		
 
 	F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
 

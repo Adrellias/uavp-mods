@@ -81,7 +81,7 @@ void main(void)
 			UpdateGPS();
 			UpdateControls();
 
-			if ( F.Signal && ( FailState != Terminated ) && ( FailState != Returning ) )
+			if ( F.Signal && ( FailState == MonitoringRx ) )
 			{
 				switch ( State  ) {
 				case Starting:	// this state executed once only after arming

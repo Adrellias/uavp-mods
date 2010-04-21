@@ -23,7 +23,7 @@ rem Prevous switches THC and CAM have been abandoned in favour of Tx based
 rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
 
 rem Add/Delete required combinations to these sets
-set CLOCK=CLOCK_16MHZ
+set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG DEBUG_SENSORS 
 set RX=RX7CH RX6CH
@@ -51,7 +51,7 @@ echo Starting makeall uavp > log.lst
 
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do call makeallhelper.bat %%x %%p %%d  %%r %%c %%o
 
-set CLOCK=CLOCK_16MHZ
+set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=SIMULATE 
 set RX=RX7CH RX6CH
