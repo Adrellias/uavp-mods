@@ -159,7 +159,7 @@
 
 #define	GPS_MIN_SATELLITES			6		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
-#define GPS_INITIAL_SENTENCES 		30L		// Number of sentences needed with set HDilute
+#define GPS_ORIGIN_SENTENCES 		30L		// Number of sentences needed to obtain reasonable Origin
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
 	
 #ifdef C90

@@ -135,9 +135,9 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 } // DoAltitudeHold	
 
 void AltitudeHold()
-{
-	// relies upon good cross calibration of baro and rangefinder!!!!!!
-
+{  // relies upon good cross calibration of baro and rangefinder!!!!!!
+	static int16 Temp;
+	
 	if ( F.RangefinderAltitudeValid ) // some hysteresis
 		if (( RangefinderAltitude < 500 ) && !F.UsingRangefinderAlt)
 			F.UsingRangefinderAlt = true;
@@ -151,7 +151,7 @@ void AltitudeHold()
 		ROC = RangefinderROC;
 	}
 	else
-		if ( F.UsingGPSAlt && F.GPSValid )
+		if ( F.UsingGPSAlt && F.NavValid )
 		{
 			Altitude = GPSRelAltitude;
 			ROC = GPSROC;
@@ -173,8 +173,11 @@ void AltitudeHold()
 		
 		if( F.HoldingAlt )
 		{
-			if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS )
-				CruiseThrottle = HardFilter(CruiseThrottle, DesiredThrottle + AltComp);
+			if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_CMPS  ) // Use Baro NOT GPS
+			{
+				Temp = DesiredThrottle + AltComp;
+				CruiseThrottle = HardFilter(CruiseThrottle, Temp);
+			}
 			DoAltitudeHold(Altitude, ROC);
 		}
 		else	
