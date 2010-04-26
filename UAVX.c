@@ -107,6 +107,9 @@ void main(void)
 						SetGPSOrigin();
 					else
 					{
+						#ifdef SIMULATE
+							FakeRelBaroAltitude = 0;
+						#endif // SIMULATE
 						InitHeading();						
 						LEDCycles = 1;
 						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;

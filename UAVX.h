@@ -1,12 +1,12 @@
 // EXPERIMENTAL
 
-//#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff.
-
-#define XMODE_ACC_COMP					// if defined corrects Acc sensor adjustment for XMode flight
+//#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.
 						
 // Debugging
 
 #define ALT_SLEW_LIMIT					// removes slew limit of 2 for alt hold compensation
+
+//#define FLATACC							// accelerometer laid flat on UAVP board
 
 // zzz #define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
 
@@ -581,7 +581,7 @@ typedef union {
 		AcquireNewPosition:1, 
 		GPSTestActive:1,
 		unused1:1,
-		unused2:1;
+		Simulation:1;
 		};
 } Flags;
 

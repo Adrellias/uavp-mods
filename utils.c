@@ -74,6 +74,10 @@ void InitMisc(void)
 	F.BeeperInUse = F.GPSTestActive = false; 
 	F.NavAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
 
+	#ifdef SIMULATE
+	F.Simulation = true;
+	#endif // SIMULATE
+
 	BatteryCharge = 0;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;

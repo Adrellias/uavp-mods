@@ -217,26 +217,32 @@ void GetNeutralAccelerations(void)
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
 	static uint8 i;
-	static int16 Rp, Pp, Yp;
+	static int16 LR, FB, DU;
 
 	Delay100mSWithOutput(2);	// wait 1/10 sec until LISL is ready to talk
 	// already done in caller program
-	Rp = Pp = Yp = 0;
+	LR = FB = DU = 0;
 	for ( i = 16; i; i--)
 	{
 		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == 0 );
 		ReadAccelerations();
-		
-		Rp += Ax.i16;
-		Pp += Az.i16;
-		Yp += Ay.i16;
-	}
-	Rp = SRS16(Rp, 4);
-	Pp = SRS16(Pp, 4);
-	Yp = SRS16(Yp, 4);
 
-	NeutralLR = Limit(Rp, -99, 99);
-	NeutralFB = Limit(Pp, -99, 99);
-	NeutralDU = Limit(Yp - 1024, -99, 99); // -1g
+		#ifdef FLATACC
+		LR += Ax.i16;
+		FB += Ay.i16;
+		DU -= Az.i16;
+		#else		
+		LR += Ax.i16;
+		DU += Ay.i16;
+		FB += Az.i16;
+		#endif // FLATACC
+	}
+	LR = SRS16(LR, 4);
+	FB = SRS16(FB, 4);
+	DU = SRS16(DU, 4);
+
+	NeutralLR = Limit(LR, -99, 99);
+	NeutralFB = Limit(FB, -99, 99);
+	NeutralDU = Limit(DU - 1024, -99, 99); // -1g
 } // GetNeutralAccelerations
 
