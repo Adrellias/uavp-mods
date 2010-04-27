@@ -6,9 +6,7 @@
 
 #define ALT_SLEW_LIMIT					// removes slew limit of 2 for alt hold compensation
 
-//#define FLATACC							// accelerometer laid flat on UAVP board
-
-// zzz #define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
+//#define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -42,7 +40,7 @@
 
 // Airframe
 
-#if ( defined TRICOPTER || defined QUADROCOPTER || defined HEXACOPTER )
+#if ( defined TRICOPTER | defined QUADROCOPTER | defined HEXACOPTER )
 	#define MULTICOPTER
 #endif
 
@@ -693,6 +691,9 @@ extern i16u	BaroVal;
 extern int8	BaroSample;
 extern uint8 BaroType;
 
+#ifdef SIMULATE
+extern int24 FakeRelBaroAltitude;
+#endif // SIMULATE
 //______________________________________________________________________________________________
 
 // compass.c

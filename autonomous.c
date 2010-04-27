@@ -290,7 +290,7 @@ void DoNavigation(void)
 			break;
 		case Descending:
 			Navigate( OriginLatitude, OriginLongitude );
-			if ( F.ReturnHome )
+			if ( F.ReturnHome || F.Navigate )
 			#ifdef NAV_WING
 			{
 				// needs more thought - runway direction?
@@ -313,7 +313,7 @@ void DoNavigation(void)
 		case AtHome:
 			Navigate(OriginLatitude, OriginLongitude);
 			SetDesiredAltitude((int16)P[NavRTHAlt]);
-			if ( F.ReturnHome )
+			if ( F.ReturnHome || F.Navigate )
 			{
 				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[NavStateTimeout] ) )
 					NavState = Descending;
@@ -324,7 +324,7 @@ void DoNavigation(void)
 		case ReturningHome:		
 			Navigate(OriginLatitude, OriginLongitude);
 			SetDesiredAltitude((int16)P[NavRTHAlt]);
-			if ( F.ReturnHome )
+			if ( F.ReturnHome || F.Navigate )
 			{
 				if ( F.WayPointAchieved )
 				{
@@ -341,10 +341,16 @@ void DoNavigation(void)
 			if ( F.Navigate )
 			{
 				if ( F.WayPointAchieved && (mS[Clock] > mS[NavStateTimeout]) )
-				{	
-					GetWayPointEE(++CurrWP); // wrap around through origin and repeat
-					NavState = Navigating;
-				}
+					if ( CurrWP == NoOfWayPoints )
+					{
+						CurrWP = 1;
+						NavState = ReturningHome;	
+					}
+					else
+					{
+						GetWayPointEE(++CurrWP); 
+						NavState = Navigating;
+					}
 			}
 			else
 				AcquireHoldPosition();
@@ -595,8 +601,8 @@ void InitNavigation(void)
 	else
 	{
 		// need minimum values in UAVXNav?
-		NavProximityRadius = ConvertMToGPS(Read16EE(NAV_PROX_RADIUS));
-		NavProximityAltitude = Read16EE(NAV_PROX_ALT) * 100L;
+		NavProximityRadius = ConvertMToGPS(ReadEE(NAV_PROX_RADIUS));
+		NavProximityAltitude = ReadEE(NAV_PROX_ALT) * 100L;
 	}
 
 	NoOfWayPoints = ReadEE(NAV_NO_WP);

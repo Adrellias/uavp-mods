@@ -94,7 +94,11 @@ void ShowSetup(uint8 h)
 
 	TxString("Accelerometers ");
 	if( F.AccelerationsValid )
+	#ifdef FLATACC
+		TxString("ONLINE (Horizontal)\r\n");
+	#else
 		TxString("ONLINE\r\n");
+	#endif // FLATACC
 	else
 		TxString("not available\r\n");
 

@@ -19,6 +19,7 @@ rem Configuration TRICOPTER for 3 motors and QUAD for 4.
 rem Motors are disabled for DEBUG_SENSORS for safety reasons.
 rem Older compasses have a different offset than the newer ones - use C90 if the front motor
 rem arm is not pointing North with a heading of 0 degrees.
+rem FLATACC is used if you have mounted the accelerometer flat on the UAVP board rather than vertical
 rem Prevous switches THC and CAM have been abandoned in favour of Tx based
 rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
 
@@ -28,15 +29,17 @@ set PROC=18F2620
 set DBG=NO_DEBUG DEBUG_SENSORS 
 set RX=RX7CH RX6CH
 set CDEG=C90 C270
-set CFG=QUADROCOPTER TRICOPTER
+set CFG=QUADROCOPTER TRICOPTER 
+set ACC=VERTACC FLATACC
 
 rem Personal choice
 rem set CLOCK=CLOCK_16MHZ
-rem set PROC=18F2520
+rem set PROC=18F2620
 rem set DBG=NO_DEBUG DEBUG_SENSORS
 rem set RX=RX7CH RX6CH
 rem set CDEG=C90 C270
 rem set CFG=QUADROCOPTER TRICOPTER HELICOPTER FIXEDWING DELTAWING
+rem set ACC=VERTACC FLATACC
 
 rem Delete working files
 call makeclean.bat
@@ -49,7 +52,7 @@ del *.HEX
 echo Starting makeall uavp > gen.lst
 echo Starting makeall uavp > log.lst
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do call makeallhelper.bat %%x %%p %%d  %%r %%c %%o
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do for %%a in (%ACC%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%o %%a
 
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
@@ -57,5 +60,6 @@ set DBG=SIMULATE
 set RX=RX7CH RX6CH
 set CDEG=C270
 set CFG=QUADROCOPTER
+set ACC=VERTACC
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do call makeallhelper.bat %%x %%p %%d  %%r %%c %%o
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%o in (%CDEG%) do for %%a in (%ACC%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%o %%a
