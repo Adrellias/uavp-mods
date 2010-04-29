@@ -34,7 +34,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,0,0,0,0,0,0,0,0,0,
+	1,1,0,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
 
@@ -93,11 +93,11 @@ const rom int8 DefaultParams[] = {
 	12,				// NavIntLimit		48
 	3,				// AltIntLimit		49
 	11,				// GravComp			50c
-	1,				// CompSteps		51c			
+	1,				// CompSteps		51c
+	0,				// ServoSense		52c				
 
-	0,				// 52 - 64 unused currently	
+	0,				// 53 - 64 unused currently	
 
-	0,
 	0,
 	0,
 	0,
@@ -190,7 +190,7 @@ void MapRC(void)
 
 void ReadParametersEE(void)
 {
-	uint8 i;
+	uint8 i,b;
 	static uint16 a;
 
 	if ( ParametersChanged )
@@ -208,6 +208,16 @@ void ReadParametersEE(void)
 			for ( i = 0; i < NoOfPWMOutputs; i++ )
 				ESCI2CFail[i] = false;
 			InitI2CESCs();
+		}
+
+		b = P[ServoSense];
+		for ( i = 0; i < 6; i++ )
+		{
+			if ( b & 1 )
+				PWMSense[i] = -1;
+			else
+				PWMSense[i] = 1;
+			b >>=1;
 		}
 
 		#ifdef RX6CH

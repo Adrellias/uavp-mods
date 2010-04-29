@@ -228,14 +228,20 @@ void GetNeutralAccelerations(void)
 		ReadAccelerations();
 
 		#ifdef FLATACC
-		LR += Ax.i16;
-		FB += Ay.i16;
-		DU -= Az.i16;
-		#else		
-		LR += Ax.i16;
-		DU += Ay.i16;
-		FB += Az.i16;
-		#endif // FLATACC
+			LR += Ax.i16;
+			FB += Ay.i16;
+			DU -= Az.i16;
+		#else
+			#ifdef FLATACC2
+				LR -= Ax.i16;
+				FB += Ay.i16;
+				DU += Az.i16;
+			#else		
+				LR += Ax.i16;
+				DU += Ay.i16;
+				FB += Az.i16;
+			#endif // FLATACC
+		#endif
 	}
 	LR = SRS16(LR, 4);
 	FB = SRS16(FB, 4);

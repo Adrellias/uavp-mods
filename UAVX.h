@@ -44,11 +44,7 @@
 	#define MULTICOPTER
 #endif
 
-#if ( defined HELICOPTER | defined FIXEDWING | defined DELTAWING )
-	#define PWM1_SENSE			1		// Aileron or Right Elevon
-	#define PWM2_SENSE			1		// Elevator or Left Elevon
-	#define PWM3_SENSE			1		// Rudder
-	
+#if ( defined HELICOPTER | defined FIXEDWING | defined DELTAWING )	
 	#if ( defined FIXEDWING | defined DELTAWING )
 		#define NAV_WING
 	#endif
@@ -57,11 +53,13 @@
 // Tests
 
 #ifndef SIMULATE
-	//#define TESTS_FULL_BARO			// show pressures and temperatures in Baro test
-	//#define TESTS_FULL				// increases information displayed in tests but increases code size
+	//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+	//#define TESTS_ACC						// accelerometer tests
+	//#define TESTS_LEDS					// do LED and buzzer test
 	#ifdef CLOCK_16MHZ
-		// # define TESTS_GPS
-		#define TESTS_ALL				// show flight stats otherwise use UAVXNav
+	//	#define TESTS_GPS
+	//	#define TESTS_FULL_COMPASS			// show internal registers of compass
+		#define TESTS_STATS				// show flight stats otherwise use UAVXNav
 	#endif // CLOCK_16MHZ
 #endif // !SIMULATE
 
@@ -920,6 +918,7 @@ enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 #define NoOfI2CESCOutputs 		4 // zzz Hexacopter etc.
 
 extern int16 PWM[6];
+extern int16 PWMSense[6];
 extern boolean ESCI2CFail[4];
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near uint8 ESCMin, ESCMax;
@@ -996,8 +995,9 @@ enum Params { // MAX 64
 	DescentDelayS,		// 47c
 	NavIntLimit,		// 48
 	AltIntLimit,		// 49
-	GravComp,			// 50
-	CompSteps			// 51		
+	GravComp,			// 50c
+	CompSteps,			// 51c
+	ServoSense			// 52c		
 	// 51 - 64 unused currently
 	};
 

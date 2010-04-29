@@ -79,7 +79,7 @@ void WriteStatsEE()
 
 void ShowStats(void)
 {
-	#ifdef TESTS_ALL	
+	#ifdef TESTS_STATS	
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
@@ -106,7 +106,7 @@ void ShowStats(void)
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
-	#endif // TESTS_ALL
+	#endif // TESTS_STATS
 
 } // ShowStats
 

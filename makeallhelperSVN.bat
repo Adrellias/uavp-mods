@@ -52,7 +52,7 @@ if "%CLOCK%" == "CLOCK_40MHZ"     	set X=-40
 if "%COFFSET%" == "C90"           	set O=-90D
 
 if "%ACC%" == "FLATACC"           	set A=-FLATACC
-
+if "%ACC%" == "FLATACC2"           	set A=-FLATACC2
 
 set CC="C:\MCC18\bin\mcc18" 
 set CCMD=  -Oi -w1 -Opa- -DBATCHMODE

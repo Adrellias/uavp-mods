@@ -53,7 +53,7 @@ void DoLEDs(void)
 
 void LinearTest(void)
 {
-	#ifdef TESTS_ALL
+	#ifdef TESTS_ACC
 
 	TxString("\r\nAccelerometer test:\r\n");
 	TxString("Read once - no averaging\r\n");
@@ -88,7 +88,7 @@ void LinearTest(void)
 	}
 	else
 		TxString("\r\n(Acc. not present)\r\n");
-	#endif // TESTS_ALL
+	#endif // TESTS_ACC
 } // LinearTest
 
 uint8 ScanI2CBus(void)
@@ -210,7 +210,7 @@ static uint8 CP[9];
 
 void GetCompassParameters(void)
 {
-	#ifdef TESTS_FULL
+	#ifdef TESTS_FULL_COMPASS
 
 	uint8 r;
 
@@ -253,7 +253,7 @@ CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
 
-	#endif // TESTS_FULL
+	#endif // TESTS_FULL_COMPASS
 } // GetCompassParameters
 
 void DoCompassTest(void)
@@ -263,7 +263,7 @@ void DoCompassTest(void)
 
 	TxString("\r\nCompass test\r\n");
 
-	#ifdef TESTS_FULL
+	#ifdef TESTS_FULL_COMPASS
 
 	#define COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
 
@@ -333,7 +333,7 @@ void DoCompassTest(void)
 		}
 	TxNextLine(); 
 
-	#endif // TESTS_FULL
+	#endif // TESTS_FULL_COMPASS
 
 	InitCompass();
 	if ( !F.CompassValid ) goto CTerror;
@@ -458,7 +458,7 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
-	#ifdef TESTS_FULL
+	#ifdef TESTS_LEDS
 
 	uint8 s, m, mask, LEDSave;
 
@@ -498,7 +498,7 @@ void LEDsAndBuzzer(void)
 	TxString("Test Finished\r\n");
 	#else
 	TxString("/r/nTest not available\r\n");
-	#endif // TESTS_FULL		
+	#endif // TESTS_LEDS		
 } // PowerOutput
 
 void GPSTest(void)

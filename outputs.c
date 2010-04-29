@@ -29,6 +29,7 @@ void InitI2CESCs(void);
 
 boolean OutToggle;
 int16 PWM[6];
+int16 PWMSense[6];
 boolean ESCI2CFail[4];
 
 #pragma udata access outputvars
@@ -142,15 +143,15 @@ void MixAndLimitMotors(void)
 		PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
 	#else
 		PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
-		PWM[RudderC] = Limit(PWM3_SENSE * Yl, ESCMin, ESCMax);
+		PWM[RudderC] = Limit(PWMSense[RudderC] * Yl + OUT_NEUTRAL, ESCMin, ESCMax);
 		#ifdef DELTAWING
-			TempElevon = PWM1_SENSE * Rl;
-			TempElevator = PWM2_SENSE * Pl;
+			TempElevon = PWMSense[1] * Rl + OUT_NEUTRAL;
+			TempElevator = PWMSense[2] * Pl + OUT_NEUTRAL;
 			PWM[RightElevonC] = Limit( TempElevator + TempElevon, ESCMin, ESCMax);
 			PWM[LeftElevonC] = Limit( TempElevator - TempElevon, ESCMin, ESCMax);			
 		#else
-			PWM[AileronC] = Limit(PWM1_SENSE * Rl, ESCMin, ESCMax);
-			PWM[ElevatorC] = Limit(PWM2_SENSE * Pl, ESCMin, ESCMax);
+			PWM[AileronC] = Limit(PWMSense[AileronC] * Rl + OUT_NEUTRAL, ESCMin, ESCMax);
+			PWM[ElevatorC] = Limit(PWMSense[ElevatorC] * Pl + OUT_NEUTRAL, ESCMin, ESCMax);
 		#endif
 	#endif // MULTICOPTER
 
@@ -161,11 +162,11 @@ void MixAndLimitCam(void)
 	static int16 Cr, Cp;
 
 	// use only roll/pitch angle estimates
-	Cr = SRS32((int24)RollSum * P[CamRollKp], 8);
-	Cr += (int16)P[CamRollTrim] + OUT_NEUTRAL;
+	Cr = SRS32((int24)RollSum * P[CamRollKp], 8) + (int16)P[CamRollTrim];
+	Cr = PWMSense[CamRollC] * Cr + OUT_NEUTRAL;
 
-	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8);
-	Cp += DesiredCamPitchTrim + OUT_NEUTRAL; 			
+	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8) + DesiredCamPitchTrim;
+	Cp = PWMSense[CamPitchC] * Cp + OUT_NEUTRAL; 			
 
 	PWM[CamRollC] = Limit(Cr, 1, OUT_MAXIMUM);
 	PWM[CamPitchC] = Limit(Cp, 1, OUT_MAXIMUM);
