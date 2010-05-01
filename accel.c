@@ -227,22 +227,20 @@ void GetNeutralAccelerations(void)
 		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == 0 );
 		ReadAccelerations();
 
-		#ifdef FLATACC
-			LR += Ax.i16;
+		if (F.UsingFlatAcc )
+		{
+			LR -= Ax.i16;
 			FB += Ay.i16;
-			DU -= Az.i16;
-		#else
-			#ifdef FLATACC2
-				LR -= Ax.i16;
-				FB += Ay.i16;
-				DU += Az.i16;
-			#else		
-				LR += Ax.i16;
-				DU += Ay.i16;
-				FB += Az.i16;
-			#endif // FLATACC
-		#endif
-	}
+			DU += Az.i16;
+		}
+		else
+		{
+			LR += Ax.i16;
+			DU += Ay.i16;
+			FB += Az.i16;
+		}
+	}	
+
 	LR = SRS16(LR, 4);
 	FB = SRS16(FB, 4);
 	DU = SRS16(DU, 4);

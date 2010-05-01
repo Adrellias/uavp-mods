@@ -93,8 +93,6 @@ void ErectGyros(void)
 	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
-	F.GyrosErected = true;
-
 } // ErectGyros
 
 #define AccFilter NoFilter
@@ -110,21 +108,18 @@ void CompensateRollPitchGyros(void)
 	{
 		ReadAccelerations();
 
-		#ifdef FLATACC // chip down
-			NewLRAcc = Ax.i16;	
+		if ( F.UsingFlatAcc ) // chip up and twisted over
+		{
+			NewLRAcc = -Ax.i16;	
 			NewFBAcc = Ay.i16;
-			NewDUAcc = -Az.i16;
-		#else
-			#ifdef FLATACC2 // chip up and twisted over
-				NewLRAcc = -Ax.i16;	
-				NewFBAcc = Ay.i16;
-				NewDUAcc = Az.i16;
-			#else // normal mounting vertical
-				NewLRAcc = Ax.i16;
-				NewDUAcc = Ay.i16;
-				NewFBAcc = Az.i16;
-			#endif // FLATACC
-		#endif
+			NewDUAcc = Az.i16;
+		}
+		else
+		{	
+			NewLRAcc = Ax.i16;
+			NewDUAcc = Ay.i16;
+			NewFBAcc = Az.i16;
+		}
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.

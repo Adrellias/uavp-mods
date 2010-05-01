@@ -94,11 +94,10 @@ void ShowSetup(uint8 h)
 
 	TxString("Accelerometers ");
 	if( F.AccelerationsValid )
-	#ifdef FLATACC
-		TxString("ONLINE (Horizontal)\r\n");
-	#else
-		TxString("ONLINE\r\n");
-	#endif // FLATACC
+		if ( F.UsingFlatAcc )
+			TxString("ONLINE (Horizontal)\r\n");
+		else
+			TxString("ONLINE\r\n");
 	else
 		TxString("not available\r\n");
 
@@ -106,7 +105,7 @@ void ShowSetup(uint8 h)
 	if( F.CompassValid )
 	{
 		TxString("ONLINE (");
-		TxVal32(COMPASS_OFFSET_DEG,0,0);
+		TxVal32(P[CompassOffsetQtr]*90,0,0);
 		TxString("deg. offset)\r\n");
 	}
 	else

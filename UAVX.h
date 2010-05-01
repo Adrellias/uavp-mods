@@ -1,5 +1,7 @@
 // EXPERIMENTAL
 
+//#define BARO_NO_QUEUE
+
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.
 						
 // Debugging
@@ -31,7 +33,7 @@
 #ifndef BATCHMODE
 //#define TRICOPTER						
 //#define RX6CH 						// 6ch Receivers
-//#define DEBUG_SENSORS					// Debug sensors with UAVPset - no motors
+//#define DEBUG_SENSORS 				// Debug sensors with UAVPset - no motors
 //#define SIMULATE
 #define QUADROCOPTER
 #endif // !BATCHMODE
@@ -52,13 +54,13 @@
 
 // Tests
 
-#ifndef SIMULATE
-	//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-	//#define TESTS_ACC						// accelerometer tests
-	//#define TESTS_LEDS					// do LED and buzzer test
-	#ifdef CLOCK_16MHZ
+#ifndef SIMULATE	
+	#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+	//	#define TESTS_FULL_COMPASS
+	//	#define TESTS_ACC					// accelerometer tests
+	//	#define TESTS_LEDS					// do LED and buzzer test
 	//	#define TESTS_GPS
-	//	#define TESTS_FULL_COMPASS			// show internal registers of compass
+	#ifdef CLOCK_16MHZ
 		#define TESTS_STATS				// show flight stats otherwise use UAVXNav
 	#endif // CLOCK_16MHZ
 #endif // !SIMULATE
@@ -157,12 +159,6 @@
 #define GPS_MIN_FIX					1		// must be 1 or 2 
 #define GPS_ORIGIN_SENTENCES 		30L		// Number of sentences needed to obtain reasonable Origin
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
-	
-#ifdef C90
-	#define COMPASS_OFFSET_DEG		90L		// North degrees CW from Front - older compass
-#else
-	#define COMPASS_OFFSET_DEG		270L	// North degrees CW from Front
-#endif // COMPASS_OFFSET_90
 
 #define	NAV_GAIN_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
 #define NAV_GAIN_6CH				80L		// Low GPS gain for 6ch Rx
@@ -561,7 +557,7 @@ typedef union {
 		CompassValid:1,
 		CompassMissRead:1,
 
-		GyrosErected:1,
+		UsingFlatAcc:1,
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
 		NavComputed:1,
@@ -576,7 +572,7 @@ typedef union {
 		BeeperInUse:1, 
 		AcquireNewPosition:1, 
 		GPSTestActive:1,
-		unused1:1,
+		RFInInches:1,
 		Simulation:1;
 		};
 } Flags;
@@ -681,8 +677,10 @@ extern void InitBarometer(void);
 //extern Baro24Q BaroPressQ;
 //extern Baro24Q BaroTempQ;
 
-extern int24 OriginBaroPressure, CompBaroPress;
+extern int24 OriginBaroPressure, OriginBaroTemperature, CompBaroPress;
 extern int24 BaroPressSum, BaroTempSum;
+extern int24 BaroPressure, BaroTemperature;
+extern boolean ReadPressure;
 extern int24 RelBaroAltitude, RelBaroAltitudeP;
 extern int16 BaroROC;
 extern i16u	BaroVal;
@@ -997,8 +995,9 @@ enum Params { // MAX 64
 	AltIntLimit,		// 49
 	GravComp,			// 50c
 	CompSteps,			// 51c
-	ServoSense			// 52c		
-	// 51 - 64 unused currently
+	ServoSense,			// 52c
+	CompassOffsetQtr	// 53c		
+	// 53 - 64 unused currently
 	};
 
 #define FlyXMode 			0
@@ -1013,12 +1012,16 @@ enum Params { // MAX 64
 #define RxSerialPPM 		3
 #define RxSerialPPMMask		0x08 
 
+#define RFInches 		4
+#define RFInchesMask		0x10
+
 // bit 4 is pulse polarity for 3.15
 
 #define UseGPSAlt 			5
 #define	UseGPSAltMask		0x20
 
-// bit 6 is throttle channel for 3.15
+#define UseFlatAcc 			6
+#define	UseFlatAccMask		0x40
 
 // bit 7 unusable in UAVPSet
 

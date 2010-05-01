@@ -33,7 +33,11 @@ void GetRangefinderAltitude(void)
 
 	if ( F.RangefinderAltitudeValid )
 	{
-		Temp = ADC(ADCAltChan);
+		if ( F.RFInInches )
+			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/100L);
+		else
+			Temp = ADC(ADCAltChan);
+
 		if ( mS[Clock] > mS[RangefinderROCUpdate] )
 		{
 			mS[RangefinderROCUpdate] = mS[Clock] + 1000; // 1 Sec.

@@ -34,7 +34,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,1,0,0,0,0,0,0,0,0,
+	1,1,1,0,0,0,0,0,0,0,
 	0,0,0,0
 	};
 
@@ -94,11 +94,11 @@ const rom int8 DefaultParams[] = {
 	3,				// AltIntLimit		49
 	11,				// GravComp			50c
 	1,				// CompSteps		51c
-	0,				// ServoSense		52c				
+	0,				// ServoSense		52c	
+	3,				// CompassOffsetQtr 53c			
 
-	0,				// 53 - 64 unused currently	
+	0,				// 54 - 64 unused currently	
 
-	0,
 	0,
 	0,
 	0,	
@@ -242,7 +242,7 @@ void ReadParametersEE(void)
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
-		CompassOffset = (((COMPASS_OFFSET_DEG - (int16)P[NavMagVar])*MILLIPI)/180L);
+		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
 		F.UsingXMode = ( (P[ConfigBits] & FlyXModeMask) != 0);
 		if ( F.UsingXMode )
 			CompassOffset -= QUARTERMILLIPI;
@@ -252,6 +252,9 @@ void ReadParametersEE(void)
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
+
+		F.UsingFlatAcc = ((P[ConfigBits] & UseFlatAccMask) != 0);
+		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);

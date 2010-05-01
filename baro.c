@@ -47,6 +47,10 @@ void InitBarometer(void);
 //#define SMD500_PRESS_TIME_MS 	34
 #define BARO_PRESS_TIME_MS	45	
 
+#ifdef BARO_NO_QUEUE
+int24	BaroPressure, BaroTemperature;
+boolean ReadPressure;
+#else
 typedef struct {
 	uint8 Head, Tail;
 	int24 B[8];
@@ -58,12 +62,14 @@ Baro24Q BaroPressQ;
 Baro24Q BaroTempQ;
 #pragma udata
 
-int24	OriginBaroPressure, CompBaroPress;
 int24 	BaroPressSum, BaroTempSum;
+int8	BaroSample;
+#endif // BARO_NO_QUEUE
+
+int24	OriginBaroPressure, CompBaroPress;
 int24	RelBaroAltitude, RelBaroAltitudeP;
 int16	BaroROC;
 i16u	BaroVal;
-int8	BaroSample;
 uint8	BaroType;
 
 #ifdef SIMULATE
@@ -141,16 +147,16 @@ RVerror:
 #define BARO_BMP085_TEMP_COEFF		62L 	
 #define BARO_SMD500_TEMP_COEFF		50L
 
-int24 CompensatedPressure(int24 BaroPressSum, int24 BaroTempSum)
+int24 CompensatedPressure(int24 BaroPress, int24 BaroTemp)
 {
 	static int24 BaroTempComp;
 
 	if ( BaroType == BARO_ID_BMP085 )
-		BaroTempComp = (int24)((int32)BaroTempSum * BARO_BMP085_TEMP_COEFF + 64) >> 7;
+		BaroTempComp = (int24)((int32)BaroTemp * BARO_BMP085_TEMP_COEFF + 64) >> 7;
 	else
-		BaroTempComp = (int24)((int32)BaroTempSum * BARO_SMD500_TEMP_COEFF + 16) >> 4;
+		BaroTempComp = (int24)((int32)BaroTemp * BARO_SMD500_TEMP_COEFF + 16) >> 4;
 	
-	return (BaroPressSum + BaroTempComp - OriginBaroPressure);
+	return (BaroPress + BaroTempComp - OriginBaroPressure);
 } // CompensatedPressure
 
 void GetBaroAltitude(void)
@@ -159,6 +165,65 @@ void GetBaroAltitude(void)
 	// SMD500 9.5mS (T) 34mS (P)  
 	// BMP085 4.5mS (T) 25.5mS (P) OSRS=3
 	// Use 50mS => 5 samples per altitude hold update
+
+	#ifdef BARO_NO_QUEUE
+	if ( mS[Clock] >= mS[BaroUpdate] )
+	{
+		if ( ReadPressure )
+		{
+			ReadBaro(ReadPressure);
+			BaroPressure = BaroVal.u16;
+			ReadPressure = false;
+			StartBaroADC(ReadPressure);
+
+		}
+		else
+		{
+			ReadBaro(ReadPressure);
+			BaroTemperature = BaroVal.u16;
+			ReadPressure = true;
+			StartBaroADC(ReadPressure);
+
+			CompBaroPress = CompensatedPressure(BaroPressure, BaroTemperature);
+			Temp = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 1);
+			RelBaroAltitude = BaroFilter(RelBaroAltitude, Temp);
+	
+			#ifdef SIMULATE
+			if ( State == InFlight )
+			{
+				FakeRelBaroAltitude += ( DesiredThrottle - CruiseThrottle ) + AltComp * 5;
+				RelBaroAltitude = FakeRelBaroAltitude;
+			}			
+			#endif // SIMULATE
+	
+			Temp = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
+			BaroROC = BaroROCFilter(BaroROC, Temp);
+			
+			RelBaroAltitudeP = RelBaroAltitude;
+	
+			if ( State == InFlight )
+			{
+				if ( BaroROC > Stats[MaxBaroROCS] )
+					Stats[MaxBaroROCS] = BaroROC;
+				else
+					if ( BaroROC < Stats[MinBaroROCS] )
+						Stats[MinBaroROCS] = BaroROC;
+	
+				if ( RelBaroAltitude > MaxRelBaroAltitudeS ) 
+				{ 
+					MaxRelBaroAltitudeS = RelBaroAltitude;
+					Stats[RelBaroPressureS] = CompBaroPress;
+				}
+			}
+			F.NewBaroValue = F.BaroAltitudeValid;
+	
+			#ifdef DEBUG_SENSORS	
+			Trace[TRelBaroAltitude] = RelBaroAltitude/10L;
+			#endif
+		}
+	}
+
+	#else
 
 	if ( mS[Clock] >= mS[BaroUpdate] ) // 5 pressure readings and 1 temperature reading
 	{
@@ -237,17 +302,25 @@ void GetBaroAltitude(void)
 			#endif
 		}
 	}
+
+	#endif // BARO_NO_QUEUE
 }// GetBaroAltitude
 
 void InitBarometer(void)
 {	
-	int24 Temp, CurrBaroTemp;
+	int24 Temp, CurrBaroTemp, AvOriginBaroPressure;
 	uint8 s;
 
-	RelBaroAltitude = RelBaroAltitudeP = BaroROC = 0;
-	BaroPressSum = BaroSample = OriginBaroPressure = CompBaroPress = 0;
+	RelBaroAltitude = RelBaroAltitudeP = BaroROC = CompBaroPress = 0;
 	AltComp = AltDiffSum = AltDSum = 0;
+	OriginBaroPressure = 0;
+
+	#ifdef BARO_NO_QUEUE
+	
+	#else
+	BaroPressSum = BaroSample = CompBaroPress = 0;
 	BaroPressQ.Head = BaroTempQ.Head = 0;
+	#endif // BARO_NO_QUEUE
 
 	#ifdef SIMULATE
 	FakeRelBaroAltitude = 0;
@@ -270,25 +343,43 @@ void InitBarometer(void)
 
 	if ( !F.BaroAltitudeValid ) goto BAerror;
 
-	for ( s = 0; s < 8 ; s++ )
-	{
+	#ifdef BARO_NO_QUEUE
+		AvOriginBaroPressure = 0;
+		for ( s = 0; s < 8 ; s++ )
+		{
+			while ( mS[Clock] < mS[BaroUpdate] );
+			ReadBaro(true);
+			BaroPressure = BaroVal.u16;
+			StartBaroADC(false);
+			while ( mS[Clock] < mS[BaroUpdate] );
+			ReadBaro(false);
+			BaroTemperature = BaroVal.u16;
+			AvOriginBaroPressure += CompensatedPressure(BaroPressure, BaroTemperature);		
+			ReadPressure = true;
+			StartBaroADC(ReadPressure);
+		}
+		OriginBaroPressure = AvOriginBaroPressure >> 3;
+	#else
+		for ( s = 0; s < 8 ; s++ )
+		{
+			while ( mS[Clock] < mS[BaroUpdate] );
+			ReadBaro(true);
+			StartBaroADC(s < 7); // start temperature read on last sample
+			Temp = (int24)BaroVal.u16;
+			BaroPressQ.B[s] = Temp;
+			BaroPressSum += Temp;	
+		}
+	
 		while ( mS[Clock] < mS[BaroUpdate] );
-		ReadBaro(true);
-		StartBaroADC(s < 7); // start temperature read on last sample
-		Temp = (int24)BaroVal.u16;
-		BaroPressQ.B[s] = Temp;
-		BaroPressSum += Temp;	
-	}
+		ReadBaro(false);
+		CurrBaroTemp = (int24)BaroVal.u16;	 
+		for ( s = 0; s < 8 ; s++ )
+			BaroTempQ.B[s] =  CurrBaroTemp;
+		BaroTempSum = CurrBaroTemp * 8L;
+		OriginBaroPressure = CompensatedPressure(BaroPressSum, BaroTempSum);
+		StartBaroADC(true);
+	#endif // BARO_NO_QUEUE
 
-	while ( mS[Clock] < mS[BaroUpdate] );
-	ReadBaro(false);
-	CurrBaroTemp = (int24)BaroVal.u16;	 
-	for ( s = 0; s < 8 ; s++ )
-		BaroTempQ.B[s] =  CurrBaroTemp;
-	BaroTempSum = CurrBaroTemp * 8L;
-	OriginBaroPressure = CompensatedPressure(BaroPressSum, BaroTempSum);
-
-	StartBaroADC(true);
 	RelBaroAltitudeP = 0;
 
 	return;

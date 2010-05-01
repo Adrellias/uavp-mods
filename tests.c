@@ -307,8 +307,6 @@ void DoCompassTest(void)
 	TxNextLine(); 
 
 	TxString("6:\tNSum\t"); TxVal32((int32)CP[6], 0, 0);
-	if ( CP[6] !=16 ) 
-		TxString("\t Error expected 16");
 	TxNextLine(); 
 
 	TxString("7:\tSW Ver\t"); 
@@ -410,14 +408,14 @@ void BaroTest(void)
 
 	#ifdef TESTS_FULL_BARO
 
-	TxString("Origin P/T:  \t");
-	TxVal32((int32)OriginBaroPressure, 0, ' ');
-	TxVal32((int32)OriginBaroTemperature,0, ' ');
-	TxString("\r\nRelative P/T: \t");
-	TxVal32((int32)BaroPress.u16 - OriginBaroPressure,0,' ');
-	TxVal32((int32)BaroTemp.u16 - OriginBaroTemperature, 0, ' ');
-	TxString("\r\nComp P*8:    \t");
-	TxVal32((int32)BaroSum + BaroTempComp, 0, ' ');
+	TxString("\r\nP/T: \t");
+	#ifdef BARO_NO_QUEUE
+	TxVal32((int32)BaroPressure,0,' ');
+	TxVal32((int32)BaroTemperature, 0, ' ');
+	#else
+	TxVal32((int32)BaroPressSum >> 3,0,' ');
+	TxVal32((int32)BaroTempSum >> 3, 0, ' ');
+	#endif // BARO_NO_QUEUE
 	TxNextLine();
 
 	#endif // TESTS_FULL_BARO
