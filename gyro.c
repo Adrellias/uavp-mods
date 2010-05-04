@@ -28,32 +28,32 @@ void GetYawGyroValue(void);
 void ErectGyros(void);
 void CalcGyroRates(void);
 
-int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
+int16	GyroMidRoll, GyroMidPitch, GyroMidYaw, GyroMidYawADC;
 int16	RollRate, PitchRate, YawRate;
+int16	RollRateADC, PitchRateADC, YawRateADC;
 
 void GetRollPitchGyroValues(void)
 {
-	static int16 NewRollRate, NewPitchRate;
-
 	if ( P[GyroType] == IDG300 ) // 500 Deg/Sec
 	{
-		NewRollRate = (int16)ADC(IDGADCRollChan);
-		NewPitchRate = (int16)ADC(IDGADCPitchChan);
+		RollRateADC = (int16)ADC(IDGADCRollChan);
+		PitchRateADC = (int16)ADC(IDGADCPitchChan);
 	}
 	else
 	{
-		NewRollRate = (int16)ADC(NonIDGADCRollChan);
-		NewPitchRate = (int16)ADC(NonIDGADCPitchChan);
+		RollRateADC = (int16)ADC(NonIDGADCRollChan);
+		PitchRateADC = (int16)ADC(NonIDGADCPitchChan);
 	}
 
-	RollRate += NewRollRate;
-	PitchRate += NewPitchRate;
+	RollRate = RollRate + RollRateADC;
+	PitchRate = PitchRate + PitchRateADC;
+
 } // GetRollPitchGyroValues
 
 void GetYawGyroValue(void)
 {
-	YawRate = ADC(ADCYawChan);
-	YawRate >>= 2;	// use only 8 bit A/D resolution
+	YawRateADC = ADC(ADCYawChan);
+	YawRate = YawRateADC >> 2;	// use only 8 bit A/D resolution
 } // GetYawGyroValue
 
 void ErectGyros(void)
@@ -88,7 +88,8 @@ void ErectGyros(void)
 	
 	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
 	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
-	GyroMidYaw = (int16)((YawAv + 64) >> 7);
+	GyroMidYawADC = (int16)((YawAv + 16) >> 5);
+	GyroMidYaw = GyroMidYawADC >> 2;
 
 	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;

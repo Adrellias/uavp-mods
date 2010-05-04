@@ -75,9 +75,9 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(DesiredPitch);
 		TxESCi16(DesiredYaw);
 
-		TxESCi16(RollRate);
-		TxESCi16(PitchRate);
-		TxESCi16(YawRate);
+		TxESCi16(RollRateADC - GyroMidRoll);
+		TxESCi16(PitchRateADC - GyroMidPitch);
+		TxESCi16(YawRateADC - GyroMidYawADC);
 
 		TxESCi16(RollSum);
 		TxESCi16(PitchSum);

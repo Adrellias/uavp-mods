@@ -806,8 +806,9 @@ extern void GetYawGyroValue(void);
 extern void ErectGyros(void);
 extern void CalcGyroRates(void);
 
-extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw;
+extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw, GyroMidYawADC;
 extern int16 RollRate, PitchRate, YawRate;
+extern int16 RollRateADC, PitchRateADC, YawRateADC;
 
 //______________________________________________________________________________________________
 
