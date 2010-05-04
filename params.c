@@ -42,34 +42,34 @@ const rom int8 DefaultParams[] = {
 	-24, 			// RollKp, 			01
 	-14, 			// RollKi,			02
 	75, 			// RollKd,			03
-	0, 				// HorizDampKp,		04c 
+	-1, 			// HorizDampKp,		04c 
 	3, 				// RollIntLimit,	05
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	24, 			// AltKp,			09
+	6, 				// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
-	-20, 			// YawKi,			12
+	-25, 			// YawKi,			12
 	0, 				// YawKd,			13
-	30, 			// YawLimit,		14
+	25, 			// YawLimit,		14
 	2, 				// YawIntLimit,		15
 	0, 				// ConfigBits,		16c
 	4, 				// TimeSlots,		17c
 	48, 			// LowVoltThres,	18c
-	24, 			// CamRollKp,		19
+	20, 			// CamRollKp,		19
 	45, 			// PercentCruiseThr,20c 
 	
 	-1, 			// VertDampKp,		21c
 	0, 				// MiddleDU,		22c
-	10, 			// PercentIdleThr,	23c
+	20, 			// PercentIdleThr,	23c
 	0, 				// MiddleLR,		24c
 	0, 				// MiddleFB,		25c
-	24, 			// CamPitchKp,		26
+	20, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	12, 			// AltKi,			28
-	90, 			// NavRadius,		29
+	4, 				// AltKi,			28
+	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
 	0, 				// unused1,			31
@@ -81,7 +81,7 @@ const rom int8 DefaultParams[] = {
 	DX7AR7000, 		// TxRxType			37c
 	2,				// NeutralRadius	38
 	30,				// PercentNavSens6Ch	39
-	0,				// CamRollTrim,		40c
+	1,				// CamRollTrim,		40c
 
 	-16,			// NavKd			41
 	1,				// VertDampDecay    42c
@@ -90,8 +90,8 @@ const rom int8 DefaultParams[] = {
 	0,				// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
-	12,				// NavIntLimit		48
-	3,				// AltIntLimit		49
+	1,				// NavIntLimit		48
+	1,				// AltIntLimit		49
 	11,				// GravComp			50c
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	

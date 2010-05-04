@@ -95,7 +95,7 @@ void ShowSetup(uint8 h)
 	TxString("Accelerometers ");
 	if( F.AccelerationsValid )
 		if ( F.UsingFlatAcc )
-			TxString("ONLINE (Horizontal)\r\n");
+			TxString("ONLINE (horiz.)\r\n");
 		else
 			TxString("ONLINE\r\n");
 	else
@@ -105,7 +105,7 @@ void ShowSetup(uint8 h)
 	if( F.CompassValid )
 	{
 		TxString("ONLINE (");
-		TxVal32(P[CompassOffsetQtr]*90,0,0);
+		TxVal32((int16)P[CompassOffsetQtr]*90,0,0);
 		TxString("deg. offset)\r\n");
 	}
 	else
@@ -122,7 +122,10 @@ void ShowSetup(uint8 h)
 
 	TxString("Rangefinder ");
 	if ( F.RangefinderAltitudeValid )
-		TxString("ONLINE\r\n");
+		if ( F.RFInInches )
+			TxString("ONLINE (inches)\r\n");
+		else
+			TxString("ONLINE\r\n");
 	else
 		TxString("not available\r\n");
 
