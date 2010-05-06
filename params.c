@@ -34,7 +34,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,1,1,0,0,0,0,0,0,0,
+	1,1,1,1,0,0,0,0,0,0,
 	0,0,0,0
 	};
 
@@ -95,11 +95,11 @@ const rom int8 DefaultParams[] = {
 	11,				// GravComp			50c
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	
-	3,				// CompassOffsetQtr 53c			
+	3,				// CompassOffsetQtr 53c
+	49,				// BatteryCapacity	54c			
 
-	0,				// 54 - 64 unused currently	
+	0,				// 55 - 64 unused currently	
 
-	0,
 	0,
 	0,	
 	0,
@@ -262,7 +262,7 @@ void ReadParametersEE(void)
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 		DescentCmpS = (int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
-		BatteryVoltsADC = (int16)P[LowVoltThres] << 3;
+		BatteryVoltsLimitADC = BatteryVoltsADC = (int16)P[LowVoltThres] << 3; // weird units
 		BatteryCurrentADC = 0;
 		
 		ParametersChanged = false;

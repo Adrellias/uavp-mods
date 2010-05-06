@@ -61,12 +61,10 @@ void SendUAVXNav(void) // 800uS at 40MHz
 			TxESCu8(F.AllFlags[b]); 
 		
 		TxESCu8(State);	
+
 		TxESCi16(BatteryVoltsADC);
-
 		TxESCi16(BatteryCurrentADC);
-
-		Temp.i32 = BatteryCharge;
-		TxESCi16(Temp.w1);
+		TxESCi16(BatteryChargeUsedmAH);
  
 		TxESCi16(RCGlitches);			
 		TxESCi16(DesiredThrottle);

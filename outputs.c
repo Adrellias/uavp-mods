@@ -31,6 +31,7 @@ boolean OutToggle;
 int16 PWM[6];
 int16 PWMSense[6];
 boolean ESCI2CFail[4];
+int16 CurrThrottle;
 
 #pragma udata access outputvars
 near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
@@ -49,30 +50,30 @@ void DoMix(int16 CurrThrottle)
 	PWM[BackC] = CurrThrottle;
 	#endif // !TRICOPTER
 
-	#ifndef TRICOPTER
-	if( F.UsingXMode )
-	{	// "Cross" Mode
-		PWM[LeftC] +=   Pl - Rl - Yl;
-		PWM[RightC] += -Pl + Rl - Yl;
-		PWM[FrontC] += -Pl - Rl + Yl;
-		PWM[BackC] +=   Pl + Rl + Yl; 
-	}
-	else
-	{	// Normal "Plus" Mode
-		PWM[LeftC]  += -Rl - Yl;	
-		PWM[RightC] +=  Rl - Yl;
-		PWM[FrontC] += -Pl + Yl;
-		PWM[BackC]  +=  Pl + Yl;
-	}
-
-	#else	// TRICOPTER
-	Temp = SRS16(Rl - Pl, 1); 
-	PWM[FrontC] += Pl ;				// front motor
-	PWM[LeftC]  += Temp;				// rear left
-	PWM[RightC] -= Temp; 				// rear right
-	PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
-	#endif
-
+	#ifdef TRICOPTER
+		Temp = SRS16(Rl - Pl, 1); 
+		PWM[FrontC] += Pl ;				// front motor
+		PWM[LeftC]  += Temp;				// rear left
+		PWM[RightC] -= Temp; 				// rear right
+		PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
+	#else
+		#ifdef QUADROCOPTER
+		if( F.UsingXMode )
+		{	// "Cross" Mode
+			PWM[LeftC] +=   Pl - Rl - Yl;
+			PWM[RightC] += -Pl + Rl - Yl;
+			PWM[FrontC] += -Pl - Rl + Yl;
+			PWM[BackC] +=   Pl + Rl + Yl; 
+		}
+		else
+		#endif // QUADROCOPTER
+		{	// Normal "Plus" Mode
+			PWM[LeftC]  += -Rl - Yl;	
+			PWM[RightC] +=  Rl - Yl;
+			PWM[FrontC] += -Pl + Yl;
+			PWM[BackC]  +=  Pl + Yl;
+		}
+	#endif // TRICOPTER
 } // DoMix
 
 boolean 	MotorDemandRescale;
@@ -113,7 +114,7 @@ void CheckDemand(int16 CurrThrottle)
 
 void MixAndLimitMotors(void)
 { 	// expensive ~400uSec @16MHz
-    static int16 Temp, CurrThrottle, TempElevon, TempElevator;
+    static int16 Temp, TempElevon, TempElevator;
 
 	#ifdef MULTICOPTER
 		if ( DesiredThrottle < IdleThrottle )

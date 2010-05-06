@@ -407,9 +407,7 @@ void InitGPS(void)
 
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSFix = GPSNoOfSats = GPSHDilute = 0;
-	GPSRelAltitude = 66666; 
-	GPSROC = 6666;
-	GPSAltitude = 0;
+	GPSRelAltitude = GPSROC = GPSAltitude = 0;
 	GPSVel = 0;
 
 	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;

@@ -34,8 +34,8 @@ void DumpTrace(void);
 
 int16 Trace[TopTrace+1];
 int8 BatteryVolts;
-int16 BatteryVoltsADC, BatteryCurrentADC;
-int32 BatteryCharge;
+int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
+int32 BatteryChargeADC, BatteryCurrent;
 
 void InitPorts(void)
 {
@@ -78,7 +78,7 @@ void InitMisc(void)
 	F.Simulation = true;
 	#endif // SIMULATE
 
-	BatteryCharge = 0;
+	BatteryChargeADC = 0;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
 	IdleThrottle = RC_THRES_STOP;
@@ -166,14 +166,15 @@ void CheckAlarms(void)
 	static int16 Temp;
 
 	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
-	//BatteryCurrentADC  = SoftFilter(BatteryCurrentADC, Temp);
-	BatteryCharge += BatteryCurrentADC * (mS[Clock] - mS[LastBattery]); // scaling at GS
+	BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
+
+	BatteryChargeADC += BatteryCurrentADC * (mS[Clock] - mS[LastBattery]);
 	mS[LastBattery] = mS[Clock];
+	BatteryChargeUsedmAH = CURRENT_SENSOR_MAX * (BatteryChargeADC/3686400L); // 1024*1000*3600
 
 	Temp = ADC(ADCBattVoltsChan);
 	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
-	BatteryVolts = BatteryVoltsADC >> 3; // still weird units from original UAVP
-	F.LowBatt = (BatteryVolts < (int16)P[LowVoltThres]) & 1;
+	F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel;
 

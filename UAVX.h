@@ -174,6 +174,10 @@
 
 // Throttle
 
+#define	THROTTLE_MAX_CURRENT	40L		// Amps total current at full throttle for estimated mAH
+#define	CURRENT_SENSOR_MAX		50L		// Amps range of current sensor - used for estimated consumption - no actual sensor yet.
+#define	THROTTLE_CURRENT_SCALE	((THROTTLE_MAX_CURRENT * 1024L)/(200L * CURRENT_SENSOR_MAX ))
+
 #define THROTTLE_SLEW_LIMIT		0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
 #define THROTTLE_MIDDLE			10  	// throttle stick dead zone for baro 
 #define THROTTLE_MIN_ALT_HOLD	75		// min throttle stick for altitude lock
@@ -919,6 +923,7 @@ enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 extern int16 PWM[6];
 extern int16 PWMSense[6];
 extern boolean ESCI2CFail[4];
+extern int16 CurrThrottle;
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near uint8 ESCMin, ESCMax;
 extern near boolean ServoToggle;
@@ -997,8 +1002,9 @@ enum Params { // MAX 64
 	GravComp,			// 50c
 	CompSteps,			// 51c
 	ServoSense,			// 52c
-	CompassOffsetQtr	// 53c		
-	// 53 - 64 unused currently
+	CompassOffsetQtr,	// 53c
+	BatteryCapacity		// 55c	
+	// 55 - 64 unused currently
 	};
 
 #define FlyXMode 			0
@@ -1139,8 +1145,8 @@ enum TraceTags {
 #define TopTrace TPWM5
 
 extern int16 Trace[];
-extern int16 BatteryVoltsADC, BatteryCurrentADC;
-extern int32 BatteryCharge;
+extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
+extern int32 BatteryChargeADC, BatteryCurrent;
 
 //______________________________________________________________________________________________
 
