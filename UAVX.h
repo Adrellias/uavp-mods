@@ -30,12 +30,15 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-#ifndef BATCHMODE
-//#define TRICOPTER						
+#ifndef BATCHMODE						
 //#define RX6CH 						// 6ch Receivers
 //#define DEBUG_SENSORS 				// Debug sensors with UAVPset - no motors
 //#define SIMULATE
 #define QUADROCOPTER
+//#define TRICOPTER
+//#define HELICOPTER
+//#define AILERON
+//#define ELEVON
 #endif // !BATCHMODE
 
 //________________________________________________________________________________________________
@@ -46,8 +49,8 @@
 	#define MULTICOPTER
 #endif
 
-#if ( defined HELICOPTER | defined FIXEDWING | defined DELTAWING )	
-	#if ( defined FIXEDWING | defined DELTAWING )
+#if ( defined HELICOPTER | defined AILERON | defined ELEVON )	
+	#if ( defined AILERON | defined ELEVON )
 		#define NAV_WING
 	#endif
 #endif
@@ -513,7 +516,9 @@ typedef struct {
 #error RC_MAXIMUM < RC_NEUTRAL !
 #endif
 
-// end of sanity checks
+#if (( defined TRICOPTER + defined QUADROCOPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
+#error More than one aircraft configuration defined !
+#endif
 
 //______________________________________________________________________________________________
 
@@ -907,7 +912,7 @@ extern const rom uint8 RxChMnem[];
 // outputs.c
 
 extern uint8 SaturInt(int16);
-extern void DoMix(int16 CurrThrottle);
+extern void DoMulticopterMix(int16 CurrThrottle);
 extern void CheckDemand(int16 CurrThrottle);
 extern void MixAndLimitMotors(void);
 extern void MixAndLimitCam(void);

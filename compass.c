@@ -104,7 +104,7 @@ void GetHeading(void)
 		Heading = 0;
 
 	#ifdef SIMULATE
-		#if ( defined FIXEDWING | defined DELTAWING )
+		#if ( defined AILERON | defined ELEVON )
 			if ( State == InFlight )
 				FakeHeading -= FakeDesiredRoll/5 + FakeDesiredYaw/5;
 		#else
@@ -116,7 +116,7 @@ void GetHeading(void)
 	
 		FakeHeading = Make2Pi((int16)FakeHeading);
 		Heading = FakeHeading;
-		#endif // FIXEDWING | DELTAWING
+		#endif // AILERON | ELEVON
 
 	#endif // SIMULATE
 } // GetHeading

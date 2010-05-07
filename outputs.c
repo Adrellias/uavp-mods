@@ -20,7 +20,7 @@
 
 #include "uavx.h"
 
-void DoMix(int16);
+void DoMulticopterMix(int16);
 void CheckDemand(int16);
 void MixAndLimitMotors(void);
 void MixAndLimitCam(void);
@@ -41,40 +41,53 @@ near boolean ServoToggle;
 
 #ifdef MULTICOPTER
 
-void DoMix(int16 CurrThrottle)
+void DoMulticopterMix(int16 CurrThrottle)
 {
 	static int16 Temp;
 
-	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
-	#ifndef TRICOPTER
-	PWM[BackC] = CurrThrottle;
-	#endif // !TRICOPTER
-
 	#ifdef TRICOPTER
+		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+		#define ALT_TRICOPTER
+		#ifdef ALT_TRICOPTER
+		Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
+		PWM[FrontC] -= Pl ;				// front motor
+		PWM[LeftC]  += (Temp - Rl);		// rear left
+		PWM[RightC] += (Temp + Rl); 	// rear right
+		PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
+		#else
+		// this does not allow for the 1.15 times effectiveness of the left and right motors
 		Temp = SRS16(Rl - Pl, 1); 
 		PWM[FrontC] += Pl ;				// front motor
-		PWM[LeftC]  += Temp;				// rear left
-		PWM[RightC] -= Temp; 				// rear right
+		PWM[LeftC]  += Temp;			// rear left
+		PWM[RightC] -= Temp; 			// rear right
 		PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
+		#endif
 	#else
-		#ifdef QUADROCOPTER
-		if( F.UsingXMode )
-		{	// "Cross" Mode
-			PWM[LeftC] +=   Pl - Rl - Yl;
-			PWM[RightC] += -Pl + Rl - Yl;
-			PWM[FrontC] += -Pl - Rl + Yl;
-			PWM[BackC] +=   Pl + Rl + Yl; 
-		}
-		else
-		#endif // QUADROCOPTER
-		{	// Normal "Plus" Mode
-			PWM[LeftC]  += -Rl - Yl;	
-			PWM[RightC] +=  Rl - Yl;
-			PWM[FrontC] += -Pl + Yl;
-			PWM[BackC]  +=  Pl + Yl;
-		}
-	#endif // TRICOPTER
-} // DoMix
+	    #ifdef HEXACOPTER
+
+			#error NO HEXACOPTER YET!
+
+		#else // QUADROCOPTER
+			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+			PWM[BackC] = CurrThrottle;
+			if( F.UsingXMode )
+			{	// "Cross" Mode
+				PWM[LeftC]  +=  Pl - Rl - Yl;
+				PWM[RightC] += -Pl + Rl - Yl;
+				PWM[FrontC] += -Pl - Rl + Yl;
+				PWM[BackC]  +=  Pl + Rl + Yl; 
+			}
+			else
+			{	// Normal "Plus" Mode
+				PWM[LeftC]  += -Rl - Yl;	
+				PWM[RightC] +=  Rl - Yl;
+				PWM[FrontC] += -Pl + Yl;
+				PWM[BackC]  +=  Pl + Yl;
+			}
+		#endif
+	#endif
+
+} // DoMulticopterMix
 
 boolean 	MotorDemandRescale;
 
@@ -121,41 +134,40 @@ void MixAndLimitMotors(void)
 			CurrThrottle = 0;
 		else
 			CurrThrottle = DesiredThrottle + (DUComp + AltComp); // vertical compensation not optional
-		
+			
 		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
-		
+			
 		if ( CurrThrottle > IdleThrottle )
 		{
-			DoMix(CurrThrottle);
-		
+			DoMulticopterMix(CurrThrottle);
+			
 			CheckDemand(CurrThrottle);
-		
+			
 			if ( MotorDemandRescale )
-				DoMix(CurrThrottle);
+				DoMulticopterMix(CurrThrottle);
 		}
 		else
-			PWM[FrontC] = PWM[BackC] = 
-			PWM[LeftC] = PWM[RightC] = CurrThrottle;
-	
-		PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
-		PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
-		PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
-		PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
+			PWM[FrontC] = PWM[BackC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 	#else
-		PWM[ThrottleC] = Limit(CurrThrottle + AltComp + DUComp, ESCMin, ESCMax);
-		PWM[RudderC] = Limit(PWMSense[RudderC] * Yl + OUT_NEUTRAL, ESCMin, ESCMax);
-		#ifdef DELTAWING
-			TempElevon = PWMSense[1] * Rl + OUT_NEUTRAL;
+		if ( DesiredThrottle < IdleThrottle )
+			CurrThrottle = 0;
+		else
+			CurrThrottle = DesiredThrottle + AltComp;
+		
+		PWM[ThrottleC] = CurrThrottle;
+		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
+		
+		#if ( defined AILERON | defined HELICOPTER )
+			PWM[AileronC] = PWMSense[AileronC] * Rl + OUT_NEUTRAL;
+			PWM[ElevatorC] = PWMSense[ElevatorC] * Pl + OUT_NEUTRAL;
+		#else // ELEVON
+			TempElevon = PWMSense[1] * Rl;
 			TempElevator = PWMSense[2] * Pl + OUT_NEUTRAL;
-			PWM[RightElevonC] = Limit( TempElevator + TempElevon, ESCMin, ESCMax);
-			PWM[LeftElevonC] = Limit( TempElevator - TempElevon, ESCMin, ESCMax);			
-		#else
-			PWM[AileronC] = Limit(PWMSense[AileronC] * Rl + OUT_NEUTRAL, ESCMin, ESCMax);
-			PWM[ElevatorC] = Limit(PWMSense[ElevatorC] * Pl + OUT_NEUTRAL, ESCMin, ESCMax);
+			PWM[RightElevonC] = TempElevator + TempElevon;
+			PWM[LeftElevonC] = TempElevator - TempElevon;		
 		#endif
-	#endif // MULTICOPTER
-
+	#endif
 } // MixAndLimitMotors
 
 void MixAndLimitCam(void)
@@ -187,6 +199,9 @@ void OutSignals(void)
 
 	#ifndef SIMULATE
 
+	for ( m = 0; m < 6; m++ )
+		PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
+
 	#ifdef DEBUG_SENSORS
 
 	Trace[TDesiredThrottle] = DesiredThrottle;
@@ -199,9 +214,8 @@ void OutSignals(void)
 	Trace[TPWM1] = PWM[1];
 	Trace[TPWM2] = PWM[2];
 	Trace[TPWM3] = PWM[3];
-
-	Trace[TPWM4] = PWM[CamRollC];
-	Trace[TPWM5] = PWM[CamPitchC];
+	Trace[TPWM4] = PWM[4];
+	Trace[TPWM5] = PWM[5];
 
 	#else // !DEBUG_SENSORS
 
@@ -212,7 +226,7 @@ void OutSignals(void)
 		PWM[LeftC] = PWM[RightC] = ESCMin;	
 		#else
 		PWM[ThrottleC] = ESCMin;
-		PWM[AileronC] = PWM[ElevatorC] = PWM[RudderC] = OUT_NEUTRAL;
+		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
 		#endif // MULTICOPTER
 
 		PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
@@ -242,7 +256,7 @@ void OutSignals(void)
 			PWM2 = PWM[RightC];
 			PWM3 = PWM[BackC];
 		#else
-			#ifdef DELTAWING
+			#ifdef ELEVON
 				PWM0 = PWM[ThrottleC];
 				PWM1 = PWM[RightElevonC];
 				PWM2 = PWM[LeftElevonC];
