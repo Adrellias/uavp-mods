@@ -177,7 +177,6 @@ void main(void)
 			OutSignals();							// some jitter because sync precedes this
 
 			CheckAlarms();
-			DumpTrace();
 		
 		} // flight while armed
 	}

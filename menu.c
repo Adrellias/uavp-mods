@@ -49,8 +49,12 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
+	#ifdef TESTS_LEDS
 	"T..All LEDs and buzzer test\r\n"
+	#endif // TESTS_LEDS
+	#ifdef TESTS_ANALOG
 	"V..Analog input test\r\n"
+	#endif // TESTS_ANALOG
 	#ifdef TESTS_STATS
 	"X..Flight stats\r\n"
 	#endif // TESTS_STATS
@@ -86,10 +90,11 @@ void ShowSetup(uint8 h)
 		ParamSet = 1;	
 	}
 
+	TxString("\r\nUAVX V" Version);
 	#ifdef CLOCK_16MHZ
-	TxString("\r\nUAVX V" Version " 16MHz\r\n");
+	TxString(" 16MHz\r\n");
 	#else // CLOCK_40MHZ
-	TxString("\r\nUAVX V" Version " 40MHz\r\n");
+	TxString(" 40MHz\r\n");
 	#endif // CLOCK_16MHZ
 
 	TxString("Accelerometers ");
@@ -129,10 +134,20 @@ void ShowSetup(uint8 h)
 	else
 		TxString("not available\r\n");
 
-	if ( F.UsingXMode )
-		TxString("Orientation: X\r\n");
-	else
-		TxString("Orientation: +\r\n");
+	#if ( defined QUADROCOPTER | defined TRICOPTER )
+		#ifdef TRICOPTER
+		if ( F.UsingAltOrientation )
+			TxString("Orientation: ^\r\n");
+		else
+			TxString("Orientation: Y\r\n");
+		#else
+		if ( F.UsingAltOrientation )
+			TxString("Orientation: X\r\n");
+		else
+			TxString("Orientation: +\r\n");
+		#endif // TRICOPTER
+	#endif // QUADROCOPTER | TRICOPTER
+	
 	switch ( P[GyroType] ) {
 	case ADXRS300:TxString("Pitch/Roll Gyros: ADXRS610/300 or MLX90609\r\n"); break;
 	case ADXRS150:TxString("Pitch/Roll Gyros: ADXRS613/150\r\n"); break;

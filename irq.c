@@ -78,7 +78,6 @@ void DoRxPolarity(void)
 
 void ReceivingGPSOnly(boolean r)
 {
-	#ifndef DEBUG_SENSORS
 	if ( r != F.ReceivingGPS )
 	{
 		PIE1bits.RCIE = false;
@@ -97,7 +96,6 @@ void ReceivingGPSOnly(boolean r)
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
    		PIE1bits.RCIE = r;
 	}
-	#endif // DEBUG_SENSORS
 } // ReceivingGPSOnly
 
 void InitTimersAndInterrupts(void)

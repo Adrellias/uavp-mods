@@ -243,9 +243,16 @@ void ReadParametersEE(void)
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
-		F.UsingXMode = ( (P[ConfigBits] & FlyXModeMask) != 0);
-		if ( F.UsingXMode )
-			CompassOffset -= QUARTERMILLIPI;
+		F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
+		#if ( defined QUADROCOPTER | defined TRICOPTER )
+			#ifdef TRICOPTER
+			if ( F.UsingAltOrientation ) // K1 forward
+				CompassOffset -= MILLIPI;
+			#else
+			if ( F.UsingAltOrientation )
+				CompassOffset -= QUARTERMILLIPI;
+			#endif // TRICOPTER
+		#endif // QUADROCOPTER | TRICOPTER
 	
 		F.UsingSerialPPM = ((P[ConfigBits] & RxSerialPPMMask) != 0);
 		PIE1bits.CCP1IE = false;

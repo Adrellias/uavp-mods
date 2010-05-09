@@ -136,14 +136,24 @@ void CompensateRollPitchGyros(void)
 		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
 		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);
 
-		if ( F.UsingXMode )
-		{
-			// "Real" LR =  0.707 * (LR + FB), FB = 0.707 * ( FB - LR )
-			Temp24 = FBAcc + LRAcc;	
-			FBAcc -= LRAcc;		
-			FBAcc = (FBAcc * 7L)/10L;
-			LRAcc = (Temp * 7L)/10L;
-		}
+		#if ( defined QUADROCOPTER | defined TRICOPTER )
+			#ifdef TRICOPTER
+			if ( F.UsingAltOrientation ) // K1 forward
+			{
+				FBAcc = -FBAcc;	
+				LRAcc = -LRAcc;
+			}
+			#else
+			if ( F.UsingAltOrientation )
+			{
+				// "Real" LR =  0.707 * (LR + FB), FB = 0.707 * ( FB - LR )
+				Temp24 = FBAcc + LRAcc;	
+				FBAcc -= LRAcc;		
+				FBAcc = (FBAcc * 7L)/10L;
+				LRAcc = (Temp * 7L)/10L;
+			}
+			#endif // TRICOPTER
+		#endif // QUADROCOPTER | TRICOPTER 
 			
 		// Roll
 
@@ -176,15 +186,6 @@ void CompensateRollPitchGyros(void)
 		// correct DC level of the integral	
 		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
 		FBIntCorr = Limit(FBIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
-
-		#ifdef DEBUG_SENSORS
-		Trace[TAx]= LRAcc;
-		Trace[TAz] = FBAcc;
-		Trace[TAy] = DUAcc;
-
-		Trace[TLRIntCorr] = LRIntCorr * 8; // scale up for UAVPSet
-		Trace[TFBIntCorr] = FBIntCorr * 8;	
-		#endif // DEBUG_SENSORS	
 	}	
 	else
 		LRIntCorr = FBIntCorr = DUAcc = 0;
@@ -217,14 +218,24 @@ void CalcGyroRates(void)
 		}
 	}
 
-	if ( F.UsingXMode )
-	{
-		// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
-		Temp = RollRate + PitchRate;	
-		PitchRate -= RollRate;	
-		RollRate = (Temp * 7L)/10L;
-		PitchRate = (PitchRate * 7L)/10L; 
-	}
+	#if ( defined QUADROCOPTER | defined TRICOPTER )
+		#ifdef TRICOPTER
+		if ( F.UsingAltOrientation ) // K1 forward
+		{
+			RollRate = -RollRate;
+			PitchRate = -PitchRate;
+		}		
+		#else
+		if ( F.UsingAltOrientation )
+		{
+			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
+			Temp = RollRate + PitchRate;	
+			PitchRate -= RollRate;	
+			RollRate = (Temp * 7L)/10L;
+			PitchRate = (PitchRate * 7L)/10L; 
+		}
+		#endif // TRICOPTER
+	#endif // QUADROCOPTER | TRICOPTER 
 	
 	// Yaw is sampled only once every frame
 	GetYawGyroValue();	

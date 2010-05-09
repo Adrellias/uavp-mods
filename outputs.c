@@ -47,21 +47,22 @@ void DoMulticopterMix(int16 CurrThrottle)
 
 	#ifdef TRICOPTER
 		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
-		#define ALT_TRICOPTER
-		#ifdef ALT_TRICOPTER
-		Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
-		PWM[FrontC] -= Pl ;				// front motor
-		PWM[LeftC]  += (Temp - Rl);		// rear left
-		PWM[RightC] += (Temp + Rl); 	// rear right
-		PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
-		#else
-		// this does not allow for the 1.15 times effectiveness of the left and right motors
-		Temp = SRS16(Rl - Pl, 1); 
-		PWM[FrontC] += Pl ;				// front motor
-		PWM[LeftC]  += Temp;			// rear left
-		PWM[RightC] -= Temp; 			// rear right
-		PWM[BackC]   = Yl + RC_NEUTRAL;	// yaw servo
-		#endif
+		if ( F.UsingAltOrientation ) // K1 forward
+		{
+			Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
+			PWM[K1] -= Pl ;				// front motor
+			PWM[K2] += (Temp - Rl);		// right rear
+			PWM[K3] += (Temp + Rl); 	// left rear
+			PWM[K4] = Yl + RC_NEUTRAL;	// yaw servo
+		}
+		else // Y K1 rearwards
+		{
+			Temp = -(Pl * 50)/115; 
+			PWM[K1] += Pl ;				// rear motor
+			PWM[K2] += (Temp + Rl);		// left front
+			PWM[K3] += (Temp - Rl); 	// right front
+			PWM[K4] = Yl + RC_NEUTRAL;	// yaw servo
+		}	
 	#else
 	    #ifdef HEXACOPTER
 
@@ -70,7 +71,7 @@ void DoMulticopterMix(int16 CurrThrottle)
 		#else // QUADROCOPTER
 			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 			PWM[BackC] = CurrThrottle;
-			if( F.UsingXMode )
+			if( F.UsingAltOrientation )
 			{	// "Cross" Mode
 				PWM[LeftC]  +=  Pl - Rl - Yl;
 				PWM[RightC] += -Pl + Rl - Yl;
@@ -153,7 +154,7 @@ void MixAndLimitMotors(void)
 		if ( DesiredThrottle < IdleThrottle )
 			CurrThrottle = 0;
 		else
-			CurrThrottle = DesiredThrottle + AltComp;
+			CurrThrottle = DesiredThrottle + AltComp; // simple - faster to climb with no elevator yet
 		
 		PWM[ThrottleC] = CurrThrottle;
 		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
@@ -162,10 +163,9 @@ void MixAndLimitMotors(void)
 			PWM[AileronC] = PWMSense[AileronC] * Rl + OUT_NEUTRAL;
 			PWM[ElevatorC] = PWMSense[ElevatorC] * Pl + OUT_NEUTRAL;
 		#else // ELEVON
-			TempElevon = PWMSense[1] * Rl;
 			TempElevator = PWMSense[2] * Pl + OUT_NEUTRAL;
-			PWM[RightElevonC] = TempElevator + TempElevon;
-			PWM[LeftElevonC] = TempElevator - TempElevon;		
+			PWM[RightElevonC] = PWMSense[RightElevonC] * (TempElevator + Rl);
+			PWM[LeftElevonC] = PWMSense[LeftElevonC] * (TempElevator -  Rl);		
 		#endif
 	#endif
 } // MixAndLimitMotors
@@ -201,23 +201,6 @@ void OutSignals(void)
 
 	for ( m = 0; m < 6; m++ )
 		PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
-
-	#ifdef DEBUG_SENSORS
-
-	Trace[TDesiredThrottle] = DesiredThrottle;
-
-	Trace[TDesiredRoll] = DesiredRoll;
-	Trace[TDesiredPitch] = DesiredPitch;
-	Trace[TDesiredYaw] = DesiredYaw;
-
-	Trace[TPWM0] = PWM[0];
-	Trace[TPWM1] = PWM[1];
-	Trace[TPWM2] = PWM[2];
-	Trace[TPWM3] = PWM[3];
-	Trace[TPWM4] = PWM[4];
-	Trace[TPWM5] = PWM[5];
-
-	#else // !DEBUG_SENSORS
 
 	if ( !F.MotorsArmed )
 	{
@@ -439,8 +422,6 @@ OS002:
 	EnableInterrupts;
 
 	ServoToggle ^= true;
-
-#endif  // DEBUG_SENSORS
 
 #endif // !SIMULATE
 

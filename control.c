@@ -352,16 +352,6 @@ void DoControl(void)
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
 
-	#ifdef DEBUG_SENSORS
-	Trace[THE] = HE;
-	Trace[TRollRate] = RollRate;
-	Trace[TPitchRate] = PitchRate;
-	Trace[TYE] = YE;
-	Trace[TRollSum] = RollSum;
-	Trace[TPitchSum] = PitchSum;
-	Trace[TYawSum] = YawSum;
-	#endif
-
 	REp = RE;
 	PEp = PE;
 	YEp = YE;

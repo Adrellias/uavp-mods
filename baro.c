@@ -216,10 +216,6 @@ void GetBaroAltitude(void)
 				}
 			}
 			F.NewBaroValue = F.BaroAltitudeValid;
-	
-			#ifdef DEBUG_SENSORS	
-			Trace[TRelBaroAltitude] = RelBaroAltitude/10L;
-			#endif
 		}
 	}
 
@@ -296,10 +292,6 @@ void GetBaroAltitude(void)
 			}
 			F.NewBaroValue = F.BaroAltitudeValid;
 			BaroSample = 0;
-
-			#ifdef DEBUG_SENSORS	
-			Trace[TRelBaroAltitude] = RelBaroAltitude/10L;
-			#endif
 		}
 	}
 

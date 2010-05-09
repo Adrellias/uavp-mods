@@ -12,7 +12,7 @@ rem Uses: makeallhelper.bat and makeclean.bat
 rem
 rem Clock rate CLOCK_16MHZ (Only 16MHZ available for UAVP version)
 rem Type of PIC processor 18F2620 only
-rem DEBUG_SENSORS to generate trace files of all main program and sensor values which can be plotted
+rem DEBUG_SENSORS no longer available as a build
 rem SIMULATE to generate a simple flight simulator (no dynamics) for use with UAVXGS - no motors.
 rem using UAVPSet (blank option in menu below testsoftware).
 rem Configuration TRICOPTER for 3 motors and QUAD for 4.
@@ -22,14 +22,14 @@ rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
 rem Add/Delete required combinations to these sets
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
-set DBG=NO_DEBUG DEBUG_SENSORS 
+set DBG=NO_DEBUG
 set RX=RX7CH RX6CH
 set CFG=QUADROCOPTER TRICOPTER HELICOPTER AILERON ELEVON
 
 rem Personal choice
 rem set CLOCK=CLOCK_16MHZ
 rem set PROC=18F2620
-rem set DBG=NO_DEBUG DEBUG_SENSORS
+rem set DBG=NO_DEBUG
 rem set RX=RX7CH RX6CH
 rem set CFG=QUADROCOPTER TRICOPTER HELICOPTER AILERON ELEVON
 

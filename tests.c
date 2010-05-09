@@ -394,6 +394,8 @@ CCerror:
 
 void BaroTest(void)
 {
+	#ifdef TESTS_BARO
+
 	TxString("\r\nAltitude test\r\n");
 	if ( !F.BaroAltitudeValid ) goto BAerror;
 
@@ -407,7 +409,6 @@ void BaroTest(void)
 	F.NewBaroValue = false;	
 
 	#ifdef TESTS_FULL_BARO
-
 	TxString("\r\nP/T: \t");
 	#ifdef BARO_NO_QUEUE
 	TxVal32((int32)BaroPressure,0,' ');
@@ -417,7 +418,6 @@ void BaroTest(void)
 	TxVal32((int32)BaroTempSum >> 3, 0, ' ');
 	#endif // BARO_NO_QUEUE
 	TxNextLine();
-
 	#endif // TESTS_FULL_BARO
 
 	TxString("Alt.:     \t");	
@@ -437,7 +437,7 @@ void BaroTest(void)
 	return;
 BAerror:
 	TxString("FAIL\r\n");
-
+	#endif // TESTS_BARO
 } // BaroTest
 
 void PowerOutput(int8 d)
@@ -553,15 +553,14 @@ void GPSTest(void)
 	TxString("GPS Test TERMINATED \r\n");
 	TxString("Set Baud Rate to 38.4Kb \r\n");
 	ReceivingGPSOnly(false);
- 	F.GPSTestActive = false;
-	#else
-		TxString("No GPS Test available.\r\n");	
-	#endif // TESTS_GPS
-	
+ 	F.GPSTestActive = false;	
+	#endif // TESTS_GPS	
 } // GPSTest
 
 void AnalogTest(void)
 {
+	#ifdef TESTS_ANALOG
+
 	int32 v;
 	uint8 c, lv, hv;
 	int32 A[5];
@@ -626,7 +625,9 @@ void AnalogTest(void)
 	v = A[ADCAltChan];
 	TxString("Alt:  \t");	
 	TxVal32(v, 1, 'V');	
-	TxNextLine();	
+	TxNextLine();
+
+	#endif // TESTS_ANALOG	
 } // AnalogTest
 
 void ProgramSlaveAddress(uint8 addr)

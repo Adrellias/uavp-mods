@@ -30,9 +30,7 @@ void CheckAlarms(void);
 int16 SlewLimit(int16, int16, int16);
 int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
-void DumpTrace(void);
 
-int16 Trace[TopTrace+1];
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 int32 BatteryChargeADC, BatteryCurrent;
@@ -65,9 +63,6 @@ void InitMisc(void)
 
 	State = Starting;				// For trace preconditions
 	ServoToggle = false;
-
-	for ( i = 0; i <= TopTrace; i++)
-		Trace[i] = 0;
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = 0;
@@ -252,23 +247,6 @@ int16 SlewLimit(int16 Old, int16 New, int16 Slew)
   return(( New < Low ) ? Low : (( New > High ) ? High : New));
 } // SlewLimit
 
-void DumpTrace(void)
-{
-	#ifdef DEBUG_SENSORS
-	uint8 t;
-
-	if ( DesiredThrottle > 20 ) 
-	{
-		for (t=0; t <= TopTrace; t++)
-		{
-			TxValH16(Trace[t]);
-			TxChar(';');
-		}
-		TxNextLine();
-	} 
-
-	#endif // DEBUG_SENSORS
-} // DumpTrace
 
 
 

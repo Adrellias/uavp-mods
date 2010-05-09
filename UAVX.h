@@ -32,7 +32,6 @@
 
 #ifndef BATCHMODE						
 //#define RX6CH 						// 6ch Receivers
-//#define DEBUG_SENSORS 				// Debug sensors with UAVPset - no motors
 //#define SIMULATE
 #define QUADROCOPTER
 //#define TRICOPTER
@@ -58,14 +57,17 @@
 // Tests
 
 #ifndef SIMULATE	
-	#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-	//	#define TESTS_FULL_COMPASS
+	#define TESTS_BARO				// show pressures and temperatures in Baro test
+	//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
+	#define TESTS_COMPASS			// simple heading and offset test
+	//	#define TESTS_FULL_COMPASS			// all internal registers
 	//	#define TESTS_ACC					// accelerometer tests
 	//	#define TESTS_LEDS					// do LED and buzzer test
-	//	#define TESTS_GPS
-	#ifdef CLOCK_16MHZ
+	//	#define TESTS_GPS					// superseded by UAVXGS?
+	//	#define TESTS_ANALOG				// superseded by UAVXGS?
+//	#ifdef CLOCK_16MHZ
 		#define TESTS_STATS				// show flight stats otherwise use UAVXNav
-	#endif // CLOCK_16MHZ
+//	#endif // CLOCK_16MHZ
 #endif // !SIMULATE
 
 #define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
@@ -573,7 +575,7 @@ typedef union {
 		CheckThrottleMoved:1,		
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
-		UsingXMode:1,
+		UsingAltOrientation:1,
 
 		UsingTelemetry:1,
 		TxToBuffer:1,
@@ -922,6 +924,7 @@ extern void InitI2CESCs(void);
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
 enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
+enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
 #define NoOfPWMOutputs 		4
 #define NoOfI2CESCOutputs 		4 // zzz Hexacopter etc.
 
@@ -1013,7 +1016,7 @@ enum Params { // MAX 64
 	};
 
 #define FlyXMode 			0
-#define FlyXModeMask 		0x01
+#define FlyAltOrientationMask 		0x01
 
 #define UseRTHDescend 		1
 #define	UseRTHDescendMask	0x02
@@ -1134,22 +1137,6 @@ extern int16 SlewLimit(int16, int16, int16);
 extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 extern void CheckAlarms(void);
-extern void DumpTrace(void);
-
-enum TraceTags {
-	THE, TRelBaroAltitude,
-	TRollRate,TPitchRate,TYE,
-	TRollSum,TPitchSum,TYawSum,
-	TAx,TAz,TAy,
-	TLRIntCorr, TFBIntCorr,
-	TDesiredThrottle,
-	TDesiredRoll, TDesiredPitch, TDesiredYaw,
-	TPWM0, TPWM1, TPWM2, TPWM3,
-	TPWM4, TPWM5
-	};
-#define TopTrace TPWM5
-
-extern int16 Trace[];
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;
 
