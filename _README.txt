@@ -237,7 +237,35 @@ UAVX ********************************************************************
 
 15.08.2009
 - Release of Experimental UAVX.
-  
+
+10.05.2010
+- DEBUG_SENSORS revision to sensor trace order:
+
+1 Heading
+2 RelBaroAltitude
+3 RangefinderAltitude
+4 GPSRelAltitude			
+5 DesiredThrottle
+6 DesiredRoll
+7 DesiredPitch
+8 DesiredYaw
+9 RollRateADC - GyroMidRoll
+10 PitchRateADC - GyroMidPitch
+11 YawRateADC - GyroMidYawADC
+12 RollSum
+13 PitchSum
+14 YawSum
+15 LRAcc
+16 FBAcc
+17 DUAcc
+18 LRComp
+19 FBComp
+20 DUComp
+21 AltComp
+
+- Added revised Tricopter mixing to allow Y flight or one arm forward.
+- Added Aileron and Elevon Mix.
+
 =========================================================================
  SAFETY FIRST!                              
 =========================================================================

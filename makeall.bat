@@ -48,7 +48,7 @@ for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in 
 
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
-set DBG=SIMULATE 
+set DBG=SIMULATE TESTING 
 set RX=RX7CH RX6CH
 set CFG=QUADROCOPTER
 

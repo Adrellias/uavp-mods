@@ -20,6 +20,8 @@
 
 #include "uavx.h"
 
+#ifdef TESTING
+
 void DoLEDs(void);
 void LinearTest(void);
 uint8 ScanI2CBus(void);
@@ -53,8 +55,6 @@ void DoLEDs(void)
 
 void LinearTest(void)
 {
-	#ifdef TESTS_ACC
-
 	TxString("\r\nAccelerometer test:\r\n");
 	TxString("Read once - no averaging\r\n");
 	if( F.AccelerationsValid )
@@ -88,7 +88,6 @@ void LinearTest(void)
 	}
 	else
 		TxString("\r\n(Acc. not present)\r\n");
-	#endif // TESTS_ACC
 } // LinearTest
 
 uint8 ScanI2CBus(void)
@@ -210,8 +209,6 @@ static uint8 CP[9];
 
 void GetCompassParameters(void)
 {
-	#ifdef TESTS_FULL_COMPASS
-
 	uint8 r;
 
 	#define COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
@@ -252,8 +249,6 @@ void GetCompassParameters(void)
 CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
-
-	#endif // TESTS_FULL_COMPASS
 } // GetCompassParameters
 
 void DoCompassTest(void)
@@ -262,8 +257,6 @@ void DoCompassTest(void)
 	int16 Temp;
 
 	TxString("\r\nCompass test\r\n");
-
-	#ifdef TESTS_FULL_COMPASS
 
 	#define COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
 
@@ -331,8 +324,6 @@ void DoCompassTest(void)
 		}
 	TxNextLine(); 
 
-	#endif // TESTS_FULL_COMPASS
-
 	InitCompass();
 	if ( !F.CompassValid ) goto CTerror;
 
@@ -394,8 +385,6 @@ CCerror:
 
 void BaroTest(void)
 {
-	#ifdef TESTS_BARO
-
 	TxString("\r\nAltitude test\r\n");
 	if ( !F.BaroAltitudeValid ) goto BAerror;
 
@@ -408,7 +397,6 @@ void BaroTest(void)
 		GetBaroAltitude();	
 	F.NewBaroValue = false;	
 
-	#ifdef TESTS_FULL_BARO
 	TxString("\r\nP/T: \t");
 	#ifdef BARO_NO_QUEUE
 	TxVal32((int32)BaroPressure,0,' ');
@@ -418,7 +406,6 @@ void BaroTest(void)
 	TxVal32((int32)BaroTempSum >> 3, 0, ' ');
 	#endif // BARO_NO_QUEUE
 	TxNextLine();
-	#endif // TESTS_FULL_BARO
 
 	TxString("Alt.:     \t");	
 	TxVal32((int32)RelBaroAltitude, 2, ' ');
@@ -437,7 +424,6 @@ void BaroTest(void)
 	return;
 BAerror:
 	TxString("FAIL\r\n");
-	#endif // TESTS_BARO
 } // BaroTest
 
 void PowerOutput(int8 d)
@@ -456,8 +442,6 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
-	#ifdef TESTS_LEDS
-
 	uint8 s, m, mask, LEDSave;
 
 	LEDSave = LEDShadow;
@@ -493,15 +477,12 @@ void LEDsAndBuzzer(void)
 	}
 	LEDShadow  = LEDSave;
 	SendLEDs();	
-	TxString("Test Finished\r\n");
-	#else
-	TxString("/r/nTest not available\r\n");
-	#endif // TESTS_LEDS		
+	TxString("Test Finished\r\n");		
 } // PowerOutput
 
 void GPSTest(void)
 {
-	#ifdef TESTS_GPS
+	#ifdef TEST_GPS
 	uint8 ch; 
 
 	TxString("\r\nGPS test\r\n");
@@ -553,14 +534,12 @@ void GPSTest(void)
 	TxString("GPS Test TERMINATED \r\n");
 	TxString("Set Baud Rate to 38.4Kb \r\n");
 	ReceivingGPSOnly(false);
- 	F.GPSTestActive = false;	
-	#endif // TESTS_GPS	
+ 	F.GPSTestActive = false;
+	#endif // TEST_GPS		
 } // GPSTest
 
 void AnalogTest(void)
 {
-	#ifdef TESTS_ANALOG
-
 	int32 v;
 	uint8 c, lv, hv;
 	int32 A[5];
@@ -625,9 +604,7 @@ void AnalogTest(void)
 	v = A[ADCAltChan];
 	TxString("Alt:  \t");	
 	TxVal32(v, 1, 'V');	
-	TxNextLine();
-
-	#endif // TESTS_ANALOG	
+	TxNextLine();	
 } // AnalogTest
 
 void ProgramSlaveAddress(uint8 addr)
@@ -704,4 +681,4 @@ void ConfigureESCs(void)
 		TxString("\r\nYGEI2C not selected as ESC?\r\n");
 } // ConfigureESCs
 
-
+#endif // TESTING

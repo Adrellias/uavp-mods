@@ -23,15 +23,18 @@
 void SendTelemetry(void);
 void SendUAVXNav(void);
 void SendArduStation(void);
+void SensorTrace(void);
 
 uint8 UAVXCurrPacketTag;
 
 void SendTelemetry(void)
 {
+	#ifndef TESTING // not used for testing - make space!
 	switch ( P[TelemetryType] ) {
 		case UAVXTelemetry: SendUAVXNav(); break;
 		case ArduStationTelemetry: SendArduStation(); break;
 	}
+	#endif // TESTING
 } // SendTelemetry
 
 void SendUAVXNav(void) // 800uS at 40MHz
@@ -170,8 +173,6 @@ void SendArduStation(void)
     SST: Switch Status, used for debugging, but is disabled in the current version.
 	*/
 
-	#ifndef TESTS_FULL_STATS
-
 	#ifdef CLOCK_40MHZ	// ArdStation required scaling etc. too slow for 16MHz
 
 	F.TxToBuffer = true;
@@ -209,8 +210,43 @@ void SendArduStation(void)
 
 	#endif // CLOCK_40MHZ
 
-	#endif // TESTS_FULL_STATS
-
 } // SendArduStation
 
+void SensorTrace(void)
+{
+	#ifdef TESTING
+	if ( DesiredThrottle > 20 ) 
+	{
+		F.TxToBuffer = false; // direct to USART
 
+		TxValH16(Heading); TxChar(';');
+
+		TxValH16(RelBaroAltitude); TxChar(';');
+		TxValH16(RangefinderAltitude); TxChar(';');
+		TxValH16(GPSRelAltitude); TxChar(';');
+			
+		TxValH16(DesiredThrottle); TxChar(';');
+		TxValH16(DesiredRoll); TxChar(';');
+		TxValH16(DesiredPitch); TxChar(';');
+		TxValH16(DesiredYaw); TxChar(';');
+
+		TxValH16(RollRateADC - GyroMidRoll); TxChar(';');
+		TxValH16(PitchRateADC - GyroMidPitch); TxChar(';');
+		TxValH16(YawRateADC - GyroMidYawADC); TxChar(';');
+
+		TxValH16(RollSum); TxChar(';');
+		TxValH16(PitchSum); TxChar(';');
+		TxValH16(YawSum); TxChar(';');
+
+		TxValH16(LRAcc); TxChar(';');
+		TxValH16(FBAcc); TxChar(';');
+		TxValH16(DUAcc); TxChar(';');
+
+		TxValH16(LRComp); TxChar(';');
+		TxValH16(FBComp); TxChar(';');
+		TxValH16(DUComp); TxChar(';');
+		TxValH16(AltComp); TxChar(';');
+		TxNextLine();
+	} 
+	#endif // TESTING
+} // SensorTrace

@@ -22,6 +22,8 @@
 
 #include "uavx.h"
 
+
+
 void FailsafeLevelFlight(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int16);
@@ -140,6 +142,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	// waypoint. It simply rolls/pitches towards the destination
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
+
+	#ifndef TESTING // not used for testing - make space!
 
 	static int16 SinHeading, CosHeading;
     static int24 Radius;
@@ -264,7 +268,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 		#endif // NAV_WING	
 	}	
-	else 
+	else
+    #endif // !TESTING
 	{
 		// Neutral Zone - no GPS influence
 		NavPCorr = DecayX(NavPCorr, 2);
@@ -280,6 +285,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 void DoNavigation(void)
 {
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
+
+	#ifndef TESTING // not used for testing - make space!
 
 	if ( !F.NavComputed ) 
 	{
@@ -410,6 +417,7 @@ void DoNavigation(void)
 	DesiredRoll = Limit(DesiredRoll, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
 	DesiredPitch = Limit(DesiredPitch, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
 
+	#endif // !TESTING
 } // DoNavigation
 
 void CheckFailsafeAbort(void)
@@ -432,6 +440,7 @@ void CheckFailsafeAbort(void)
 void DoPPMFailsafe(void)
 { // only relevant to PPM Rx or Quad NOT synchronising with Rx
 
+	#ifndef TESTING // not used for testing - make space!
 	if ( State == InFlight )
 		switch ( FailState ) {
 		case Terminated: // Basic assumption is that aircraft is being flown over a safe area!
@@ -479,7 +488,8 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;			
+		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
+	#endif // !TESTING			
 } // DoPPMFailsafe
 
 void UAVXNavCommand(void)
@@ -548,6 +558,8 @@ void UAVXNavCommand(void)
 	LEDBlue_OFF;
 } // UAVXNavCommand
 
+
+
 void GetWayPointEE(uint8 wp)
 { 
 	static uint16 w;
@@ -578,6 +590,8 @@ void GetWayPointEE(uint8 wp)
 	F.WayPointCentred =  F.WayPointAchieved = false;
 
 } // GetWaypointEE
+
+
 
 void InitNavigation(void)
 {

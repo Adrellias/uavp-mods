@@ -22,43 +22,49 @@
 
 void ShowPrompt(void);
 void ShowRxSetup(void);
-void ShowSetup(uint8);
+void ShowSetup(boolean);
 void ProcessCommand(void);
 
 #pragma idata menu1
-const rom uint8 SerHello[] = "\r\nUAVX " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+#ifdef TESTING
+const rom uint8 SerHello[] = "UAVX TEST " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
 							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
 							  "see http://www.gnu.org/licenses/!\r\n";
+#else
+const rom uint8 SerHello[] = "UAVX " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
+							  "see http://www.gnu.org/licenses/!\r\n";
+#endif // TESTING
 
 #pragma idata
 
 #pragma idata menuhelp
 const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
-	#ifdef TESTS_ACC
+	#ifdef TESTING
 	"A..Accelerometer test\r\n"
-	#endif // TESTS_ACC
+	#endif // TESTING
 	"B..Load UAVX hex file\r\n"
+	#ifdef TESTING
 	"C..Compass test\r\n"
 	"D..Load default parameter set\r\n"
-	#ifdef TESTS_GPS
+	#ifdef TEST_GPS
 	"G..GPS test (Use HyperTerm)\r\n"
-	#endif // TESTS_GPS
+	#endif // TEST_GPS
 	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
-	#ifdef TESTS_LEDS
 	"T..All LEDs and buzzer test\r\n"
-	#endif // TESTS_LEDS
-	#ifdef TESTS_ANALOG
 	"V..Analog input test\r\n"
-	#endif // TESTS_ANALOG
-	#ifdef TESTS_STATS
+	#endif // TESTING
+	#ifdef FLIGHT_STATS
 	"X..Flight stats\r\n"
-	#endif // TESTS_STATS
+	#endif // FLIGHT_STATS
+	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
+	#endif // TESTING
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
@@ -68,6 +74,8 @@ void ShowPrompt(void)
 {
 	TxString("\r\n>");
 } // ShowPrompt
+
+#ifdef TESTING
 
 void ShowRxSetup(void)
 {
@@ -80,7 +88,7 @@ void ShowRxSetup(void)
 		TxString("Odd Rx Channels PPM");
 } // ShowRxSetup
 
-void ShowSetup(uint8 h)
+void ShowSetup(boolean h)
 {
 	uint8 i;
 
@@ -90,7 +98,7 @@ void ShowSetup(uint8 h)
 		ParamSet = 1;	
 	}
 
-	TxString("\r\nUAVX V" Version);
+	TxString("\r\nUAVX TEST V" Version);
 	#ifdef CLOCK_16MHZ
 	TxString(" 16MHz\r\n");
 	#else // CLOCK_40MHZ
@@ -252,6 +260,23 @@ void ShowSetup(uint8 h)
 	
 	ShowPrompt();
 } // ShowSetup
+#else
+void ShowSetup(boolean h)
+{
+	if( h )
+	{
+		TxString(SerHello);
+		ParamSet = 1;	
+	}
+	TxString("\r\nUAVX FLIGHT V" Version);
+	#ifdef CLOCK_16MHZ
+	TxString(" 16MHz\r\n");
+	#else // CLOCK_40MHZ
+	TxString(" 40MHz\r\n");
+	#endif // CLOCK_16MHZ
+	ShowPrompt();
+} // ShowSetup
+#endif // TESTING
 
 void ProcessCommand(void)
 {
@@ -270,39 +295,13 @@ void ProcessCommand(void)
 			
 			switch( ch )
 			{
-			case 'A' :	// linear sensor
-				LinearTest();
-				ShowPrompt();
-				break;
 			case 'B':	// call bootloader
 				{ // arming switch must be OFF to call bootloader!!!
 					DisableInterrupts;
 					BootStart();		// never comes back!
 				}
-			case 'C':
-				DoCompassTest();
-				ShowPrompt();
-				break;
 			case 'D':
 				UseDefaultParameters();
-				ShowPrompt();
-				break;
-			case 'G' : // GPS test
-				GPSTest();
-				ShowPrompt();
-				break;			
-			case 'H':	// barometer
-				BaroTest();
-				ShowPrompt();
-				break;
-			case 'I':
-				TxString("\r\nI2C devices ...\r\n");
-				TxVal32(ScanI2CBus(),0,0);
-				TxString(" device(s) found\r\n");
-				ShowPrompt();
-				break;	
-			case 'K':
-				CalibrateCompass();
 				ShowPrompt();
 				break;
 			case 'L'  :	// List parameters
@@ -363,9 +362,9 @@ void ProcessCommand(void)
 				TxValS(NeutralDU);
 				ShowPrompt();
 				break;
-			case 'P'  :	// Receiver test			
-				ReceiverTest();
-				ShowPrompt();
+			case 'W' :	// comms with UAVXNav utility NOT UAVPSet
+				UAVXNavCommand();
+				//ShowPrompt();
 				break;
 			case 'R':	// receiver values
 				TxString("\r\nT:");TxValU(ToPercent(RC[ThrottleC], RC_MAXIMUM));
@@ -378,20 +377,52 @@ void ProcessCommand(void)
 				ShowPrompt();
 				break;
 			case 'S' :	// show status
-				ShowSetup(0);
+				ShowSetup(false);
 				break;
+			case 'X' :	// flight stats
+				ShowStats();
+				ShowPrompt();
+				break;
+
+			#ifdef TESTING
+			case 'A' :	// linear sensor
+				LinearTest();
+				ShowPrompt();
+				break;
+			case 'C':
+				DoCompassTest();
+				ShowPrompt();
+				break;
+			case 'G' : // GPS test
+				GPSTest();
+				ShowPrompt();
+				break;			
+			case 'H':	// barometer
+				BaroTest();
+				ShowPrompt();
+				break;
+			case 'I':
+				TxString("\r\nI2C devices ...\r\n");
+				TxVal32(ScanI2CBus(),0,0);
+				TxString(" device(s) found\r\n");
+				ShowPrompt();
+				break;	
+			case 'K':
+				CalibrateCompass();
+				ShowPrompt();
+				break;
+			
+			case 'P'  :	// Receiver test			
+				ReceiverTest();
+				ShowPrompt();
+				break;
+
+
 			case 'V' :	// analog test
 				AnalogTest();
 				ShowPrompt();
 				break;
-			case 'W' :	// comms with UAVXNav utility NOT UAVPSet
-				UAVXNavCommand();
-				//ShowPrompt();
-				break;
-			case 'X' :	// analog test
-				ShowStats();
-				ShowPrompt();
-				break;
+
 			case 'Y':	// configure YGE30i EScs
 				ConfigureESCs();
 				ShowPrompt();
@@ -426,6 +457,7 @@ void ProcessCommand(void)
 				LEDsAndBuzzer();
 				ShowPrompt();
 				break;
+			#endif // TESTING
 			case '?'  :  // help
 				TxString(SerHelp);
 				ShowPrompt();

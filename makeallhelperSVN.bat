@@ -33,7 +33,7 @@ set T=
 set R=
 set B=
 
-if "%DBG%" == "DEBUG_SENSORS"     	set D=-Debug_SENSORS
+if "%DBG%" == "TESTING"     		set D=-TEST
 if "%DBG%" == "SIMULATE"     		set D=-SIMULATOR
 
 if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
@@ -43,6 +43,8 @@ if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
 if "%CFG%" == "CAN"					set C=-CAN
 if "%CFG%" == "DELTAWING"			set C=-HEX
+
+if "%DBG%" == "TESTING"				set C=
 
 if "%RX%" == "RX6CH"				set R=-6CH
 if "%CLOCK%" == "CLOCK_16MHZ"    	set X=-16

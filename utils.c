@@ -248,5 +248,3 @@ int16 SlewLimit(int16 Old, int16 New, int16 Slew)
 } // SlewLimit
 
 
-
-

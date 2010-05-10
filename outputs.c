@@ -197,7 +197,7 @@ void OutSignals(void)
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
-	#ifndef SIMULATE
+	#if !( defined SIMULATE | defined TESTING )
 
 	for ( m = 0; m < 6; m++ )
 		PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
@@ -422,8 +422,8 @@ OS002:
 	EnableInterrupts;
 
 	ServoToggle ^= true;
-
-#endif // !SIMULATE
+	
+	#endif // !(SIMULATE | TESTING)
 
 } // OutSignals
 

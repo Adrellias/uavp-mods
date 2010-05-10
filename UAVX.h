@@ -30,7 +30,8 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-#ifndef BATCHMODE						
+#ifndef BATCHMODE
+//#define TESTING						
 //#define RX6CH 						// 6ch Receivers
 //#define SIMULATE
 #define QUADROCOPTER
@@ -55,20 +56,7 @@
 #endif
 
 // Tests
-
-#ifndef SIMULATE	
-	#define TESTS_BARO				// show pressures and temperatures in Baro test
-	//#define TESTS_FULL_BARO				// show pressures and temperatures in Baro test
-	#define TESTS_COMPASS			// simple heading and offset test
-	//	#define TESTS_FULL_COMPASS			// all internal registers
-	//	#define TESTS_ACC					// accelerometer tests
-	//	#define TESTS_LEDS					// do LED and buzzer test
-	//	#define TESTS_GPS					// superseded by UAVXGS?
-	//	#define TESTS_ANALOG				// superseded by UAVXGS?
-//	#ifdef CLOCK_16MHZ
-		#define TESTS_STATS				// show flight stats otherwise use UAVXNav
-//	#endif // CLOCK_16MHZ
-#endif // !SIMULATE
+#define FLIGHT_STATS					// show flight stats
 
 #define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
 
@@ -900,7 +888,7 @@ extern int32 int32sqrt(int32);
 
 extern void ShowPrompt(void);
 extern void ShowRxSetup(void);
-extern void ShowSetup(uint8);
+extern void ShowSetup(boolean);
 extern void ProcessCommand(void);
 
 extern const rom uint8 SerHello[];
@@ -1113,6 +1101,7 @@ extern int16 Stats[];
 extern void SendTelemetry(void);
 extern void SendUAVXNav(void);
 extern void SendArduStation(void);
+extern void SensorTrace(void);
 
 extern uint8 UAVXCurrPacketTag;
 
@@ -1137,6 +1126,7 @@ extern int16 SlewLimit(int16, int16, int16);
 extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 extern void CheckAlarms(void);
+
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;
 

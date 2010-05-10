@@ -59,7 +59,7 @@ void main(void)
 	InitNavigation();
 	InitBarometer();
 
-	ShowSetup(1);
+	ShowSetup(true);
 
 	FirstPass = true;
 	
@@ -170,6 +170,7 @@ void main(void)
 			mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
 
 			GetRollPitchGyroValues();				// Second gyro sample
+			
 			DoControl();
 
 			MixAndLimitMotors();
@@ -177,6 +178,8 @@ void main(void)
 			OutSignals();							// some jitter because sync precedes this
 
 			CheckAlarms();
+
+			SensorTrace();
 		
 		} // flight while armed
 	}
