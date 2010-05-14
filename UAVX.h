@@ -31,7 +31,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-//#define TESTING						
+#define TESTING						
 //#define RX6CH 						// 6ch Receivers
 //#define SIMULATE
 #define QUADROCOPTER
@@ -805,7 +805,7 @@ extern void GetYawGyroValue(void);
 extern void ErectGyros(void);
 extern void CalcGyroRates(void);
 
-extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw, GyroMidYawADC;
+extern int16 GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
 extern int16 RollRate, PitchRate, YawRate;
 extern int16 RollRateADC, PitchRateADC, YawRateADC;
 
@@ -940,7 +940,7 @@ enum TxRxTypes {
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
-enum GyroTypes { ADXRS300, ADXRS150, IDG300};
+enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
 
 enum Params { // MAX 64
 	RollKp, 			// 01
@@ -980,7 +980,7 @@ enum Params { // MAX 64
 	unused2,			// 32
 	NavRTHAlt,			// 33
 	NavMagVar,			// 34c
-	GyroType,			// 35c
+	GyroRollPitchType,	// 35c
 	ESCType,			// 36c
 	TxRxType,			// 37c
 	NeutralRadius,		// 38
@@ -999,8 +999,10 @@ enum Params { // MAX 64
 	CompSteps,			// 51c
 	ServoSense,			// 52c
 	CompassOffsetQtr,	// 53c
-	BatteryCapacity		// 55c	
-	// 55 - 64 unused currently
+	BatteryCapacity,	// 54c
+	GyroYawType			// 55c
+	
+	// 56 - 64 unused currently
 	};
 
 #define FlyXMode 			0

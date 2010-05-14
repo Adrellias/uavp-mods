@@ -81,7 +81,7 @@ void InitMisc(void)
 	ESCMin = OUT_MINIMUM;
 	ESCMax = OUT_MAXIMUM;
 
-	GyroMidRoll = GyroMidPitch = GyroMidYaw = RollRate = PitchRate = YawRate = 0;
+	RollRate = PitchRate = YawRate = 0;
 	DesiredRollP = DesiredPitchP = 0;
 	RollTrim = PitchTrim = YawTrim = 0;	
 

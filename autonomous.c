@@ -591,8 +591,6 @@ void GetWayPointEE(uint8 wp)
 
 } // GetWaypointEE
 
-
-
 void InitNavigation(void)
 {
 	static uint8 wp;

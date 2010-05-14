@@ -241,27 +241,27 @@ UAVX ********************************************************************
 10.05.2010
 - DEBUG_SENSORS revision to sensor trace order:
 
-1 Heading
-2 RelBaroAltitude
-3 RangefinderAltitude
-4 GPSRelAltitude			
-5 DesiredThrottle
-6 DesiredRoll
-7 DesiredPitch
-8 DesiredYaw
-9 RollRateADC - GyroMidRoll
-10 PitchRateADC - GyroMidPitch
-11 YawRateADC - GyroMidYawADC
-12 RollSum
-13 PitchSum
-14 YawSum
-15 LRAcc
-16 FBAcc
-17 DUAcc
-18 LRComp
-19 FBComp
-20 DUComp
-21 AltComp
+  * 1 Heading
+  * 2 Baro Relative Altitude
+  * 3 Rangefinder Altitude
+  * 4 unused		
+  * 5 Desired Throttle
+  * 6 Desired Roll
+  * 7 Desired Pitch
+  * 8 Desired Yaw
+  * 9 Roll Rate
+  * 10 Pitch Rate
+  * 11 Yaw Rate
+  * 12 Roll Angle
+  * 13 Pitch Angle
+  * 14 Yaw Angle
+  * 15 LR (X) Acceleration
+  * 16 FB (Y) Acceleration
+  * 17 DU (Z) Acceleration
+  * 18 LR Compensation
+  * 19 FB Compensation
+  * 20 DU Compensation
+  * 21 Alt Compensation
 
 - Added revised Tricopter mixing to allow Y flight or one arm forward.
 - Added Aileron and Elevon Mix.

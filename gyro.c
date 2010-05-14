@@ -28,13 +28,13 @@ void GetYawGyroValue(void);
 void ErectGyros(void);
 void CalcGyroRates(void);
 
-int16	GyroMidRoll, GyroMidPitch, GyroMidYaw, GyroMidYawADC;
+int16	GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
 int16	RollRate, PitchRate, YawRate;
 int16	RollRateADC, PitchRateADC, YawRateADC;
 
 void GetRollPitchGyroValues(void)
-{
-	if ( P[GyroType] == IDG300 ) // 500 Deg/Sec
+{ // invoked TWICE per control cycle so roll/pitch "rates" are double actual
+	if ( P[GyroRollPitchType] == IDG300 ) // 500 Deg/Sec
 	{
 		RollRateADC = (int16)ADC(IDGADCRollChan);
 		PitchRateADC = (int16)ADC(IDGADCPitchChan);
@@ -53,7 +53,16 @@ void GetRollPitchGyroValues(void)
 void GetYawGyroValue(void)
 {
 	YawRateADC = ADC(ADCYawChan);
-	YawRate = YawRateADC >> 2;	// use only 8 bit A/D resolution
+	YawRate = YawRateADC - GyroMidYaw; 
+
+	if ( P[GyroYawType] == Gyro150D5V )
+		YawRate = SRS16(YawRate, 2);
+	else // 
+		if ( P[GyroYawType] == Gyro300D5V )
+			YawRate = SRS16(YawRate, 1);
+	//	else // Gyro300D3V  
+	//		YawRate = YawRate;
+
 } // GetYawGyroValue
 
 void ErectGyros(void)
@@ -67,7 +76,7 @@ void ErectGyros(void)
 		LEDRed_TOG;
 		Delay100mSWithOutput(GYRO_ERECT_DELAY);
 
-		if ( P[GyroType] == IDG300 )
+		if ( P[GyroRollPitchType] == IDG300 )
 		{
 			RollAv += ADC(IDGADCRollChan);
 			PitchAv += ADC(IDGADCPitchChan);	
@@ -88,9 +97,12 @@ void ErectGyros(void)
 	
 	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
 	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
-	GyroMidYawADC = (int16)((YawAv + 16) >> 5);
-	GyroMidYaw = GyroMidYawADC >> 2;
+	GyroMidYaw = (int16)((YawAv + 16) >> 5);
 
+	// compute here to remove from main control loop
+	GyroMidRollBy2 = GyroMidRoll * 2;
+	GyroMidPitchBy2 = GyroMidPitch * 2;
+	
 	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
@@ -199,24 +211,30 @@ void CalcGyroRates(void)
 	// RollRate & PitchRate hold the sum of 2 consecutive conversions
 	// 300 Deg/Sec is the "reference" gyro full scale rate
 
-	if ( P[GyroType] == IDG300 )
-	{ 	// 500 Deg/Sec, 5/3.3V Ref => ~2.5 so do not average 
-		RollRate -= GyroMidRoll * 2;
-		PitchRate -= GyroMidPitch * 2;
+	if ( P[GyroRollPitchType] == IDG300 ) // 2.0
+	{ 	// 500 Deg/Sec, 5/3.3 FS => ~2.5 so do not average 
+		RollRate -= GyroMidRollBy2;
+		PitchRate -= GyroMidPitchBy2;
 		RollRate = -RollRate;			// adjust for reversed roll gyro sense
  	}
 	else
-	{ 	// 1.0
-		// Average of two readings
-		RollRate = ( RollRate >> 1 ) - GyroMidRoll;	
-		PitchRate = ( PitchRate >> 1 ) - GyroMidPitch;
-
-		if ( P[GyroType] == ADXRS150 )	// 150 deg/sec (0.5)
-		{ // 150 Deg/Sec or 0.5
-			RollRate = SRS16(RollRate, 1); 
-			PitchRate = SRS16(PitchRate, 1);
+		if ( P[GyroRollPitchType] == Gyro300D3V ) // 2.0
+		{ 	// 300 Deg/Sec, 5/2.4 FS => ~2.0 so do not average 
+			RollRate -= GyroMidRollBy2;
+			PitchRate -= GyroMidPitchBy2;
+	 	}
+		else
+		{ 	// 1.0
+			// Average of two readings
+			RollRate = ( RollRate >> 1 ) - GyroMidRoll;	
+			PitchRate = ( PitchRate >> 1 ) - GyroMidPitch;
+	
+			if ( P[GyroRollPitchType] == Gyro150D5V )	// 0.5
+			{ // 150 Deg/Sec or 0.5
+				RollRate = SRS16(RollRate, 1); 
+				PitchRate = SRS16(PitchRate, 1);
+			}
 		}
-	}
 
 	#if ( defined QUADROCOPTER | defined TRICOPTER )
 		#ifdef TRICOPTER
@@ -239,7 +257,6 @@ void CalcGyroRates(void)
 	
 	// Yaw is sampled only once every frame
 	GetYawGyroValue();	
-	YawRate -= GyroMidYaw;
 
 } // CalcGyroRates
 

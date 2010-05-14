@@ -34,7 +34,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,1,1,1,0,0,0,0,0,0,
+	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,0
 	};
 
@@ -76,7 +76,7 @@ const rom int8 DefaultParams[] = {
 	0, 				// unused2,			32
 	20, 			// NavRTHAlt,		33
 	0, 				// NavMagVar,		34c
-	ADXRS300, 		// GyroType,		35c
+	Gyro300D5V, 	// GyroRollPitchType,	35c
 	ESCPPM, 		// ESCType,			36c
 	DX7AR7000, 		// TxRxType			37c
 	2,				// NeutralRadius	38
@@ -96,11 +96,11 @@ const rom int8 DefaultParams[] = {
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	
 	3,				// CompassOffsetQtr 53c
-	49,				// BatteryCapacity	54c			
+	49,				// BatteryCapacity	54c	
+	Gyro150D5V,		// GuroYawType		55c		
 
 	0,				// 55 - 64 unused currently	
 
-	0,
 	0,	
 	0,
 	0,

@@ -156,12 +156,24 @@ void ShowSetup(boolean h)
 		#endif // TRICOPTER
 	#endif // QUADROCOPTER | TRICOPTER
 	
-	switch ( P[GyroType] ) {
-	case ADXRS300:TxString("Pitch/Roll Gyros: ADXRS610/300 or MLX90609\r\n"); break;
-	case ADXRS150:TxString("Pitch/Roll Gyros: ADXRS613/150\r\n"); break;
-	case IDG300:TxString("Pitch/Roll Gyros: IDG300\r\n"); break;
+	TxString("Roll/Pitch Gyros: ");
+	switch ( P[GyroRollPitchType] ) {
+	case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
+	case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
+	case IDG300:TxString("IDG300\r\n"); break;
+	case Gyro300D3V:TxString("ST-AY530\r\n"); break;
+	case CustomGyro:TxString("Custom\r\n"); break;
 	}
 	
+	TxString("Yaw Gyro: ");
+	switch ( P[GyroYawType] ) {
+	case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
+	case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
+	case IDG300:TxString("INVALID\r\n"); break;
+	case Gyro300D3V:TxString("ST-AY530\r\n"); break;
+	case CustomGyro:TxString("Custom\r\n"); break;
+	}
+
 	TxString("Motor ESCs: ");	
 	switch ( P[ESCType] ) {
 	case ESCPPM:TxString("PPM "); break;

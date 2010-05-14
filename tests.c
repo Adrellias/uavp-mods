@@ -552,7 +552,7 @@ void AnalogTest(void)
 	TxString("\r\nDepends on an accurate 5V supply\r\n");
 
 	// Roll
-	if ( P[GyroType] == IDG300 )
+	if ( P[GyroRollPitchType] == IDG300 )
 	{
 		lv = 10; hv = 20;
 		v = A[IDGADCRollChan];
@@ -569,7 +569,7 @@ void AnalogTest(void)
 	TxNextLine();
 
 	// Pitch
-	if ( P[GyroType] == IDG300 )
+	if ( P[GyroRollPitchType] == IDG300 )
 		v = A[IDGADCPitchChan]; 
 	else
 		v = A[NonIDGADCPitchChan]; 

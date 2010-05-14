@@ -78,7 +78,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 
 		TxESCi16(RollRateADC - GyroMidRoll);
 		TxESCi16(PitchRateADC - GyroMidPitch);
-		TxESCi16(YawRateADC - GyroMidYawADC);
+		TxESCi16(YawRateADC - GyroMidYaw);
 
 		TxESCi16(RollSum);
 		TxESCi16(PitchSum);
@@ -219,11 +219,11 @@ void SensorTrace(void)
 	{
 		F.TxToBuffer = false; // direct to USART
 
-		TxValH16(Heading); TxChar(';');
+		TxValH16(((int24)Heading * 180)/MILLIPI); TxChar(';');
 
 		TxValH16(RelBaroAltitude); TxChar(';');
 		TxValH16(RangefinderAltitude); TxChar(';');
-		TxValH16(GPSRelAltitude); TxChar(';');
+		TxValH16(0); TxChar(';');
 			
 		TxValH16(DesiredThrottle); TxChar(';');
 		TxValH16(DesiredRoll); TxChar(';');
@@ -232,7 +232,7 @@ void SensorTrace(void)
 
 		TxValH16(RollRateADC - GyroMidRoll); TxChar(';');
 		TxValH16(PitchRateADC - GyroMidPitch); TxChar(';');
-		TxValH16(YawRateADC - GyroMidYawADC); TxChar(';');
+		TxValH16(YawRateADC - GyroMidYaw); TxChar(';');
 
 		TxValH16(RollSum); TxChar(';');
 		TxValH16(PitchSum); TxChar(';');
