@@ -528,7 +528,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome ||
+	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome || F.GyroFailure ||
 				( InitialThrottle >= RC_THRES_START) );
 
 	FirstPass = false;

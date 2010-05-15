@@ -27,10 +27,194 @@ void GetRollPitchGyroValues(void);
 void GetYawGyroValue(void);
 void ErectGyros(void);
 void CalcGyroRates(void);
+void GyroTest(void);
+void InitGyros(void);
 
 int16	GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
 int16	RollRate, PitchRate, YawRate;
 int16	RollRateADC, PitchRateADC, YawRateADC;
+
+#ifdef GYRO_ITG3200
+
+// ITG3200 Register Defines
+#define ITG_WHO		0x00
+#define	ITG_SMPL	0x15
+#define ITG_DLPF	0x16
+#define ITG_INT_C	0x17
+#define ITG_INT_S	0x1A
+#define	ITG_TMP_H	0x1B
+#define	ITG_TMP_L	0x1C
+#define	ITG_GX_H	0x1D
+#define	ITG_GX_L	0x1E
+#define	ITG_GY_H	0x1F
+#define	ITG_GY_L	0x20
+#define ITG_GZ_H	0x21
+#define ITG_GZ_L	0x22
+#define ITG_PWR_M	0x3E
+
+#define ITG_I2C_ID 	0xD2
+#define ITG_R 		(ITG_I2C_ID+1)	
+#define ITG_W 		ITG_I2C_ID
+
+// depending on orientation of chip
+#define ITG_ROLL_H	ITG_GX_H
+#define ITG_ROLL_L	ITG_GX_L
+
+#define ITG_PITCH_H	ITG_GY_H
+#define ITG_PITCH_L	ITG_GY_L
+
+#define ITG_YAW_H	ITG_GZ_H
+#define ITG_YAW_L	ITG_GZ_L
+
+void ITG3200ViewRegisters(void);
+void BlockReadITG3200(void);
+uint8 ReadByteITG3200(uint8);
+void WriteByteITG3200(uint8, uint8);
+void InitITG3200(void);
+
+void BlockReadITG3200(void)
+{
+	static uint8 G[6], b, Temp, GX, GY, GZ;
+
+	I2CStart();
+	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+
+	if( SendI2CByte(ITG_GX_H) != I2C_ACK ) goto SGerror;
+
+	I2CStart();	
+	if( SendI2CByte(ITG_R) != I2C_ACK ) goto SGerror;
+
+	for (b = 0; b < 6; b++)
+	{
+		if ( b < 5 )
+			Temp = RecvI2CByte(I2C_ACK);
+		else
+			Temp = RecvI2CByte(I2C_NACK);
+		G[b] = Temp;
+	}
+	I2CStop();
+
+	// zzz need to get orientation
+	GX = (G[0] << 8) | G[1];
+	GY = (G[2] << 8) | G[3];
+	GZ = (G[4] << 8) | G[5];
+
+	RollRateADC = GX;
+	PitchRateADC = -GY;
+	YawRateADC = -GZ;
+
+	return;	
+
+SGerror:
+	I2CStop();
+	// GYRO FAILURE - FATAL
+	Stats[GyroS]++;
+	F.GyroFailure = true;
+	return;
+} // BlockReadITG3200
+
+uint8 ReadByteITG3200(uint8 address)
+{
+	uint8 data;
+	boolean b;
+		
+	I2CStart();
+	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+	if( SendI2CByte(address) != I2C_ACK ) goto SGerror;
+
+	I2CStart();
+	if( SendI2CByte(ITG_R) != I2C_ACK ) goto SGerror;	
+	data = RecvI2CByte(I2C_NACK);
+	I2CStop();
+	
+	return ( data );
+
+SGerror:
+	I2CStop();
+	// GYRO FAILURE - FATAL
+	Stats[GyroS]++;
+	F.GyroFailure = true;
+	return ( 0 );
+} // ReadByteITG3200
+
+void WriteByteITG3200(uint8 address, uint8 data)
+{
+	I2CStart();	// restart
+	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+	if( SendI2CByte(address) != I2C_ACK ) goto SGerror;
+	if(SendI2CByte(data) != I2C_ACK ) goto SGerror;
+	I2CStop();
+	return;
+
+SGerror:
+	I2CStop();
+	// GYRO FAILURE - FATAL
+	Stats[GyroS]++;
+	F.GyroFailure = true;
+	return;
+} // WriteByteITG3200
+
+void InitITG3200(void)
+{
+	F.GyroFailure = false; // reset optimistically!
+
+	WriteByteITG3200(ITG_PWR_M, 0x80);			// Reset to defaults
+	WriteByteITG3200(ITG_SMPL, 0x00);			// continuous update
+	WriteByteITG3200(ITG_DLPF, 0b00011001);		// 188Hz, 2000deg/S
+	WriteByteITG3200(ITG_INT_C, 0b00000000);	// no interrupts
+	WriteByteITG3200(ITG_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
+} // InitITG3200
+
+void GetRollPitchGyroValues(void)
+{ // invoked TWICE per control cycle so roll/pitch "rates" are double actual
+
+	BlockReadITG3200();
+
+	RollRate = RollRate + RollRateADC;
+	PitchRate = PitchRate + PitchRateADC;
+
+} // GetRollPitchGyroValues
+
+void GetYawGyroValue(void)
+{
+	// YawRateADC already acquired in block read for roll/pitch
+	YawRate = YawRateADC - GyroMidYaw; 
+	YawRate = SRS16(YawRate, 1);
+
+} // GetYawGyroValue
+
+#ifdef TESTING
+
+void GyroTest(void)
+{
+	TxString("\r\nITG3200 3 axis I2C Gyro Test\r\n");
+	TxString("WHO_AM_I  \t"); TxValH(ReadByteITG3200(ITG_WHO)); TxNextLine();
+//	Delay1mS(1000);
+	TxString("SMPLRT_DIV\t"); TxValH(ReadByteITG3200(ITG_SMPL)); TxNextLine();
+	TxString("DLPF_FS   \t"); TxValH(ReadByteITG3200(ITG_DLPF)); TxNextLine();
+	TxString("INT_CFG   \t"); TxValH(ReadByteITG3200(ITG_INT_C)); TxNextLine();
+	TxString("INT_STATUS\t"); TxValH(ReadByteITG3200(ITG_INT_S)); TxNextLine();
+	TxString("TEMP      \t"); TxVal32( (ReadByteITG3200(ITG_TMP_H)<<8) | ReadByteITG3200(ITG_TMP_L),0,0); TxNextLine();
+	TxString("GYRO_X    \t"); TxVal32( (ReadByteITG3200(ITG_GX_H)<<8) | ReadByteITG3200(ITG_GX_L),0,0); TxNextLine();
+	TxString("GYRO_Y    \t"); TxVal32( (ReadByteITG3200(ITG_GY_H)<<8) | ReadByteITG3200(ITG_GY_L),0,0); TxNextLine();
+	TxString("GYRO_Z    \t"); TxVal32( (ReadByteITG3200(ITG_GZ_H)<<8) | ReadByteITG3200(ITG_GZ_L),0,0); TxNextLine();
+	TxString("PWR_MGM   \t"); TxValH(ReadByteITG3200(ITG_PWR_M)); TxNextLine();
+	TxNextLine();
+	if ( F.GyroFailure )
+		TxString("Test FAILED\r\n");
+	else
+		TxString("Test OK\r\n");
+
+} // GyroTest
+
+#endif // TESTING
+
+void InitGyros(void)
+{
+	InitITG3200();
+} // InitGyros
+
+#else
 
 void GetRollPitchGyroValues(void)
 { // invoked TWICE per control cycle so roll/pitch "rates" are double actual
@@ -65,6 +249,86 @@ void GetYawGyroValue(void)
 
 } // GetYawGyroValue
 
+#ifdef TESTING
+
+void GyroTest(void)
+{
+	int32 v;
+	uint8 c, lv, hv;
+	int32 A[5];
+
+	for ( c = 1; c <= 4; c++ )
+		A[c] = ((int24)ADC(c)* 50L + 512L)/1024L;
+
+	TxString("\r\nGyro Test\r\n");
+
+	// Roll
+	if ( P[GyroRollPitchType] == IDG300 )
+	{
+		lv = 10; hv = 20;
+		v = A[IDGADCRollChan];
+	}
+	else
+		if ( P[GyroRollPitchType] == Gyro300D3V )
+		{
+			lv = 10; hv = 20;
+			v = A[NonIDGADCRollChan];
+		}
+		else
+		{
+			lv = 20; hv = 30;
+			v = A[NonIDGADCRollChan];
+		} 
+	TxString("Roll: \t"); 
+	TxVal32(v, 1, 'V');
+	if ( ( v < lv ) || ( v > hv ) )
+		TxString(" gyro NC or fault?");
+	TxNextLine();
+
+	// Pitch
+	if ( P[GyroRollPitchType] == IDG300 )
+		v = A[IDGADCPitchChan];
+	else
+		if ( P[GyroRollPitchType] == Gyro300D3V )
+			v = A[NonIDGADCRollChan];
+		else
+			v = A[NonIDGADCPitchChan]; 
+	TxString("Pitch:\t");		
+	TxVal32(v, 1, 'V');
+	if ( ( v < lv ) || ( v > hv ) )
+		TxString(" gyro NC or fault?");
+	
+	TxNextLine();
+
+	// Yaw
+	if ( P[GyroYawType] == Gyro300D3V )
+	{
+		lv = 10; hv = 20;
+	}
+	else
+	{
+		lv = 20; hv = 30;
+	}
+	
+	v = A[ADCYawChan];
+	TxString("Yaw:  \t");
+	TxVal32(v, 1, 'V');
+	if ( ( v < lv ) || ( v > hv ) )
+		TxString(" gyro NC or fault?");	
+	TxNextLine();
+	
+} // GyroTest
+
+#endif // TESTING
+
+void InitGyros(void)
+{
+	// nothing to be done for analog gyros - could check nominal midpoints?
+	F.GyroFailure = false;
+} // InitGyros
+
+#endif // GYRO_ITG3200
+
 void ErectGyros(void)
 {
 	static uint8 i;
@@ -76,17 +340,12 @@ void ErectGyros(void)
 		LEDRed_TOG;
 		Delay100mSWithOutput(GYRO_ERECT_DELAY);
 
-		if ( P[GyroRollPitchType] == IDG300 )
-		{
-			RollAv += ADC(IDGADCRollChan);
-			PitchAv += ADC(IDGADCPitchChan);	
-		}
-		else
-		{
-			RollAv += ADC(NonIDGADCRollChan);
-			PitchAv += ADC(NonIDGADCPitchChan);
-		}
-		YawAv += ADC(ADCYawChan);
+		GetRollPitchGyroValues();
+		GetYawGyroValue();
+
+		RollAv += RollRateADC;
+		PitchAv += PitchRateADC;	
+		YawAv += YawRateADC;
 	}
 	
 	if( !F.AccelerationsValid )
@@ -103,7 +362,7 @@ void ErectGyros(void)
 	GyroMidRollBy2 = GyroMidRoll * 2;
 	GyroMidPitchBy2 = GyroMidPitch * 2;
 	
-	RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 	LEDRed_OFF;
 
 } // ErectGyros
@@ -259,6 +518,3 @@ void CalcGyroRates(void)
 	GetYawGyroValue();	
 
 } // CalcGyroRates
-
-
-

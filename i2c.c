@@ -27,6 +27,7 @@ void I2CStop(void);
 boolean I2CWaitClkHi(void);
 uint8 SendI2CByte(uint8);
 uint8 RecvI2CByte(uint8);
+uint8 ScanI2CBus(void);
 
 #ifdef CLOCK_16MHZ
 #define	I2C_DELAY		Delay10TCY()
@@ -144,6 +145,58 @@ uint8 RecvI2CByte(uint8 r)
 		return(0);	
 } // RecvI2CByte
 
+#ifdef TESTING
+
+uint8 ScanI2CBus(void)
+{
+	int16 s;
+	uint8 d;
+
+	d = 0;
+
+	TxString("Sensor Bus\r\n");
+	for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
+	{
+		I2CStart();
+		if( SendI2CByte(s) == I2C_ACK )
+		{
+			d++;
+			TxString("\t0x");
+			TxValH(s);
+			TxNextLine();
+		}
+		I2CStop();
+
+		Delay1mS(2);
+	}
+
+	TxString("\r\nESC Bus\r\n");
+
+	if ( (P[ESCType] == ESCHolger)||(P[ESCType] == ESCX3D)||(P[ESCType] == ESCYGEI2C) )
+		for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
+		{
+			ESCI2CStart();
+			if( SendESCI2CByte(s) == I2C_ACK )
+			{
+				d++;
+				TxString("\t0x");
+				TxValH(s);
+				TxNextLine();
+			}
+			ESCI2CStop();
+	
+			Delay1mS(2);
+		}
+	else
+		TxString("\tinactive - I2C ESCs not selected..\r\n");
+
+	TxNextLine();
+
+	return(d);
+} // ScanI2CBus
+
+#endif // TESTING
+
 // -----------------------------------------------------------
 // SW I2C Routines for ESCs
 
@@ -151,6 +204,8 @@ boolean ESCWaitClkHi(void);
 void ESCI2CStart(void);
 void ESCI2CStop(void);
 uint8 SendESCI2CByte(uint8);
+void ProgramSlaveAddress(uint8);
+void ConfigureESCs(void);
 
 // Constants
 
@@ -226,3 +281,82 @@ uint8 SendESCI2CByte(uint8 d)
 										
 	return( s );
 } // SendESCI2CByte
+
+#ifdef TESTING
+
+void ProgramSlaveAddress(uint8 addr)
+{
+	static uint8 s;
+
+	for (s = 0x10 ; s < 0xf0 ; s += 2 )
+	{
+		ESCI2CStart();
+		if( SendESCI2CByte(s) == I2C_ACK )
+			if( s == addr )
+			{	// ESC is already programmed OK
+				ESCI2CStop();
+				TxString("\tESC at SLA 0x");
+				TxValH(addr);
+				TxString(" is already programmed OK\r\n");
+				return;
+			}
+			else
+			{
+				if( SendESCI2CByte(0x87) == I2C_ACK ) // select register 0x07
+					if( SendESCI2CByte( addr ) == I2C_ACK ) // new slave address
+					{
+						ESCI2CStop();
+						TxString("\tESC at SLA 0x");
+						TxValH(s);
+						TxString(" reprogrammed to SLA 0x");
+						TxValH(addr);
+						TxNextLine();
+						return;
+					}
+			}
+		ESCI2CStop();
+	}
+	TxString("\tESC at SLA 0x");
+	TxValH(addr);
+	TxString(" no response - check cabling and pullup resistors!\r\n");
+} // ProgramSlaveAddress
+
+boolean CheckESCBus(void)
+{
+	return ( true );
+} // CheckESCBus
+
+void ConfigureESCs(void)
+{
+	uint8 m, s;
+
+	if ( P[ESCType] == ESCYGEI2C )		
+	{
+		TxString("\r\nProgram YGE ESCs\r\n");
+		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
+		{
+			TxString("Connect ONLY ");
+			switch( m )
+			{
+				#ifdef HEXACOPTER
+					not yet!
+				#else
+					case 0 : TxString("Front"); break;
+					case 1 : TxString("Back");  break;
+					case 2 : TxString("Right"); break;
+					case 3 : TxString("Left");  break;
+				#endif // HEXACOPTER
+			}
+			TxString(" ESC, then press any key \r\n");
+			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button
+		//	TxString("\r\n");
+			ProgramSlaveAddress( 0x62 + ( m*2 ));
+		}
+		TxString("\r\nConnect ALL ESCs and power-cycle the Quadrocopter\r\n");
+	}
+	else
+		TxString("\r\nYGEI2C not selected as ESC?\r\n");
+} // ConfigureESCs
+
+#endif // TESTING
+

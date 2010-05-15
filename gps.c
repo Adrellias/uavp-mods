@@ -32,6 +32,7 @@ void ParseGPRMCSentence(void);
 void ParseGPGGASentence(void);
 void SetGPSOrigin(void);
 void ParseGPSSentence(void);
+void GPSTest(void);
 void InitGPS(void);
 void UpdateGPS(void);
 
@@ -216,26 +217,6 @@ void ParseGPGGASentence(void)
 			if ( GPSNoOfSats < Stats[GPSMinSatsS] )
 				Stats[GPSMinSatsS] = GPSNoOfSats; 
 	}
-
-	#ifdef TEST_GPS
-	if ( F.GPSTestActive )
-	{
-		TxString("$GPGGA ");
-		if ( !F.GPSValid )
-		{
-			TxString(" fx=");
-			TxVal32(GPSFix, 0, ' ');
-	
-			TxString("s=");
-			TxVal32(GPSNoOfSats, 0, ' ');
-	
-			TxString("hd=");
-			TxVal32(GPSHDilute, 2, ' ');
-
-			TxString("invalid\r\n");
-		}
-	}
-	#endif // TEST_GPS
 } // ParseGPGGASentence
 
 void SetGPSOrigin(void)
@@ -308,13 +289,6 @@ void ParseGPSSentence(void)
 
 	    if ( ValidGPSSentences <  GPS_ORIGIN_SENTENCES )
 		{   // repetition to ensure GPGGA altitude is captured
-
-			if ( F.GPSTestActive )
-			{
-				TxVal32( GPS_ORIGIN_SENTENCES - ValidGPSSentences, 0, 0);
-				TxNextLine();
-			}
-
 			F.GPSValid = false;
 
 			if ( GPSHDilute <= GPS_MIN_HDILUTE )
@@ -399,6 +373,39 @@ void ParseGPSSentence(void)
 
 } // ParseGPSSentence
 
+void UpdateGPS(void)
+{
+	if ( F.GPSSentenceReceived )
+	{
+		LEDBlue_ON;
+		LEDRed_OFF;
+		F.GPSSentenceReceived = false;  
+		ParseGPSSentence(); // 7.5mS 18f2520 @ 16MHz
+		if ( F.GPSValid )
+		{
+			F.NavComputed = false;
+			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
+		}
+		else
+		{
+			NavPCorr = DecayX(NavPCorr, 2);
+			NavRCorr = DecayX(NavRCorr, 2);
+			NavYCorr = 0;
+			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
+		}
+		SendTelemetry();	// Tx overlapped with next GPS packet Rx
+	}
+	else
+		if( mS[Clock] > mS[GPSTimeout] )
+			F.GPSValid = false;
+
+	LEDBlue_OFF;
+	if ( F.GPSValid )
+		LEDRed_OFF;
+	else
+		LEDRed_ON;	
+} // UpdateGPS
+
 void InitGPS(void)
 { 
 	uint8 n;
@@ -425,38 +432,3 @@ void InitGPS(void)
   	GPSRxState = WaitGPSSentinel; 
   	
 } // InitGPS
-
-void UpdateGPS(void)
-{
-	if ( F.GPSSentenceReceived )
-	{
-		LEDBlue_ON;
-		LEDRed_OFF;
-		F.GPSSentenceReceived = false;  
-		ParseGPSSentence(); // 7.5mS 18f2520 @ 16MHz
-		if ( F.GPSValid )
-		{
-			F.NavComputed = false;
-			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
-		}
-		else
-		{
-			NavPCorr = DecayX(NavPCorr, 2);
-			NavRCorr = DecayX(NavRCorr, 2);
-			NavYCorr = 0;
-			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
-		}
-
-		if ( !F.GPSTestActive )			SendTelemetry();	// Tx overlapped with next GPS packet Rx
-	}
-	else
-		if( mS[Clock] > mS[GPSTimeout] )
-			F.GPSValid = false;
-
-	LEDBlue_OFF;
-	if ( F.GPSValid )
-		LEDRed_OFF;
-	else
-		LEDRed_ON;	
-} // UpdateGPS
-

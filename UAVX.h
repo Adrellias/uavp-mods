@@ -1,5 +1,7 @@
 // EXPERIMENTAL
 
+
+
 //#define BARO_NO_QUEUE
 
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.
@@ -31,7 +33,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-#define TESTING						
+//#define TESTING						
 //#define RX6CH 						// 6ch Receivers
 //#define SIMULATE
 #define QUADROCOPTER
@@ -39,6 +41,9 @@
 //#define HELICOPTER
 //#define AILERON
 //#define ELEVON
+
+//#define GYRO_ITG3200					// Experimental I2C 3-axis Gyro
+
 #endif // !BATCHMODE
 
 //________________________________________________________________________________________________
@@ -521,7 +526,7 @@ typedef union {
 		uint8
 		NavAltitudeHold:1,	// stick programmed
 		TurnToWP:1,			// stick programmed
-		MotorsArmed:1,
+		GyroFailure:1,
 		LostModel:1,
 		NearLevel:1,
 		LowBatt:1,
@@ -570,7 +575,7 @@ typedef union {
 		NewBaroValue:1,
 		BeeperInUse:1, 
 		AcquireNewPosition:1, 
-		GPSTestActive:1,
+		MotorsArmed:1,
 		RFInInches:1,
 		Simulation:1;
 		};
@@ -587,9 +592,11 @@ extern uint8 ReadLISL(uint8);
 extern uint8 ReadLISLNext(void);
 extern void WriteLISL(uint8, uint8);
 extern void IsLISLActive(void);
-extern void InitLISL(void);
+
 extern void ReadAccelerations(void);
 extern void GetNeutralAccelerations(void);
+extern void AccelerometerTest(void);
+extern void InitAccelerometers(void);
 
 extern i16u Ax, Ay, Az;
 extern int8 LRIntCorr, FBIntCorr;
@@ -669,6 +676,7 @@ extern void StartBaroADC(boolean);
 extern int24 CompensatedPressure(int24, int24);
 extern void ReadBaro(boolean);
 extern void GetBaroAltitude(void);
+extern void BaroTest(void);
 extern void InitBarometer(void);
 
 #define BARO_ID_BMP085		((uint8)(0x55))
@@ -693,9 +701,12 @@ extern int24 FakeRelBaroAltitude;
 
 // compass.c
 
-extern void InitCompass(void);
-extern void InitHeading(void);
 extern void GetHeading(void);
+extern void GetCompassParameters(void);
+extern void DoCompassTest(void);
+extern void CalibrateCompass(void);
+extern void InitHeading(void);
+extern void InitCompass(void);
 
 extern i16u Compass;
 
@@ -763,8 +774,9 @@ extern void ParseGPRMCSentence(void);
 extern void ParseGPGGASentence(void);
 extern void SetGPSOrigin(void);
 extern void ParseGPSSentence(void);
-extern void InitGPS(void);
+extern void GPSTest(void);
 extern void UpdateGPS(void);
+extern void InitGPS(void);
 
 #define MAXTAGINDEX 		4
 #define GPSRXBUFFLENGTH 	80
@@ -804,6 +816,8 @@ extern void GetRollPitchGyroValues(void);
 extern void GetYawGyroValue(void);
 extern void ErectGyros(void);
 extern void CalcGyroRates(void);
+extern void GyroTest(void);
+extern void InitGyros(void);
 
 extern int16 GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
 extern int16 RollRate, PitchRate, YawRate;
@@ -849,11 +863,15 @@ extern void I2CStart(void);
 extern void I2CStop(void);
 extern uint8 SendI2CByte(uint8);
 extern uint8 RecvI2CByte(uint8);
+extern uint8 ScanI2CBus(void);
 
 extern boolean ESCWaitClkHi(void);
 extern void ESCI2CStart(void);
 extern void ESCI2CStop(void);
 extern uint8 SendESCI2CByte(uint8);
+
+extern void ProgramSlaveAddress(uint8);
+extern void ConfigureESCs(void);
 
 //______________________________________________________________________________________________
 
@@ -1091,7 +1109,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, BatteryS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroS}; // NO MORE THAN 32 or 64 bytes
 
 extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern int16 Stats[];
@@ -1143,19 +1161,11 @@ extern void BootStart(void);
 // tests.c
 
 extern void DoLEDs(void);
-extern void LinearTest(void);
-extern uint8 ScanI2CBus(void);
 extern void ReceiverTest(void);
-extern void GetCompassParameters(void);
-extern void DoCompassTest(void);
-extern void CalibrateCompass(void);
-extern void BaroTest(void);
 extern void PowerOutput(int8);
 extern void LEDsAndBuzzer(void);
-extern void GPSTest(void);
-extern void AnalogTest(void);
-extern void ProgramSlaveAddress(uint8);
-extern void ConfigureESCs(void);
+extern void BatteryTest(void);
+
 
 
 

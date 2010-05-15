@@ -27,9 +27,11 @@ uint8 ReadLISL(uint8);
 uint8 ReadLISLNext(void);
 void WriteLISL(uint8, uint8);
 void IsLISLActive(void);
-void InitLISL(void);
+
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
+void AccelerometerTest(void);
+void InitAccelerometers(void);
 
 //#ifdef CLOCK_16MHZ
 	#define SPI_HI_DELAY Delay10TCY()
@@ -171,23 +173,6 @@ void IsLISLActive(void)
 	}
 } // IsLISLActive
 
-void InitLISL(void)
-{
-	Delay100mSWithOutput(5);	// wait 0.5 sec until LISL is ready to talk
-
-	NeutralLR = 0;
-	NeutralFB = 0;
-	NeutralDU = 0;
-
-	IsLISLActive();	
-	if( F.AccelerationsValid )
-	{
-		LEDYellow_ON;
-		GetNeutralAccelerations();
-		LEDYellow_OFF;
-	}
-} // InitLISL
-
 void ReadAccelerations()
 {
 	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == 0x3a; // Acc still there?
@@ -249,4 +234,62 @@ void GetNeutralAccelerations(void)
 	NeutralFB = Limit(FB, -99, 99);
 	NeutralDU = Limit(DU - 1024, -99, 99); // -1g
 } // GetNeutralAccelerations
+
+#ifdef TESTING
+
+void AccelerometerTest(void)
+{
+	TxString("\r\nAccelerometer test:\r\n");
+	TxString("Read once - no averaging\r\n");
+	if( F.AccelerationsValid )
+	{
+		ReadAccelerations();
+	
+		TxString("\tL->R: \t");
+		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Ax.i16, 0 , ')');
+		if ( Abs((Ax.i16)) > 128 )
+			TxString(" fault?");
+		TxNextLine();
+
+		TxString("\tF->B: \t");	
+		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Az.i16, 0 , ')');
+		if ( Abs((Az.i16)) > 128 )
+			TxString(" fault?");	
+		TxNextLine();
+
+		TxString("\tD->U:    \t");
+	
+		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
+		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
+			TxString(" fault?");	
+		TxNextLine();
+	}
+	else
+		TxString("\r\n(Acc. not present)\r\n");
+} // AccelerometerTest
+
+#endif // TESTING
+
+void InitAccelerometers(void)
+{
+	Delay100mSWithOutput(5);	// wait 0.5 sec until LISL is ready to talk
+
+	NeutralLR = 0;
+	NeutralFB = 0;
+	NeutralDU = 0;
+
+	IsLISLActive();	
+	if( F.AccelerationsValid )
+	{
+		LEDYellow_ON;
+		GetNeutralAccelerations();
+		LEDYellow_OFF;
+	}
+} // InitAccelerometers
 

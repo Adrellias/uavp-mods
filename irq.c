@@ -275,7 +275,7 @@ void high_isr_handler(void)
 		    } 
 		}
 		#ifndef TESTING // not used for testing - make space!
-		if ( Armed && !F.GPSTestActive  ) // piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
+		if ( Armed ) // piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
 			switch ( P[TelemetryType] ) {
 			case UAVXTelemetry:
 			case ArduStationTelemetry:

@@ -52,7 +52,8 @@ void main(void)
 	INTCONbits.TMR0IE = true; 
 	EnableInterrupts;
 
-	InitLISL();
+	InitAccelerometers();
+	InitGyros();
 	InitCompass();
 	InitRangefinder();
 	InitGPS();
@@ -69,7 +70,7 @@ void main(void)
 		ReceivingGPSOnly(false);
 		EnableInterrupts;
 
-		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed
+		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed, Gyros ONLINE
 	
 		State = Starting;
 

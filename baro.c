@@ -26,6 +26,7 @@ void StartBaroADC(boolean);
 int24 CompensatedPressure(int24, int24);
 void ReadBaro(boolean);
 void GetBaroAltitude(void);
+void BaroTest(void);
 void InitBarometer(void);
 
 #define BaroFilter SoftFilter
@@ -297,6 +298,53 @@ void GetBaroAltitude(void)
 
 	#endif // BARO_NO_QUEUE
 }// GetBaroAltitude
+
+#ifdef TESTING
+
+void BaroTest(void)
+{
+	TxString("\r\nAltitude test\r\n");
+	if ( !F.BaroAltitudeValid ) goto BAerror;
+
+	if ( BaroType == BARO_ID_BMP085 )
+		TxString("Type:\tBMP085\r\n");
+	else
+		TxString("Type:\tSMD500\r\n");
+	
+	while ( !F.NewBaroValue )
+		GetBaroAltitude();	
+	F.NewBaroValue = false;	
+
+	TxString("\r\nP/T: \t");
+	#ifdef BARO_NO_QUEUE
+	TxVal32((int32)BaroPressure,0,' ');
+	TxVal32((int32)BaroTemperature, 0, ' ');
+	#else
+	TxVal32((int32)BaroPressSum >> 3,0,' ');
+	TxVal32((int32)BaroTempSum >> 3, 0, ' ');
+	#endif // BARO_NO_QUEUE
+	TxNextLine();
+
+	TxString("Alt.:     \t");	
+	TxVal32((int32)RelBaroAltitude, 2, ' ');
+	TxString("M\r\n");
+
+	TxString("R.Finder: \t");
+	if ( F.RangefinderAltitudeValid )
+	{
+		GetRangefinderAltitude();
+		TxVal32((int32)RangefinderAltitude, 2, ' ');
+		TxString("M\r\n");
+	}
+	else
+		TxString("no rangefinder\r\n");	
+
+	return;
+BAerror:
+	TxString("FAIL\r\n");
+} // BaroTest
+
+#endif // TESTING
 
 void InitBarometer(void)
 {	

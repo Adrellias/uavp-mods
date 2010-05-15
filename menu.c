@@ -47,9 +47,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"C..Compass test\r\n"
 	"D..Load default parameter set\r\n"
-	#ifdef TEST_GPS
-	"G..GPS test (Use HyperTerm)\r\n"
-	#endif // TEST_GPS
+	"G..Gyro test\r\n"
 	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
@@ -57,7 +55,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
 	"T..All LEDs and buzzer test\r\n"
-	"V..Analog input test\r\n"
+	"V..Battery test\r\n"
 	#endif // TESTING
 	#ifdef FLIGHT_STATS
 	"X..Flight stats\r\n"
@@ -157,6 +155,13 @@ void ShowSetup(boolean h)
 	#endif // QUADROCOPTER | TRICOPTER
 	
 	TxString("Roll/Pitch Gyros: ");
+	#ifdef GYRO_ITG3200
+	TxString("ITG-3200 3 axis I2C ");
+	if (F.GyroFailure )
+		TxString("FAILED\r\n");
+	else
+		TxString("ONLINE\r\n");
+	#else 
 	switch ( P[GyroRollPitchType] ) {
 	case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
 	case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
@@ -173,6 +178,7 @@ void ShowSetup(boolean h)
 	case Gyro300D3V:TxString("ST-AY530\r\n"); break;
 	case CustomGyro:TxString("Custom\r\n"); break;
 	}
+	#endif // GYRO_ITG3200
 
 	TxString("Motor ESCs: ");	
 	switch ( P[ESCType] ) {
@@ -261,6 +267,8 @@ void ShowSetup(boolean h)
 		TxString("\tHold heading\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
+	if ( F.GyroFailure )
+		TxString("\tGyro failure?\r\n");
 	if ( !F.Signal )
 		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
 	if ( Armed && FirstPass ) 
@@ -398,19 +406,19 @@ void ProcessCommand(void)
 
 			#ifdef TESTING
 			case 'A' :	// linear sensor
-				LinearTest();
+				AccelerometerTest();
 				ShowPrompt();
 				break;
 			case 'C':
 				DoCompassTest();
 				ShowPrompt();
-				break;
-			case 'G' : // GPS test
-				GPSTest();
-				ShowPrompt();
-				break;			
+				break;		
 			case 'H':	// barometer
 				BaroTest();
+				ShowPrompt();
+				break;
+			case 'G':	// gyro
+				GyroTest();
 				ShowPrompt();
 				break;
 			case 'I':
@@ -422,16 +430,13 @@ void ProcessCommand(void)
 			case 'K':
 				CalibrateCompass();
 				ShowPrompt();
-				break;
-			
+				break;			
 			case 'P'  :	// Receiver test			
 				ReceiverTest();
 				ShowPrompt();
 				break;
-
-
-			case 'V' :	// analog test
-				AnalogTest();
+			case 'V' :	// Battery test
+				BatteryTest();
 				ShowPrompt();
 				break;
 

@@ -66,7 +66,7 @@ void InitMisc(void)
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = 0;
-	F.BeeperInUse = F.GPSTestActive = false; 
+	F.BeeperInUse = false; 
 	F.NavAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
 
 	#ifdef SIMULATE
@@ -178,7 +178,6 @@ void CheckAlarms(void)
 		if( F.LowBatt ) // repeating beep
 			if( ((int16)mS[Clock] & 0x0200) == 0 )
 			{
-				Stats[BatteryS] = BatteryVolts;
 				Beeper_ON;
 				LEDRed_ON;
 			}
