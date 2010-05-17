@@ -28,6 +28,7 @@ void UpdateWhichParamSet(void);
 void InitParameters(void);
 
 const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
+
 const rom int8	ComParms[]={ // mask giving common variables across parameter sets
 	0,0,0,1,0,0,0,0,0,0,
 	0,0,0,0,0,1,1,1,0,1,
@@ -38,79 +39,19 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	0,0,0,0
 	};
 
-const rom int8 DefaultParams[] = {
-	-24, 			// RollKp, 			01
-	-14, 			// RollKi,			02
-	75, 			// RollKd,			03
-	-1, 			// HorizDampKp,		04c 
-	3, 				// RollIntLimit,	05
-	-24, 			// PitchKp,			06
-	-14, 			// PitchKi,			07
-	75, 			// PitchKd,			08
-	6, 				// AltKp,			09
-	3, 				// PitchIntLimit,	10
-	
-	-30, 			// YawKp, 			11
-	-25, 			// YawKi,			12
-	0, 				// YawKd,			13
-	25, 			// YawLimit,		14
-	2, 				// YawIntLimit,		15
-	0, 				// ConfigBits,		16c
-	4, 				// TimeSlots,		17c
-	48, 			// LowVoltThres,	18c
-	20, 			// CamRollKp,		19
-	45, 			// PercentCruiseThr,20c 
-	
-	-1, 			// VertDampKp,		21c
-	0, 				// MiddleDU,		22c
-	20, 			// PercentIdleThr,	23c
-	0, 				// MiddleLR,		24c
-	0, 				// MiddleFB,		25c
-	20, 			// CamPitchKp,		26
-	24, 			// CompassKp,		27
-	4, 				// AltKi,			28
-	30, 			// NavRadius,		29
-	8, 				// NavKi,			30 
-
-	0, 				// unused1,			31
-	0, 				// unused2,			32
-	20, 			// NavRTHAlt,		33
-	0, 				// NavMagVar,		34c
-	Gyro300D5V, 	// GyroRollPitchType,	35c
-	ESCPPM, 		// ESCType,			36c
-	DX7AR7000, 		// TxRxType			37c
-	2,				// NeutralRadius	38
-	30,				// PercentNavSens6Ch	39
-	1,				// CamRollTrim,		40c
-
-	-16,			// NavKd			41
-	1,				// VertDampDecay    42c
-	1,				// HorizDampDecay	43c
-	70,				// BaroScale		44c
-	0,				// TelemetryType	45c
-	-8,				// MaxDescentRateDmpS 	46
-	30,				// DescentDelayS	47c
-	1,				// NavIntLimit		48
-	1,				// AltIntLimit		49
-	11,				// GravComp			50c
-	1,				// CompSteps		51c
-	0,				// ServoSense		52c	
-	3,				// CompassOffsetQtr 53c
-	49,				// BatteryCapacity	54c	
-	Gyro150D5V,		// GuroYawType		55c		
-
-	0,				// 55 - 64 unused currently	
-
-	0,	
-	0,
-	0,
-	0,
-
-	0,
-	0,
-	0,
-	0					
-	};
+#ifdef MULTICOPTER
+	#include "uavx_multicopter.h"
+#else
+	#ifdef HELICOPTER
+		#include "uavx_helicopter.h"	
+	#else
+		#ifdef ELEVONS
+			#include "uavx_elevon.h"
+		#else
+			#include "uavx_aileron.h"
+		#endif
+	#endif
+#endif 
 
 const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 3,1,2,4,5,6,7 }, 	// Futaba Thr 3 Throttle

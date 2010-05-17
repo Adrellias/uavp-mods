@@ -97,9 +97,14 @@ void ShowStats(void)
 	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();
 
 	TxString("\r\nGPS\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1, ' '); TxString("M\r\n");
 	#ifdef GPS_INC_GROUNDSPEED 
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
+
+	TxString("Sats:     \t");TxVal32((int32)Stats[GPSMinSatsS], 2, ' ');
+	TxVal32((int32)Stats[GPSMaxSatsS], 2, 0); TxNextLine();
+
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
 	if ( Stats[NavValidS] )

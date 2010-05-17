@@ -27,6 +27,7 @@ void I2CStop(void);
 boolean I2CWaitClkHi(void);
 uint8 SendI2CByte(uint8);
 uint8 RecvI2CByte(uint8);
+void RecvI2CString(uint8 *, uint8);
 uint8 ScanI2CBus(void);
 
 #ifdef CLOCK_16MHZ
@@ -144,6 +145,20 @@ uint8 RecvI2CByte(uint8 r)
 	else
 		return(0);	
 } // RecvI2CByte
+
+void RecvI2CString(uint8 *S, uint8 l)
+{
+	static uint8 d, b;
+
+	for (b = 0; b < l; b++)
+	{
+		if ( b < (l-1) )
+			d = RecvI2CByte(I2C_ACK);
+		else
+			d = RecvI2CByte(I2C_NACK);
+		S[b] = d;
+	}
+} // RecvI2CString
 
 #ifdef TESTING
 

@@ -33,7 +33,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-//#define TESTING						
+#define TESTING						
 //#define RX6CH 						// 6ch Receivers
 //#define SIMULATE
 #define QUADROCOPTER
@@ -814,6 +814,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 extern void CompensateRollPitchGyros(void);
 extern void GetRollPitchGyroValues(void);
 extern void GetYawGyroValue(void);
+extern void CheckGyroFault(uint8, uint8, uint8);
 extern void ErectGyros(void);
 extern void CalcGyroRates(void);
 extern void GyroTest(void);
@@ -863,6 +864,7 @@ extern void I2CStart(void);
 extern void I2CStop(void);
 extern uint8 SendI2CByte(uint8);
 extern uint8 RecvI2CByte(uint8);
+extern void RecvI2CString(uint8 *, uint8);
 extern uint8 ScanI2CBus(void);
 
 extern boolean ESCWaitClkHi(void);

@@ -25,6 +25,7 @@
 void CompensateRollPitchGyros(void);
 void GetRollPitchGyroValues(void);
 void GetYawGyroValue(void);
+void CheckGyroFault(uint8, uint8, uint8);
 void ErectGyros(void);
 void CalcGyroRates(void);
 void GyroTest(void);
@@ -83,15 +84,7 @@ void BlockReadITG3200(void)
 
 	I2CStart();	
 	if( SendI2CByte(ITG_R) != I2C_ACK ) goto SGerror;
-
-	for (b = 0; b < 6; b++)
-	{
-		if ( b < 5 )
-			Temp = RecvI2CByte(I2C_ACK);
-		else
-			Temp = RecvI2CByte(I2C_NACK);
-		G[b] = Temp;
-	}
+	RecvI2CString(G, 6);
 	I2CStop();
 
 	// zzz need to get orientation
@@ -185,6 +178,19 @@ void GetYawGyroValue(void)
 
 #ifdef TESTING
 
+void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
+{
+	TxVal32(v, 1, 0);
+	TxString(" (");
+	TxVal32(lv,1,0);
+	TxString(" >< ");
+	TxVal32(hv,1,'V');
+	TxString(")");
+	if ( ( v < lv ) || ( v > hv ) )
+		TxString(" Gyro NC or faulty?");
+	TxNextLine();
+} // CheckGyroFault
+
 void GyroTest(void)
 {
 	TxString("\r\nITG3200 3 axis I2C Gyro Test\r\n");
@@ -251,71 +257,59 @@ void GetYawGyroValue(void)
 
 #ifdef TESTING
 
+void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
+{
+	TxVal32(v, 1, 0);
+	TxString(" (");
+	TxVal32(lv,1,0);
+	TxString(" >< ");
+	TxVal32(hv,1,'V');
+	TxString(")");
+	if ( ( v < lv ) || ( v > hv ) )
+		TxString(" Gyro NC or faulty?");
+	TxNextLine();
+} // CheckGyroFault
+
 void GyroTest(void)
 {
-	int32 v;
-	uint8 c, lv, hv;
-	int32 A[5];
+	uint8 c, A[5], lv, hv, v;
 
-	for ( c = 1; c <= 4; c++ )
-		A[c] = ((int24)ADC(c)* 50L + 512L)/1024L;
+	for ( c = 1; c <= 5; c++ )
+		A[c] = ((int24)ADC(c) * 50L + 512L)/1024L;
 
 	TxString("\r\nGyro Test\r\n");
+	if ( (P[GyroRollPitchType] == IDG300) || (P[GyroRollPitchType] == Gyro300D3V) ) // 3V gyros
+		{ lv = 10; hv = 20;}
+	else
+		{ lv = 20; hv = 30;}
 
 	// Roll
 	if ( P[GyroRollPitchType] == IDG300 )
-	{
-		lv = 10; hv = 20;
 		v = A[IDGADCRollChan];
-	}
 	else
-		if ( P[GyroRollPitchType] == Gyro300D3V )
-		{
-			lv = 10; hv = 20;
-			v = A[NonIDGADCRollChan];
-		}
-		else
-		{
-			lv = 20; hv = 30;
-			v = A[NonIDGADCRollChan];
-		} 
+		v = A[NonIDGADCRollChan];
+
 	TxString("Roll: \t"); 
-	TxVal32(v, 1, 'V');
-	if ( ( v < lv ) || ( v > hv ) )
-		TxString(" gyro NC or fault?");
-	TxNextLine();
+	CheckGyroFault(v, lv, hv);
 
 	// Pitch
 	if ( P[GyroRollPitchType] == IDG300 )
-		v = A[IDGADCPitchChan];
-	else
-		if ( P[GyroRollPitchType] == Gyro300D3V )
-			v = A[NonIDGADCRollChan];
-		else
-			v = A[NonIDGADCPitchChan]; 
+		v = A[IDGADCPitchChan]; 
+	else 
+		v = A[NonIDGADCPitchChan]; 
+
 	TxString("Pitch:\t");		
-	TxVal32(v, 1, 'V');
-	if ( ( v < lv ) || ( v > hv ) )
-		TxString(" gyro NC or fault?");
-	
-	TxNextLine();
+	CheckGyroFault(v, lv, hv);	
 
 	// Yaw
 	if ( P[GyroYawType] == Gyro300D3V )
-	{
-		lv = 10; hv = 20;
-	}
+		{ lv = 10; hv = 20;}
 	else
-	{
-		lv = 20; hv = 30;
-	}
+		{ lv = 20; hv = 30;}
 	
 	v = A[ADCYawChan];
 	TxString("Yaw:  \t");
-	TxVal32(v, 1, 'V');
-	if ( ( v < lv ) || ( v > hv ) )
-		TxString(" gyro NC or fault?");	
-	TxNextLine();
+	CheckGyroFault(v, lv, hv);	
 	
 } // GyroTest
 
