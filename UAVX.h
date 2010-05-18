@@ -1,7 +1,5 @@
 // EXPERIMENTAL
 
-
-
 //#define BARO_NO_QUEUE
 
 //#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.
@@ -111,16 +109,12 @@
 
 #define ALT_BAND_CM				200L		// Cm.
 
-#define MAX_DESCENT_CMPS		-50L 		// Cm./Sec
-#define DESCENT_TRANS_CM		1500L		// Cm. Altitude at which final descent starts 
 #define LAND_CM					300L		// Cm. deemed to have landed when below this height
 
-#define ALT_LOW_THR_COMP		-7L			// Stick units
-#define ALT_HIGH_THR_COMP		30L
+#define ALT_LOW_THR_COMP		-32L			// Stick units
+#define ALT_HIGH_THR_COMP		32L
 
-#define ALT_INT_WINDUP_LIMIT	4L
-#define ALT_INT_LIMIT			4L
-#define ALT_DIFF_LIMIT			4L
+#define ALT_INT_WINDUP_LIMIT	16L
 
 // the range within which throttle adjustment is proportional to altitude error
 #define GPS_ALT_BAND_CM			500L		// Cm.
@@ -743,7 +737,7 @@ extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPi
 extern int16 DesiredRollP, DesiredPitchP;
 extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
-extern int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
+extern int16 AltComp, AltDiffSum, AltD, AltDSum, DescentCmpS;
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude;
 extern int16 ROC;
@@ -1020,7 +1014,8 @@ enum Params { // MAX 64
 	ServoSense,			// 52c
 	CompassOffsetQtr,	// 53c
 	BatteryCapacity,	// 54c
-	GyroYawType			// 55c
+	GyroYawType,			// 55c
+	AltKd				// 56
 	
 	// 56 - 64 unused currently
 	};

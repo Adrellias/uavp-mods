@@ -53,7 +53,7 @@ int16 CurrMaxRollPitch;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
-int16 AltComp, AltDiffSum, AltDSum, DescentCmpS;
+int16 AltComp, AltDiffSum, AltD, AltDSum, DescentCmpS;
 int24 DesiredAltitude, Altitude;
 int16 ROC;
 
@@ -71,34 +71,6 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 
-		// #define BARO_LEGACY
-		#ifdef BARO_LEGACY
-	
-		Temp = HardFilter(AltP, Altitude);
-		BE = Temp - AltP;	// subtract new height to get delta
-		AltP = Temp;
-		
-		// strictly this is acting more like an integrator 
-		// bumping VBaroComp up and down proportional to the error?		
-		Temp = Limit(Altitude, -3, 8) * (int16)P[AltKp]; // was: +10 and -5
-		if( AltComp > Temp )
-			AltComp--;
-		else
-			if( AltComp < Temp )
-				AltComp++; // climb
-		if( AltComp > Temp )
-			AltComp--;
-		else
-			if( AltComp < Temp )
-				AltComp++;
-		
-		// Differentialanteil
-		BE = Limit(BE, -8, 8);
-		AltComp += BE * (int16)P[AltKi]; // should be AltKd	
-		AltComp = Limit(AltComp, -5, 15);
-
-		#else
-
 		F.NewBaroValue = false;
 	
 		BE = DesiredAltitude - Altitude;
@@ -107,25 +79,26 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		AltP = SRS16(LimBE * (int16)P[AltKp], 8);
 		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 
-		AltDiffSum += Sign(LimBE);
+		AltDiffSum += LimBE;
 		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
 		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
 		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
 		 
+		AltD = Limit(-ROC, (int16)P[AltKd], -(int16)P[AltKd]); 
+	 
 		if ( ROC < DescentCmpS )
 		{
-			AltDSum+=2;
-			AltDSum = Limit(AltDSum, 0, ALT_HIGH_THR_COMP); 
+			AltDSum += 4;
+			AltDSum = Limit(AltDSum, 0, ALT_HIGH_THR_COMP*2); 
 		}
-		AltDSum = Decay1(AltDSum);
+		else
+			AltDSum = DecayX(AltDSum, 4);
 	
-		NewAltComp = AltP + AltI + AltDSum;
+		NewAltComp = AltP + AltI + AltD + AltDSum;
 		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 		#ifdef ALT_SLEW_LIMIT	
 		AltComp = SlewLimit(AltComp, NewAltComp, 2);
 		#endif // ALT_SLEW_LIMIT
-
-		#endif // BARO_LEGACY
 
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
@@ -183,7 +156,6 @@ void AltitudeHold()
 		else	
 		{
 			DesiredAltitude = Altitude;
-			AltDSum = Decay1(AltDSum);
 			AltComp = Decay1(AltComp);	
 		}
 	}

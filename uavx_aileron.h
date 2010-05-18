@@ -77,11 +77,11 @@
 	0,				// ServoSense		52c	
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
-	Gyro150D5V,		// GuroYawType		55c		
+	Gyro150D5V,		// GuroYawType		55c
+	-64,			// AltKd			56		
 
-	0,				// 55 - 64 unused currently	
-
-	0,	
+	0,				// 57 - 64 unused currently	
+	
 	0,
 	0,
 	0,

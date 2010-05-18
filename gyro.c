@@ -180,15 +180,7 @@ void GetYawGyroValue(void)
 
 void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
 {
-	TxVal32(v, 1, 0);
-	TxString(" (");
-	TxVal32(lv,1,0);
-	TxString(" >< ");
-	TxVal32(hv,1,'V');
-	TxString(")");
-	if ( ( v < lv ) || ( v > hv ) )
-		TxString(" Gyro NC or faulty?");
-	TxNextLine();
+	// not used for ITG-3000
 } // CheckGyroFault
 
 void GyroTest(void)
