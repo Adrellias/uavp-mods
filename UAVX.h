@@ -6,7 +6,7 @@
 						
 // Debugging
 
-#define ALT_SLEW_LIMIT					// removes slew limit of 2 for alt hold compensation
+//#define ALT_USE_SLEW_LIMIT				// uses slew limit for alt hold compensation
 
 //#define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
 
@@ -31,7 +31,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-#define TESTING						
+//#define TESTING						
 //#define RX6CH 						// 6ch Receivers
 //#define SIMULATE
 #define QUADROCOPTER

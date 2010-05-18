@@ -96,9 +96,11 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	
 		NewAltComp = AltP + AltI + AltD + AltDSum;
 		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
-		#ifdef ALT_SLEW_LIMIT	
-		AltComp = SlewLimit(AltComp, NewAltComp, 2);
-		#endif // ALT_SLEW_LIMIT
+		#ifdef ALT_USE_SLEW_LIMIT	
+			AltComp = SlewLimit(AltComp, NewAltComp, 4);
+		#else
+			AltComp = NewAltComp;
+		#endif // ALT_USE_SLEW_LIMIT
 
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
@@ -151,6 +153,8 @@ void AltitudeHold()
 				Temp = DesiredThrottle + AltComp;
 				CruiseThrottle = HardFilter(CruiseThrottle, Temp);
 			}
+		//	else
+		//		DesiredAltitude = Altitude;
 			DoAltitudeHold(Altitude, ROC);
 		}
 		else	

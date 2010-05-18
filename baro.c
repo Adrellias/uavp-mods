@@ -194,7 +194,7 @@ void GetBaroAltitude(void)
 			{
 				FakeRelBaroAltitude += ( DesiredThrottle - CruiseThrottle ) + AltComp * 5;
 				RelBaroAltitude = FakeRelBaroAltitude;
-			}			
+			}
 			#endif // SIMULATE
 	
 			Temp = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
@@ -235,7 +235,7 @@ void GetBaroAltitude(void)
 			BaroPressQ.Head = (BaroPressQ.Head + 1) & (BARO_BUFF_SIZE -1);
 			BaroPressSum -= (int24)BaroPressQ.B[BaroPressQ.Head];		
 			BaroPressQ.B[BaroPressQ.Head] = (int24)BaroVal.u16;
-			BaroPressSum += BaroPressQ.B[BaroPressQ.Head];
+			BaroPressSum += (int24)BaroVal.u16;
 		}
 		else
 		{
@@ -262,19 +262,20 @@ void GetBaroAltitude(void)
 			// decreasing pressure is increase in altitude
 			// negate and rescale to cm altitude
 			CompBaroPress = CompensatedPressure(BaroPressSum, BaroTempSum);
-			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);
+			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);			
 
 			#ifdef SIMULATE
 			if ( State == InFlight )
 			{
 				FakeRelBaroAltitude += ( DesiredThrottle - CruiseThrottle ) + AltComp * 5;
+				if ( FakeRelBaroAltitude < 0 ) FakeRelBaroAltitude = 0;
 				RelBaroAltitude = FakeRelBaroAltitude;
 			}			
 			#endif // SIMULATE
 
 			Temp = ( RelBaroAltitude - RelBaroAltitudeP ) * 4;
 			BaroROC = BaroROCFilter(BaroROC, Temp);
-		
+
 			RelBaroAltitudeP = RelBaroAltitude;
 
 			if ( State == InFlight )
