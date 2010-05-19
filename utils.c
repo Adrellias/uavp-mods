@@ -27,7 +27,7 @@ void Delay100mSWithOutput(int16);
 void DoBeep100mSWithOutput(uint8, uint8);
 void DoStartingBeepsWithOutput(uint8);
 void CheckAlarms(void);
-int16 SlewLimit(int16, int16, int16);
+int32 SlewLimit(int32, int32, int32);
 int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 
@@ -237,9 +237,9 @@ int16 DecayX(int16 i, int16 d)
 	return (i);
 } // DecayX
 
-int16 SlewLimit(int16 Old, int16 New, int16 Slew)
+int32 SlewLimit(int32 Old, int32 New, int32 Slew)
 {
-  int16 Low, High;
+  int32 Low, High;
   
   Low = Old - Slew;
   High = Old + Slew; 

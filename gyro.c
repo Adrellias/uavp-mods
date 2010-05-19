@@ -87,7 +87,6 @@ void BlockReadITG3200(void)
 	RecvI2CString(G, 6);
 	I2CStop();
 
-	// zzz need to get orientation
 	GX = (G[0] << 8) | G[1];
 	GY = (G[2] << 8) | G[3];
 	GZ = (G[4] << 8) | G[5];
