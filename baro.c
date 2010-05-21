@@ -277,12 +277,6 @@ void GetBaroAltitude(void)
 			CompBaroPress = CompensatedPressure(BaroPressSum, BaroTempSum);
 			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);			
 
-//zzz
-if ( State == InFlight )
-{
-TxVal32(RelBaroAltitude,3,0);
-TxNextLine();
-}
 			#ifdef SIMULATE
 			if ( State == InFlight )
 			{
