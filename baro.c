@@ -163,11 +163,14 @@ int24 CompensatedPressure(int24 BaroPress, int24 BaroTemp)
 
 uint16 ClampBaroPressure(uint16 P)
 {
+	uint16 ClampP;
+	
 	if ( Abs( DesiredAltitude - Altitude ) < ALT_BAND_CM )
-		BaroVal.u16 = SlewLimit(BaroPressureP, BaroVal.u16, 1);
+		ClampP = SlewLimit(BaroPressureP, P, 1);
 	else
-		BaroVal.u16 = SlewLimit(BaroPressureP, BaroVal.u16, 3);
-	BaroPressureP = BaroVal.u16; 			
+		ClampP = SlewLimit(BaroPressureP, P, 3);
+	BaroPressureP = ClampP;
+	return ( ClampP );	 			
 } // ClampBaroPressure
 
 void GetBaroAltitude(void)
@@ -274,6 +277,12 @@ void GetBaroAltitude(void)
 			CompBaroPress = CompensatedPressure(BaroPressSum, BaroTempSum);
 			RelBaroAltitude = -SRS32((int32)CompBaroPress * (int16)P[BaroScale], 4);			
 
+//zzz
+if ( State == InFlight )
+{
+TxVal32(RelBaroAltitude,3,0);
+TxNextLine();
+}
 			#ifdef SIMULATE
 			if ( State == InFlight )
 			{

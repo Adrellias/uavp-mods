@@ -107,6 +107,7 @@
 
 // Altitude Hold
 
+// the range within which throttle adjustment is proportional to altitude error
 #define ALT_BAND_CM				200L		// Cm.
 
 #define LAND_CM					300L		// Cm. deemed to have landed when below this height
@@ -115,9 +116,6 @@
 #define ALT_HIGH_THR_COMP		32L
 
 #define ALT_INT_WINDUP_LIMIT	16L
-
-// the range within which throttle adjustment is proportional to altitude error
-#define GPS_ALT_BAND_CM			500L		// Cm.
 
 // Navigation
 
