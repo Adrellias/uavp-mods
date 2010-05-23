@@ -1,14 +1,3 @@
-// EXPERIMENTAL
-
-//#define BARO_NO_QUEUE
-
-//#define HAVE_CUTOFF_SW				// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.
-						
-// Debugging
-
-//#define ALT_USE_SLEW_LIMIT				// uses slew limit for alt hold compensation
-
-//#define DEBUG_FORCE_NAV 				// overrides RTH and forces navigate all WPs
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -31,18 +20,24 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-//#define TESTING						
-//#define RX6CH 						// 6ch Receivers
-//#define SIMULATE
-#define QUADROCOPTER
-//#define TRICOPTER
-//#define HELICOPTER
-//#define AILERON
-//#define ELEVON
-
-//#define GYRO_ITG3200					// Experimental I2C 3-axis Gyro
-
+	#define EXPERIMENTAL
+	//#define TESTING						
+	//#define RX6CH 					// 6ch Receivers
+	//#define SIMULATE
+	#define QUADROCOPTER
+	//#define TRICOPTER
+	//#define HELICOPTER
+	//#define AILERON
+	//#define ELEVON
 #endif // !BATCHMODE
+
+#ifdef EXPERIMENTAL
+	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
+	//#define BARO_NO_QUEUE
+	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
+	//#define ALT_USE_SLEW_LIMIT		// uses slew limit for alt hold compensation
+	//#define DEBUG_FORCE_NAV 			// overrides RTH and forces navigate all WPs
+#endif // EXPERIMENTAL
 
 //________________________________________________________________________________________________
 
@@ -1106,7 +1101,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS}; // NO MORE THAN 32 or 64 bytes
 
 extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern int16 Stats[];

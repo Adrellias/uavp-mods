@@ -8,4 +8,3 @@ SubWCRev . UAVXRevisionSVN.h UAVXRevision.h
 
 if exist makeallhelper.bat del makeallhelper.bat
 SubWCRev . makeallhelperSVN.bat makeallhelper.bat
-

@@ -100,7 +100,7 @@ void BlockReadITG3200(void)
 SGerror:
 	I2CStop();
 	// GYRO FAILURE - FATAL
-	Stats[GyroS]++;
+	Stats[GyroFailS]++;
 	F.GyroFailure = true;
 	return;
 } // BlockReadITG3200
@@ -124,7 +124,7 @@ uint8 ReadByteITG3200(uint8 address)
 SGerror:
 	I2CStop();
 	// GYRO FAILURE - FATAL
-	Stats[GyroS]++;
+	Stats[GyroFailS]++;
 	F.GyroFailure = true;
 	return ( 0 );
 } // ReadByteITG3200
@@ -141,7 +141,7 @@ void WriteByteITG3200(uint8 address, uint8 data)
 SGerror:
 	I2CStop();
 	// GYRO FAILURE - FATAL
-	Stats[GyroS]++;
+	Stats[GyroFailS]++;
 	F.GyroFailure = true;
 	return;
 } // WriteByteITG3200
