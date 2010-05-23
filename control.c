@@ -65,27 +65,27 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	static int16 NewAltComp, LimBE, AltP, AltI, AltD;
 	static int24 Temp, BE;
 
-	if ( F.NewBaroValue && F.BaroAltitudeValid ) 
+	if ( F.AltitudeValid )
 	{
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
-
+		
 		F.NewBaroValue = false;
-	
+			
 		BE = DesiredAltitude - Altitude;
 		LimBE = Limit(BE, -ALT_BAND_CM, ALT_BAND_CM);
-
+		
 		AltP = SRS16(LimBE * (int16)P[AltKp], 8);
 		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
-
+		
 		AltDiffSum += LimBE;
 		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
 		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
 		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
-		 
+				 
 		AltD = Limit(-ROC, (int16)P[AltKd], -(int16)P[AltKd]); 
-	 
+			 
 		if ( ROC < DescentCmpS )
 		{
 			AltDSum += 4;
@@ -93,7 +93,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		}
 		else
 			AltDSum = DecayX(AltDSum, 4);
-	
+			
 		NewAltComp = AltP + AltI + AltD + AltDSum;
 		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
 		#ifdef ALT_USE_SLEW_LIMIT	
@@ -101,18 +101,23 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		#else
 			AltComp = NewAltComp;
 		#endif // ALT_USE_SLEW_LIMIT
-
+		
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
 		#endif
 	}
-
+	else
+	{
+		// maintain previous compensation if any
+	}
 } // DoAltitudeHold	
 
 void AltitudeHold()
 {  // relies upon good cross calibration of baro and rangefinder!!!!!!
 	static int16 Temp;
 	
+	F.AltitudeValid = true;
+
 	if ( F.RangefinderAltitudeValid ) // some hysteresis
 		if (( RangefinderAltitude < 500 ) && !F.UsingRangefinderAlt)
 			F.UsingRangefinderAlt = true;
@@ -132,10 +137,14 @@ void AltitudeHold()
 			ROC = GPSROC;
 		}
 		else
-		{
-			Altitude = RelBaroAltitude;
-			ROC = BaroROC;
-		}
+			if ( F.BaroAltitudeValid && NewBaroValue )
+			{
+				F.NewBaroValue = false;
+				Altitude = RelBaroAltitude;
+				ROC = BaroROC;
+			}
+			else
+				F.AltitudeValid = false; // altitude not available
 
 	if ( F.NavAltitudeHold && ( NavState != HoldingStation ) )
 	{
@@ -170,62 +179,68 @@ void InertialDamping(void)
 
 	static int16 Temp;
 
-	// Down - Up
-	// Empirical - acceleration changes at ~approx Sum/8 for small angles
-	DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
-	DUVel = Limit(DUVel , -16384, 16383); 			
-	Temp = SRS32(SRS16(DUVel, 4) * (int32)P[VertDampKp], 13);
-	if( Temp > DUComp ) 
-		DUComp++;
-	else
-		if( Temp < DUComp )
-			DUComp--;			
-	DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
-	DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
-
-	// Lateral compensation only when holding altitude?	
-	if ( F.HoldingAlt && F.AttitudeHold ) 
+	if ( F.AccelerationsValid ) 
 	{
- 		if ( F.WayPointCentred )
-		{
-			// Left - Right
-			LRVel += LRAcc;
-			LRVel = Limit(LRVel , -16384, 16383);  	
-			Temp = SRS32(SRS16(LRVel, 4) * (int32)P[HorizDampKp], 13);
-			if( Temp > LRComp ) 
-				LRComp++;
-			else
-				if( Temp < LRComp )
-					LRComp--;
-			LRComp = Limit(LRComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
-			LRVel = DecayX(LRVel, (int16)P[HorizDampDecay]);
+		// Down - Up
+		// Empirical - acceleration changes at ~approx Sum/8 for small angles
+		DUVel += DUAcc + SRS16( Abs(RollSum) + Abs(PitchSum), 3);		
+		DUVel = Limit(DUVel , -16384, 16383); 			
+		Temp = SRS32(SRS16(DUVel, 4) * (int32)P[VertDampKp], 13);
+		if( Temp > DUComp ) 
+			DUComp++;
+		else
+			if( Temp < DUComp )
+				DUComp--;			
+		DUComp = Limit(DUComp, DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
+		DUVel = DecayX(DUVel, (int16)P[VertDampDecay]);
 	
-			// Front - Back
-			FBVel += FBAcc;
-			FBVel = Limit(FBVel , -16384, 16383);  
-			Temp = SRS32(SRS16(FBVel, 4) * (int32)P[HorizDampKp], 13);
-			if( Temp > FBComp ) 
-				FBComp++;
+		// Lateral compensation only when holding altitude?	
+		if ( F.HoldingAlt && F.AttitudeHold ) 
+		{
+	 		if ( F.WayPointCentred )
+			{
+				// Left - Right
+				LRVel += LRAcc;
+				LRVel = Limit(LRVel , -16384, 16383);  	
+				Temp = SRS32(SRS16(LRVel, 4) * (int32)P[HorizDampKp], 13);
+				if( Temp > LRComp ) 
+					LRComp++;
+				else
+					if( Temp < LRComp )
+						LRComp--;
+				LRComp = Limit(LRComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
+				LRVel = DecayX(LRVel, (int16)P[HorizDampDecay]);
+		
+				// Front - Back
+				FBVel += FBAcc;
+				FBVel = Limit(FBVel , -16384, 16383);  
+				Temp = SRS32(SRS16(FBVel, 4) * (int32)P[HorizDampKp], 13);
+				if( Temp > FBComp ) 
+					FBComp++;
+				else
+					if( Temp < FBComp )
+						FBComp--;
+				FBComp = Limit(FBComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
+				FBVel = DecayX(FBVel, (int16)P[HorizDampDecay]);
+			}
 			else
-				if( Temp < FBComp )
-					FBComp--;
-			FBComp = Limit(FBComp, -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
-			FBVel = DecayX(FBVel, (int16)P[HorizDampDecay]);
+			{
+				LRVel = FBVel = 0;
+				LRComp = Decay1(LRComp);
+				FBComp = Decay1(FBComp);
+			}
 		}
 		else
 		{
 			LRVel = FBVel = 0;
+	
 			LRComp = Decay1(LRComp);
 			FBComp = Decay1(FBComp);
 		}
 	}
 	else
-	{
-		LRVel = FBVel = 0;
-
-		LRComp = Decay1(LRComp);
-		FBComp = Decay1(FBComp);
-	}
+		LRComp = FBComp = DUComp = LRVel = FBVel = DUVel = 0;
+		
 } // InertialDamping	
 
 void LimitRollSum(void)

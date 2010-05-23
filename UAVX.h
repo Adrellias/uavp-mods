@@ -552,7 +552,7 @@ typedef union {
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
 		NavComputed:1,
-		CheckThrottleMoved:1,		
+		AltitudeValid:1,		
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
 		UsingAltOrientation:1,
