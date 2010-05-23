@@ -137,7 +137,7 @@ void AltitudeHold()
 			ROC = GPSROC;
 		}
 		else
-			if ( F.BaroAltitudeValid && NewBaroValue )
+			if ( F.BaroAltitudeValid && F.NewBaroValue )
 			{
 				F.NewBaroValue = false;
 				Altitude = RelBaroAltitude;
