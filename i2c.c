@@ -204,7 +204,6 @@ uint8 ScanI2CBus(void)
 		}
 	else
 		TxString("\tinactive - I2C ESCs not selected..\r\n");
-
 	TxNextLine();
 
 	return(d);
@@ -374,4 +373,5 @@ void ConfigureESCs(void)
 } // ConfigureESCs
 
 #endif // TESTING
+
 

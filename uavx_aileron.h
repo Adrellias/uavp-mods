@@ -54,7 +54,7 @@
 
 	0, 				// unused1,			31
 	0, 				// unused2,			32
-	20, 			// NavRTHAlt,		33
+	10, 			// NavRTHAlt,		33
 	0, 				// NavMagVar,		34c
 	Gyro300D5V, 	// GyroRollPitchType,	35c
 	ESCPPM, 		// ESCType,			36c
@@ -77,7 +77,7 @@
 	0,				// ServoSense		52c	
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
-	Gyro150D5V,		// GuroYawType		55c		
+	Gyro300D5V,		// GyroYawType		55c		
 	-32,			// AltKd			56		
 
 	0,				// 57 - 64 unused currently	

@@ -20,8 +20,10 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
+	//#define UAVX_HW					// New UAVX BOARD
+	//#define LIGHT
 	#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -33,7 +35,7 @@
 
 #ifdef EXPERIMENTAL
 	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
-	//#define BARO_NO_QUEUE
+	//#define UAVX_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 	//#define ALT_USE_SLEW_LIMIT		// uses slew limit for alt hold compensation
 	//#define DEBUG_FORCE_NAV 			// overrides RTH and forces navigate all WPs
@@ -42,6 +44,10 @@
 //________________________________________________________________________________________________
 
 // Airframe
+
+#if (defined LIGHT )
+	#define UAVXLITE
+#endif
 
 #if ( defined TRICOPTER | defined QUADROCOPTER | defined HEXACOPTER )
 	#define MULTICOPTER
@@ -91,9 +97,6 @@
 #define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
 											// unfortunately there seems to be a leak which cause the roll/pitch 
 											// to increase without the decay.
-
-// Adds a delay between gyro neutral acquisition samples (16)
-#define GYRO_ERECT_DELAY		1			// x 64 x 100mS 
 
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
@@ -499,7 +502,7 @@ typedef struct {
 #endif
 
 #if (( defined TRICOPTER + defined QUADROCOPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
-#error More than one aircraft configuration defined !
+#error None or more than one aircraft configuration defined !
 #endif
 
 //______________________________________________________________________________________________
@@ -660,9 +663,8 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 // baro.c
 
 extern void StartBaroADC(boolean);
-extern int24 CompensatedPressure(int24, int24);
+extern int24 CompensatedPressure(uint16, uint16);
 extern void ReadBaro(boolean);
-extern uint16 ClampBaroPressure(uint16);
 extern void GetBaroAltitude(void);
 extern void BaroTest(void);
 extern void InitBarometer(void);
@@ -672,15 +674,12 @@ extern void InitBarometer(void);
 //extern Baro24Q BaroPressQ;
 //extern Baro24Q BaroTempQ;
 
-extern int24 OriginBaroPressure, OriginBaroTemperature, CompBaroPress;
-extern int24 BaroPressSum, BaroTempSum;
-extern int24 BaroPressure, BaroTemperature;
-extern boolean ReadPressure;
+extern int24 OriginBaroAltitude, CompBaroAltitude;
+extern uint16 BaroPressure, BaroTemperature;
+extern boolean AcquiringPressure;
 extern int24 RelBaroAltitude, RelBaroAltitudeP;
 extern int16 BaroROC;
 extern i16u	BaroVal;
-extern uint16 BaroPressureP;
-extern int8	BaroSample;
 extern uint8 BaroType;
 
 #ifdef SIMULATE
@@ -790,7 +789,7 @@ extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
-extern int32 SumGPSRelAltitude, SumCompBaroPress;
+extern int32 SumGPSRelAltitude, SumCompBaroAltitude;
 
 #ifdef SIMULATE
 extern int32 FakeGPSLongitude, FakeGPSLatitude;
@@ -808,6 +807,12 @@ extern void ErectGyros(void);
 extern void CalcGyroRates(void);
 extern void GyroTest(void);
 extern void InitGyros(void);
+
+extern void ITG3200ViewRegisters(void);
+extern void BlockReadITG3200(void);
+extern uint8 ReadByteITG3200(uint8);
+extern void WriteByteITG3200(uint8, uint8);
+extern void InitITG3200(void);
 
 extern int16 GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
 extern int16 RollRate, PitchRate, YawRate;
@@ -927,7 +932,7 @@ enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
 
 extern int16 PWM[6];
 extern int16 PWMSense[6];
-extern boolean ESCI2CFail[4];
+extern int16 ESCI2CFail[4];
 extern int16 CurrThrottle;
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near uint8 ESCMin, ESCMax;
@@ -1099,7 +1104,7 @@ extern void WriteStatsEE(void);
 extern void ShowStats(void);
 
 enum Statistics { 
-	GPSAltitudeS, RelBaroAltitudeS, RelBaroPressureS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
+	GPSAltitudeS, RelBaroAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
 	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS}; // NO MORE THAN 32 or 64 bytes
 

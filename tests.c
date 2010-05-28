@@ -170,7 +170,6 @@ void BatteryTest(void)
 	int32 v;
 
 	TxString("\r\nBattery test");
-	TxString("\r\nDepends on an accurate 5V supply\r\n");
 
 	// Battery
 	v = ((int24)ADC(ADCBattVoltsChan)* 61L + 102L)/205L; // resistive divider

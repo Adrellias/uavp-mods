@@ -28,6 +28,22 @@ void LEDGame(void);
 uint8 LEDShadow;		// shadow register
 uint8 LEDCycles;
 
+#ifdef UAVX_HW
+
+void SendLEDs(void)
+{	
+	#ifndef UAVX_HW_RX_PARALLEL
+	PORTBbits.RB6 = (LEDShadow &  YellowM ) !=0;
+	PORTBbits.RB7 = (LEDShadow &  BlueM ) !=0;
+	#endif // !UAVX_HW_RX_PARALLEL
+	PORTCbits.RC0 = (LEDShadow &  RedM ) !=0;
+	PORTCbits.RC1 = (LEDShadow &  GreenM ) !=0;
+	PORTCbits.RC5 = (LEDShadow &  BeeperM ) !=0;
+} // SendLEDs
+
+
+#else // UAVX_HW
+
 void SendLEDs(void)
 {
 	static int8	i, s;
@@ -55,6 +71,8 @@ void SendLEDs(void)
 	SPI_SCL = 1;		// rest state for LISL
 	SPI_IO = RD_SPI;
 } // SendLEDs
+
+#endif // UAVX_HW
 
 void LEDsOn(uint8 l)
 {

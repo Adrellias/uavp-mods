@@ -15,8 +15,10 @@ rem Type of PIC processor 18F2620 only
 rem SIMULATE to generate a simple flight simulator (no dynamics) for use with UAVXGS - no motors.
 rem using UAVPSet (blank option in menu below testsoftware).
 rem Configuration TRICOPTER for 3 motors and QUAD for 4.
-rem TESTING fpr checking out sensors Motors are disabled for safety reasons.
-rem throttle shaping and X-mode to orient the camera forward set under UAVPSet.
+rem TESTING for checking out sensors Motors are disabled for safety reasons.
+rem LIGHT for aircraft equipped only with gyros
+rem EXPERIMENTAL - USE WITH GREAT CAUTION - EXPERIMENTAL CONTROLS SEVERAL OTHER
+rem DEFINES CONTAINED IN THE BLOCK TOWARDS THE TOP OF UAVX.H
 
 rem Add/Delete required combinations to these sets
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
@@ -30,12 +32,10 @@ rem Personal choice
 set CLOCK=CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
-set RX=RX7CH RX6CH
-set CFG=QUADROCOPTER ELEVON
-
-rem USE "EXPERIMENTAL" WITH GREAT CAUTION - EXPERIMENTAL CONTROLS SEVERAL
-rem DEFINES CONTAINED IN THE BLOCK TOWARDS THE TOP OF UAVX.H	
+set RX=RX7CH
+set CFG=QUADROCOPTER	
 set EXP=NO_EXP EXPERIMENTAL
+set ALT=HEAVY LIGHT
 
 rem Delete working files
 call makeclean.bat
@@ -48,11 +48,12 @@ rem del *.HEX
 echo Starting makeall uavp > gen.lst
 echo Starting makeall uavp > log.lst
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e 
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%a in (%ALT%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%a 
 
 set PROC=18F2620
-set DBG=SIMULATE TESTING 
-set RX=RX7CH RX6CH
+set DBG=TESTING 
+set RX=RX7CH
 set CFG=QUADROCOPTER
+set ALT=HEAVY LIGHT
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e 
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%a in (%ALT%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%a 

@@ -67,6 +67,7 @@ void GetHeading(void)
 		#endif // AILERON | ELEVON
 
 	#endif // SIMULATE
+
 } // GetHeading
 
 static uint8 CP[9];
@@ -244,10 +245,10 @@ void CalibrateCompass(void)
 
 CCerror:
 	TxString("Calibration FAILED\r\n");
-
 } // CalibrateCompass
 
 #endif // TESTING
+
 
 void InitCompass(void)
 {

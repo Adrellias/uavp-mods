@@ -30,7 +30,7 @@ void InitI2CESCs(void);
 boolean OutToggle;
 int16 PWM[6];
 int16 PWMSense[6];
-boolean ESCI2CFail[4];
+int16 ESCI2CFail[4];
 int16 CurrThrottle;
 
 #pragma udata access outputvars
@@ -130,11 +130,14 @@ void MixAndLimitMotors(void)
 { 	// expensive ~400uSec @16MHz
     static int16 Temp, TempElevon, TempElevator;
 
+	if ( DesiredThrottle < IdleThrottle )
+		CurrThrottle = 0;
+	else
+		CurrThrottle = DesiredThrottle;
+
 	#ifdef MULTICOPTER
-		if ( DesiredThrottle < IdleThrottle )
-			CurrThrottle = 0;
-		else
-			CurrThrottle = DesiredThrottle + (DUComp + AltComp); // vertical compensation not optional
+		if ( State == InFlight )
+			 CurrThrottle += (DUComp + AltComp); // vertical compensation not optional
 			
 		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
@@ -151,10 +154,7 @@ void MixAndLimitMotors(void)
 		else
 			PWM[FrontC] = PWM[BackC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 	#else
-		if ( DesiredThrottle < IdleThrottle )
-			CurrThrottle = 0;
-		else
-			CurrThrottle = DesiredThrottle + AltComp; // simple - faster to climb with no elevator yet
+		CurrThrottle += AltComp; // simple - faster to climb with no elevator yet
 		
 		PWM[ThrottleC] = CurrThrottle;
 		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
@@ -170,8 +170,12 @@ void MixAndLimitMotors(void)
 	#endif
 } // MixAndLimitMotors
 
+
+
 void MixAndLimitCam(void)
 {
+	#ifndef UAVX_HW_RX_PARALLEL
+
 	static int16 Cr, Cp;
 
 	// use only roll/pitch angle estimates
@@ -184,6 +188,7 @@ void MixAndLimitCam(void)
 	PWM[CamRollC] = Limit(Cr, 1, OUT_MAXIMUM);
 	PWM[CamPitchC] = Limit(Cp, 1, OUT_MAXIMUM);
 
+	#endif // !UAVX_HW_RX_PARALLEL
 } // MixAndLimitCam
 
 void OutSignals(void)
@@ -313,9 +318,11 @@ OS006:
 		
 		EnableInterrupts;
 		SyncToTimer0AndDisableInterrupts();	
+
 	} 
 	else
 	{ // I2C ESCs
+		#ifndef UAVX_HW_RX_PARALLEL
 		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
@@ -329,7 +336,8 @@ OS006:
 		{
 			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
 		}
-		
+		#endif // !UAVX_HW_RX_PARALLEL
+
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible.
@@ -339,7 +347,8 @@ OS006:
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
-				r = SendESCI2CByte( PWM[m] );
+				r += SendESCI2CByte( PWM[m] );
+				ESCI2CFail[m] += r;
 				ESCI2CStop();
 			}
 		else
@@ -348,7 +357,8 @@ OS006:
 				{
 					ESCI2CStart();
 					r = SendESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
-					r = SendESCI2CByte( PWM[m]>>1 );
+					r += SendESCI2CByte( PWM[m]>>1 );
+					ESCI2CFail[m] += r;
 					ESCI2CStop();
 				}
 			else
@@ -356,16 +366,18 @@ OS006:
 				{
 					ESCI2CStart();
 					r = SendESCI2CByte(0x10);			// one command, 4 data bytes
-					r = SendESCI2CByte( PWM[FrontC] ); 
-					r = SendESCI2CByte( PWM[BackC] );
-					r = SendESCI2CByte( PWM[LeftC] );
-					r = SendESCI2CByte( PWM[RightC] );
+					r += SendESCI2CByte( PWM[FrontC] ); 
+					r += SendESCI2CByte( PWM[BackC] );
+					r += SendESCI2CByte( PWM[LeftC] );
+					r += SendESCI2CByte( PWM[RightC] );
+					ESCI2CFail[0] += r;
 //  other ESCs if a Hexacopter
 					ESCI2CStop();
 				}
 		#endif //  MULTICOPTER
 	}
 
+	#ifndef UAVX_HW_RX_PARALLEL
 	if ( ServoToggle )
 	{	
 		_asm
@@ -406,6 +418,9 @@ OS002:
 		EnableInterrupts;
 		SyncToTimer0AndDisableInterrupts();
 	}
+	#else // !UAVX_HW_RX_PARALLEL
+		ServoToggle = false;
+	#endif // !UAVX_HW_RX_PARALLEL
 
 	FastWriteTimer0(SaveTimer0.u16);
 	// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?
@@ -419,18 +434,21 @@ OS002:
 			Clock[mS] = SaveClockmS + 2;
 		else
 			Clock[mS] = SaveClockmS;
-	EnableInterrupts;
 
 	ServoToggle ^= true;
+
+	EnableInterrupts;
 	
 	#endif // !(SIMULATE | TESTING)
 
 } // OutSignals
 
+
+
 void InitI2CESCs(void)
 {
 	static uint8 m;
-	static boolean r;
+	static uint8 r;
 	
 	#ifdef MULTICOPTER
 
@@ -439,8 +457,8 @@ void InitI2CESCs(void)
 		{
 			ESCI2CStart();
 			r = SendESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
-			r |= SendESCI2CByte(0);
-			ESCI2CFail[m] |= r;  
+			r += SendESCI2CByte(0);
+			ESCI2CFail[m] += r;  
 			ESCI2CStop();
 		}
 	else
@@ -449,8 +467,8 @@ void InitI2CESCs(void)
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
-				r |= SendESCI2CByte(0);
-				ESCI2CFail[m] |= r; 
+				r += SendESCI2CByte(0);
+				ESCI2CFail[m] += r; 
 				ESCI2CStop();
 			}
 		else
@@ -458,12 +476,15 @@ void InitI2CESCs(void)
 			{
 				ESCI2CStart();
 				r = SendESCI2CByte(0x10);			// one command, 4 data bytes
-				r |= SendESCI2CByte(0); 
-				r |= SendESCI2CByte(0);
-				r |= SendESCI2CByte(0);
-				r |= SendESCI2CByte(0);
-				ESCI2CFail[0] |= r;
+				r += SendESCI2CByte(0); 
+				r += SendESCI2CByte(0);
+				r += SendESCI2CByte(0);
+				r += SendESCI2CByte(0);
+				ESCI2CFail[0] += r;
 				ESCI2CStop();
 			}
 	#endif // MULTICOPTER
 } // InitI2CESCs
+
+
+

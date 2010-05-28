@@ -147,7 +147,7 @@ void ReadParametersEE(void)
 		{
 			ESCMin = 0;
 			for ( i = 0; i < NoOfPWMOutputs; i++ )
-				ESCI2CFail[i] = false;
+				ESCI2CFail[i] = 0;
 			InitI2CESCs();
 		}
 

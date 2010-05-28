@@ -104,12 +104,12 @@ void main(void)
 					State = Landed;
 					break;
 				case Landed:
-					if ( DesiredThrottle < IdleThrottle  )
+					if ( DesiredThrottle < IdleThrottle )
 						SetGPSOrigin();
 					else
 					{
 						#ifdef SIMULATE
-							FakeRelBaroAltitude = 0;
+						FakeRelBaroAltitude = 0;
 						#endif // SIMULATE
 						InitHeading();						
 						LEDCycles = 1;
@@ -123,9 +123,9 @@ void main(void)
 					if ( DesiredThrottle > IdleThrottle )
 						State = InFlight;
 					else
-						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
-							DesiredThrottle = IdleThrottle;
-						else
+					//	if ( mS[Clock] < mS[ThrottleIdleTimeout] )
+					//		DesiredThrottle = IdleThrottle;
+					//	else
 						{
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
@@ -151,7 +151,6 @@ void main(void)
 						State = Landing;
 					}
 					break;
-
 				} // Switch State
 				F.LostModel = false;
 				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;

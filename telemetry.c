@@ -215,6 +215,7 @@ void SendArduStation(void)
 void SensorTrace(void)
 {
 	#ifdef TESTING
+
 	if ( DesiredThrottle > 20 ) 
 	{
 		F.TxToBuffer = false; // direct to USART
@@ -250,3 +251,6 @@ void SensorTrace(void)
 	} 
 	#endif // TESTING
 } // SensorTrace
+
+
+

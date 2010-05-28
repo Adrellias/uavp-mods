@@ -437,10 +437,13 @@ void CheckFailsafeAbort(void)
 		mS[AbortTimeout] += ABORT_UPDATE_MS;
 } // CheckFailsafeAbort
 
+
+
 void DoPPMFailsafe(void)
 { // only relevant to PPM Rx or Quad NOT synchronising with Rx
 
 	#ifndef TESTING // not used for testing - make space!
+
 	if ( State == InFlight )
 		switch ( FailState ) {
 		case Terminated: // Basic assumption is that aircraft is being flown over a safe area!
@@ -489,8 +492,12 @@ void DoPPMFailsafe(void)
 		} // Switch FailState
 	else
 		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
-	#endif // !TESTING			
+
+	#endif // !TESTING
+			
 } // DoPPMFailsafe
+
+
 
 void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
@@ -590,6 +597,7 @@ void GetWayPointEE(uint8 wp)
 	F.WayPointCentred =  F.WayPointAchieved = false;
 
 } // GetWaypointEE
+
 
 void InitNavigation(void)
 {

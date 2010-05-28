@@ -61,7 +61,7 @@ boolean	FirstPass;
 
 void DoAltitudeHold(int24 Altitude, int16 ROC)
 { // Syncronised to baro intervals independant of active altitude source
-
+	
 	static int16 NewAltComp, LimBE, AltP, AltI, AltD;
 	static int24 Temp, BE;
 
@@ -110,6 +110,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	{
 		// maintain previous compensation if any
 	}
+
 } // DoAltitudeHold	
 
 void AltitudeHold()
@@ -131,6 +132,7 @@ void AltitudeHold()
 		ROC = RangefinderROC;
 	}
 	else
+
 		if ( F.UsingGPSAlt && F.NavValid )
 		{
 			Altitude = GPSRelAltitude;
@@ -176,7 +178,6 @@ void AltitudeHold()
 
 void InertialDamping(void)
 { // Uses accelerometer to damp disturbances while holding altitude
-
 	static int16 Temp;
 
 	if ( F.AccelerationsValid ) 
@@ -240,7 +241,7 @@ void InertialDamping(void)
 	}
 	else
 		LRComp = FBComp = DUComp = LRVel = FBVel = DUVel = 0;
-		
+
 } // InertialDamping	
 
 void LimitRollSum(void)
@@ -520,8 +521,8 @@ void LightsAndSirens(void)
 		ReadParametersEE();	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome || F.GyroFailure ||
-				( InitialThrottle >= RC_THRES_START) );
-
+		( InitialThrottle >= RC_THRES_START ) );
+				
 	FirstPass = false;
 
 	Beeper_OFF;

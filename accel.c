@@ -191,13 +191,11 @@ void ReadAccelerations()
 		Ax.i16 = Ay.i16 = Az.i16 = 0;
 		if ( State == InFlight )
 		{
-
 			Stats[AccFailS]++;	// data over run - acc out of range
 			// use neutral values!!!!
 			F.AccFailure = true;
 		}
 	}
-
 } // ReadAccelerations
 
 void GetNeutralAccelerations(void)

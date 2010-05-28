@@ -60,14 +60,18 @@ void ReadStatsEE(void)
 
 void WriteStatsEE()
 {
-	uint8 s;
+	uint8 s, i;
 	int16 Temp;
 
 	Stats[GPSAltitudeS] = (int16)(MaxGPSAltitudeS/10L);
 	Stats[RelBaroAltitudeS] = (int16)(MaxRelBaroAltitudeS/10L);
 
-	if ( SumCompBaroPress != 0 )
-		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * 16)/(-SumCompBaroPress); 
+	if ( P[ESCType] != ESCPPM )
+		for ( i = 0; i < NoOfPWMOutputs; i++ )
+			Stats[ESCI2CFailS] += ESCI2CFail[i];
+
+	if ( SumCompBaroAltitude != 0 )
+		Stats[GPSBaroScaleS] = ((int16)P[BaroScale] * SumGPSRelAltitude)/SumCompBaroAltitude; 
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
@@ -88,11 +92,13 @@ void ShowStats(void)
 	TxString("Gyro:     \t");TxVal32((int32)Stats[GyroFailS], 0, 0); TxNextLine();
 	TxString("Comp:     \t");TxVal32((int32)Stats[CompassFailS], 0, 0); TxNextLine();
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS],0 , 0); TxNextLine();
+	if ( P[ESCType] != ESCPPM )
+	{
+		TxString("I2CESC:     \t");TxVal32((int32)Stats[ESCI2CFailS],0 , 0); TxNextLine();
+	}
 	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
-
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
-	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS], 1, ' '); TxString("M (");
-	TxVal32((int32)Stats[RelBaroPressureS], 0, ' '); TxString("clicks)\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS], 1, ' '); TxString("M \r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 2, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS], 2, ' '); TxString("M/S\r\n");
 	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();

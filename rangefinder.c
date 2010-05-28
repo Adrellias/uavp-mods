@@ -51,9 +51,14 @@ void GetRangefinderAltitude(void)
 
 void InitRangefinder(void)
 {
+	#ifndef UAVXLITE
+
 	static int16 Temp;
 
 	Temp = ADC(ADCAltChan);
 	F.RangefinderAltitudeValid = !(Temp > 573) && (Temp < 778); // 2.8-3.8V => supply not RF
 	GetRangefinderAltitude();
+
+	#endif // !UAVXLITE
+
 } // InitRangefinder

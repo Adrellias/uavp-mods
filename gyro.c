@@ -75,7 +75,8 @@ void InitITG3200(void);
 
 void BlockReadITG3200(void)
 {
-	static uint8 G[6], b, Temp, GX, GY, GZ;
+	static uint8 G[6];
+	static int16 GX, GY, GZ;
 
 	I2CStart();
 	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
@@ -91,9 +92,9 @@ void BlockReadITG3200(void)
 	GY = (G[2] << 8) | G[3];
 	GZ = (G[4] << 8) | G[5];
 
-	RollRateADC = GX;
-	PitchRateADC = -GY;
-	YawRateADC = -GZ;
+	RollRateADC = SRS16(GX, 3);
+	PitchRateADC = SRS16(-GY, 3);
+	YawRateADC = SRS16(-GZ, 3);
 
 	return;	
 
@@ -108,7 +109,6 @@ SGerror:
 uint8 ReadByteITG3200(uint8 address)
 {
 	uint8 data;
-	boolean b;
 		
 	I2CStart();
 	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
@@ -175,6 +175,37 @@ void GetYawGyroValue(void)
 
 } // GetYawGyroValue
 
+void ErectGyros(void)
+{
+	static int16 i;
+	static int32 RollAv, PitchAv, YawAv;
+	
+	RollAv = PitchAv = YawAv = 0;	
+    for ( i = 0; i < 4096 ; i++ )
+	{
+		if ( ( i & 0x00ff ) == 0 ) LEDRed_TOG;
+
+		BlockReadITG3200();
+	
+		RollAv += RollRateADC;
+		PitchAv += PitchRateADC;	
+		YawAv += YawRateADC;
+	}
+	
+	GyroMidRoll = SRS32(RollAv, 12);	
+	GyroMidPitch = SRS32(PitchAv, 12);
+	GyroMidYaw = SRS32(YawAv, 12);
+	
+	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+	LEDRed_OFF;
+
+} // ErectGyros
+
+void InitGyros(void)
+{
+	InitITG3200();
+} // InitGyros
+
 #ifdef TESTING
 
 void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
@@ -196,6 +227,7 @@ void GyroTest(void)
 	TxString("GYRO_Y    \t"); TxVal32( (ReadByteITG3200(ITG_GY_H)<<8) | ReadByteITG3200(ITG_GY_L),0,0); TxNextLine();
 	TxString("GYRO_Z    \t"); TxVal32( (ReadByteITG3200(ITG_GZ_H)<<8) | ReadByteITG3200(ITG_GZ_L),0,0); TxNextLine();
 	TxString("PWR_MGM   \t"); TxValH(ReadByteITG3200(ITG_PWR_M)); TxNextLine();
+
 	TxNextLine();
 	if ( F.GyroFailure )
 		TxString("Test FAILED\r\n");
@@ -206,12 +238,7 @@ void GyroTest(void)
 
 #endif // TESTING
 
-void InitGyros(void)
-{
-	InitITG3200();
-} // InitGyros
-
-#else
+#else // GYRO_ITG3200
 
 void GetRollPitchGyroValues(void)
 { // invoked TWICE per control cycle so roll/pitch "rates" are double actual
@@ -245,6 +272,51 @@ void GetYawGyroValue(void)
 	//		YawRate = YawRate;
 
 } // GetYawGyroValue
+
+void ErectGyros(void)
+{
+	static uint8 i;
+	static uint16 RollAv, PitchAv, YawAv;
+	
+	RollAv = PitchAv = YawAv = 0;	
+    for ( i = 32; i ; i-- )
+	{
+		LEDRed_TOG;
+		Delay100mSWithOutput(1);
+
+		GetRollPitchGyroValues();
+		GetYawGyroValue();
+
+		RollAv += RollRateADC;
+		PitchAv += PitchRateADC;	
+		YawAv += YawRateADC;
+	}
+	
+	if( !F.AccelerationsValid )
+	{
+		RollAv += (int16)P[MiddleLR] * 2;
+		PitchAv += (int16)P[MiddleFB] * 2;
+	}
+	
+	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
+	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
+	GyroMidYaw = (int16)((YawAv + 16) >> 5);
+
+	// compute here to remove from main control loop
+	GyroMidRollBy2 = GyroMidRoll * 2;
+	GyroMidPitchBy2 = GyroMidPitch * 2;
+	
+	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+	LEDRed_OFF;
+
+} // ErectGyros
+
+
+void InitGyros(void)
+{
+	// nothing to be done for analog gyros - could check nominal midpoints?
+	F.GyroFailure = false;
+} // InitGyros
 
 #ifdef TESTING
 
@@ -306,51 +378,7 @@ void GyroTest(void)
 
 #endif // TESTING
 
-void InitGyros(void)
-{
-	// nothing to be done for analog gyros - could check nominal midpoints?
-	F.GyroFailure = false;
-} // InitGyros
-
 #endif // GYRO_ITG3200
-
-void ErectGyros(void)
-{
-	static uint8 i;
-	static uint16 RollAv, PitchAv, YawAv;
-	
-	RollAv = PitchAv = YawAv = 0;	
-    for ( i = 32; i ; i-- )
-	{
-		LEDRed_TOG;
-		Delay100mSWithOutput(GYRO_ERECT_DELAY);
-
-		GetRollPitchGyroValues();
-		GetYawGyroValue();
-
-		RollAv += RollRateADC;
-		PitchAv += PitchRateADC;	
-		YawAv += YawRateADC;
-	}
-	
-	if( !F.AccelerationsValid )
-	{
-		RollAv += (int16)P[MiddleLR] * 2;
-		PitchAv += (int16)P[MiddleFB] * 2;
-	}
-	
-	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
-	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
-	GyroMidYaw = (int16)((YawAv + 16) >> 5);
-
-	// compute here to remove from main control loop
-	GyroMidRollBy2 = GyroMidRoll * 2;
-	GyroMidPitchBy2 = GyroMidPitch * 2;
-	
-	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
-	LEDRed_OFF;
-
-} // ErectGyros
 
 #define AccFilter NoFilter
 
@@ -468,10 +496,10 @@ void CalcGyroRates(void)
 			PitchRate -= GyroMidPitchBy2;
 	 	}
 		else
-		{ 	// 1.0
+		{ 	// 1.0 - includes ITG-3200
 			// Average of two readings
-			RollRate = ( RollRate >> 1 ) - GyroMidRoll;	
-			PitchRate = ( PitchRate >> 1 ) - GyroMidPitch;
+			RollRate = SRS16( RollRate, 1) - GyroMidRoll;	
+			PitchRate = SRS16( PitchRate, 1) - GyroMidPitch;
 	
 			if ( P[GyroRollPitchType] == Gyro150D5V )	// 0.5
 			{ // 150 Deg/Sec or 0.5
@@ -503,3 +531,7 @@ void CalcGyroRates(void)
 	GetYawGyroValue();	
 
 } // CalcGyroRates
+
+
+
+

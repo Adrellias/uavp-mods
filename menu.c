@@ -26,15 +26,17 @@ void ShowSetup(boolean);
 void ProcessCommand(void);
 
 #pragma idata menu1
+
+
 #ifdef TESTING
-const rom uint8 SerHello[] = "UAVX TEST " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
-							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
-							  "see http://www.gnu.org/licenses/!\r\n";
+const rom uint8 SerHello[] = "UAVX TEST " Version 
 #else
-const rom uint8 SerHello[] = "UAVX " Version " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+const rom uint8 SerHello[] = "UAVX " Version 							 
+#endif // TESTING
+
+ 							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
 							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
 							  "see http://www.gnu.org/licenses/!\r\n";
-#endif // TESTING
 
 #pragma idata
 
@@ -97,6 +99,7 @@ void ShowSetup(boolean h)
 	}
 
 	TxString("\r\nUAVX TEST V" Version);
+
 	#ifdef CLOCK_16MHZ
 	TxString(" 16MHz\r\n");
 	#else // CLOCK_40MHZ
@@ -156,7 +159,7 @@ void ShowSetup(boolean h)
 	
 	TxString("Roll/Pitch Gyros: ");
 	#ifdef GYRO_ITG3200
-	TxString("ITG-3200 3 axis I2C ");
+	TxString("ITG-3200 3-axis I2C ");
 	if (F.GyroFailure )
 		TxString("FAILED\r\n");
 	else
@@ -196,7 +199,7 @@ void ShowSetup(boolean h)
 			else
 				TxString(" OK");
 		TxString(" }");
-	}
+	}	
 	TxNextLine();	
 	
 	#ifdef RX6CH
@@ -265,7 +268,6 @@ void ShowSetup(boolean h)
 		TxString("\tTurn toward Way Point\r\n");
 	else
 		TxString("\tHold heading\r\n");
-
 	TxString("\r\nALARM (if any):\r\n");
 	if ( F.GyroFailure )
 		TxString("\tGyro failure?\r\n");
@@ -275,6 +277,7 @@ void ShowSetup(boolean h)
 		TxString("\tUAVX is armed - disarm!\r\n");
 	if ( F.Navigate || F.ReturnHome )
 		TxString("\tNavigate/RTH is selected - deselect!\r\n");
+
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - close throttle!\r\n");
 	
