@@ -22,8 +22,8 @@
 #ifndef BATCHMODE
 	//#define UAVX_HW					// New UAVX BOARD
 	//#define LIGHT
-	#define EXPERIMENTAL
-	#define TESTING						
+	//#define EXPERIMENTAL
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -45,7 +45,7 @@
 
 // Airframe
 
-#if (defined LIGHT )
+#if (defined UAVXLIGHTBOARD )
 	#define UAVXLITE
 #endif
 

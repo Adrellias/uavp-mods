@@ -12,7 +12,7 @@ set DBG=%3
 set RX=%4
 set CFG=%5
 set EXP=%6
-set LITE=%7
+set BRD=%7
 
 for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set year=%%c
 for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set month=%%a
@@ -45,7 +45,7 @@ if "%CFG%" == "HEXACOPTER"			set C=-HEX
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
 
-if "%LITE%" == "LIGHT"				set L=Light
+if "%BRD%" == "UAVXLIGHT"				set L=Light
 
 if "%DBG%" == "TESTING"				set C=
 
@@ -70,7 +70,7 @@ set F=
 for %%i in ( %CSRC% ) do set F=!F! %%i.o
 for %%i in ( %ASRC% ) do set F=!F! %%i.o
 
-for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -D%CLOCK% -D%DBG% -D%RX% -D%CFG% -D%EXP% -D%LITE% >> log.lst
+for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -D%CLOCK% -D%DBG% -D%RX% -D%CFG% -D%EXP% -D%BRD% >> log.lst
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 

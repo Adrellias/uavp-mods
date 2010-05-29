@@ -6,7 +6,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 rem Batch compiles various possibilities of the UFO software for the Microchip 18F2xxx series
 rem
-rem Greg Egan 2008-2009
+rem Greg Egan 2008-2010
 rem
 rem Uses: makeallhelper.bat and makeclean.bat
 rem
@@ -16,7 +16,7 @@ rem SIMULATE to generate a simple flight simulator (no dynamics) for use with UA
 rem using UAVPSet (blank option in menu below testsoftware).
 rem Configuration TRICOPTER for 3 motors and QUAD for 4.
 rem TESTING for checking out sensors Motors are disabled for safety reasons.
-rem LIGHT for aircraft equipped only with gyros
+rem UAVPBLACK original UAVP board
 rem EXPERIMENTAL - USE WITH GREAT CAUTION - EXPERIMENTAL CONTROLS SEVERAL OTHER
 rem DEFINES CONTAINED IN THE BLOCK TOWARDS THE TOP OF UAVX.H
 
@@ -35,7 +35,7 @@ set DBG=NO_DEBUG
 set RX=RX7CH
 set CFG=QUADROCOPTER	
 set EXP=NO_EXP EXPERIMENTAL
-set ALT=HEAVY LIGHT
+set BRD=UAVPBLACK
 
 rem Delete working files
 call makeclean.bat
@@ -48,12 +48,12 @@ rem del *.HEX
 echo Starting makeall uavp > gen.lst
 echo Starting makeall uavp > log.lst
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%a in (%ALT%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%a 
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
 
 set PROC=18F2620
 set DBG=TESTING 
 set RX=RX7CH
 set CFG=QUADROCOPTER
-set ALT=HEAVY LIGHT
+set BRD=UAVPBLACK
 
-for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%a in (%ALT%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%a 
+for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 

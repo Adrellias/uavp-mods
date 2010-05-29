@@ -76,7 +76,7 @@ void InitITG3200(void);
 void BlockReadITG3200(void)
 {
 	static uint8 G[6];
-	static int16 GX, GY, GZ;
+	static i16u GX, GY, GZ;
 
 	I2CStart();
 	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
@@ -88,13 +88,13 @@ void BlockReadITG3200(void)
 	RecvI2CString(G, 6);
 	I2CStop();
 
-	GX = (G[0] << 8) | G[1];
-	GY = (G[2] << 8) | G[3];
-	GZ = (G[4] << 8) | G[5];
+	GX.b0 = G[1]; GX.b1 = G[0];
+	GY.b0 = G[3]; GY.b1 = G[2];
+	GZ.b0 = G[5]; GZ.b1 = G[4];
 
-	RollRateADC = SRS16(GX, 3);
-	PitchRateADC = SRS16(-GY, 3);
-	YawRateADC = SRS16(-GZ, 3);
+	RollRateADC = GX.i16;
+	PitchRateADC = -GY.i16;
+	YawRateADC = -GZ.i16;
 
 	return;	
 
@@ -167,24 +167,50 @@ void GetRollPitchGyroValues(void)
 
 } // GetRollPitchGyroValues
 
-void GetYawGyroValue(void)
+void CalcGyroRates(void)
 {
-	// YawRateADC already acquired in block read for roll/pitch
-	YawRate = YawRateADC - GyroMidYaw; 
-	YawRate = SRS16(YawRate, 1);
+	static int16 Temp;
 
-} // GetYawGyroValue
+	// RollRate & PitchRate hold the sum of 2 consecutive conversions
+	// 300 Deg/Sec is the "reference" gyro full scale rate
+	// ITG-3200 Gyro rescaled 1/8
+	RollRate = SRS16( RollRate - GyroMidRollBy2, 4);	
+	PitchRate = SRS16( PitchRate - GyroMidPitchBy2, 4);
+
+	#if ( defined QUADROCOPTER | defined TRICOPTER )
+		#ifdef TRICOPTER
+		if ( F.UsingAltOrientation ) // K1 forward
+		{
+			RollRate = -RollRate;
+			PitchRate = -PitchRate;
+		}		
+		#else
+		if ( F.UsingAltOrientation )
+		{
+			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
+			Temp = RollRate + PitchRate;	
+			PitchRate -= RollRate;	
+			RollRate = (Temp * 7L)/10L;
+			PitchRate = (PitchRate * 7L)/10L; 
+		}
+		#endif // TRICOPTER
+	#endif // QUADROCOPTER | TRICOPTER 
+	
+	YawRate = YawRateADC - GyroMidYaw; 
+	YawRate = SRS16(YawRate, 1);	
+
+} // CalcGyroRates
 
 void ErectGyros(void)
 {
 	static int16 i;
 	static int32 RollAv, PitchAv, YawAv;
+
+	LEDRed_ON;
 	
 	RollAv = PitchAv = YawAv = 0;	
-    for ( i = 0; i < 4096 ; i++ )
+    for ( i = 0; i < 32 ; i++ )
 	{
-		if ( ( i & 0x00ff ) == 0 ) LEDRed_TOG;
-
 		BlockReadITG3200();
 	
 		RollAv += RollRateADC;
@@ -192,11 +218,16 @@ void ErectGyros(void)
 		YawAv += YawRateADC;
 	}
 	
-	GyroMidRoll = SRS32(RollAv, 12);	
-	GyroMidPitch = SRS32(PitchAv, 12);
-	GyroMidYaw = SRS32(YawAv, 12);
+	GyroMidRoll = SRS32(RollAv, 5);	
+	GyroMidPitch = SRS32(PitchAv, 5);
+	GyroMidYaw = SRS32(YawAv, 5);
+
+	// compute here to remove from main control loop
+	GyroMidRollBy2 = GyroMidRoll * 2;
+	GyroMidPitchBy2 = GyroMidPitch * 2;
 	
 	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+
 	LEDRed_OFF;
 
 } // ErectGyros
@@ -272,6 +303,62 @@ void GetYawGyroValue(void)
 	//		YawRate = YawRate;
 
 } // GetYawGyroValue
+
+void CalcGyroRates(void)
+{
+	static int16 Temp;
+
+	// RollRate & PitchRate hold the sum of 2 consecutive conversions
+	// 300 Deg/Sec is the "reference" gyro full scale rate
+
+	if ( P[GyroRollPitchType] == IDG300 ) // 2.0
+	{ 	// 500 Deg/Sec, 5/3.3 FS => ~2.5 so do not average 
+		RollRate -= GyroMidRollBy2;
+		PitchRate -= GyroMidPitchBy2;
+		RollRate = -RollRate;			// adjust for reversed roll gyro sense
+ 	}
+	else
+		if ( P[GyroRollPitchType] == Gyro300D3V ) // 2.0
+		{ 	// 300 Deg/Sec, 5/2.4 FS => ~2.0 so do not average 
+			RollRate -= GyroMidRollBy2;
+			PitchRate -= GyroMidPitchBy2;
+	 	}
+		else
+		{ 	// 1.0 - includes ITG-3200
+			// Average of two readings
+			RollRate = SRS16( RollRate, 1) - GyroMidRoll;	
+			PitchRate = SRS16( PitchRate, 1) - GyroMidPitch;
+	
+			if ( P[GyroRollPitchType] == Gyro150D5V )	// 0.5
+			{ // 150 Deg/Sec or 0.5
+				RollRate = SRS16(RollRate, 1); 
+				PitchRate = SRS16(PitchRate, 1);
+			}
+		}
+
+	#if ( defined QUADROCOPTER | defined TRICOPTER )
+		#ifdef TRICOPTER
+		if ( F.UsingAltOrientation ) // K1 forward
+		{
+			RollRate = -RollRate;
+			PitchRate = -PitchRate;
+		}		
+		#else
+		if ( F.UsingAltOrientation )
+		{
+			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
+			Temp = RollRate + PitchRate;	
+			PitchRate -= RollRate;	
+			RollRate = (Temp * 7L)/10L;
+			PitchRate = (PitchRate * 7L)/10L; 
+		}
+		#endif // TRICOPTER
+	#endif // QUADROCOPTER | TRICOPTER 
+	
+	// Yaw is sampled only once every frame
+	GetYawGyroValue();	
+
+} // CalcGyroRates
 
 void ErectGyros(void)
 {
@@ -476,61 +563,7 @@ void CompensateRollPitchGyros(void)
 
 } // CompensateRollPitchGyros
 
-void CalcGyroRates(void)
-{
-	static int16 Temp;
 
-	// RollRate & PitchRate hold the sum of 2 consecutive conversions
-	// 300 Deg/Sec is the "reference" gyro full scale rate
-
-	if ( P[GyroRollPitchType] == IDG300 ) // 2.0
-	{ 	// 500 Deg/Sec, 5/3.3 FS => ~2.5 so do not average 
-		RollRate -= GyroMidRollBy2;
-		PitchRate -= GyroMidPitchBy2;
-		RollRate = -RollRate;			// adjust for reversed roll gyro sense
- 	}
-	else
-		if ( P[GyroRollPitchType] == Gyro300D3V ) // 2.0
-		{ 	// 300 Deg/Sec, 5/2.4 FS => ~2.0 so do not average 
-			RollRate -= GyroMidRollBy2;
-			PitchRate -= GyroMidPitchBy2;
-	 	}
-		else
-		{ 	// 1.0 - includes ITG-3200
-			// Average of two readings
-			RollRate = SRS16( RollRate, 1) - GyroMidRoll;	
-			PitchRate = SRS16( PitchRate, 1) - GyroMidPitch;
-	
-			if ( P[GyroRollPitchType] == Gyro150D5V )	// 0.5
-			{ // 150 Deg/Sec or 0.5
-				RollRate = SRS16(RollRate, 1); 
-				PitchRate = SRS16(PitchRate, 1);
-			}
-		}
-
-	#if ( defined QUADROCOPTER | defined TRICOPTER )
-		#ifdef TRICOPTER
-		if ( F.UsingAltOrientation ) // K1 forward
-		{
-			RollRate = -RollRate;
-			PitchRate = -PitchRate;
-		}		
-		#else
-		if ( F.UsingAltOrientation )
-		{
-			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
-			Temp = RollRate + PitchRate;	
-			PitchRate -= RollRate;	
-			RollRate = (Temp * 7L)/10L;
-			PitchRate = (PitchRate * 7L)/10L; 
-		}
-		#endif // TRICOPTER
-	#endif // QUADROCOPTER | TRICOPTER 
-	
-	// Yaw is sampled only once every frame
-	GetYawGyroValue();	
-
-} // CalcGyroRates
 
 
 

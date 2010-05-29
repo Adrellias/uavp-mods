@@ -123,10 +123,11 @@ void main(void)
 					if ( DesiredThrottle > IdleThrottle )
 						State = InFlight;
 					else
-					//	if ( mS[Clock] < mS[ThrottleIdleTimeout] )
-					//		DesiredThrottle = IdleThrottle;
-					//	else
+						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
+							DesiredThrottle = IdleThrottle;
+						else
 						{
+							DesiredThrottle = 0; // to catch cycles between Rx updates
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();

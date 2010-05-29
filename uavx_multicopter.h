@@ -27,7 +27,7 @@
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	32, 			// AltKp,			09
+	8, 				// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -71,14 +71,14 @@
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48
-	4,				// AltIntLimit		49
+	2,				// AltIntLimit		49
 	11,				// GravComp			50c
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
-	-32,			// AltKd			56		
+	-8,				// AltKd			56		
 
 	0,				// 57 - 64 unused currently	
 	
