@@ -217,7 +217,7 @@ void OutSignals(void)
 		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
 		#endif // MULTICOPTER
 
-		PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
+	//	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 	}
 
 	// Save TMR0 and reset

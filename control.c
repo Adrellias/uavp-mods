@@ -495,6 +495,7 @@ void LightsAndSirens(void)
 			{
 				UpdateControls();
 				UpdateParamSetChoice();
+				MixAndLimitCam();
 				InitialThrottle = DesiredThrottle;
 				DesiredThrottle = 0; 
 				OutSignals();
