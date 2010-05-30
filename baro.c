@@ -189,12 +189,12 @@ void GetBaroAltitude(void)
 
 		if ( AcquiringPressure )
 		{
-			CompBaroAltitude = CompBaroAltitude & 0xfffff0;	// discard noise in bottom 4 bits!!!		
+			Temp = CompBaroAltitude & 0xfffff0;	// discard noise in bottom 4 bits!!!		
 	
 			if ( Abs( DesiredAltitude - RelBaroAltitude ) < ALT_BAND_CM )
-				RelBaroAltitude = SlewLimit(RelBaroAltitude, CompBaroAltitude, 5); // 1M/S
+				RelBaroAltitude = SlewLimit(RelBaroAltitude, Temp, 5); // 1M/S
 			else
-				RelBaroAltitude = SlewLimit(RelBaroAltitude, CompBaroAltitude, 25); // 5M/S			
+				RelBaroAltitude = SlewLimit(RelBaroAltitude, Temp, 25); // 5M/S			
 	
 			#ifdef SIMULATE
 			if ( State == InFlight )

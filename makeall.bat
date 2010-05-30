@@ -27,7 +27,7 @@ set DBG=NO_DEBUG
 set RX=RX7CH RX6CH
 set CFG=QUADROCOPTER TRICOPTER HEXACOPTER HELICOPTER AILERON ELEVON
 set EXP=NO_EXP
-rem set BRD=UAVPBLACK
+set BRD=UAVPBLACK
 
 rem Personal choice
 rem set CLOCK=CLOCK_40MHZ
@@ -44,7 +44,7 @@ call makeclean.bat
 rem Requires Tortoise SVN 
 call makerev.bat
 
-rem del *.HEX
+del *.HEX
 
 echo Starting makeall uavp > gen.lst
 echo Starting makeall uavp > log.lst
