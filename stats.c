@@ -70,8 +70,8 @@ void WriteStatsEE()
 		for ( i = 0; i < NoOfPWMOutputs; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
 
-	if ( SumCompBaroAltitude != 0 )
-		Stats[GPSBaroScaleS] = ((int16)P[BaroScale] * SumGPSRelAltitude)/SumCompBaroAltitude; 
+	if ( SumCompBaroPressure != 0 )
+		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * 32)/(-SumCompBaroPressure); // zzz
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);

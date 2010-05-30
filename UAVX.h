@@ -674,7 +674,7 @@ extern void InitBarometer(void);
 //extern Baro24Q BaroPressQ;
 //extern Baro24Q BaroTempQ;
 
-extern int24 OriginBaroAltitude, CompBaroAltitude;
+extern int24 OriginBaroPressure, CompBaroPressure;
 extern uint16 BaroPressure, BaroTemperature;
 extern boolean AcquiringPressure;
 extern int24 RelBaroAltitude, RelBaroAltitudeP;
@@ -789,7 +789,7 @@ extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
-extern int32 SumGPSRelAltitude, SumCompBaroAltitude;
+extern int32 SumGPSRelAltitude, SumCompBaroPressure;
 
 #ifdef SIMULATE
 extern int32 FakeGPSLongitude, FakeGPSLatitude;

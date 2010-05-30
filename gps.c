@@ -78,7 +78,7 @@ boolean EmptyField;
 int16 ValidGPSSentences;
 #pragma udata
 
-int32 SumGPSRelAltitude, SumCompBaroAltitude;
+int32 SumGPSRelAltitude, SumCompBaroPressure;
 
 int32 ConvertGPSToM(int32 c)
 {	// approximately 1.8553257183 cm per LSB at the Equator
@@ -365,7 +365,7 @@ void ParseGPSSentence(void)
 			if (( GPSRelAltitude > 1000 ) && ( GPSRelAltitude < 2500 )) // 10-25M
 			{
 				SumGPSRelAltitude += GPSRelAltitude;
-				SumCompBaroAltitude += CompBaroAltitude;
+				SumCompBaroPressure += CompBaroPressure;
 			}
 		}
 	}
@@ -428,7 +428,7 @@ void InitGPS(void)
 
 	ValidGPSSentences = 0;
 
-	SumGPSRelAltitude = SumCompBaroAltitude = 0;
+	SumGPSRelAltitude = SumCompBaroPressure = 0;
 
 	F.NavValid = F.GPSValid = F.GPSSentenceReceived = false;
   	GPSRxState = WaitGPSSentinel; 
