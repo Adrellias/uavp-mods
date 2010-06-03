@@ -53,7 +53,7 @@ int16 CurrMaxRollPitch;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
-int16 AltComp, AltDiffSum, AltD, AltDSum, DescentCmpS;
+int16 AltComp, AltDiffSum, AltD, AltDSum;
 int24 DesiredAltitude, Altitude;
 int16 ROC;
 
@@ -74,33 +74,31 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		F.NewBaroValue = false;
 			
 		BE = DesiredAltitude - Altitude;
-		LimBE = Limit(BE, -ALT_BAND_CM, ALT_BAND_CM);
+		LimBE = Limit(BE, -ALT_BAND_DM, ALT_BAND_DM);
 		
-		AltP = SRS16(LimBE * (int16)P[AltKp], 8);
-		AltP = Limit(AltP, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
+		AltP = SRS16(LimBE * (int16)P[AltKp], 4);
+		AltP = Limit(AltP, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
 		
 		AltDiffSum += LimBE;
 		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
-		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 4);
+		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 3);
 		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
 				 
-		AltD = Limit(-ROC, (int16)P[AltKd], -(int16)P[AltKd]); 
+		AltD = SRS16(ROC * (int16)P[AltKd], 2);
+		AltD = Limit(AltD, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP); 
 			 
-		if ( ROC < DescentCmpS )
+		if ( ROC < (int16)P[MaxDescentRateDmpS] )
 		{
-			AltDSum += 4;
-			AltDSum = Limit(AltDSum, 0, ALT_HIGH_THR_COMP*2); 
+			AltDSum += 1;
+			AltDSum = Limit(AltDSum, 0, ALT_MAX_THR_COMP * 2); 
 		}
 		else
-			AltDSum = DecayX(AltDSum, 4);
+			AltDSum = DecayX(AltDSum, 1);
 			
 		NewAltComp = AltP + AltI + AltD + AltDSum;
-		NewAltComp = Limit(NewAltComp, ALT_LOW_THR_COMP, ALT_HIGH_THR_COMP);
-		#ifdef ALT_USE_SLEW_LIMIT	
-			AltComp = SlewLimit(AltComp, NewAltComp, 4);
-		#else
-			AltComp = NewAltComp;
-		#endif // ALT_USE_SLEW_LIMIT
+		NewAltComp = Limit(NewAltComp, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
+	
+		AltComp = SlewLimit(AltComp, NewAltComp, 1);
 		
 		#ifdef ALT_SCRATCHY_BEEPER
 		if ( !F.BeeperInUse ) Beeper_TOG;
@@ -142,7 +140,7 @@ void AltitudeHold()
 			if ( F.BaroAltitudeValid && F.NewBaroValue )
 			{
 				F.NewBaroValue = false;
-				Altitude = RelBaroAltitude;
+				Altitude = BaroRelAltitude;
 				ROC = BaroROC;
 			}
 			else
@@ -159,7 +157,7 @@ void AltitudeHold()
 		
 		if( F.HoldingAlt )
 		{
-			if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_CMPS  ) // Use Baro NOT GPS
+			if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
 			{
 				Temp = DesiredThrottle + AltComp;
 				CruiseThrottle = HardFilter(CruiseThrottle, Temp);
@@ -495,6 +493,7 @@ void LightsAndSirens(void)
 			{
 				UpdateControls();
 				UpdateParamSetChoice();
+				GetBaroAltitude();
 				MixAndLimitCam();
 				InitialThrottle = DesiredThrottle;
 				DesiredThrottle = 0; 

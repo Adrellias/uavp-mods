@@ -48,7 +48,7 @@
 	0, 				// MiddleFB,		25c
 	20, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	4, 				// AltKi,			28
+	8, 				// AltKi,			28
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -66,12 +66,12 @@
 	-16,			// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	70,				// BaroScale		44c
+	56,				// BaroScale		44c
 	UAVXTelemetry,	// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48
-	4,				// AltIntLimit		49
+	2,				// AltIntLimit		49
 	11,				// GravComp			50c
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	

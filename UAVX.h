@@ -23,7 +23,7 @@
 	//#define UAVX_HW					// New UAVX BOARD
 	//#define LIGHT
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -37,7 +37,6 @@
 	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
 	//#define UAVX_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
-	//#define ALT_USE_SLEW_LIMIT		// uses slew limit for alt hold compensation
 	//#define DEBUG_FORCE_NAV 			// overrides RTH and forces navigate all WPs
 #endif // EXPERIMENTAL
 
@@ -82,7 +81,7 @@
 // Altitude Hold
 
 #define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
-#define ALT_HOLD_MAX_ROC_CMPS	50L			// Must be changing altitude at less than this for alt. hold to be detected
+#define ALT_HOLD_MAX_ROC_DMPS	5L			// Must be changing altitude at less than this for alt. hold to be detected
 
 // Accelerometers
 
@@ -106,12 +105,11 @@
 // Altitude Hold
 
 // the range within which throttle adjustment is proportional to altitude error
-#define ALT_BAND_CM				200L		// Cm.
+#define ALT_BAND_DM				50L		// Decimetres
 
-#define LAND_CM					300L		// Cm. deemed to have landed when below this height
+#define LAND_DM					30L		// Decimetres deemed to have landed when below this height
 
-#define ALT_LOW_THR_COMP		-32L			// Stick units
-#define ALT_HIGH_THR_COMP		32L
+#define ALT_MAX_THR_COMP		32L			// Stick units
 
 #define ALT_INT_WINDUP_LIMIT	16L
 
@@ -123,12 +121,12 @@
 
 #define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
 
-#define NAV_MAX_ROLL_PITCH 			25L	// Rx stick units
-#define NAV_CONTROL_HEADROOM		10L	// at least this much stick control headroom above Nav control	
-#define NAV_DIFF_LIMIT				24L	// Approx double NAV_INT_LIMIT
-#define NAV_INT_WINDUP_LIMIT		64L	// ???
+#define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
+#define NAV_CONTROL_HEADROOM		10L		// at least this much stick control headroom above Nav control	
+#define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
+#define NAV_INT_WINDUP_LIMIT		64L		// ???
 
-#define NAV_ENFORCE_ALTITUDE_CEILING	// limit all autonomous altitudes
+#define NAV_ENFORCE_ALTITUDE_CEILING		// limit all autonomous altitudes
 #define NAV_CEILING					120L	// 400 feet
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
@@ -674,16 +672,16 @@ extern void InitBarometer(void);
 //extern Baro24Q BaroPressQ;
 //extern Baro24Q BaroTempQ;
 
-extern int24 OriginBaroPressure, CompBaroPressure;
+extern int32 OriginBaroPressure, CompBaroPressure;
 extern uint16 BaroPressure, BaroTemperature;
 extern boolean AcquiringPressure;
-extern int24 RelBaroAltitude, RelBaroAltitudeP;
+extern int24 BaroRelAltitude, BaroRelAltitudeP;
 extern int16 BaroROC;
 extern i16u	BaroVal;
 extern uint8 BaroType;
 
 #ifdef SIMULATE
-extern int24 FakeRelBaroAltitude;
+extern int24 FakeBaroRelAltitude;
 #endif // SIMULATE
 //______________________________________________________________________________________________
 
@@ -731,7 +729,7 @@ extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPi
 extern int16 DesiredRollP, DesiredPitchP;
 extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
-extern int16 AltComp, AltDiffSum, AltD, AltDSum, DescentCmpS;
+extern int16 AltComp, AltDiffSum, AltD, AltDSum;
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude;
 extern int16 ROC;
@@ -789,7 +787,7 @@ extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
-extern int32 SumGPSRelAltitude, SumCompBaroPressure;
+extern int32 SumGPSRelAltitude, SumBaroRelAltitude;
 
 #ifdef SIMULATE
 extern int32 FakeGPSLongitude, FakeGPSLatitude;
@@ -1104,11 +1102,10 @@ extern void WriteStatsEE(void);
 extern void ShowStats(void);
 
 enum Statistics { 
-	GPSAltitudeS, RelBaroAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
+	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
 	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS}; // NO MORE THAN 32 or 64 bytes
 
-extern int24 MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 extern int16 Stats[];
 
 //______________________________________________________________________________________________

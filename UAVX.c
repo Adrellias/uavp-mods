@@ -97,7 +97,6 @@ void main(void)
 
 					DesiredThrottle = 0;
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
-					InitBarometer(); 			// as late as possible to allow some warmup
 					ZeroStats();
 					DoStartingBeepsWithOutput(3);
 
@@ -109,7 +108,7 @@ void main(void)
 					else
 					{
 						#ifdef SIMULATE
-						FakeRelBaroAltitude = 0;
+						FakeBaroRelAltitude = 0;
 						#endif // SIMULATE
 						InitHeading();						
 						LEDCycles = 1;

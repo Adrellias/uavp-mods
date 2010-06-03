@@ -208,7 +208,6 @@ void ReadParametersEE(void)
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
-		DescentCmpS = (int16)P[MaxDescentRateDmpS] * 10L; // cm/S
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = (int16)P[LowVoltThres] << 3; // weird units
 		BatteryCurrentADC = 0;

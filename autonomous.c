@@ -103,7 +103,7 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 	{
 		AltSum = 0;
 		DesiredThrottle = CruiseThrottle;
-		DesiredAltitude = NewDesiredAltitude * 100L;
+		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
 	}
 	else
 	{
@@ -306,7 +306,7 @@ void DoNavigation(void)
 				StopMotors();
 			}
 			#else
-				if ( Altitude < LAND_CM )
+				if ( Altitude < LAND_DM )
 				{
 					mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 					NavState = Touchdown;
@@ -452,7 +452,7 @@ void DoPPMFailsafe(void)
 			break;
 		case Terminating:
 			FailsafeHoldPosition();
-			if ( Altitude < LAND_CM )
+			if ( Altitude < LAND_DM )
 			{
 				mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
 				NavState = Touchdown;
@@ -578,7 +578,7 @@ void GetWayPointEE(uint8 wp)
 		WPLatitude = OriginLatitude;
 		WPLongitude = OriginLongitude;
 		WPAltitude = (int16)P[NavRTHAlt];
-		WPLoiter = 30000;
+		WPLoiter = 30000; // mS
 	}
 	else
 	{	
@@ -591,7 +591,7 @@ void GetWayPointEE(uint8 wp)
 		if ( WPAltitude > NAV_CEILING )
 			WPAltitude = NAV_CEILING;
 		#endif // NAV_ENFORCE_ALTITUDE_CEILING
-		WPLoiter = (int16)ReadEE(w + 10) * 1000L;
+		WPLoiter = (int16)ReadEE(w + 10) * 1000L; // mS
 	}
 
 	F.WayPointCentred =  F.WayPointAchieved = false;
@@ -616,13 +616,13 @@ void InitNavigation(void)
 	if ( ReadEE(NAV_NO_WP) <= 0 )
 	{
 		NavProximityRadius = ConvertMToGPS(NAV_PROXIMITY_RADIUS); 
-		NavProximityAltitude = NAV_PROXIMITY_ALTITUDE * 100L;
+		NavProximityAltitude = NAV_PROXIMITY_ALTITUDE * 10L; // Decimetres
 	}
 	else
 	{
 		// need minimum values in UAVXNav?
 		NavProximityRadius = ConvertMToGPS(ReadEE(NAV_PROX_RADIUS));
-		NavProximityAltitude = ReadEE(NAV_PROX_ALT) * 100L;
+		NavProximityAltitude = ReadEE(NAV_PROX_ALT) * 10L; // Decimetres
 	}
 
 	NoOfWayPoints = ReadEE(NAV_NO_WP);

@@ -171,6 +171,8 @@ void IsLISLActive(void)
 		WriteLISL(0b00000000, LISL_DD_CFG);
 		F.AccelerationsValid = true;
 	}
+	else
+		F.AccFailure = true;
 } // IsLISLActive
 
 void ReadAccelerations()
@@ -243,6 +245,8 @@ void AccelerometerTest(void)
 {
 	TxString("\r\nAccelerometer test:\r\n");
 	TxString("Read once - no averaging\r\n");
+
+	InitAccelerometers();
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
@@ -280,18 +284,20 @@ void AccelerometerTest(void)
 
 void InitAccelerometers(void)
 {
+	int8 i;
+
 	Delay100mSWithOutput(5);	// wait 0.5 sec until LISL is ready to talk
 
-	NeutralLR = 0;
-	NeutralFB = 0;
-	NeutralDU = 0;
+	NeutralLR = NeutralFB = NeutralDU = Ax.i16 = Ay.i16 = Az.i16 = 0;
 
-	IsLISLActive();	
+	IsLISLActive();
 	if( F.AccelerationsValid )
 	{
 		LEDYellow_ON;
 		GetNeutralAccelerations();
 		LEDYellow_OFF;
 	}
+	else
+		F.AccFailure = true;
 } // InitAccelerometers
 

@@ -106,20 +106,20 @@ void SendUAVXNav(void) // 800uS at 40MHz
 
 		TxESCu8(CurrWP);	
 
-		TxESCi16(BaroROC); // cm/S
-		TxESCi24(RelBaroAltitude);
+		TxESCi16(BaroROC); // dm/S
+		TxESCi24(BaroRelAltitude);
 
-		TxESCi16(RangefinderROC); // cm/S 
-		TxESCi16(RangefinderAltitude); // cm
+		TxESCi16(RangefinderROC); // dm/S 
+		TxESCi16(RangefinderAltitude); // dm
 
 		TxESCi16(GPSHDilute);
 		TxESCi16(Heading);
 		TxESCi16(WayHeading);
 
 		TxESCi16(GPSVel);
-		TxESCi16(GPSROC); // dM/S
+		TxESCi16(GPSROC); // dm/S
 
-		TxESCi24(GPSRelAltitude); // cm
+		TxESCi24(GPSRelAltitude); // dm
 		TxESCi32(GPSLatitude); // 5 decimal minute units
 		TxESCi32(GPSLongitude); 
 
@@ -182,8 +182,8 @@ void SendArduStation(void)
 		TxString("!!!");
 		TxString("LAT:"); TxVal32(GPSLatitude / 6000, 3, 0);
 		TxString(",LON:"); TxVal32(GPSLongitude / 6000, 3, 0);
-		TxString(",ALT:"); TxVal32(Altitude / 100,0,0);
-		//TxString(",ALH:"); TxVal32(DesiredAltitude / 100, 0, 0);
+		TxString(",ALT:"); TxVal32(Altitude / 10,0,0);
+		//TxString(",ALH:"); TxVal32(DesiredAltitude / 10, 0, 0);
 		//TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
 		TxString(",CRS:"); TxVal32(((int24)Heading * 180) / MILLIPI, 0, 0); // scaling to degrees?
 		TxString(",BER:"); TxVal32(((int24)WayHeading * 180) / MILLIPI, 0, 0);
@@ -222,7 +222,7 @@ void SensorTrace(void)
 
 		TxValH16(((int24)Heading * 180)/MILLIPI); TxChar(';');
 
-		TxValH16(RelBaroAltitude); TxChar(';');
+		TxValH16(BaroRelAltitude); TxChar(';');
 		TxValH16(RangefinderAltitude); TxChar(';');
 		TxValH16(0); TxChar(';');
 			

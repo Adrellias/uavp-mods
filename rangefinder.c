@@ -34,9 +34,9 @@ void GetRangefinderAltitude(void)
 	if ( F.RangefinderAltitudeValid )
 	{
 		if ( F.RFInInches )
-			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/100L);
+			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/1000L);
 		else
-			Temp = ADC(ADCAltChan);
+			Temp = ADC(ADCAltChan) / 10L; // Decimetres for now zzz
 
 		if ( mS[Clock] > mS[RangefinderROCUpdate] )
 		{

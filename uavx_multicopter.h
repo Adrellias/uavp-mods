@@ -27,7 +27,7 @@
 	-24, 			// PitchKp,			06
 	-14, 			// PitchKi,			07
 	75, 			// PitchKd,			08
-	8, 				// AltKp,			09
+	32, 			// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -48,7 +48,7 @@
 	0, 				// MiddleFB,		25c
 	20, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	4, 				// AltKi,			28
+	8, 				// AltKi,			28
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -66,7 +66,7 @@
 	-16,			// NavKd			41
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
-	70,				// BaroScale		44c
+	56,				// BaroScale		44c
 	UAVXTelemetry,	// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
@@ -78,7 +78,7 @@
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
-	-8,				// AltKd			56		
+	-32,			// AltKd			56		
 
 	0,				// 57 - 64 unused currently	
 	

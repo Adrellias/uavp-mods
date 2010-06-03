@@ -521,7 +521,7 @@ void CompensateRollPitchGyros(void)
 				Temp24 = FBAcc + LRAcc;	
 				FBAcc -= LRAcc;		
 				FBAcc = (FBAcc * 7L)/10L;
-				LRAcc = (Temp * 7L)/10L;
+				LRAcc = (Temp24 * 7L)/10L;
 			}
 			#endif // TRICOPTER
 		#endif // QUADROCOPTER | TRICOPTER 

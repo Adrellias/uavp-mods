@@ -78,7 +78,7 @@ boolean EmptyField;
 int16 ValidGPSSentences;
 #pragma udata
 
-int32 SumGPSRelAltitude, SumCompBaroPressure;
+int32 SumGPSRelAltitude, SumBaroRelAltitude;
 
 int32 ConvertGPSToM(int32 c)
 {	// approximately 1.8553257183 cm per LSB at the Equator
@@ -191,7 +191,7 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ( ConvertInt(lo, hi-2) * 10L + ConvertInt(hi, hi) ) * 10L; // Centimetres
+	GPSAltitude = ConvertInt(lo, hi-2) * 10L + ConvertInt(hi, hi) ; // Decimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -322,7 +322,7 @@ void ParseGPSSentence(void)
 
 		if ( F.NavValid )
 		{
-			GPSRelAltitude = RelBaroAltitude;
+			GPSRelAltitude = BaroRelAltitude;
 			GPSROC = BaroROC;
 		}
 		
@@ -356,16 +356,16 @@ void ParseGPSSentence(void)
 
 		if ( State == InFlight )
 		{
-			if ( GPSRelAltitude > MaxGPSAltitudeS )
-				MaxGPSAltitudeS = GPSRelAltitude;
+			if ( GPSRelAltitude > Stats[GPSAltitudeS] )
+				Stats[GPSAltitudeS] = GPSRelAltitude;
 
 			if ( GPSVel > Stats[GPSVelS] )
 				Stats[GPSVelS] = GPSVel;
 
-			if (( GPSRelAltitude > 1000 ) && ( GPSRelAltitude < 2500 )) // 10-25M
+			if (( BaroRelAltitude > 50 ) && ( BaroRelAltitude < 150 )) // 5-15M
 			{
 				SumGPSRelAltitude += GPSRelAltitude;
-				SumCompBaroPressure += CompBaroPressure;
+				SumBaroRelAltitude += BaroRelAltitude;
 			}
 		}
 	}
@@ -428,7 +428,7 @@ void InitGPS(void)
 
 	ValidGPSSentences = 0;
 
-	SumGPSRelAltitude = SumCompBaroPressure = 0;
+	SumGPSRelAltitude = SumBaroRelAltitude = 0;
 
 	F.NavValid = F.GPSValid = F.GPSSentenceReceived = false;
   	GPSRxState = WaitGPSSentinel; 

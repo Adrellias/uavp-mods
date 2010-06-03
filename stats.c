@@ -26,7 +26,6 @@ void WriteStatsEE(void);
 void ShowStats(void);
 
 #pragma udata stats
-int24 	MaxRelBaroAltitudeS, MaxGPSAltitudeS;
 int16 	Stats[MAX_STATS];
 #pragma udata
 
@@ -43,7 +42,6 @@ void ZeroStats(void)
 	Stats[MaxBaroROCS] = 0;
 	Stats[GPSMinSatsS] = 50;
 	Stats[GPSMaxSatsS] = 0;
-	MaxGPSAltitudeS = MaxRelBaroAltitudeS = 0;
 
 } // ZeroStats
 
@@ -53,9 +51,6 @@ void ReadStatsEE(void)
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Stats[s] = Read16EE(STATS_ADDR_EE + s*2);
-
-	MaxGPSAltitudeS = (int24)Stats[GPSAltitudeS] * 10L;
-	MaxRelBaroAltitudeS = (int24)Stats[RelBaroAltitudeS] * 10L;
 } // InitStats
 
 void WriteStatsEE()
@@ -63,15 +58,12 @@ void WriteStatsEE()
 	uint8 s, i;
 	int16 Temp;
 
-	Stats[GPSAltitudeS] = (int16)(MaxGPSAltitudeS/10L);
-	Stats[RelBaroAltitudeS] = (int16)(MaxRelBaroAltitudeS/10L);
-
 	if ( P[ESCType] != ESCPPM )
 		for ( i = 0; i < NoOfPWMOutputs; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
 
-	if ( SumCompBaroPressure != 0 )
-		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * 32)/(-SumCompBaroPressure); // zzz
+	if ( SumBaroRelAltitude != 0 )
+		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * (int16)P[BaroScale])/SumBaroRelAltitude; 
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
@@ -98,9 +90,9 @@ void ShowStats(void)
 	}
 	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
-	TxString("Alt:      \t");TxVal32((int32)Stats[RelBaroAltitudeS], 1, ' '); TxString("M \r\n");
-	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 2, ' '); 
-							TxVal32((int32)Stats[MaxBaroROCS], 2, ' '); TxString("M/S\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[BaroRelAltitudeS], 1, ' '); TxString("M \r\n");
+	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
+							TxVal32((int32)Stats[MaxBaroROCS], 1, ' '); TxString("M/S\r\n");
 	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();
 
 	TxString("\r\nGPS\r\n");
