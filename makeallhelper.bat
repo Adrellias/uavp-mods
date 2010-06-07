@@ -12,7 +12,7 @@ set DBG=%3
 set RX=%4
 set CFG=%5
 set EXP=%6
-set LITE=%7
+set BRD=%7
 
 for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set year=%%c
 for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set month=%%a
@@ -45,7 +45,7 @@ if "%CFG%" == "HEXACOPTER"			set C=-HEX
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
 
-if "%LITE%" == "LIGHT"				set L=Light
+if "%BRD%" == "UAVXLIGHT"				set L=Light
 
 if "%DBG%" == "TESTING"				set C=
 
@@ -70,23 +70,23 @@ set F=
 for %%i in ( %CSRC% ) do set F=!F! %%i.o
 for %%i in ( %ASRC% ) do set F=!F! %%i.o
 
-for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -D%CLOCK% -D%DBG% -D%RX% -D%CFG% -D%EXP% -D%LITE% >> log.lst
+for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -D%CLOCK% -D%DBG% -D%RX% -D%CFG% -D%EXP% -D%BRD% >> log.lst
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.509gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.523gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX%L%-V1.509gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo compiled - UAVX%L%-V1.509gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX%L%-V1.523gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo compiled - UAVX%L%-V1.523gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX%L%-V1.509gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo failed - UAVX%L%-V1.509gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX%L%-V1.523gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo failed - UAVX%L%-V1.523gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

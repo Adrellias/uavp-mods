@@ -118,19 +118,18 @@ void AltitudeHold()
 	F.AltitudeValid = true;
 
 	if ( F.RangefinderAltitudeValid ) // some hysteresis
-		if (( RangefinderAltitude < 500 ) && !F.UsingRangefinderAlt)
+		if (( RangefinderAltitude < ALT_RF_ENABLE_CM ) && !F.UsingRangefinderAlt)
 			F.UsingRangefinderAlt = true;
 		else
-			if (( RangefinderAltitude > 600 ) && F.UsingRangefinderAlt)
+			if (( RangefinderAltitude > ALT_RF_DISABLE_CM ) && F.UsingRangefinderAlt)
 				F.UsingRangefinderAlt = false;	
 
 	if ( F.UsingRangefinderAlt )
 	{
-		Altitude = RangefinderAltitude;
-		ROC = RangefinderROC;
+		Altitude = RangefinderAltitude / 10; // Decimetres for now
+		ROC = RangefinderROC / 10; // Decimetres/Sec.
 	}
 	else
-
 		if ( F.UsingGPSAlt && F.NavValid )
 		{
 			Altitude = GPSRelAltitude;

@@ -19,14 +19,14 @@
 //    If not, see http://www.gnu.org/licenses/
 	
 	const rom int8 DefaultParams[] = {
-	-24, 			// RollKp, 			01
-	-14, 			// RollKi,			02
-	75, 			// RollKd,			03
+	-22, 			// RollKp, 			01
+	-12, 			// RollKi,			02
+	70, 			// RollKd,			03
 	-1, 			// HorizDampKp,		04c 
 	3, 				// RollIntLimit,	05
-	-24, 			// PitchKp,			06
-	-14, 			// PitchKi,			07
-	75, 			// PitchKd,			08
+	-22, 			// PitchKp,			06
+	-12, 			// PitchKi,			07
+	70, 			// PitchKd,			08
 	32, 			// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	

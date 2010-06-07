@@ -87,7 +87,7 @@ void InitMisc(void)
 	BatteryChargeADC = 0;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
-	IdleThrottle = ((10L*RC_MAXIMUM)/100);
+	IdleThrottle = ((10L*OUT_MAXIMUM)/100);
 	InitialThrottle = RC_MAXIMUM;
 	ESCMin = OUT_MINIMUM;
 	ESCMax = OUT_MAXIMUM;

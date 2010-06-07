@@ -18,7 +18,7 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/.
 
-// Rangefinder (Maxbotix 5V Analog at 1cm/click)
+// Rangefinder (Maxbotix 5V Analog at either 1cm/click or 1"/click)
 
 #include "uavx.h"
 
@@ -34,9 +34,9 @@ void GetRangefinderAltitude(void)
 	if ( F.RangefinderAltitudeValid )
 	{
 		if ( F.RFInInches )
-			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/1000L);
+			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/100L);
 		else
-			Temp = ADC(ADCAltChan) / 10L; // Decimetres for now zzz
+			Temp = ADC(ADCAltChan); // Centimetres
 
 		if ( mS[Clock] > mS[RangefinderROCUpdate] )
 		{

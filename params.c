@@ -168,8 +168,9 @@ void ReadParametersEE(void)
 		for ( i = 0; i < CONTROLS; i++) // make reverse map
 			RMap[Map[P[TxRxType]][i]-1] = i+1;
 	
-		IdleThrottle = ((int16)P[PercentIdleThr] * RC_MAXIMUM )/100L;
-		IdleThrottle = Limit(IdleThrottle, ((10L*RC_MAXIMUM)/100), ((30L*RC_MAXIMUM)/100)); 
+
+		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
+		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 	
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;

@@ -23,7 +23,7 @@
 	//#define UAVX_HW					// New UAVX BOARD
 	//#define LIGHT
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -112,6 +112,9 @@
 #define ALT_MAX_THR_COMP		32L			// Stick units
 
 #define ALT_INT_WINDUP_LIMIT	16L
+
+#define ALT_RF_ENABLE_CM		500L	// altitude below which the rangefiner is selected as the altitude source
+#define ALT_RF_DISABLE_CM		600L	// altitude above which the rangefiner is deselected as the altitude source
 
 // Navigation
 
@@ -1104,7 +1107,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 

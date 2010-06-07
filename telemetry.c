@@ -59,7 +59,7 @@ void SendUAVXNav(void) // 800uS at 40MHz
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 		TxESCu8(UAVXFlightPacketTag);
-		TxESCu8(39 + FLAG_BYTES);
+		TxESCu8(45 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			TxESCu8(F.AllFlags[b]); 
 		
@@ -91,6 +91,9 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi8((int8)FBComp);
 		TxESCi8((int8)DUComp);
 		TxESCi8((int8)AltComp);
+
+		for ( b = 0; b < 6; b++ ) // motor/servo channels
+	 		TxESCu8(PWM[b]);
 		
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
