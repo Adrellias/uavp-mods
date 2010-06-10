@@ -26,6 +26,7 @@ void StartBaroADC(boolean);
 int24 CompensatedPressure(uint16, uint16);
 void GetBaroAltitude(void);
 void BaroTest(void);
+void ZeroBaroOriginAltitude(void);
 void InitBarometer(void);
 
 #define BaroFilter SoftFilter
@@ -156,6 +157,8 @@ int24 CompensatedPressure(uint16 BaroPress, uint16 BaroTemp)
 
 } // CompensatedPressure
 
+static uint8 SimulateCycles = 0;
+
 void GetBaroAltitude(void)
 {
 	static int24 Temp;
@@ -187,18 +190,24 @@ void GetBaroAltitude(void)
 			// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 			// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
 			BaroRelAltitude = -SRS32(CompBaroPressure * (int16)P[BaroScale], 8);
-		
+
 			#ifdef SIMULATE
 			if ( State == InFlight )
 			{
-				FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + AltComp * 5;
-				if ( FakeBaroRelAltitude < 0 ) 
-					FakeBaroRelAltitude = 0;
+				if ( ++SimulateCycles == ALT_UPDATE_HZ )
+				{
+					FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + AltComp;
+					if ( FakeBaroRelAltitude < 0 ) 
+						FakeBaroRelAltitude = 0;
+
+					SimulateCycles = 0;
+				}
+
 				BaroRelAltitude = FakeBaroRelAltitude;
-			}			
+			}				
 			#endif // SIMULATE
 	
-			Temp = ( BaroRelAltitude - BaroRelAltitudeP ) * 20; // 20Hz altitude update
+			Temp = ( BaroRelAltitude - BaroRelAltitudeP ) * ALT_UPDATE_HZ;
 			BaroROC = BaroROCFilter(BaroROC, Temp);
 	
 			BaroRelAltitudeP = BaroRelAltitude;
@@ -255,6 +264,12 @@ BAerror:
 } // BaroTest
 
 #endif // TESTING
+
+void ZeroBaroOriginAltitude(void)
+{
+	OriginBaroPressure = 0;
+	OriginBaroPressure = CompensatedPressure(BaroPressure, BaroTemperature);
+} // ZeroBaroOriginAltitude
 
 void InitBarometer(void)
 {

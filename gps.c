@@ -318,10 +318,7 @@ void ParseGPSSentence(void)
 		
 			FakeGPSLongitude = GPSLongitude;
 			FakeGPSLatitude = GPSLatitude;
-		}
 
-		if ( F.NavValid )
-		{
 			GPSRelAltitude = BaroRelAltitude;
 			GPSROC = BaroROC;
 		}
@@ -382,7 +379,7 @@ void UpdateGPS(void)
 		LEDBlue_ON;
 		LEDRed_OFF;
 		F.GPSSentenceReceived = false;  
-		ParseGPSSentence(); // 7.5mS 18f2520 @ 16MHz
+		ParseGPSSentence(); // 3mS 18f2620 @ 40MHz
 		if ( F.GPSValid )
 		{
 			F.NavComputed = false;

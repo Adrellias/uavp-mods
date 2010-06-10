@@ -44,7 +44,7 @@ void SendLEDs(void)
 
 #else // UAVX_HW
 
-void SendLEDs(void)
+void SendLEDs(void) // 39.3 uS @ 40MHz 
 {
 	static int8	i, s;
 

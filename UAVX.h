@@ -31,6 +31,7 @@
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
+	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
@@ -77,6 +78,8 @@
 #define NAV_RTH_LAND_TIMEOUT_MS	10000L	// mS. Shutdown throttle if descent lasts too long
 
 #define GPS_TIMEOUT_MS			2000L	// mS.
+
+#define	ALT_UPDATE_HZ			20L			// Hz based on 50mS update time for Baro 
 
 // Altitude Hold
 
@@ -668,6 +671,7 @@ extern int24 CompensatedPressure(uint16, uint16);
 extern void ReadBaro(boolean);
 extern void GetBaroAltitude(void);
 extern void BaroTest(void);
+extern void ZeroBaroOriginAltitude(void);
 extern void InitBarometer(void);
 
 #define BARO_ID_BMP085		((uint8)(0x55))
@@ -704,6 +708,7 @@ extern i16u Compass;
 // control.c
 
 extern void DoAltitudeHold(int24, int16);
+extern void UpdateAltitudeSource(void);
 extern void AltitudeHold(void);
 
 extern void LimitRollSum(void);
@@ -1064,7 +1069,7 @@ extern int8 RMap[];
 extern void GetRangefinderAltitude(void);
 extern void InitRangefinder(void);
 
-extern int16 RangefinderAltitude, RangefinderROC;
+extern int16 RangefinderAltitude, RangefinderAltitudeP, RangefinderROC;
 
 //__________________________________________________________________________________________
 

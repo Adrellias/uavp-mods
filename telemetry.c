@@ -87,9 +87,15 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);
 		TxESCi16(DUAcc);
+		#ifdef SIMULATE
+		TxESCi8((int8)NavRCorr);
+		TxESCi8((int8)NavPCorr);
+		TxESCi8((int8)NavYCorr);
+		#else
 		TxESCi8((int8)LRComp);
 		TxESCi8((int8)FBComp);
 		TxESCi8((int8)DUComp);
+		#endif // SIMULATE
 		TxESCi8((int8)AltComp);
 
 		for ( b = 0; b < 6; b++ ) // motor/servo channels

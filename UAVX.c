@@ -99,12 +99,16 @@ void main(void)
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
 					ZeroStats();
 					DoStartingBeepsWithOutput(3);
+ 					ZeroBaroOriginAltitude();
 
 					State = Landed;
 					break;
 				case Landed:
 					if ( DesiredThrottle < IdleThrottle )
+					{
 						SetGPSOrigin();
+						// ZeroBaroOriginAltitude(); // maybe a problem if throttle is closed for more than 5 Sec in flight
+					}
 					else
 					{
 						#ifdef SIMULATE
@@ -161,9 +165,6 @@ void main(void)
 
 			GetRollPitchGyroValues();				// First gyro sample
 			GetHeading();
-			CheckThrottleMoved();
-			GetBaroAltitude();
-			GetRangefinderAltitude();
 			AltitudeHold();
 	
 			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point

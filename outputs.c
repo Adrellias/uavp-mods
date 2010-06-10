@@ -127,7 +127,7 @@ void CheckDemand(int16 CurrThrottle)
 #endif // MULTICOPTER
 
 void MixAndLimitMotors(void)
-{ 	// expensive ~400uSec @16MHz
+{ 	// expensive ~160uSec @ 40MHz
     static int16 Temp, TempElevon, TempElevator;
 
 	if ( DesiredThrottle < IdleThrottle )

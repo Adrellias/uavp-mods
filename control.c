@@ -21,6 +21,7 @@
 #include "uavx.h"
 
 void DoAltitudeHold(int24, int16);
+void UpdateAltitudeSource(void);
 void AltitudeHold(void);
 void InertialDamping(void);
 void LimitRollSum(void);
@@ -65,69 +66,49 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	static int16 NewAltComp, LimBE, AltP, AltI, AltD;
 	static int24 Temp, BE;
 
-	if ( F.AltitudeValid )
-	{
-		#ifdef ALT_SCRATCHY_BEEPER
-		if ( !F.BeeperInUse ) Beeper_TOG;
-		#endif
-		
-		F.NewBaroValue = false;
+	#ifdef ALT_SCRATCHY_BEEPER
+	if ( !F.BeeperInUse ) Beeper_TOG;
+	#endif
 			
-		BE = DesiredAltitude - Altitude;
-		LimBE = Limit(BE, -ALT_BAND_DM, ALT_BAND_DM);
+	BE = DesiredAltitude - Altitude;
+	LimBE = Limit(BE, -ALT_BAND_DM, ALT_BAND_DM);
 		
-		AltP = SRS16(LimBE * (int16)P[AltKp], 4);
-		AltP = Limit(AltP, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
+	AltP = SRS16(LimBE * (int16)P[AltKp], 4);
+	AltP = Limit(AltP, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
 		
-		AltDiffSum += LimBE;
-		AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
-		AltI = SRS16(AltDiffSum * (int16)P[AltKi], 3);
-		AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
+	AltDiffSum += LimBE;
+	AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
+	AltI = SRS16(AltDiffSum * (int16)P[AltKi], 3);
+	AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
 				 
-		AltD = SRS16(ROC * (int16)P[AltKd], 2);
-		AltD = Limit(AltD, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP); 
+	AltD = SRS16(ROC * (int16)P[AltKd], 2);
+	AltD = Limit(AltD, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP); 
 			 
-		if ( ROC < (int16)P[MaxDescentRateDmpS] )
-		{
-			AltDSum += 1;
-			AltDSum = Limit(AltDSum, 0, ALT_MAX_THR_COMP * 2); 
-		}
-		else
-			AltDSum = DecayX(AltDSum, 1);
-			
-		NewAltComp = AltP + AltI + AltD + AltDSum;
-		NewAltComp = Limit(NewAltComp, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
-	
-		AltComp = SlewLimit(AltComp, NewAltComp, 1);
-		
-		#ifdef ALT_SCRATCHY_BEEPER
-		if ( !F.BeeperInUse ) Beeper_TOG;
-		#endif
+	if ( ROC < (int16)P[MaxDescentRateDmpS] )
+	{
+		AltDSum += 1;
+		AltDSum = Limit(AltDSum, 0, ALT_MAX_THR_COMP * 2); 
 	}
 	else
-	{
-		// maintain previous compensation if any
-	}
+		AltDSum = DecayX(AltDSum, 1);
+			
+	NewAltComp = AltP + AltI + AltD + AltDSum;
+	NewAltComp = Limit(NewAltComp, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
+	
+	AltComp = SlewLimit(AltComp, NewAltComp, 1);
+		
+	#ifdef ALT_SCRATCHY_BEEPER
+	if ( !F.BeeperInUse ) Beeper_TOG;
+	#endif
 
 } // DoAltitudeHold	
 
-void AltitudeHold()
-{  // relies upon good cross calibration of baro and rangefinder!!!!!!
-	static int16 Temp;
-	
-	F.AltitudeValid = true;
-
-	if ( F.RangefinderAltitudeValid ) // some hysteresis
-		if (( RangefinderAltitude < ALT_RF_ENABLE_CM ) && !F.UsingRangefinderAlt)
-			F.UsingRangefinderAlt = true;
-		else
-			if (( RangefinderAltitude > ALT_RF_DISABLE_CM ) && F.UsingRangefinderAlt)
-				F.UsingRangefinderAlt = false;	
-
+void UpdateAltitudeSource(void)
+{
 	if ( F.UsingRangefinderAlt )
 	{
-		Altitude = RangefinderAltitude / 10; // Decimetres for now
-		ROC = RangefinderROC / 10; // Decimetres/Sec.
+		Altitude = RangefinderAltitude / 10; 	// Decimetres for now
+		ROC = RangefinderROC / 10; 				// Decimetres/Sec.
 	}
 	else
 		if ( F.UsingGPSAlt && F.NavValid )
@@ -136,40 +117,50 @@ void AltitudeHold()
 			ROC = GPSROC;
 		}
 		else
-			if ( F.BaroAltitudeValid && F.NewBaroValue )
+		{
+			Altitude = BaroRelAltitude;
+			ROC = BaroROC;
+		}
+} // UpdateAltitudeSource
+
+void AltitudeHold()
+{  // relies upon good cross calibration of baro and rangefinder!!!!!!
+	static int16 NewCruiseThrottle;
+
+	GetBaroAltitude();
+
+	if ( F.NewBaroValue ) // sync on Baro which MUST be working
+	{		
+		F.NewBaroValue = false;
+		GetRangefinderAltitude();
+		UpdateAltitudeSource();
+
+		if ( NavState == HoldingStation ) // Using Manual Throttle
+		{
+			CheckThrottleMoved();
+			if ( F.ThrottleMoving )
 			{
-				F.NewBaroValue = false;
-				Altitude = BaroRelAltitude;
-				ROC = BaroROC;
+				F.HoldingAlt = false;
+				DesiredAltitude = Altitude;
 			}
 			else
-				F.AltitudeValid = false; // altitude not available
-
-	if ( F.NavAltitudeHold && ( NavState != HoldingStation ) )
-	{
-		F.HoldingAlt = false;
-		DoAltitudeHold(Altitude, ROC);
-	}
-	else // holding station
-	{
-		F.HoldingAlt = !F.ThrottleMoving; 
-		
-		if( F.HoldingAlt )
-		{
-			if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
 			{
-				Temp = DesiredThrottle + AltComp;
-				CruiseThrottle = HardFilter(CruiseThrottle, Temp);
+				F.HoldingAlt = true;
+				if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
+				{
+					NewCruiseThrottle = DesiredThrottle + AltComp;
+					CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
+				}
+				DoAltitudeHold(Altitude, ROC);
 			}
-		//	else
-		//		DesiredAltitude = Altitude;
+		}
+		else
+		{  // Navigating - using CruiseThrottle
+			F.HoldingAlt = true;
 			DoAltitudeHold(Altitude, ROC);
 		}
-		else	
-		{
-			DesiredAltitude = Altitude;
-			AltComp = Decay1(AltComp);	
-		}
+
+		
 	}
 } // AltitudeHold
 
@@ -364,9 +355,14 @@ void UpdateControls(void)
 
 		MapRC();								// remap channel order for specific Tx/Rx
 
-		DesiredThrottle = RC[ThrottleC];
-		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
-			DesiredThrottle = 0;
+		if ( NavState != HoldingStation )
+			DesiredThrottle = CruiseThrottle;
+		else
+		{
+			DesiredThrottle = RC[ThrottleC];
+			if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
+				DesiredThrottle = 0;
+		}
 
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;

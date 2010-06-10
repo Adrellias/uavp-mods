@@ -57,7 +57,7 @@ boolean I2CWaitClkHi(void)
 
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 1;
-	while( !I2C_SCL )	// timeout wraparound through 255 to 0 1.25mS @ 16MHz
+	while( !I2C_SCL )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
 		if( ++s == 0 ) return (false);
 	return( true );
 } // I2CWaitClkHi

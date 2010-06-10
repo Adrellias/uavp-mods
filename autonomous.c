@@ -101,8 +101,7 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
 	if ( F.NavAltitudeHold )
 	{
-		AltSum = 0;
-		DesiredThrottle = CruiseThrottle;
+		AltSum = 0;	
 		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
 	}
 	else
@@ -143,7 +142,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
 
-	#ifndef TESTING // not used for testing - make space!
+//	#ifndef TESTING // not used for testing - make space!
 
 	static int16 SinHeading, CosHeading;
     static int24 Radius;
@@ -269,7 +268,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		#endif // NAV_WING	
 	}	
 	else
-    #endif // !TESTING
+ //   #endif // !TESTING
 	{
 		// Neutral Zone - no GPS influence
 		NavPCorr = DecayX(NavPCorr, 2);
@@ -321,10 +320,13 @@ void DoNavigation(void)
 			Navigate(OriginLatitude, OriginLongitude);
 			SetDesiredAltitude((int16)P[NavRTHAlt]);
 			if ( F.ReturnHome || F.Navigate )
-			{
-				if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[NavStateTimeout] ) )
-					NavState = Descending;
-			}
+				if ( F.WayPointAchieved ) // check still @ Home
+				{
+					if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[NavStateTimeout] ) )
+						NavState = Descending;
+				}
+				else
+					NavState = ReturningHome;
 			else
 				AcquireHoldPosition();
 			break;
@@ -480,6 +482,7 @@ void DoPPMFailsafe(void)
 		case MonitoringRx:
 			if ( mS[Clock] > mS[FailsafeTimeout] ) 
 			{
+				Stats[RCFailsafesS]++;
 				if ( F.GPSValid && F.CompassValid )
 					mS[NavStateTimeout] = mS[Clock] + ABORT_TIMEOUT_GPS_MS;
 				else

@@ -89,6 +89,8 @@ void ShowStats(void)
 		TxString("I2CESC:     \t");TxVal32((int32)Stats[ESCI2CFailS],0 , 0); TxNextLine();
 	}
 	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
+	TxString("Failsafes:\t");TxVal32((int32)Stats[RCFailsafesS],0,' '); TxNextLine();
+
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
 	TxString("Alt:      \t");TxVal32((int32)Stats[BaroRelAltitudeS], 1, ' '); TxString("M \r\n");
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
@@ -101,8 +103,8 @@ void ShowStats(void)
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 
-	TxString("Sats:     \t");TxVal32((int32)Stats[GPSMinSatsS], 2, ' ');
-	TxVal32((int32)Stats[GPSMaxSatsS], 2, 0); TxNextLine();
+	TxString("Sats:     \t");TxVal32((int32)Stats[GPSMinSatsS], 0, ' ');
+	TxVal32((int32)Stats[GPSMaxSatsS], 0, 0); TxNextLine();
 
 	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
 	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();

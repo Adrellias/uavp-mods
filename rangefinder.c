@@ -25,28 +25,33 @@
 void GetRangefinderAltitude(void);
 void InitRangefinder(void);
 
-int16 RangefinderAltitude, RangefinderROC;
+int16 RangefinderAltitude, RangefinderAltitudeP, RangefinderROC;
 
 void GetRangefinderAltitude(void)
 {
-	static int16 Temp;
+	static int16 Range;
 
 	if ( F.RangefinderAltitudeValid )
 	{
 		if ( F.RFInInches )
-			Temp = (int16)(((int24)ADC(ADCAltChan) * 254L)/100L);
+			RangefinderAltitude = (int16)(((int24)ADC(ADCAltChan) * 254L)/100L);
 		else
-			Temp = ADC(ADCAltChan); // Centimetres
+			RangefinderAltitude = ADC(ADCAltChan); // Centimetres
 
-		if ( mS[Clock] > mS[RangefinderROCUpdate] )
-		{
-			mS[RangefinderROCUpdate] = mS[Clock] + 1000; // 1 Sec.
-			RangefinderROC = Temp - RangefinderAltitude;
-		}
-		RangefinderAltitude = Temp;
+		RangefinderROC = (RangefinderAltitude - RangefinderAltitudeP) * ALT_UPDATE_HZ;
+		RangefinderAltitudeP = RangefinderAltitude;
+
+		if (( RangefinderAltitude < ALT_RF_ENABLE_CM ) && !F.UsingRangefinderAlt)
+			F.UsingRangefinderAlt = true;
+		else
+			if (( RangefinderAltitude > ALT_RF_DISABLE_CM ) && F.UsingRangefinderAlt)
+				F.UsingRangefinderAlt = false;
 	}
 	else
+	{
 		RangefinderAltitude = RangefinderROC = 0;
+		F.UsingRangefinderAlt = false;
+	}
 } // GetRangefinderAltitude
 
 void InitRangefinder(void)
@@ -57,6 +62,7 @@ void InitRangefinder(void)
 
 	Temp = ADC(ADCAltChan);
 	F.RangefinderAltitudeValid = !(Temp > 573) && (Temp < 778); // 2.8-3.8V => supply not RF
+	RangefinderAltitudeP =0;
 	GetRangefinderAltitude();
 
 	#endif // !UAVXLITE
