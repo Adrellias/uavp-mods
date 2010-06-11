@@ -392,7 +392,6 @@ void UpdateGPS(void)
 			NavYCorr = 0;
 			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
-		SendTelemetry();	// Tx overlapped with next GPS packet Rx
 	}
 	else
 		if( mS[Clock] > mS[GPSTimeout] )

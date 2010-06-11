@@ -25,13 +25,13 @@
 	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
-	//#define DEBUG_FORCE_NAV //zzz
+	#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
@@ -42,6 +42,10 @@
 #endif // EXPERIMENTAL
 
 //________________________________________________________________________________________________
+
+// Tests
+
+#define FLIGHT_STATS					// show flight stats
 
 // Airframe
 
@@ -59,32 +63,31 @@
 	#endif
 #endif
 
-// Tests
-#define FLIGHT_STATS					// show flight stats
-
-#define GPS_INC_GROUNDSPEED				// GPS groundspeed is not used for flight but may be of interest
+#define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
 
 // Timeouts and Update Intervals
 
-#define FAILSAFE_TIMEOUT_MS		1000L 	// mS. hold last "good" settings and then restore flight or abort
-#define ABORT_TIMEOUT_GPS_MS	5000L	// mS. go to descend on position hold if GPS valid.
-#define ABORT_TIMEOUT_NO_GPS_MS	0L		// mS. go to descend on position hold if GPS valid.  
-#define ABORT_UPDATE_MS			1000L	// mS. retry period for RC Signal and restore Pilot in Control
+#define FAILSAFE_TIMEOUT_MS			1000L 	// mS. hold last "good" settings and then restore flight or abort
+#define ABORT_TIMEOUT_GPS_MS		5000L	// mS. go to descend on position hold if GPS valid.
+#define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
+#define ABORT_UPDATE_MS				1000L	// mS. retry period for RC Signal and restore Pilot in Control
 
-#define THROTTLE_LOW_DELAY_MS	1000L	// mS. that motor runs at idle after the throttle is closed
-#define THROTTLE_UPDATE_MS		3000L	// mS. constant throttle time for altitude hold
+#define THROTTLE_LOW_DELAY_MS		1000L	// mS. that motor runs at idle after the throttle is closed
+#define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
 
-#define NAV_ACTIVE_DELAY_MS		10000L	// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_LAND_TIMEOUT_MS	10000L	// mS. Shutdown throttle if descent lasts too long
+#define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
+#define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
 
-#define GPS_TIMEOUT_MS			2000L	// mS.
+#define TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
 
-#define	ALT_UPDATE_HZ			20L			// Hz based on 50mS update time for Baro 
+#define GPS_TIMEOUT_MS				2000L	// mS.
+
+#define	ALT_UPDATE_HZ				20L		// Hz based on 50mS update time for Baro 
 
 // Altitude Hold
 
 #define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
-#define ALT_HOLD_MAX_ROC_DMPS	5L			// Must be changing altitude at less than this for alt. hold to be detected
+#define ALT_HOLD_MAX_ROC_DMPS		5L		// Must be changing altitude at less than this for alt. hold to be detected
 
 // Accelerometers
 
@@ -94,7 +97,7 @@
 
 // Gyros
 
-#define ATTITUDE_FF_DIFF		24L			// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
+#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
 
 #define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
 											// unfortunately there seems to be a leak which cause the roll/pitch 
@@ -108,16 +111,16 @@
 // Altitude Hold
 
 // the range within which throttle adjustment is proportional to altitude error
-#define ALT_BAND_DM				50L		// Decimetres
+#define ALT_BAND_DM					50L		// Decimetres
 
-#define LAND_DM					30L		// Decimetres deemed to have landed when below this height
+#define LAND_DM						30L		// Decimetres deemed to have landed when below this height
 
-#define ALT_MAX_THR_COMP		32L			// Stick units
+#define ALT_MAX_THR_COMP			32L		// Stick units
 
-#define ALT_INT_WINDUP_LIMIT	16L
+#define ALT_INT_WINDUP_LIMIT		16L
 
-#define ALT_RF_ENABLE_CM		500L	// altitude below which the rangefiner is selected as the altitude source
-#define ALT_RF_DISABLE_CM		600L	// altitude above which the rangefiner is deselected as the altitude source
+#define ALT_RF_ENABLE_CM			500L	// altitude below which the rangefiner is selected as the altitude source
+#define ALT_RF_DISABLE_CM			600L	// altitude above which the rangefiner is deselected as the altitude source
 
 // Navigation
 
@@ -142,7 +145,7 @@
 	#define NAV_PROXIMITY_ALTITUDE	5L		// Metres
 #else
 	#define NAV_PROXIMITY_RADIUS	5L		// Metres if there are no WPs
-	#define NAV_PROXIMITY_ALTITUDE	3L	// Metres
+	#define NAV_PROXIMITY_ALTITUDE	3L		// Metres
 #endif // NAV_WING
 
 // reads $GPGGA sentence - all others discarded
@@ -159,20 +162,20 @@
 #define NAV_MAX_TRIM				20L		// max trim offset for altitude hold
 #define NAV_CORR_SLEW_LIMIT			1L		// *5L maximum change in roll or pitch correction per GPS update
 
-#define ATTITUDE_HOLD_LIMIT 			8L		// dead zone for roll/pitch stick for position hold
-#define ATTITUDE_HOLD_RESET_INTERVAL	25L		// number of impulse cycles before GPS position is re-acquired
+#define ATTITUDE_HOLD_LIMIT 		8L		// dead zone for roll/pitch stick for position hold
+#define ATTITUDE_HOLD_RESET_INTERVAL 25L	// number of impulse cycles before GPS position is re-acquired
 
-//#define NAV_PPM_FAILSAFE_RTH			// PPM signal failure causes RTH with Signal sampled periodically
+//#define NAV_PPM_FAILSAFE_RTH				// PPM signal failure causes RTH with Signal sampled periodically
 
 // Throttle
 
-#define	THROTTLE_MAX_CURRENT	40L		// Amps total current at full throttle for estimated mAH
-#define	CURRENT_SENSOR_MAX		50L		// Amps range of current sensor - used for estimated consumption - no actual sensor yet.
+#define	THROTTLE_MAX_CURRENT		40L		// Amps total current at full throttle for estimated mAH
+#define	CURRENT_SENSOR_MAX			50L		// Amps range of current sensor - used for estimated consumption - no actual sensor yet.
 #define	THROTTLE_CURRENT_SCALE	((THROTTLE_MAX_CURRENT * 1024L)/(200L * CURRENT_SENSOR_MAX ))
 
-#define THROTTLE_SLEW_LIMIT		0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
-#define THROTTLE_MIDDLE			10  	// throttle stick dead zone for baro 
-#define THROTTLE_MIN_ALT_HOLD	75		// min throttle stick for altitude lock
+#define THROTTLE_SLEW_LIMIT			0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
+#define THROTTLE_MIDDLE				10  	// throttle stick dead zone for baro 
+#define THROTTLE_MIN_ALT_HOLD		75		// min throttle stick for altitude lock
 
 //________________________________________________________________________________________
 
@@ -836,7 +839,7 @@ extern void ReceivingGPSOnly(uint8);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, 
-	GPSTimeout, GPSROCUpdate, LastBattery, ArduStationUpdate, RangefinderROCUpdate, NavActiveTime, 
+	GPSTimeout, GPSROCUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
@@ -1120,7 +1123,7 @@ extern int16 Stats[];
 
 // telemetry.c
 
-extern void SendTelemetry(void);
+extern void CheckTelemetry(void);
 extern void SendUAVXNav(void);
 extern void SendArduStation(void);
 extern void SensorTrace(void);

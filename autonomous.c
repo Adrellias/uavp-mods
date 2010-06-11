@@ -142,7 +142,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
 
-//	#ifndef TESTING // not used for testing - make space!
+	#ifndef TESTING // not used for testing - make space!
 
 	static int16 SinHeading, CosHeading;
     static int24 Radius;
@@ -268,7 +268,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		#endif // NAV_WING	
 	}	
 	else
- //   #endif // !TESTING
+    #endif // !TESTING
 	{
 		// Neutral Zone - no GPS influence
 		NavPCorr = DecayX(NavPCorr, 2);

@@ -27,23 +27,25 @@ void SensorTrace(void);
 
 uint8 UAVXCurrPacketTag;
 
-void SendTelemetry(void)
+void CheckTelemetry(void)
 {
 	#ifndef TESTING // not used for testing - make space!
-	switch ( P[TelemetryType] ) {
+	if ( mS[Clock] > mS[TelemetryUpdate] )
+	{
+		mS[TelemetryUpdate] = mS[Clock] + TELEMETRY_INTERVAL_MS;
+		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry: SendUAVXNav(); break;
 		case ArduStationTelemetry: SendArduStation(); break;
+		case GPSTelemetry: break;
+		} 
 	}
 	#endif // TESTING
-} // SendTelemetry
+} // CheckTelemetry
 
-void SendUAVXNav(void) // 800uS at 40MHz
+void SendUAVXNav(void) // 800uS at 40MHz?
 {
-	uint8 b;
-	i32u Temp;
-
-	// packet must be shorter than GPS shortest valid packet ($GPGGA)
-	// which is ~64 characters - so limit to 48 for byte stuffing expansion?.
+	static uint8 b;
+	static i32u Temp;
 
 	F.TxToBuffer = true;
 
@@ -87,15 +89,9 @@ void SendUAVXNav(void) // 800uS at 40MHz
 		TxESCi16(LRAcc);
 		TxESCi16(FBAcc);
 		TxESCi16(DUAcc);
-		#ifdef SIMULATE
-		TxESCi8((int8)NavRCorr);
-		TxESCi8((int8)NavPCorr);
-		TxESCi8((int8)NavYCorr);
-		#else
 		TxESCi8((int8)LRComp);
 		TxESCi8((int8)FBComp);
 		TxESCi8((int8)DUComp);
-		#endif // SIMULATE
 		TxESCi8((int8)AltComp);
 
 		for ( b = 0; b < 6; b++ ) // motor/servo channels
@@ -115,28 +111,28 @@ void SendUAVXNav(void) // 800uS at 40MHz
 
 		TxESCu8(CurrWP);	
 
-		TxESCi16(BaroROC); // dm/S
+		TxESCi16(BaroROC); 							// dm/S
 		TxESCi24(BaroRelAltitude);
 
-		TxESCi16(RangefinderROC); // dm/S 
-		TxESCi16(RangefinderAltitude); // dm
+		TxESCi16(RangefinderROC); 					// dm/S 
+		TxESCi16(RangefinderAltitude); 				// dm
 
 		TxESCi16(GPSHDilute);
 		TxESCi16(Heading);
 		TxESCi16(WayHeading);
 
 		TxESCi16(GPSVel);
-		TxESCi16(GPSROC); // dm/S
+		TxESCi16(GPSROC); 							// dm/S
 
-		TxESCi24(GPSRelAltitude); // dm
-		TxESCi32(GPSLatitude); // 5 decimal minute units
+		TxESCi24(GPSRelAltitude); 					// dm
+		TxESCi32(GPSLatitude); 						// 5 decimal minute units
 		TxESCi32(GPSLongitude); 
 
 		TxESCi24(DesiredAltitude);
 		TxESCi32(DesiredLatitude); 
 		TxESCi32(DesiredLongitude);
 
-		TxESCi24(mS[NavStateTimeout] - mS[Clock]); // mS
+		TxESCi24(mS[NavStateTimeout] - mS[Clock]);	// mS
 		
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
@@ -186,21 +182,21 @@ void SendArduStation(void)
 
 	F.TxToBuffer = true;
 
-	if ( ++Count == 4 ) // ~2.0mS @ 40MHz
-	{ // some fields suppressed to stay within 80 char GPS sentence length constraint
+	if ( ++Count == 4 ) // ~2.5mS @ 40MHz?
+	{
 		TxString("!!!");
 		TxString("LAT:"); TxVal32(GPSLatitude / 6000, 3, 0);
 		TxString(",LON:"); TxVal32(GPSLongitude / 6000, 3, 0);
 		TxString(",ALT:"); TxVal32(Altitude / 10,0,0);
-		//TxString(",ALH:"); TxVal32(DesiredAltitude / 10, 0, 0);
-		//TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
+		TxString(",ALH:"); TxVal32(DesiredAltitude / 10, 0, 0);
+		TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
 		TxString(",CRS:"); TxVal32(((int24)Heading * 180) / MILLIPI, 0, 0); // scaling to degrees?
 		TxString(",BER:"); TxVal32(((int24)WayHeading * 180) / MILLIPI, 0, 0);
-		//TxString(",SPD:"); TxVal32(GPSVel, 0, 0);
+		TxString(",SPD:"); TxVal32(GPSVel, 0, 0);
 		TxString(",WPN:"); TxVal32(CurrWP,0,0);
-		//TxString(",DST:"); TxVal32(0, 0, 0); // distance to WP
+		TxString(",DST:"); TxVal32(0, 0, 0); // distance to WP
 		TxString(",BTV:"); TxVal32((BatteryVoltsADC * 61)/205, 1, 0);
-		//TxString(",RSP:"); TxVal32(DesiredRoll, 0, 0);
+		TxString(",RSP:"); TxVal32(DesiredRoll, 0, 0);
 
 		Count = 0;
 	}

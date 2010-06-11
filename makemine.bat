@@ -51,7 +51,7 @@ echo Starting makeall uavp > log.lst
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
 
 set PROC=18F2620
-set DBG=TESTING 
+set DBG=TESTING SIMULATE 
 set RX=RX7CH
 set CFG=QUADROCOPTER
 set BRD=UAVPBLACK

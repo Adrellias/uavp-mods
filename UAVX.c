@@ -178,7 +178,7 @@ void main(void)
 			MixAndLimitCam();
 			OutSignals();							// some jitter because sync precedes this
 
-			CheckAlarms();
+			CheckAlarms();			CheckTelemetry();
 
 			SensorTrace();
 		

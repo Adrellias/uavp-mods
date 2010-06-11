@@ -1,5 +1,7 @@
 Starting makeall uavp 
-compiled - UAVX-V1.523gke--40-QUAD.hex 
-compiled - UAVX-V1.523gke-EXP--40-QUAD.hex 
-compiled - UAVX-V1.523gke--40-TEST.hex 
-compiled - UAVX-V1.523gke-EXP--40-TEST.hex 
+compiled - UAVX-V1.526gke--40-QUAD.hex 
+compiled - UAVX-V1.526gke-EXP--40-QUAD.hex 
+compiled - UAVX-V1.526gke--40-TEST.hex 
+compiled - UAVX-V1.526gke-EXP--40-TEST.hex 
+compiled - UAVX-V1.526gke--40-QUAD-SIMULATOR.hex 
+compiled - UAVX-V1.526gke-EXP--40-QUAD-SIMULATOR.hex 

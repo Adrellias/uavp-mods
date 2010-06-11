@@ -275,22 +275,8 @@ void high_isr_handler(void)
 		    } 
 		}
 		#ifndef TESTING // not used for testing - make space!
-		if ( Armed ) // piggy-back telemetry on top of GPS - cannot afford interrupt overheads!
-			switch ( P[TelemetryType] ) {
-			case UAVXTelemetry:
-			case ArduStationTelemetry:
-				if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
-				{
-					TXREG = TxQ.B[TxQ.Head];
-					TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
-				}
-				break;
-			case GPSTelemetry:
-				TXREG = gps_ch;
-				break;
-			case NoTelemetry:
-				break;
-			}
+		if ( Armed && ( P[TelemetryType] == GPSTelemetry) ) // piggyback GPS telemetry on GPS Rx
+			TXREG = gps_ch;
 		#endif // TESTING
 	
 		PIR1bits.RCIF = false;
@@ -313,6 +299,16 @@ void high_isr_handler(void)
 			F.Signal = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
+
+		#ifndef TESTING // not used for testing - make space!
+		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
+			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
+			{
+				TXREG = TxQ.B[TxQ.Head];
+				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
+			}
+		#endif // TESTING
+
 		INTCONbits.TMR0IF = false;	
 	}
 } // high_isr_handler

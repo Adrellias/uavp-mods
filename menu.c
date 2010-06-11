@@ -48,7 +48,9 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"B..Load UAVX hex file\r\n"
 	#ifdef TESTING
 	"C..Compass test\r\n"
+	#endif // TESTING
 	"D..Load default parameter set\r\n"
+	#ifdef TESTING
 	"G..Gyro test\r\n"
 	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
