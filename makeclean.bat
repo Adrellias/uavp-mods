@@ -29,7 +29,7 @@ if exist *.cod del *.cod
 if exist *.i del *.i
 rem if exist *.lst del *.lst
 if exist *.map del *.map
-if exist *.hex del *.hex
+rem if exist *.hex del *.hex
 
 
 
