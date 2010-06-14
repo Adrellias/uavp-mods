@@ -47,7 +47,6 @@ int24	BaroRelAltitude, BaroRelAltitudeP;
 int16	BaroROC;
 i16u	BaroVal;
 uint8	BaroType;
-enum BaroTypes { BaroBMP085, BaroSMD500, BaroMXP4115 };
 
 #ifdef SIMULATE
 int24	FakeBaroRelAltitude;

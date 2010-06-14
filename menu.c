@@ -129,10 +129,11 @@ void ShowSetup(boolean h)
 
 	TxString("Baro ");
 	if ( F.BaroAltitudeValid )
-		if ( BaroType == BARO_ID_BMP085 )
-			TxString("BMP085 ONLINE\r\n");
-		else
-			TxString("SMD500 ONLINE\r\n");
+		switch ( BaroType ) {
+		case BaroMXP4115: TxString("Type:\tMXP4115 ONLINE\r\n"); break;
+		case BaroSMD500: TxString("Type:\tSMD500 ONLINE\r\n"); break;
+		case BaroBMP085: TxString("Type:\tBMP085 ONLINE\r\n"); break;
+	}
 	else
 		TxString("not available\r\n");
 

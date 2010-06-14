@@ -23,7 +23,7 @@
 	//#define UAVX_HW					// UAVX board using I2C hardware
 	//#define LIGHT
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -675,6 +675,8 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 //______________________________________________________________________________________________
 
 // baro.c
+
+enum BaroTypes { BaroBMP085, BaroSMD500, BaroMXP4115 };
 
 extern void StartBoschBaroADC(boolean);
 extern void ReadBoschBaro(void);
