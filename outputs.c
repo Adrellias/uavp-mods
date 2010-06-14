@@ -170,8 +170,6 @@ void MixAndLimitMotors(void)
 	#endif
 } // MixAndLimitMotors
 
-
-
 void MixAndLimitCam(void)
 {
 	#ifndef UAVX_HW_RX_PARALLEL
@@ -344,8 +342,8 @@ OS006:
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = SendESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
-				r += SendESCI2CByte( PWM[m] );
+				r = WriteESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
+				r += WriteESCI2CByte( PWM[m] );
 				ESCI2CFail[m] += r;
 				ESCI2CStop();
 			}
@@ -354,8 +352,8 @@ OS006:
 				for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 				{
 					ESCI2CStart();
-					r = SendESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
-					r += SendESCI2CByte( PWM[m]>>1 );
+					r = WriteESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
+					r += WriteESCI2CByte( PWM[m]>>1 );
 					ESCI2CFail[m] += r;
 					ESCI2CStop();
 				}
@@ -363,11 +361,11 @@ OS006:
 				if ( P[ESCType] == ESCX3D )
 				{
 					ESCI2CStart();
-					r = SendESCI2CByte(0x10);			// one command, 4 data bytes
-					r += SendESCI2CByte( PWM[FrontC] ); 
-					r += SendESCI2CByte( PWM[BackC] );
-					r += SendESCI2CByte( PWM[LeftC] );
-					r += SendESCI2CByte( PWM[RightC] );
+					r = WriteESCI2CByte(0x10);				// one command, 4 data bytes
+					r += WriteESCI2CByte( PWM[FrontC] ); 
+					r += WriteESCI2CByte( PWM[BackC] );
+					r += WriteESCI2CByte( PWM[LeftC] );
+					r += WriteESCI2CByte( PWM[RightC] );
 					ESCI2CFail[0] += r;
 //  other ESCs if a Hexacopter
 					ESCI2CStop();
@@ -441,8 +439,6 @@ OS002:
 
 } // OutSignals
 
-
-
 void InitI2CESCs(void)
 {
 	static uint8 m;
@@ -454,8 +450,8 @@ void InitI2CESCs(void)
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 		{
 			ESCI2CStart();
-			r = SendESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
-			r += SendESCI2CByte(0);
+			r = WriteESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
+			r += WriteESCI2CByte(0);
 			ESCI2CFail[m] += r;  
 			ESCI2CStop();
 		}
@@ -464,8 +460,8 @@ void InitI2CESCs(void)
 			for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = SendESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
-				r += SendESCI2CByte(0);
+				r = WriteESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
+				r += WriteESCI2CByte(0);
 				ESCI2CFail[m] += r; 
 				ESCI2CStop();
 			}
@@ -473,11 +469,11 @@ void InitI2CESCs(void)
 			if ( P[ESCType] == ESCX3D )
 			{
 				ESCI2CStart();
-				r = SendESCI2CByte(0x10);			// one command, 4 data bytes
-				r += SendESCI2CByte(0); 
-				r += SendESCI2CByte(0);
-				r += SendESCI2CByte(0);
-				r += SendESCI2CByte(0);
+				r = WriteESCI2CByte(0x10);			// one command, 4 data bytes
+				r += WriteESCI2CByte(0); 
+				r += WriteESCI2CByte(0);
+				r += WriteESCI2CByte(0);
+				r += WriteESCI2CByte(0);
 				ESCI2CFail[0] += r;
 				ESCI2CStop();
 			}

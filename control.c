@@ -355,15 +355,15 @@ void UpdateControls(void)
 
 		MapRC();								// remap channel order for specific Tx/Rx
 
-		if ( NavState != HoldingStation )
-			DesiredThrottle = CruiseThrottle;
-		else
-		{
+		if ( NavState == HoldingStation )
+		{ // Manual
 			DesiredThrottle = RC[ThrottleC];
 			if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
 				DesiredThrottle = 0;
 		}
-
+		else // Automatic
+			DesiredThrottle = CruiseThrottle;
+	
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;
 			// NavSensitivity set in ReadParametersEE
@@ -395,7 +395,7 @@ void UpdateControls(void)
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )
 				F.Navigate = true;
 
-		if ( (! F.HoldingAlt) && (! (F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+		if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 			DesiredAltitude = Altitude;
 
 		HoldRoll = DesiredRoll - RollTrim;

@@ -33,6 +33,8 @@ void main(void)
 	static int16	Temp;
 	static uint8	b;
 
+static uint8 G[8]; // zzz
+
 	DisableInterrupts;
 
 	InitMisc();
@@ -43,7 +45,8 @@ void main(void)
 	OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
 
-	InitADC();		
+	InitADC();
+	InitI2C(MASTER, SLEW_ON);		
 	InitTimersAndInterrupts();
 	InitParameters();
 

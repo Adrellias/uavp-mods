@@ -79,6 +79,7 @@ void ShowStats(void)
 	TxString("\r\nFlight Statistics\r\n");
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
+	TxString("I2CBus:   \t");TxVal32((int32)Stats[I2CFailS],0,0); TxNextLine();
 	TxString("GPS:      \t");TxVal32((int32)Stats[GPSInvalidS],0,0); TxNextLine();
 	TxString("Acc:      \t");TxVal32((int32)Stats[AccFailS], 0, 0); TxNextLine();
 	TxString("Gyro:     \t");TxVal32((int32)Stats[GyroFailS], 0, 0); TxNextLine();

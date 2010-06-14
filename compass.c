@@ -18,7 +18,7 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/.
 
-// Compass
+// Compass 100KHz I2C
 
 #include "uavx.h"
 
@@ -38,9 +38,9 @@ void GetHeading(void)
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
 		I2CStart();
-		F.CompassMissRead = SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-		Compass.b1 = RecvI2CByte(I2C_ACK);
-		Compass.b0 = RecvI2CByte(I2C_NACK);
+		F.CompassMissRead = WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
+		Compass.b1 = ReadI2CByte(I2C_ACK);
+		Compass.b0 = ReadI2CByte(I2C_NACK);
 		I2CStop();
 
 		Temp = ConvertDDegToMPi(Compass.i16) - CompassOffset;
@@ -81,10 +81,10 @@ void GetCompassParameters(void)
 	uint8 r;
 
 	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('G')  != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(0x74) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(COMPASS_TIME_MS);
@@ -96,16 +96,16 @@ void GetCompassParameters(void)
 		Delay1mS(10);
 
 		I2CStart();
-		if ( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-		if ( SendI2CByte('r')  != I2C_ACK ) goto CTerror;
-		if ( SendI2CByte(r)  != I2C_ACK ) goto CTerror;
+		if ( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+		if ( WriteI2CByte('r')  != I2C_ACK ) goto CTerror;
+		if ( WriteI2CByte(r)  != I2C_ACK ) goto CTerror;
 		I2CStop();
 
 		Delay1mS(10);
 
 		I2CStart();
-		if( SendI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
-		CP[r] = RecvI2CByte(I2C_NACK);
+		if( WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
+		CP[r] = ReadI2CByte(I2C_NACK);
 		I2CStop();
 	}
 
@@ -126,17 +126,17 @@ void DoCompassTest(void)
 	TxString("\r\nCompass test\r\n");
 
 	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('G')  != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(0x74) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(1);
 
 	I2CStart(); // Do Set/Reset now		
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('O')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(7);
@@ -214,16 +214,16 @@ void CalibrateCompass(void)
 	while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button
 
 	I2CStart(); // Do Set/Reset now		
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
-	if( SendI2CByte('O')  != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte('O')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
 	Delay1mS(7);
 
 	// set Compass device to Calibration mode 
 	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
-	if( SendI2CByte('C')  != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte('C')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
 	TxString("\r\nRotate horizontally 720 deg in ~30 sec. - Press any key (x) to FINISH\r\n");
@@ -231,8 +231,8 @@ void CalibrateCompass(void)
 
 	// set Compass device to End-Calibration mode 
 	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
-	if( SendI2CByte('E')  != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte('E')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
 	TxString("\r\nCalibration complete\r\n");
@@ -261,24 +261,24 @@ void InitCompass(void)
 
 	// Set device to Compass mode 
 	I2CStart();
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('G')  != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(0x74) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte(COMP_OPMODE) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMP_OPMODE) != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(1);
 
 	I2CStart(); // save operation mode in EEPROM
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('L')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('L')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(1);
 
 	I2CStart(); // Do Bridge Offset Set/Reset now
-	if( SendI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
-	if( SendI2CByte('O')  != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(50);

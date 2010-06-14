@@ -75,17 +75,17 @@ void InitITG3200(void);
 
 void BlockReadITG3200(void)
 {
-	static uint8 G[6];
+	static uint8 G[6], r;
 	static i16u GX, GY, GZ;
 
 	I2CStart();
-	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
 
-	if( SendI2CByte(ITG_GX_H) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(ITG_GX_H) != I2C_ACK ) goto SGerror;
 
 	I2CStart();	
-	if( SendI2CByte(ITG_R) != I2C_ACK ) goto SGerror;
-	RecvI2CString(G, 6);
+	if( WriteI2CByte(ITG_R) != I2C_ACK ) goto SGerror;
+	r = ReadI2CString(G, 6);
 	I2CStop();
 
 	GX.b0 = G[1]; GX.b1 = G[0];
@@ -111,12 +111,12 @@ uint8 ReadByteITG3200(uint8 address)
 	uint8 data;
 		
 	I2CStart();
-	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
-	if( SendI2CByte(address) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(address) != I2C_ACK ) goto SGerror;
 
 	I2CStart();
-	if( SendI2CByte(ITG_R) != I2C_ACK ) goto SGerror;	
-	data = RecvI2CByte(I2C_NACK);
+	if( WriteI2CByte(ITG_R) != I2C_ACK ) goto SGerror;	
+	data = ReadI2CByte(I2C_NACK);
 	I2CStop();
 	
 	return ( data );
@@ -132,9 +132,9 @@ SGerror:
 void WriteByteITG3200(uint8 address, uint8 data)
 {
 	I2CStart();	// restart
-	if( SendI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
-	if( SendI2CByte(address) != I2C_ACK ) goto SGerror;
-	if(SendI2CByte(data) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(ITG_W) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(address) != I2C_ACK ) goto SGerror;
+	if(WriteI2CByte(data) != I2C_ACK ) goto SGerror;
 	I2CStop();
 	return;
 

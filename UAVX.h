@@ -20,18 +20,18 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	//#define UAVX_HW					// New UAVX BOARD
+	//#define UAVX_HW					// UAVX board using I2C hardware
 	//#define LIGHT
 	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
-	#define DEBUG_FORCE_NAV //zzz
+	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
@@ -40,6 +40,13 @@
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 	//#define DEBUG_FORCE_NAV 			// overrides RTH and forces navigate all WPs
 #endif // EXPERIMENTAL
+
+#ifdef I2C_HW
+	#include "i2c.h"
+#else
+	#define MASTER 		0
+	#define SLEW_ON 	0
+#endif // I2C_HW
 
 //________________________________________________________________________________________________
 
@@ -669,18 +676,25 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 // baro.c
 
-extern void StartBaroADC(boolean);
-extern int24 CompensatedPressure(uint16, uint16);
-extern void ReadBaro(boolean);
+extern void StartBoschBaroADC(boolean);
+extern void ReadBoschBaro(void);
+extern int24 CompensatedBoschPressure(uint16, uint16);
+extern void GetBoschBaroAltitude(void);
+extern void ZeroBoschBaroOriginAltitude(void);
+extern boolean IsBoschBaroActive(void);
+extern void InitBoschBarometer(void);
+
+extern void ReadFreescaleBaro(void);
+extern void GetFreescaleBaroAltitude(void);
+extern void ZeroFreescaleBaroOriginAltitude(void);
+extern boolean IsFreescaleBaroActive(void);
+extern void InitFreescaleBarometer(void);
+
 extern void GetBaroAltitude(void);
-extern void BaroTest(void);
 extern void ZeroBaroOriginAltitude(void);
 extern void InitBarometer(void);
 
-#define BARO_ID_BMP085		((uint8)(0x55))
-
-//extern Baro24Q BaroPressQ;
-//extern Baro24Q BaroTempQ;
+extern void BaroTest(void);
 
 extern int32 OriginBaroPressure, CompBaroPressure;
 extern uint16 BaroPressure, BaroTemperature;
@@ -862,18 +876,19 @@ extern uint16 RCGlitches;
 
 // i2c.c
 
+extern void InitI2C(uint8, uint8);
 extern boolean I2CWaitClkHi(void);
 extern void I2CStart(void);
 extern void I2CStop(void);
-extern uint8 SendI2CByte(uint8);
-extern uint8 RecvI2CByte(uint8);
-extern void RecvI2CString(uint8 *, uint8);
+extern uint8 WriteI2CByte(uint8);
+extern uint8 ReadI2CByte(uint8);
+extern uint8 ReadI2CString(uint8 *, uint8);
 extern uint8 ScanI2CBus(void);
 
 extern boolean ESCWaitClkHi(void);
 extern void ESCI2CStart(void);
 extern void ESCI2CStop(void);
-extern uint8 SendESCI2CByte(uint8);
+extern uint8 WriteESCI2CByte(uint8);
 
 extern void ProgramSlaveAddress(uint8);
 extern void ConfigureESCs(void);
@@ -1115,7 +1130,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 

@@ -18,17 +18,12 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-// SW I2C Routines for Sensors
+// I2C Routines - Compass is the limiting device at 100KHz!
 
 #include "uavx.h"
 
-void I2CStart(void);
-void I2CStop(void);
-boolean I2CWaitClkHi(void);
-uint8 SendI2CByte(uint8);
-uint8 RecvI2CByte(uint8);
-void RecvI2CString(uint8 *, uint8);
-uint8 ScanI2CBus(void);
+#define I2C_IN			1
+#define I2C_OUT			0
 
 #ifdef CLOCK_16MHZ
 #define	I2C_DELAY		Delay10TCY()
@@ -38,18 +33,68 @@ uint8 ScanI2CBus(void);
 #define I2C_DELAY2		Delay1TCY();Delay1TCY()	
 #endif // CLOCK_16MHZ
 
-#define I2C_IN			1
-#define I2C_OUT			0
+void InitI2C(uint8, uint8);
+void I2CStart(void);
+void I2CStop(void);
+boolean I2CWaitClkHi(void); // has timeout
+uint8 ReadI2CByte(uint8);
+uint8 WriteI2CByte(uint8);
+uint8 ScanI2CBus(void);
+uint8 ReadI2CString(uint8 *, uint8);
 
-#define I2C_SDA			PORTBbits.RB6
-#define I2C_DIO			TRISBbits.TRISB6
-#define I2C_SCL			PORTBbits.RB7
-#define I2C_CIO			TRISBbits.TRISB7
+#ifdef I2C_HW
 
-#define I2C_DATA_LOW	{I2C_SDA=0;I2C_DELAY2;I2C_DIO=I2C_OUT;I2C_DELAY2;}
-#define I2C_DATA_FLOAT	{I2C_DIO=I2C_IN;}
-#define I2C_CLK_LOW		{I2C_SCL=0;I2C_DELAY2;I2C_CIO=I2C_OUT;I2C_DELAY2;}
-#define I2C_CLK_FLOAT	{I2C_CIO=I2C_IN;I2C_DELAY2;} 
+void InitI2C(uint8 sync, uint8 slew)
+{
+	OpenI2C(sync, slew);
+} // InitI2C
+
+void I2CStop()
+{
+	StopI2C();
+}  // I2CStop
+
+void I2CStart()
+{
+	StartI2C();
+}  // I2CStop
+
+uint8 ReadI2CByte(uint8 r)
+{
+	static uint8 s;
+
+	s = 0;
+	while ( !DataRdyI2C())
+		if( ++s == 0 ) // timeout wraparound through 255 to 0 0.5mS @ 40MHz
+		{
+			Stats[I2CFailS]++;
+			return ( false);
+		}
+ use r to continue series of byte reads
+	return( ReadI2C());
+}  // ReadI2CByte
+
+uint8 WriteI2CByte(uint8 d)
+{
+	return( WriteI2C(d));
+}  // WriteI2CByte
+
+#else // I2C SW
+
+#define I2C_SDA_SW			PORTBbits.RB6
+#define I2C_DIO_SW			TRISBbits.TRISB6
+#define I2C_SCL_SW			PORTBbits.RB7
+#define I2C_CIO_SW			TRISBbits.TRISB7
+
+#define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DELAY2;I2C_DIO_SW=I2C_OUT;I2C_DELAY2;}
+#define I2C_DATA_FLOAT	{I2C_DIO_SW=I2C_IN;}
+#define I2C_CLK_LOW		{I2C_SCL_SW=0;I2C_DELAY2;I2C_CIO_SW=I2C_OUT;I2C_DELAY2;}
+#define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;I2C_DELAY2;} 
+
+void InitI2C(uint8 sync, uint8 slew)
+{
+	// null for SW I2C
+} // InitI2C
 
 boolean I2CWaitClkHi(void)
 {
@@ -57,8 +102,12 @@ boolean I2CWaitClkHi(void)
 
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 1;
-	while( !I2C_SCL )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
-		if( ++s == 0 ) return (false);
+	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
+		if( ++s == 0 )
+		{
+			Stats[I2CFailS]++;
+			return (false);
+		}
 	return( true );
 } // I2CWaitClkHi
 
@@ -84,7 +133,44 @@ void I2CStop(void)
 
 } // I2CStop 
 
-uint8 SendI2CByte(uint8 d)
+uint8 ReadI2CByte(uint8 r)
+{
+	static uint8 s, d;
+
+	I2C_DATA_FLOAT;
+	d = 0;
+	for ( s = 8; s ; s-- )
+		if( I2CWaitClkHi() )
+		{ 
+			d <<= 1;
+			if( I2C_SDA_SW ) d |= 1;
+			I2C_CLK_LOW;
+ 		}
+		else
+		{
+			Stats[I2CFailS]++;
+			return(false);
+		}
+
+	I2C_SDA_SW = r;
+	I2C_DELAY2;
+	I2C_DIO_SW = I2C_OUT;
+	I2C_DELAY2;
+										
+	if( I2CWaitClkHi() )
+	{
+		I2C_CLK_LOW;
+		return(d);
+	}
+	else
+	{
+		Stats[I2CFailS]++;
+		return(false);
+	}
+	
+} // ReadI2CByte
+
+uint8 WriteI2CByte(uint8 d)
 {
 	static uint8 s;
 
@@ -101,64 +187,43 @@ uint8 SendI2CByte(uint8 d)
 			d <<= 1;
 		}
 		else
-			return(I2C_NACK);	
+		{
+			Stats[I2CFailS]++;
+			return(I2C_NACK);
+		}
 	}
 
 	I2C_DATA_FLOAT;
 	if( I2CWaitClkHi() )
-		s = I2C_SDA;
+		s = I2C_SDA_SW;
 	else
-		return(I2C_NACK);	
+	{
+		Stats[I2CFailS]++;
+		return(I2C_NACK);
+	}	
 
 	I2C_CLK_LOW;
 
 	return(s);
-} // SendI2CByte
+} // WriteI2CByte
 
-uint8 RecvI2CByte(uint8 r)
-{
-	static uint8 s, d;
+#endif // I2C_HW
 
-	I2C_DATA_FLOAT;
-	d = 0;
-	for ( s = 8; s ; s-- )
-		if( I2CWaitClkHi() )
-		{ 
-			d <<= 1;
-			if( I2C_SDA )
-				d |= 1;
-			I2C_CLK_LOW;
- 		}
-		else
-			return(0);
-
-	I2C_SDA = r;
-	I2C_DELAY2;
-	I2C_DIO = I2C_OUT;
-	I2C_DELAY2;
-										
-	if( I2CWaitClkHi() )
-	{
-		I2C_CLK_LOW;
-		return(d);
-	}
-	else
-		return(0);	
-} // RecvI2CByte
-
-void RecvI2CString(uint8 *S, uint8 l)
+uint8 ReadI2CString(uint8 *S, uint8 l)
 {
 	static uint8 d, b;
 
 	for (b = 0; b < l; b++)
 	{
 		if ( b < (l-1) )
-			d = RecvI2CByte(I2C_ACK);
+			d = ReadI2CByte(I2C_ACK);
 		else
-			d = RecvI2CByte(I2C_NACK);
+			d = ReadI2CByte(I2C_NACK);
 		S[b] = d;
 	}
-} // RecvI2CString
+
+	return( 0 );
+} // ReadI2CString
 
 #ifdef TESTING
 
@@ -173,7 +238,7 @@ uint8 ScanI2CBus(void)
 	for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
 	{
 		I2CStart();
-		if( SendI2CByte(s) == I2C_ACK )
+		if( WriteI2CByte(s) == I2C_ACK )
 		{
 			d++;
 			TxString("\t0x");
@@ -191,7 +256,7 @@ uint8 ScanI2CBus(void)
 		for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
 		{
 			ESCI2CStart();
-			if( SendESCI2CByte(s) == I2C_ACK )
+			if( WriteESCI2CByte(s) == I2C_ACK )
 			{
 				d++;
 				TxString("\t0x");
@@ -212,12 +277,14 @@ uint8 ScanI2CBus(void)
 #endif // TESTING
 
 // -----------------------------------------------------------
+
 // SW I2C Routines for ESCs
 
 boolean ESCWaitClkHi(void);
 void ESCI2CStart(void);
 void ESCI2CStop(void);
-uint8 SendESCI2CByte(uint8);
+
+uint8 WriteESCI2CByte(uint8);
 void ProgramSlaveAddress(uint8);
 void ConfigureESCs(void);
 
@@ -266,7 +333,7 @@ void ESCI2CStop(void)
 
 } // ESCI2CStop
 
-uint8 SendESCI2CByte(uint8 d)
+uint8 WriteESCI2CByte(uint8 d)
 {
 	static uint8 s, t;
 
@@ -294,7 +361,7 @@ uint8 SendESCI2CByte(uint8 d)
 	ESC_CLK_LOW;
 										
 	return( s );
-} // SendESCI2CByte
+} // WriteESCI2CByte
 
 #ifdef TESTING
 
@@ -305,7 +372,7 @@ void ProgramSlaveAddress(uint8 addr)
 	for (s = 0x10 ; s < 0xf0 ; s += 2 )
 	{
 		ESCI2CStart();
-		if( SendESCI2CByte(s) == I2C_ACK )
+		if( WriteESCI2CByte(s) == I2C_ACK )
 			if( s == addr )
 			{	// ESC is already programmed OK
 				ESCI2CStop();
@@ -316,8 +383,8 @@ void ProgramSlaveAddress(uint8 addr)
 			}
 			else
 			{
-				if( SendESCI2CByte(0x87) == I2C_ACK ) // select register 0x07
-					if( SendESCI2CByte( addr ) == I2C_ACK ) // new slave address
+				if( WriteESCI2CByte(0x87) == I2C_ACK ) // select register 0x07
+					if( WriteESCI2CByte( addr ) == I2C_ACK ) // new slave address
 					{
 						ESCI2CStop();
 						TxString("\tESC at SLA 0x");
@@ -373,5 +440,7 @@ void ConfigureESCs(void)
 } // ConfigureESCs
 
 #endif // TESTING
+
+
 
 
