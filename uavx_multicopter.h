@@ -27,7 +27,7 @@
 	-22, 			// PitchKp,			06
 	-12, 			// PitchKi,			07
 	70, 			// PitchKd,			08
-	32, 			// AltKp,			09
+	16, 			// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -48,7 +48,7 @@
 	0, 				// MiddleFB,		25c
 	20, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	8, 				// AltKi,			28
+	4, 				// AltKi,			28
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -78,7 +78,7 @@
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
-	-32,			// AltKd			56		
+	-16,			// AltKd			56		
 
 	0,				// 57 - 64 unused currently	
 	

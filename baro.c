@@ -112,17 +112,16 @@ void GetFreescaleBaroAltitude(void)
 
 	if ( mS[Clock] >= mS[BaroUpdate] )
 	{
-		ReadFreescaleBaro(); 			
+		ReadFreescaleBaro();
+		BaroPressure = (int24)BaroVal.u16;			
 		CompBaroPressure -= BaroQ.B[BaroQ.Head];		
-		BaroQ.B[BaroQ.Head] = (int24)BaroVal.u16;
-		CompBaroPressure += (int24)BaroVal.u16; // contains the sum of the last 32 baro samples
-		BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);
-
-// conversion to dM here >>>>>>>>			
+		BaroQ.B[BaroQ.Head] = BaroPressure;
+		CompBaroPressure += BaroPressure; // contains the sum of the last 32 baro samples
+		BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);			
 	
 		// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 		// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-		BaroRelAltitude = -SRS32(CompBaroPressure * (int16)P[BaroScale], 8);
+		BaroRelAltitude = (((int32)4095L*32L - (CompBaroPressure-OriginBaroPressure)) * 2 )/(int16)P[BaroScale];
 
 		#ifdef SIMULATE
 		if ( State == InFlight )
@@ -150,7 +149,7 @@ void GetFreescaleBaroAltitude(void)
 
 void ZeroFreescaleBaroOriginAltitude(void)
 {
-	OriginBaroPressure = BaroPressure;
+	OriginBaroPressure = CompBaroPressure;
 } // ZeroFreescaleBaroOriginAltitude
 
 boolean IsFreescaleBaroActive(void)
@@ -172,7 +171,14 @@ FreescaleInactive:
 
 void InitFreescaleBarometer(void)
 {
+	static uint8 s;
 
+	OriginBaroPressure = 0;	
+	for (s = 0; s <8; s++ )
+	{
+		ReadFreescaleBaro(); 					
+		OriginBaroPressure += (int32)BaroVal.u16;
+	}
 	#ifdef SIMULATE
 	FakeBaroRelAltitude = 0;
 	#endif // SIMULATE
@@ -447,7 +453,14 @@ void BaroTest(void)
 	
 	while ( !F.NewBaroValue )
 		GetBaroAltitude();	
-	F.NewBaroValue = false;	
+	F.NewBaroValue = false;
+
+	if ( BaroType == BaroMXP4115 )
+	{		
+		TxString("OriginADC:\t");	
+		TxVal32((int32)BaroPressure/4,0, ' ');
+		TxString("\r\n");
+	}	
 
 	TxString("Alt.:     \t");	
 	TxVal32((int32)BaroRelAltitude, 1, ' ');
