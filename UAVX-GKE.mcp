@@ -53,6 +53,9 @@ file_025=.
 file_026=.
 file_027=.
 file_028=.
+file_029=.
+file_030=.
+file_031=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -83,6 +86,9 @@ file_025=no
 file_026=no
 file_027=no
 file_028=no
+file_029=no
+file_030=no
+file_031=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -113,6 +119,9 @@ file_025=no
 file_026=no
 file_027=no
 file_028=no
+file_029=no
+file_030=no
+file_031=no
 [FILE_INFO]
 file_000=utils.c
 file_001=accel.c
@@ -143,6 +152,9 @@ file_025=uavx_multicopter.h
 file_026=uavx_aileron.h
 file_027=uavx_elevon.h
 file_028=uavx_helicopter.h
+file_029=gyro_itg3200.h
+file_030=gyro_analog.h
+file_031=gyro_wii.h
 [SUITE_INFO]
 suite_guid={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 suite_state=

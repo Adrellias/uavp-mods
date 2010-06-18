@@ -81,6 +81,9 @@ void ShowPrompt(void)
 
 void ShowRxSetup(void)
 {
+	#ifdef UAVX_HW_RX_PARALLEL
+		TxString("Rx: Parallel Input");
+	#else
 	if ( F.UsingSerialPPM )
 		if ( PPMPosPolarity[TxRxType] )
 			TxString("Serial PPM frame (Positive Polarity)");
@@ -88,6 +91,7 @@ void ShowRxSetup(void)
 			TxString("Serial PPM frame (Negative Polarity)");
 	else
 		TxString("Odd Rx Channels PPM");
+	#endif //UAVX_HW_RX_PARALLEL
 } // ShowRxSetup
 
 void ShowSetup(boolean h)
@@ -203,7 +207,11 @@ void ShowSetup(boolean h)
 				TxString(" OK");
 		TxString(" }");
 	}	
-	TxNextLine();	
+	TxNextLine();
+
+	#ifdef UAVX_HW_RX_PARALLEL
+		// ???
+	#else	
 	
 	#ifdef RX6CH
 	TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
@@ -248,6 +256,8 @@ void ShowSetup(boolean h)
 	else
 		TxString(" Tx Mode 1");
 	TxNextLine();
+
+	#endif // UAVX_HW_RX_PARALLEL
 
 	TxString("Selected parameter set: ");
 	TxChar('0' + ParamSet);	

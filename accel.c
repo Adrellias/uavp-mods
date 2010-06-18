@@ -33,6 +33,45 @@ void GetNeutralAccelerations(void);
 void AccelerometerTest(void);
 void InitAccelerometers(void);
 
+#pragma udata accs
+i16u	Ax, Ay, Az;
+int8	LRIntCorr, FBIntCorr;
+int16	Rl,Pl,Yl;						// PID output values
+int8	NeutralLR, NeutralFB, NeutralDU;
+int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+#pragma udata
+
+#ifdef UAVX_HW
+
+void ReadAccelerations(void)
+{
+ 	// I2C Acc not implemented yet - not used in UAVXLight
+} // ReadAccelerations
+
+void GetNeutralAccelerations(void)
+{
+	// I2C Acc not implemented yet - not used in UAVXLight
+	NeutralLR = NeutralFB = NeutralDU = 0;
+} // GetNeutralAccelerations
+
+#ifdef TESTING
+
+void AccelerometerTest(void)
+{
+	TxString("\r\nAccelerometer test:\r\n");
+	TxString("\r\n(Acc. not active for UAVXLight)\r\n");
+} // AccelerometerTest
+
+#endif // TESTING
+
+void InitAccelerometers(void)
+{
+	F.AccelerationsValid = false;
+	F.AccFailure = true;
+} // InitAccelerometers
+
+#else
+
 //#ifdef CLOCK_16MHZ
 	#define SPI_HI_DELAY Delay10TCY()
 	#define SPI_LO_DELAY Delay10TCY()
@@ -69,14 +108,6 @@ void InitAccelerometers(void);
 #define LISL_DD_CFG		(0x38)
 #define LISL_INCR_ADDR	(0x40)
 #define LISL_READ		(0x80)
-
-#pragma udata accs
-i16u	Ax, Ay, Az;
-int8	LRIntCorr, FBIntCorr;
-int16	Rl,Pl,Yl;						// PID output values
-int8	NeutralLR, NeutralFB, NeutralDU;
-int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
-#pragma udata
 
 void SendCommand(int8 c)
 {
@@ -301,3 +332,4 @@ void InitAccelerometers(void)
 		F.AccFailure = true;
 } // InitAccelerometers
 
+#endif // UAVX_HW

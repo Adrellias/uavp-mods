@@ -112,7 +112,13 @@ void InitTimersAndInterrupts(void)
 	OpenTimer0(TIMER_INT_OFF&T0_16BIT&T0_SOURCE_INT&T0_PS_1_16);	
 	#endif // CLOCK_16MHZ
 	OpenTimer1(T1_8BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
-	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
+
+	#ifdef UAVX_HW_RX_PARALLEL
+		INTCONbits.RBIE = true; // interrupt on change PORTB bits 4..7
+	#else
+		OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
+	#endif // UAVX_HW_RX_PARALLEL
+
 	DoRxPolarity();
 
 	TxQ.Head = TxQ.Tail = 0;
@@ -150,6 +156,15 @@ void low_isr_handler(void)
 #pragma interrupt high_isr_handler
 void high_isr_handler(void)
 {
+	#ifdef UAVX_HW_RX_PARALLEL
+	if( INTCONbits.RBIF )
+	{
+		// need fast timer - add time tagged transitions and bits 4..7 to queue
+		// process pulse widths outside interrupt routine
+
+		INTCONbits.RBIF = false;
+	}
+	#else
 	if( PIR1bits.CCP1IF ) 						// An Rx PPM pulse edge has been detected
 	{
 		CurrEdge = CCPR1;
@@ -213,7 +228,8 @@ void high_isr_handler(void)
 			CCP1CONbits.CCP1M0 ^= 1;
 
 		PIR1bits.CCP1IF = false;
-	}	
+	}
+	#endif // UAVX_HW_RX_PARALLEL	
 
 	if ( PIR1bits.RCIF & PIE1bits.RCIE )			// RCIE enabled for GPS
 	{

@@ -36,9 +36,9 @@
 
 #ifdef EXPERIMENTAL
 	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
-	//#define UAVX_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
+	#define UAVX_HW						// UAVX board using I2C hardware
+	#define UAVX_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
-	//#define DEBUG_FORCE_NAV 			// overrides RTH and forces navigate all WPs
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW

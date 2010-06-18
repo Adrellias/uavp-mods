@@ -81,10 +81,17 @@ uint8 WriteI2CByte(uint8 d)
 
 #else // I2C SW
 
-#define I2C_SDA_SW			PORTBbits.RB6
-#define I2C_DIO_SW			TRISBbits.TRISB6
-#define I2C_SCL_SW			PORTBbits.RB7
-#define I2C_CIO_SW			TRISBbits.TRISB7
+#ifdef UAVX_HW
+	#define I2C_SDA_SW			PORTCbits.RC4
+	#define I2C_DIO_SW			TRISCbits.TRISC4
+	#define I2C_SCL_SW			PORTCbits.RC3
+	#define I2C_CIO_SW			TRISCbits.TRISC3
+#else
+	#define I2C_SDA_SW			PORTBbits.RB6
+	#define I2C_DIO_SW			TRISBbits.TRISB6
+	#define I2C_SCL_SW			PORTBbits.RB7
+	#define I2C_CIO_SW			TRISBbits.TRISB7
+#endif // UAVX_HW
 
 #define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DELAY2;I2C_DIO_SW=I2C_OUT;I2C_DELAY2;}
 #define I2C_DATA_FLOAT	{I2C_DIO_SW=I2C_IN;}

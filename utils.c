@@ -39,12 +39,12 @@ void InitPorts(void)
 {
 	// general ports setup
 	TRISA = 0b00111111;								// all inputs
-	ADCON1 = 0b00000010;							// uses 5V as Vref
+	ADCON1 = 0b00000010;							// Vref used for Rangefinder
 
 	#ifdef UAVX_HW
 		#ifdef UAVX_HW_RX_PARALLEL
 			PORTB = 0b00000000;						// bottom 4 bits motor/servos, top Rx signals
-			TRISB = 0b1110000;
+			TRISB = 0b11110000;
 // zzz ??? interrupts on change		
 		#else
 			PORTB = 0b00000000;						// all outputs - motos/servos LEDs, buzzer
@@ -55,7 +55,6 @@ void InitPorts(void)
 		TRISB = 0b01000000;							// all servo and LED outputs
 	#endif // UAVX_HW
 
-	// RC0 Pin 11 currently unused 
 	PORTC = 0b01100000;								// all outputs to low, except TxD and CS
 	#ifdef HAVE_CUTOFF_SW
 		TRISC = 0b10000101;							// RC7, RC2, RC0 are inputs
@@ -64,6 +63,7 @@ void InitPorts(void)
 	#endif // HAVE_CUTOFF_SW
 
 	SSPSTATbits.CKE = true;							// low logic threshold for LISL
+	
 	INTCON2bits.NOT_RBPU = false;	// WEAK PULLUPS MUST BE ENABLED OTHERWISE I2C VERSIONS 
 									// WITHOUT ESCS INSTALLED WILL PREVENT ANY FURTHER BOOTLOADS
 } // InitPorts

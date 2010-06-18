@@ -149,7 +149,7 @@ void GetFreescaleBaroAltitude(void)
 
 void ZeroFreescaleBaroOriginAltitude(void)
 {
-	OriginBaroPressure = CompBaroPressure;
+	InitFreescaleBarometer();
 } // ZeroFreescaleBaroOriginAltitude
 
 boolean IsFreescaleBaroActive(void)
@@ -167,18 +167,23 @@ FreescaleInactive:
 	I2CStop();
 	return(false);
 
-} // IsBoschBaroActive
+} // IsFreescaleBaroActive
 
 void InitFreescaleBarometer(void)
 {
 	static uint8 s;
 
-	OriginBaroPressure = 0;	
+	CompBaroPressure = 0;
+	BaroQ.Head = 0;	
 	for (s = 0; s <8; s++ )
 	{
-		ReadFreescaleBaro(); 					
-		OriginBaroPressure += (int32)BaroVal.u16;
+		ReadFreescaleBaro();
+		BaroPressure = (int24)BaroVal.u16;
+		BaroQ.B[s] = BaroPressure; 					
+		CompBaroPressure += BaroPressure;
 	}
+	OriginBaroPressure = CompBaroPressure;
+
 	#ifdef SIMULATE
 	FakeBaroRelAltitude = 0;
 	#endif // SIMULATE

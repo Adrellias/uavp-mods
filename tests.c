@@ -54,9 +54,14 @@ void ReceiverTest(void)
 	TxString("\r\n");
 	
 	TxString("\tRAW Rx frame values - neutrals NOT applied\r\n");
-	TxString("\tChannel order is: ");
-	for ( s = 0; s < RC_CONTROLS; s++)
-		TxChar(RxChMnem[RMap[s]-1]);
+
+	#ifdef UAVX_HW_RX_PARALLEL
+
+	#else
+		TxString("\tChannel order is: ");
+		for ( s = 0; s < RC_CONTROLS; s++)
+			TxChar(RxChMnem[RMap[s]-1]);
+	#endif //UAVX_HW_RX_PARALLEL
 
 	if ( F.Signal )
 		TxString("\r\nSignal OK ");
