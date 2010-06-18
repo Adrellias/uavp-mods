@@ -23,7 +23,7 @@
 	//#define UAVX_HW					// UAVX board using I2C hardware
 	//#define LIGHT
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -85,7 +85,9 @@
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
 
-#define TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
+#define UAVX_TELEMETRY_INTERVAL_MS		250L	// mS. emit an interleaved telemetry packet
+#define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
+#define CUSTOM_TELEMETRY_INTERVAL_MS	100L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
 
@@ -1140,9 +1142,10 @@ extern int16 Stats[];
 
 // telemetry.c
 
-extern void CheckTelemetry(void);
-extern void SendUAVXNav(void);
+extern void SendTelemetry(void);
+extern void SendUAVX(void);
 extern void SendArduStation(void);
+extern void SendCustom(void);
 extern void SensorTrace(void);
 
 extern uint8 UAVXCurrPacketTag;
@@ -1152,7 +1155,7 @@ enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPac
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
 	UAVXNavPacketTag};
 
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry };
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry, CustomTelemetry };
 
 //______________________________________________________________________________________________
 

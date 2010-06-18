@@ -19,15 +19,15 @@
 //    If not, see http://www.gnu.org/licenses/
 	
 	const rom int8 DefaultParams[] = {
-	-22, 			// RollKp, 			01
+	-20, 			// RollKp, 			01
 	-12, 			// RollKi,			02
-	70, 			// RollKd,			03
+	50, 			// RollKd,			03
 	-1, 			// HorizDampKp,		04c 
 	3, 				// RollIntLimit,	05
-	-22, 			// PitchKp,			06
+	-20, 			// PitchKp,			06
 	-12, 			// PitchKi,			07
-	70, 			// PitchKd,			08
-	16, 			// AltKp,			09
+	50, 			// PitchKd,			08
+	8, 				// AltKp,			09
 	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
@@ -67,7 +67,7 @@
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
 	56,				// BaroScale		44c
-	UAVXTelemetry,	// TelemetryType	45c
+	TelemetryType,	// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48

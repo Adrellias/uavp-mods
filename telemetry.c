@@ -21,8 +21,9 @@
 #include "uavx.h"
 
 void SendTelemetry(void);
-void SendUAVXNav(void);
+void SendUAVX(void);
 void SendArduStation(void);
+void SendCustom(void);
 void SensorTrace(void);
 
 uint8 UAVXCurrPacketTag;
@@ -32,17 +33,27 @@ void CheckTelemetry(void)
 	#ifndef TESTING // not used for testing - make space!
 	if ( mS[Clock] > mS[TelemetryUpdate] )
 	{
-		mS[TelemetryUpdate] = mS[Clock] + TELEMETRY_INTERVAL_MS;
+		
 		switch ( P[TelemetryType] ) {
-		case UAVXTelemetry: SendUAVXNav(); break;
-		case ArduStationTelemetry: SendArduStation(); break;
+		case UAVXTelemetry: 
+			SendUAVX(); 
+			mS[TelemetryUpdate] = mS[Clock] + UAVX_TELEMETRY_INTERVAL_MS;
+			break;
+		case ArduStationTelemetry: 
+			SendArduStation(); 
+			mS[TelemetryUpdate] = mS[Clock] + ARDU_TELEMETRY_INTERVAL_MS;
+			break;
+		case CustomTelemetry: 
+			SendCustom(); 
+			mS[TelemetryUpdate] = mS[Clock] + CUSTOM_TELEMETRY_INTERVAL_MS;
+			break;
 		case GPSTelemetry: break;
 		} 
 	}
 	#endif // TESTING
 } // CheckTelemetry
 
-void SendUAVXNav(void) // 800uS at 40MHz?
+void SendUAVX(void) // 800uS at 40MHz?
 {
 	static uint8 b;
 	static i32u Temp;
@@ -150,10 +161,13 @@ void SendUAVXNav(void) // 800uS at 40MHz?
 
 	F.TxToBuffer = false; 
 	
-} // SendUAVXNav
+} // SendUAVX
 
 void SendArduStation(void)
 {
+	// This form of telemetry using the flight controller to convert 
+	// to readable text is FAR to EXPENSIVE in computation time.
+
 	static uint8 Count = 0;
 	/*      
 	Definitions of the low rate telemetry (1Hz):
@@ -216,6 +230,47 @@ void SendArduStation(void)
 	#endif // CLOCK_40MHZ
 
 } // SendArduStation
+
+void SendCustom(void)
+{ // user defined telemetry human readable OK for small amounts of data < 1mS
+
+	F.TxToBuffer = true;
+	
+	// insert values here using TxVal32(n, dp, separator)
+	// dp is the scaling to decimal places, separator is 0 or a 'char'
+	// -> 
+
+	// 800uS @ 40MHz
+
+	TxVal32(mS[Clock], 3, HT);
+
+	if ( F.HoldingAlt ) // are we holding
+		TxChar('H');
+	else
+		TxChar('N');
+	TxChar(HT);
+
+	if (F.UsingRangefinderAlt ) // are we using the rangefinder
+		TxChar('R');
+	else
+		TxChar('B');
+	TxChar(HT);
+
+	TxVal32(GPSRelAltitude, 1, HT);
+	TxVal32(BaroRelAltitude, 1, HT);
+	TxVal32(RangefinderAltitude, 2, HT);
+
+	TxVal32(BaroPressure, 0, HT);			// eff. sensor reading
+	TxVal32(BaroTemperature, 0, HT); 		// eff. sensor reading redundant for MXP4115
+	TxVal32(CompBaroPressure, 0, HT);  		// moving sum of last 8 readings
+
+	// <-
+
+	TxChar(CR);
+	TxChar(LF);
+
+	F.TxToBuffer = false;
+} // SendCustom
 
 void SensorTrace(void)
 {
