@@ -59,6 +59,7 @@ int24 DesiredAltitude, Altitude;
 int16 ROC;
 
 boolean	FirstPass;
+int8 BeepTick = 0;
 
 void DoAltitudeHold(int24 Altitude, int16 ROC)
 { // Syncronised to baro intervals independant of active altitude source
@@ -67,7 +68,8 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	static int24 Temp, BE;
 
 	#ifdef ALT_SCRATCHY_BEEPER
-	if ( !F.BeeperInUse ) Beeper_TOG;
+	if ( (--BeepTick <= 0) && !F.BeeperInUse ) 
+		Beeper_TOG;
 	#endif
 			
 	BE = DesiredAltitude - Altitude;
@@ -98,7 +100,11 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	AltComp = SlewLimit(AltComp, NewAltComp, 1);
 		
 	#ifdef ALT_SCRATCHY_BEEPER
-	if ( !F.BeeperInUse ) Beeper_TOG;
+	if ( (BeepTick <= 0) && !F.BeeperInUse) 
+	{
+		Beeper_TOG;
+		BeepTick = 5;
+	}
 	#endif
 
 } // DoAltitudeHold	
