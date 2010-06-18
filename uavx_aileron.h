@@ -36,7 +36,11 @@
 	25, 			// YawLimit,		14
 	2, 				// YawIntLimit,		15
 	0, 				// ConfigBits,		16c
-	4, 				// TimeSlots,		17c
+#ifdef CLOCK_16MHZ
+	8, 				// TimeSlots,		17c
+#else // CLOCK_40MHZ
+	5, 				// TimeSlots,		17c
+#endif // CLOCK_16MHZ
 	48, 			// LowVoltThres,	18c
 	20, 			// CamRollKp,		19
 	45, 			// PercentCruiseThr,20c 
@@ -67,7 +71,7 @@
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
 	56,				// BaroScale		44c
-	TelemetryType,	// TelemetryType	45c
+	UAVXTelemetry,	// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48

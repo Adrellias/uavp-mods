@@ -119,7 +119,7 @@ static uint8 G[8]; // zzz
 						#endif // SIMULATE
 						InitHeading();						
 						LEDCycles = 1;
-						mS[NavActiveTime] = mS[Clock] + NAV_ACTIVE_DELAY_MS;
+						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
 						Stats[RCGlitchesS] = RCGlitches; // start of flight
 						State = InFlight;	
 					}
@@ -129,7 +129,7 @@ static uint8 G[8]; // zzz
 					if ( DesiredThrottle > IdleThrottle )
 						State = InFlight;
 					else
-						if ( mS[Clock] < mS[ThrottleIdleTimeout] )
+						if ( mSClock() < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;
 						else
 						{
@@ -148,19 +148,19 @@ static uint8 G[8]; // zzz
 				case InFlight:
 					F.MotorsArmed = true;
 					if ( F.GPSValid && F.CompassValid  && F.NewCommands 
-						&& ( mS[Clock] > mS[NavActiveTime]) )
+						&& ( mSClock() > mS[NavActiveTime]) )
 						DoNavigation();
 					
 					LEDGame();
 					if ( DesiredThrottle < IdleThrottle )
 					{
-						mS[ThrottleIdleTimeout] = mS[Clock] + THROTTLE_LOW_DELAY_MS;
+						mS[ThrottleIdleTimeout] = mSClock() + THROTTLE_LOW_DELAY_MS;
 						State = Landing;
 					}
 					break;
 				} // Switch State
 				F.LostModel = false;
-				mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
+				mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
 				FailState = MonitoringRx;
 			}
 			else
@@ -169,9 +169,9 @@ static uint8 G[8]; // zzz
 			GetRollPitchGyroValues();				// First gyro sample
 			GetHeading();
 			AltitudeHold();
-	
-			while ( mS[Clock] < mS[UpdateTimeout] ) {}; // cycle sync. point
-			mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
+
+			while ( WaitingForSync ) {};
+			mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
 
 			GetRollPitchGyroValues();				// Second gyro sample
 			

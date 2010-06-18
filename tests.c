@@ -62,7 +62,7 @@ void ReceiverTest(void)
 		TxString("\r\nSignal OK ");
 	else
 		TxString("\r\nSignal FAIL ");	
-	TxVal32(mS[Clock] - mS[LastValidRx], 0, 0);
+	TxVal32(mSClock() - mS[LastValidRx], 0, 0);
 	TxString(" mS ago\r\n");
 	
 	// Be wary as new RC frames are being received as this

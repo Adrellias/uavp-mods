@@ -174,8 +174,8 @@ void CheckAlarms(void)
 	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
 	BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
 
-	BatteryChargeADC += BatteryCurrentADC * (mS[Clock] - mS[LastBattery]);
-	mS[LastBattery] = mS[Clock];
+	BatteryChargeADC += BatteryCurrentADC * (mSClock() - mS[LastBattery]);
+	mS[LastBattery] = mSClock();
 	BatteryChargeUsedmAH = CURRENT_SENSOR_MAX * (BatteryChargeADC/3686400L); // 1024*1000*3600
 
 	Temp = ADC(ADCBattVoltsChan);
@@ -187,7 +187,7 @@ void CheckAlarms(void)
 	if ( F.BeeperInUse )
 	{
 		if( F.LowBatt ) // repeating beep
-			if( ((int16)mS[Clock] & 0x0200) == 0 )
+			if( ((int16)mSClock() & 0x0200) == 0 )
 			{
 				Beeper_ON;
 				LEDRed_ON;
@@ -199,7 +199,7 @@ void CheckAlarms(void)
 			}	
 		else
 			if ( F.LostModel ) // 2 beeps with interval
-				if( ((int16)mS[Clock] & 0x0400) == 0 )
+				if( ((int16)mSClock() & 0x0400) == 0 )
 				{
 					Beeper_ON;
 					LEDRed_ON;
@@ -217,7 +217,7 @@ void CheckAlarms(void)
 	}	
 	#ifdef NAV_ACQUIRE_BEEPER
 	else
-		if ( (State == InFlight) && (!F.AcquireNewPosition) && (mS[Clock] > mS[BeeperTimeout]) )
+		if ( (State == InFlight) && (!F.AcquireNewPosition) && (mSClock() > mS[BeeperTimeout]) )
 			Beeper_OFF;
 	#endif // NAV_ACQUIRE_BEEPER 
 

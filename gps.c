@@ -235,7 +235,7 @@ void SetGPSOrigin(void)
 			FakeGPSLatitude = GPSLatitude;
 		#endif // SIMULATE
 
-		mS[LastGPS] = mS[Clock];
+		mS[LastGPS] = mSClock();
 			
 		Temp = GPSLatitude/600000L; // to degrees * 10
 		Temp = Abs(Temp);
@@ -286,8 +286,8 @@ void ParseGPSSentence(void)
 		// all coordinates in 0.00001 Minutes or ~1.8553cm relative to Origin
 		// There is a lot of jitter in position - could use Kalman Estimator?
 
-		GPSInterval = mS[Clock] - mS[LastGPS];
-		mS[LastGPS] = mS[Clock];
+		GPSInterval = mSClock() - mS[LastGPS];
+		mS[LastGPS] = mSClock();
 
 	    if ( ValidGPSSentences <  GPS_ORIGIN_SENTENCES )
 		{   // repetition to ensure GPGGA altitude is captured
@@ -328,9 +328,9 @@ void ParseGPSSentence(void)
 		if (F.NavValid )
 		{
 			Temp = GPSAltitude - GPSOriginAltitude;	
-			if ( mS[Clock] > mS[GPSROCUpdate] )
+			if ( mSClock() > mS[GPSROCUpdate] )
 			{
-				mS[GPSROCUpdate] = mS[Clock] + 1000; // 1Sec
+				mS[GPSROCUpdate] = mSClock() + 1000; // 1Sec
 				GPSROC = Temp - GPSRelAltitude;
 			}
 			GPSRelAltitude = Temp;
@@ -383,7 +383,7 @@ void UpdateGPS(void)
 		if ( F.GPSValid )
 		{
 			F.NavComputed = false;
-			mS[GPSTimeout] = mS[Clock] + GPS_TIMEOUT_MS;
+			mS[GPSTimeout] = mSClock() + GPS_TIMEOUT_MS;
 		}
 		else
 		{
@@ -394,7 +394,7 @@ void UpdateGPS(void)
 		}
 	}
 	else
-		if( mS[Clock] > mS[GPSTimeout] )
+		if( mSClock() > mS[GPSTimeout] )
 			F.GPSValid = false;
 
 	LEDBlue_OFF;

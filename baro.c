@@ -90,7 +90,7 @@ void ReadFreescaleBaro(void)
 
 	BaroVal.u16 = B0.u16 + B1.u16 + B2.u16 + B3.u16;
 
-	mS[BaroUpdate] = mS[Clock] + FREESCALE_TIME_MS;
+	mS[BaroUpdate] = mSClock() + FREESCALE_TIME_MS;
 
 	return;
 
@@ -110,7 +110,7 @@ void GetFreescaleBaroAltitude(void)
 {
 	static int24 Temp;
 
-	if ( mS[Clock] >= mS[BaroUpdate] )
+	if ( mSClock() >= mS[BaroUpdate] )
 	{
 		ReadFreescaleBaro();
 		BaroPressure = (int24)BaroVal.u16;			
@@ -221,11 +221,11 @@ void StartBoschBaroADC(boolean ReadPressure)
 	if ( ReadPressure )
 	{
 		TempOrPress = BOSCH_PRESS;
-		mS[BaroUpdate] = mS[Clock] + BOSCH_PRESS_TIME_MS;
+		mS[BaroUpdate] = mSClock() + BOSCH_PRESS_TIME_MS;
 	}
 	else
 	{
-		mS[BaroUpdate] = mS[Clock] + BOSCH_TEMP_TIME_MS;	
+		mS[BaroUpdate] = mSClock() + BOSCH_TEMP_TIME_MS;	
 		if ( BaroType == BaroBMP085 )
 			TempOrPress = BOSCH_TEMP_BMP085;
 		else
@@ -303,7 +303,7 @@ void GetBoschBaroAltitude(void)
 {
 	static int24 Temp;
 
-	if ( mS[Clock] >= mS[BaroUpdate] )
+	if ( mSClock() >= mS[BaroUpdate] )
 	{
 		if ( AcquiringPressure )
 		{
@@ -410,13 +410,13 @@ void InitBoschBarometer(void)
 	
 		for ( s = 0; s < 8 ; s++ )
 		{
-			while ( mS[Clock] < mS[BaroUpdate] );
+			while ( mSClock() < mS[BaroUpdate] );
 			ReadBoschBaro(); // Pressure	
 			BaroPressure = BaroVal.u16;
 			
 			AcquiringPressure = !AcquiringPressure;
 			StartBoschBaroADC(AcquiringPressure); // Temperature
-			while ( mS[Clock] < mS[BaroUpdate] );
+			while ( mSClock() < mS[BaroUpdate] );
 			ReadBoschBaro();
 			BaroTemperature = BaroVal.u16;
 			

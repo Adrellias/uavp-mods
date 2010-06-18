@@ -31,25 +31,22 @@ uint8 UAVXCurrPacketTag;
 void CheckTelemetry(void)
 {
 	#ifndef TESTING // not used for testing - make space!
-	if ( mS[Clock] > mS[TelemetryUpdate] )
-	{
-		
+	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry: 
 			SendUAVX(); 
-			mS[TelemetryUpdate] = mS[Clock] + UAVX_TELEMETRY_INTERVAL_MS;
+			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS;
 			break;
 		case ArduStationTelemetry: 
 			SendArduStation(); 
-			mS[TelemetryUpdate] = mS[Clock] + ARDU_TELEMETRY_INTERVAL_MS;
+			mS[TelemetryUpdate] = mSClock() + ARDU_TELEMETRY_INTERVAL_MS;
 			break;
 		case CustomTelemetry: 
 			SendCustom(); 
-			mS[TelemetryUpdate] = mS[Clock] + CUSTOM_TELEMETRY_INTERVAL_MS;
+			mS[TelemetryUpdate] = mSClock() + CUSTOM_TELEMETRY_INTERVAL_MS;
 			break;
 		case GPSTelemetry: break;
 		} 
-	}
 	#endif // TESTING
 } // CheckTelemetry
 
@@ -143,7 +140,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 		TxESCi32(DesiredLatitude); 
 		TxESCi32(DesiredLongitude);
 
-		TxESCi24(mS[NavStateTimeout] - mS[Clock]);	// mS
+		TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
 		
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;
@@ -237,12 +234,13 @@ void SendCustom(void)
 	F.TxToBuffer = true;
 	
 	// insert values here using TxVal32(n, dp, separator)
-	// dp is the scaling to decimal places, separator is 0 or a 'char'
+	// dp is the scaling to decimal places, separator
+	// separator may be a single 'char', HT for tab, or 0 (no space)
 	// -> 
 
-	// 800uS @ 40MHz
+	// ~1mS @ 40MHz
 
-	TxVal32(mS[Clock], 3, HT);
+	TxVal32(mSClock(), 3, HT);
 
 	if ( F.HoldingAlt ) // are we holding
 		TxChar('H');

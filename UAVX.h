@@ -854,6 +854,7 @@ extern void DoRxPolarity(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
+extern uint24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, 
@@ -875,6 +876,7 @@ extern near uint8 ll, tt, gps_ch;
 extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 extern int8	SignalCount;
 extern uint16 RCGlitches;
+extern near boolean WaitingForSync;
 
 //______________________________________________________________________________________________
 

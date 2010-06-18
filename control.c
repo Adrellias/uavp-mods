@@ -452,7 +452,7 @@ void StopMotors(void)
 
 void CheckThrottleMoved(void)
 {
-	if( mS[Clock] < mS[ThrottleUpdate] )
+	if( mSClock() < mS[ThrottleUpdate] )
 		ThrNeutral = DesiredThrottle;
 	else
 	{
@@ -461,7 +461,7 @@ void CheckThrottleMoved(void)
 		ThrHigh = ThrNeutral + THROTTLE_MIDDLE;
 		if ( ( DesiredThrottle <= ThrLow ) || ( DesiredThrottle >= ThrHigh ) )
 		{
-			mS[ThrottleUpdate] = mS[Clock] + THROTTLE_UPDATE_MS;
+			mS[ThrottleUpdate] = mSClock() + THROTTLE_UPDATE_MS;
 			F.ThrottleMoving = true;
 		}
 		else
@@ -477,7 +477,7 @@ void LightsAndSirens(void)
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF; 
-	Timeout = mS[Clock] + 500L; 					// mS.
+	Timeout = mSClock() + 500L; 					// mS.
 	do
 	{
 		ProcessCommand();
@@ -493,7 +493,7 @@ void LightsAndSirens(void)
 				InitialThrottle = DesiredThrottle;
 				DesiredThrottle = 0; 
 				OutSignals();
-				if( mS[Clock] > Timeout )
+				if( mSClock() > Timeout )
 				{
 					if ( F.Navigate || F.ReturnHome )
 					{
@@ -524,9 +524,9 @@ void LightsAndSirens(void)
 	LEDRed_OFF;
 	LEDGreen_ON;
 
-	mS[LastBattery] = mS[Clock];
-	mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS;
-	mS[UpdateTimeout] = mS[Clock] + (uint24)P[TimeSlots];
+	mS[LastBattery] = mSClock();
+	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
+	mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
 
 	F.LostModel = false;
 	FailState = MonitoringRx;

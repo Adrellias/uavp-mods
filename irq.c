@@ -36,6 +36,7 @@ void SyncToTimer0AndDisableInterrupts(void);
 void DoRxPolarity(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
+uint24 mSClock(void);
 void low_isr_handler(void);
 void high_isr_handler(void);
 
@@ -52,6 +53,7 @@ near uint8 	GPSRxState;
 near uint8 	ll, tt, gps_ch;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near uint8	State, FailState;
+near boolean WaitingForSync;
 #pragma udata
 
 int8	SignalCount;
@@ -129,6 +131,15 @@ void InitTimersAndInterrupts(void)
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
+uint24 mSClock(void)
+{ // MUST make locked accesses to the millisecond clock
+	static uint24 m;
+
+	DisableInterrupts;
+	m = mS[Clock];
+	EnableInterrupts;
+	return(m);
+} // mSClock
 
 #pragma interrupt low_isr_handler
 void low_isr_handler(void)
@@ -299,6 +310,7 @@ void high_isr_handler(void)
 			F.Signal = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
+		WaitingForSync =  mS[Clock] < mS[UpdateTimeout];
 
 		#ifndef TESTING // not used for testing - make space!
 		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )

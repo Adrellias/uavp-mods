@@ -114,7 +114,7 @@ void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
 	DesiredAltitude = -500;
-	if ( !InTheAir || (( mS[Clock] > mS[NavStateTimeout]) && (( NavState == Touchdown ) || (FailState == Terminated))) )
+	if ( !InTheAir || (( mSClock() > mS[NavStateTimeout]) && (( NavState == Touchdown ) || (FailState == Terminated))) )
 	{
 		State = Shutdown;
 		StopMotors();
@@ -307,7 +307,7 @@ void DoNavigation(void)
 			#else
 				if ( Altitude < LAND_DM )
 				{
-					mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 					NavState = Touchdown;
 				}
 				else
@@ -322,7 +322,7 @@ void DoNavigation(void)
 			if ( F.ReturnHome || F.Navigate )
 				if ( F.WayPointAchieved ) // check still @ Home
 				{
-					if ( F.UsingRTHAutoDescend && ( mS[Clock] > mS[NavStateTimeout] ) )
+					if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
 						NavState = Descending;
 				}
 				else
@@ -337,7 +337,7 @@ void DoNavigation(void)
 			{
 				if ( F.WayPointAchieved )
 				{
-					mS[NavStateTimeout] = mS[Clock] + NavRTHTimeoutmS;			
+					mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
 					NavState = AtHome;
 				}	
 			}
@@ -349,7 +349,7 @@ void DoNavigation(void)
 			SetDesiredAltitude(WPAltitude);
 			if ( F.Navigate )
 			{
-				if ( F.WayPointAchieved && (mS[Clock] > mS[NavStateTimeout]) )
+				if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
 					if ( CurrWP == NoOfWayPoints )
 					{
 						CurrWP = 1;
@@ -371,7 +371,7 @@ void DoNavigation(void)
 			{
 				if ( F.WayPointAchieved )
 				{
-					mS[NavStateTimeout] = mS[Clock] + WPLoiter;
+					mS[NavStateTimeout] = mSClock() + WPLoiter;
 					NavState = Loitering;
 				}		
 			}
@@ -387,7 +387,7 @@ void DoNavigation(void)
 					#ifdef NAV_ACQUIRE_BEEPER
 					if ( !F.BeeperInUse )
 					{
-						mS[BeeperTimeout] = mS[Clock] + 500L;
+						mS[BeeperTimeout] = mSClock() + 500L;
 						Beeper_ON;				
 					} 
 					#endif // NAV_ACQUIRE_BEEPER
@@ -424,13 +424,13 @@ void DoNavigation(void)
 
 void CheckFailsafeAbort(void)
 {
-	if ( mS[Clock] > mS[AbortTimeout] )
+	if ( mSClock() > mS[AbortTimeout] )
 	{
 		if ( F.Signal )
 		{
 			LEDGreen_ON;
 			mS[NavStateTimeout] = 0;
-			mS[FailsafeTimeout] = mS[Clock] + FAILSAFE_TIMEOUT_MS; // may be redundant?
+			mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS; // may be redundant?
 			NavState = HoldingStation;
 			FailState = MonitoringRx;
 		}
@@ -456,7 +456,7 @@ void DoPPMFailsafe(void)
 			FailsafeHoldPosition();
 			if ( Altitude < LAND_DM )
 			{
-				mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 				NavState = Touchdown;
 				FailState = Terminated;
 			}
@@ -466,13 +466,13 @@ void DoPPMFailsafe(void)
 			FailsafeHoldPosition();
 			F.NavAltitudeHold = true;
 			SetDesiredAltitude((int16)P[NavRTHAlt]);
-			if( mS[Clock] > mS[NavStateTimeout] )
+			if( mSClock() > mS[NavStateTimeout] )
 			{
 				F.LostModel = true;
 				LEDGreen_OFF;
 				LEDRed_ON;
 	
-				mS[NavStateTimeout] = mS[Clock] + NAV_RTH_LAND_TIMEOUT_MS;
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 				NavState = Descending;
 				FailState = Terminating;
 			}
@@ -480,14 +480,14 @@ void DoPPMFailsafe(void)
 				CheckFailsafeAbort();		
 			break;
 		case MonitoringRx:
-			if ( mS[Clock] > mS[FailsafeTimeout] ) 
+			if ( mSClock() > mS[FailsafeTimeout] ) 
 			{
 				Stats[RCFailsafesS]++;
 				if ( F.GPSValid && F.CompassValid )
-					mS[NavStateTimeout] = mS[Clock] + ABORT_TIMEOUT_GPS_MS;
+					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_GPS_MS;
 				else
-					mS[NavStateTimeout] = mS[Clock] + ABORT_TIMEOUT_NO_GPS_MS;
-				mS[AbortTimeout] = mS[Clock] + ABORT_UPDATE_MS;
+					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_NO_GPS_MS;
+				mS[AbortTimeout] = mSClock() + ABORT_UPDATE_MS;
 				FailState = Aborting;
 				// use last "good" throttle; 
 			}
