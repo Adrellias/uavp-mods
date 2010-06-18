@@ -45,6 +45,7 @@ uint24	mS[CompassUpdate+1];
 #pragma udata
 #pragma udata access isrvars
 near int24 	PrevEdge, CurrEdge;
+near uint8 CurrPattern;
 near i16u 	Width, Timer0;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
@@ -55,6 +56,20 @@ near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near uint8	State, FailState;
 near boolean WaitingForSync;
 #pragma udata
+
+#ifdef UAVX_HW_RX_PARALLEL
+#define RX_BUFF_SIZE 32
+#pragma udata rxq
+struct {
+	uint8 Head, Tail;
+	uint16 Entries;
+	struct { 
+		int16 T;
+		uint8 P;
+		} B[RX_BUFF_SIZE];
+	} RxQ;
+#pragma udata
+#endif // UAVX_HW_RX_PARALLEL
 
 int8	SignalCount;
 uint16	RCGlitches;
@@ -115,6 +130,7 @@ void InitTimersAndInterrupts(void)
 
 	#ifdef UAVX_HW_RX_PARALLEL
 		INTCONbits.RBIE = true; // interrupt on change PORTB bits 4..7
+		RxQ.Head = RxQ.Tail = RxQ.Entries = 0;
 	#else
 		OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 	#endif // UAVX_HW_RX_PARALLEL
@@ -161,6 +177,18 @@ void high_isr_handler(void)
 	{
 		// need fast timer - add time tagged transitions and bits 4..7 to queue
 		// process pulse widths outside interrupt routine
+		CurrEdge = CCPR1;
+		CurrPattern = PORTB;
+		if ( CurrEdge < PrevEdge )
+			PrevEdge -= (int24)0x00ffff;		// Deal with wraparound
+
+		Width.i16 = (int16)(CurrEdge - PrevEdge);
+		PrevEdge = CurrEdge;
+
+		RxQ.Head = (RxQ.Head + 1) & (RX_BUFF_SIZE - 1);
+		RxQ.B[RxQ.Tail].T = Width.i16;
+		RxQ.B[RxQ.Tail].P = CurrPattern & 0xf0;
+		RxQ.Entries++;
 
 		INTCONbits.RBIF = false;
 	}

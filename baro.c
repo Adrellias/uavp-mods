@@ -38,7 +38,7 @@ boolean AcquiringPressure;
 #pragma udata baroq
 struct {
 	uint8 Head, Tail;
-	int24 B[8];
+	int24 B[BARO_BUFF_SIZE];
 	} BaroQ;
 #pragma udata
 

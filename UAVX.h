@@ -22,7 +22,7 @@
 #ifndef BATCHMODE
 	//#define UAVX_HW					// UAVX board using I2C hardware
 	//#define LIGHT
-	//#define EXPERIMENTAL
+	#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
@@ -37,7 +37,7 @@
 #ifdef EXPERIMENTAL
 	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
 	#define UAVX_HW						// UAVX board using I2C hardware
-	#define UAVX_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
+	#define UAVX_HW_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // EXPERIMENTAL
 
@@ -869,6 +869,7 @@ extern int16 RC[];
 extern near i16u PPM[];
 extern near int8 PPM_Index;
 extern near int24 PrevEdge, CurrEdge;
+extern near uint8 CurrPattern;
 extern near i16u Width, Timer0;
 extern near int24 PauseTime; // for tests
 extern near uint8 GPSRxState;
