@@ -121,7 +121,7 @@ void GetFreescaleBaroAltitude(void)
 	
 		// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 		// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-		BaroRelAltitude = (((int32)4095L*32L - (CompBaroPressure-OriginBaroPressure)) * 2 )/(int16)P[BaroScale];
+		BaroRelAltitude = -((CompBaroPressure-OriginBaroPressure) * 2 )/(int16)P[BaroScale];
 
 		#ifdef SIMULATE
 		if ( State == InFlight )
@@ -171,11 +171,13 @@ FreescaleInactive:
 
 void InitFreescaleBarometer(void)
 {
-	static uint8 s;
+	uint8 s;
+
+	BaroTemperature = 0;
 
 	CompBaroPressure = 0;
 	BaroQ.Head = 0;	
-	for (s = 0; s <8; s++ )
+	for (s = 0; s < 8; s++ )
 	{
 		ReadFreescaleBaro();
 		BaroPressure = (int24)BaroVal.u16;
