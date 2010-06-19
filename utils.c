@@ -44,8 +44,7 @@ void InitPorts(void)
 	#ifdef UAVX_HW
 		#ifdef UAVX_HW_RX_PARALLEL
 			PORTB = 0b00000000;						// bottom 4 bits motor/servos, top Rx signals
-			TRISB = 0b11110000;
-// zzz ??? interrupts on change		
+			TRISB = 0b11110000;	
 		#else
 			PORTB = 0b00000000;						// all outputs - motos/servos LEDs, buzzer
 			TRISB = 0b00000000;					

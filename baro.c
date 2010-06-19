@@ -34,6 +34,9 @@ void BaroTest(void);
 uint16	BaroPressure, BaroTemperature;
 boolean AcquiringPressure;
 
+#define BARO_MIN_CLIMB		2000	// dM minimum available barometer climb from origin
+#define BARO_MIN_DESCENT	-500	// dM minimum available barometer descent from origin
+
 #define BARO_BUFF_SIZE 8
 #pragma udata baroq
 struct {
@@ -47,6 +50,7 @@ int24	BaroRelAltitude, BaroRelAltitudeP;
 int16	BaroROC;
 i16u	BaroVal;
 uint8	BaroType;
+int16 	BaroClimbAvailable, BaroDescentAvailable;
 
 #ifdef SIMULATE
 int24	FakeBaroRelAltitude;
@@ -58,12 +62,14 @@ uint8 SimulateCycles = 0;
 // Freescale ex Motorola MPX4115 Barometer with ADS7823 12bit ADC
 
 void ReadFreescaleBaro(void);
+int16 FreescaleToDM(int24);
 void GetFreescaleBaroAltitude(void);
 void ZeroFreescaleBaroOriginAltitude(void);
 boolean IsFreescaleBaroActive(void);
 void InitFreescaleBarometer(void);
 
 #define FREESCALE_TIME_MS	49
+#define FREESCALE_MAX_ADC 	4095 // 12 bits
 #define FREESCALE_I2C_ID	0x90 // ADS7823 ADC
 #define FREESCALE_I2C_WR	0x90 // ADS7823 ADC
 #define FREESCALE_I2C_RD	0x91 // ADS7823 ADC
@@ -106,6 +112,11 @@ FSError:
 	return;
 } // ReadFreescaleBaro
 
+int16 FreescaleToDM(int24 p)
+{ // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
+	return(-(p * 2 )/(int16)P[BaroScale]);
+}  // FreescaleToDM
+
 void GetFreescaleBaroAltitude(void)
 {
 	static int24 Temp;
@@ -120,8 +131,7 @@ void GetFreescaleBaroAltitude(void)
 		BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);			
 	
 		// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
-		// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-		BaroRelAltitude = -((CompBaroPressure-OriginBaroPressure) * 2 )/(int16)P[BaroScale];
+		BaroRelAltitude = FreescaleToDM(CompBaroPressure-OriginBaroPressure);
 
 		#ifdef SIMULATE
 		if ( State == InFlight )
@@ -158,7 +168,7 @@ boolean IsFreescaleBaroActive(void)
 	I2CStart();
 	if( WriteI2CByte(FREESCALE_I2C_ID) != I2C_ACK ) goto FreescaleInactive;
 
-	BaroType = BaroMXP4115;
+	BaroType = BaroMPX4115;
 	I2CStop();
 
 	return(true);
@@ -171,7 +181,8 @@ FreescaleInactive:
 
 void InitFreescaleBarometer(void)
 {
-	uint8 s;
+	static uint8 s;
+	static int16 BaroOriginAltitude, MinAltitude;
 
 	BaroTemperature = 0;
 
@@ -185,6 +196,13 @@ void InitFreescaleBarometer(void)
 		CompBaroPressure += BaroPressure;
 	}
 	OriginBaroPressure = CompBaroPressure;
+
+	MinAltitude = FreescaleToDM((int24)FREESCALE_MAX_ADC*4*BARO_BUFF_SIZE);
+	BaroOriginAltitude = FreescaleToDM(OriginBaroPressure);
+	BaroDescentAvailable = MinAltitude - BaroOriginAltitude;
+	BaroClimbAvailable = -BaroOriginAltitude;
+
+	// zzz F.BaroAltitudeValid = (( BaroClimbAvailable >= BARO_MIN_CLIMB ) && (BaroDescentAvailable <= BARO_MIN_DESCENT));
 
 	#ifdef SIMULATE
 	FakeBaroRelAltitude = 0;
@@ -450,29 +468,14 @@ void InitBoschBarometer(void)
 void BaroTest(void)
 {
 	TxString("\r\nAltitude test\r\n");
-	if ( !F.BaroAltitudeValid ) goto BAerror;
 
 	switch ( BaroType ) {
-		case BaroMXP4115: TxString("Type:\tMXP4115\r\n"); break;
+		case BaroMPX4115: TxString("Type:\tMPX4115\r\n"); break;
 		case BaroSMD500: TxString("Type:\tSMD500\r\n"); break;
 		case BaroBMP085: TxString("Type:\tBMP085\r\n"); break;
+		case BaroUnknown: TxString("Type:\tNone\r\n"); break;
 	}
 	
-	while ( !F.NewBaroValue )
-		GetBaroAltitude();	
-	F.NewBaroValue = false;
-
-	if ( BaroType == BaroMXP4115 )
-	{		
-		TxString("OriginADC:\t");	
-		TxVal32((int32)BaroPressure/4,0, ' ');
-		TxString("\r\n");
-	}	
-
-	TxString("Alt.:     \t");	
-	TxVal32((int32)BaroRelAltitude, 1, ' ');
-	TxString("M\r\n");
-
 	TxString("R.Finder: \t");
 	if ( F.RangefinderAltitudeValid )
 	{
@@ -483,6 +486,28 @@ void BaroTest(void)
 	else
 		TxString("no rangefinder\r\n");	
 
+	if ( BaroType == BaroMPX4115 )
+	{
+		TxString("Range   :\t");			
+		TxVal32((int32) BaroDescentAvailable,1, ' ');
+		TxString("-> ");
+		TxVal32((int32) BaroClimbAvailable,1, 'M');
+
+		if (( BaroClimbAvailable < BARO_MIN_CLIMB ) || (BaroDescentAvailable > BARO_MIN_DESCENT))
+			TxString(" Insufficient climb or descent range - inappropriate offset adjustment?");
+		TxString("\r\n");
+	}
+
+	if ( !F.BaroAltitudeValid ) goto BAerror;	
+
+	while ( !F.NewBaroValue )
+		GetBaroAltitude();	
+	F.NewBaroValue = false;
+
+	TxString("Alt.:     \t");	
+	TxVal32((int32)BaroRelAltitude, 1, ' ');
+	TxString("M\r\n");
+
 	return;
 BAerror:
 	TxString("FAIL\r\n");
@@ -492,7 +517,7 @@ BAerror:
 
 void GetBaroAltitude(void)
 {
-	if ( BaroType == BaroMXP4115 )
+	if ( BaroType == BaroMPX4115 )
 		GetFreescaleBaroAltitude();
 	else
 		GetBoschBaroAltitude();
@@ -513,7 +538,7 @@ void GetBaroAltitude(void)
 
 void ZeroBaroOriginAltitude(void)
 {
-	if ( BaroType == BaroMXP4115 )
+	if ( BaroType == BaroMPX4115 )
 		ZeroFreescaleBaroOriginAltitude();
 	else
 		ZeroBoschBaroOriginAltitude();
@@ -522,7 +547,8 @@ void ZeroBaroOriginAltitude(void)
 void InitBarometer(void)
 {
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
-	
+	BaroType = BaroUnknown;
+
 	F.BaroAltitudeValid= true; // optimistic
 
 	if ( IsBoschBaroActive() )

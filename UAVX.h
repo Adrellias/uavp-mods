@@ -22,7 +22,7 @@
 #ifndef BATCHMODE
 	//#define UAVX_HW					// UAVX board using I2C hardware
 	//#define LIGHT
-	#define EXPERIMENTAL
+	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
@@ -678,7 +678,7 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 // baro.c
 
-enum BaroTypes { BaroBMP085, BaroSMD500, BaroMXP4115 };
+enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
 
 extern void StartBoschBaroADC(boolean);
 extern void ReadBoschBaro(void);
@@ -689,6 +689,7 @@ extern boolean IsBoschBaroActive(void);
 extern void InitBoschBarometer(void);
 
 extern void ReadFreescaleBaro(void);
+extern int16 FreescaleToDM(int24);
 extern void GetFreescaleBaroAltitude(void);
 extern void ZeroFreescaleBaroOriginAltitude(void);
 extern boolean IsFreescaleBaroActive(void);

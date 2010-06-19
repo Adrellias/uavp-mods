@@ -33,8 +33,6 @@ void main(void)
 	static int16	Temp;
 	static uint8	b;
 
-static uint8 G[8]; // zzz
-
 	DisableInterrupts;
 
 	InitMisc();

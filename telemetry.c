@@ -259,7 +259,7 @@ void SendCustom(void)
 	TxVal32(RangefinderAltitude, 2, HT);
 
 	TxVal32(BaroPressure, 0, HT);			// eff. sensor reading
-	TxVal32(BaroTemperature, 0, HT); 		// eff. sensor reading redundant for MXP4115
+	TxVal32(BaroTemperature, 0, HT); 		// eff. sensor reading redundant for MPX4115
 	TxVal32(CompBaroPressure, 0, HT);  		// moving sum of last 8 readings
 
 	// <-
