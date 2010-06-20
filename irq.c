@@ -190,6 +190,8 @@ void high_isr_handler(void)
 		RxQ.B[RxQ.Tail].P = CurrPattern & 0xf0;
 		RxQ.Entries++;
 
+		F.RCNewValues = F.Signal = true;
+
 		INTCONbits.RBIF = false;
 	}
 	#else

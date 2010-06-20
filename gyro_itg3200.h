@@ -109,7 +109,7 @@ SGerror:
 	// GYRO FAILURE - FATAL
 	Stats[GyroFailS]++;
 	F.GyroFailure = true;
-	return ( 0 );
+	return (0);
 } // ReadByteITG3200
 
 void WriteByteITG3200(uint8 address, uint8 data)

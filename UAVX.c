@@ -72,7 +72,7 @@ void main(void)
 		EnableInterrupts;
 
 		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed, Gyros ONLINE
-	
+
 		State = Starting;
 
 		while ( Armed )
@@ -83,7 +83,7 @@ void main(void)
 			UpdateGPS();
 			UpdateControls();
 
-			if ( F.Signal && ( FailState == MonitoringRx ) )
+			if ( F.Signal )//zzz&& ( FailState == MonitoringRx ) )
 			{
 				switch ( State  ) {
 				case Starting:	// this state executed once only after arming

@@ -441,8 +441,7 @@ OS002:
 
 void InitI2CESCs(void)
 {
-	static uint8 m;
-	static uint8 r;
+	static uint8 m, r;
 	
 	#ifdef MULTICOPTER
 
