@@ -1143,7 +1143,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 

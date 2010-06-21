@@ -39,17 +39,19 @@ i16u AmbientTemperature;
 
 void GetTemperature(void)
 {
-	static int16 Range;
-
 	if ( WriteI2CByte(TEMPERATURE_I2C_RD) == I2C_ACK)
 	{
 		AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
 		AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
-		SRS16(	AmbientTemperature.i16, 4);
+		AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 4) * 5;
+		if ( AmbientTemperature.i16 > Stats[MaxTempS])
+			Stats[MaxTempS] = AmbientTemperature.i16;
+		else
+			if ( AmbientTemperature.i16 < Stats[MinTempS] )
+				Stats[MinTempS] = AmbientTemperature.i16;
 	}
 	else
 		AmbientTemperature.i16 = 0;
-
 } // GetTemperature
 
 void InitTemperature(void)

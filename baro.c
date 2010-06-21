@@ -492,7 +492,7 @@ void BaroTest(void)
 	}
 	
 	TxString("Ambient :\t");
-	TxVal32((int32)AmbientTemperature.i16 * 5, 1, ' ');
+	TxVal32((int32)AmbientTemperature.i16, 1, ' ');
 	TxString("C\r\n");
 	
 	TxString("R.Finder: \t");

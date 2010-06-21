@@ -42,6 +42,8 @@ void ZeroStats(void)
 	Stats[MaxBaroROCS] = 0;
 	Stats[GPSMinSatsS] = 50;
 	Stats[GPSMaxSatsS] = 0;
+	Stats[MinTempS] = 1000L;
+	Stats[MaxTempS] = 0;
 
 } // ZeroStats
 
@@ -97,6 +99,8 @@ void ShowStats(void)
 	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS], 1, ' '); TxString("M/S\r\n");
 	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();
+	TxString("Ambient:  \t");TxVal32((int32)Stats[MinTempS], 1, ' '); 
+							TxVal32((int32)Stats[MaxTempS], 1, ' '); TxString("C\r\n");
 
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1, ' '); TxString("M\r\n");
