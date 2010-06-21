@@ -76,6 +76,8 @@ static uint8 CP[9];
 
 #define TEST_COMP_OPMODE 0b01110000	// standby mode to reliably read EEPROM
 
+#ifdef TEST_COMPASS_FULL
+
 void GetCompassParameters(void)
 {
 	uint8 r;
@@ -118,6 +120,8 @@ CTerror:
 	TxString("FAIL\r\n");
 } // GetCompassParameters
 
+#endif // TEST_COMPASS_FULL
+
 void DoCompassTest(void)
 {
 	uint16 v, prev;
@@ -138,6 +142,8 @@ void DoCompassTest(void)
 	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
+
+	#ifdef TEST_COMPASS_FULL
 
 	Delay1mS(7);
 
@@ -188,6 +194,8 @@ void DoCompassTest(void)
 		case 3: TxString(" Not-allowed"); break;
 		}
 	TxNextLine(); 
+
+	#endif // TEST_COMPASS_FULL
 
 	InitCompass();
 	if ( !F.CompassValid ) goto CTerror;

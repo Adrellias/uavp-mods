@@ -67,8 +67,9 @@ const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 3,1,2,4,5,7,6 }, 	// Futaba Thr 3 Sw 6/7
 	{ 1,2,3,4,5,6,7 },	// Spektrum DX7/AR6000
 	{ 1,2,3,4,5,6,7 },	// Graupner MX16S
+	{ 5,1,3,4,2,6,7 },	// Spektrum DX6i/AR6200
 
-	{ 1,2,3,4,5,6,7 }	// Custom
+	{ 5,1,3,2,4,6,7 }	// Custom
 	};
 
 // Rx signalling polarity used only for serial PPM frames usually
@@ -87,6 +88,7 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 		false,	// Futaba Thr 3 Sw 6/7
 		true,	// Spektrum DX7/AR6000
 		true,	// Graupner MX16S
+		true,	// Graupner DX6i/AR6200
 		true	// custom Tx/Rx combination
 	};
 

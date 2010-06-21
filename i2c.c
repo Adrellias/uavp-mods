@@ -30,7 +30,10 @@
 #define I2C_DELAY2		
 #else // CLOCK_40MHZ
 #define	I2C_DELAY		Delay10TCYx(3)
-#define I2C_DELAY2		Delay1TCY();Delay1TCY()	
+// ~102KHz (Compass limit!)
+#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
+// ~210KHz
+//#define I2C_DELAY2	
 #endif // CLOCK_16MHZ
 
 void InitI2C(uint8, uint8);
@@ -125,6 +128,7 @@ void I2CStart(void)
 	I2C_DATA_FLOAT;
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
+	I2C_DELAY; // zzz
 	I2C_CLK_LOW;
 } // I2CStart
 

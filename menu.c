@@ -210,7 +210,7 @@ void ShowSetup(boolean h)
 	TxNextLine();
 
 	#ifdef UAVX_HW_RX_PARALLEL
-		// ???
+		TxString("Parallel Rx 4 ACTIVE CHANNELS ONLY - No RTH\r\n");
 	#else	
 	
 	#ifdef RX6CH
@@ -229,7 +229,8 @@ void ShowSetup(boolean h)
 	case DX7AR6200: TxString("Spektrum DX7 & AR6200 {"); break;
 	case CustomTxRx: TxString("Custom {"); break;
 	case FutabaCh3_6_7: TxString("Futaba Th 2 Swap 6&7 {"); break;
-	case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break; 
+	case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break;
+	case DX6iAR6200: TxString("Spektrum DX6i & AR6200 {"); break; 
 	case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 	}
 	
@@ -249,8 +250,8 @@ void ShowSetup(boolean h)
 		}
 	}
 	TxChar('}');
-	if ( P[TxRxType] == DX7AR6200 )
-		TxString(" Mix Rudder to Aux1 ");
+	if (( P[TxRxType] == DX7AR6200 ) || ( P[TxRxType] == DX6iAR6200))
+		TxString(" Mix Rudder to Aux1/Flaps ");
 	if ( F.UsingTxMode2 )
 		TxString(" Tx Mode 2");
 	else
@@ -265,18 +266,18 @@ void ShowSetup(boolean h)
 
 	TxString("\r\nRTH: \r\n");
 	if ( F.UsingGPSAlt )
-		TxString("\tGPS is altitude source\r\n");
+		TxString("\tGPS is alt. source\r\n");
 	else
-		TxString("\tBaro is altitude source\r\n");
+		TxString("\tBaro is alt. source\r\n");
 	if ( F.UsingRTHAutoDescend )
 		TxString("\tAuto descend ENABLED\r\n");
 	else
 		TxString("\tAuto descend disabled\r\n");
 
 	if ( F.NavAltitudeHold )
-		TxString("\tAltitude hold enabled\r\n");
+		TxString("\tAlt. hold enabled\r\n");
 	else
-		TxString("\tAltitude hold DISABLED\r\n");
+		TxString("\tAlt. hold DISABLED\r\n");
 	if ( F.TurnToWP )
 		TxString("\tTurn toward Way Point\r\n");
 	else

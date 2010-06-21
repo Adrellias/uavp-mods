@@ -132,6 +132,8 @@ void GetFreescaleBaroAltitude(void)
 			CompBaroPressure += BaroPressure; // contains the sum of the last 32 baro samples
 			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);			
 		
+			GetTemperature(); // most likely use is in altitude compensation so read here!
+
 			// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 			BaroRelAltitude = FreescaleToDM(CompBaroPressure-OriginBaroPressure);
 	
@@ -359,6 +361,8 @@ void GetBoschBaroAltitude(void)
 	
 			if ( AcquiringPressure )
 			{
+				GetTemperature(); // most likely use is in altitude compensation so read here!
+
 				// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 				// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
 	
@@ -486,6 +490,10 @@ void BaroTest(void)
 		case BaroBMP085: TxString("Type:\tBMP085\r\n"); break;
 		case BaroUnknown: TxString("Type:\tNone\r\n"); break;
 	}
+	
+	TxString("Ambient :\t");
+	TxVal32((int32)AmbientTemperature.i16 * 5, 1, ' ');
+	TxString("C\r\n");
 	
 	TxString("R.Finder: \t");
 	if ( F.RangefinderAltitudeValid )

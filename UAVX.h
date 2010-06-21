@@ -21,24 +21,24 @@
 
 #ifndef BATCHMODE
 	//#define UAVX_HW					// UAVX board using I2C hardware
-	//#define LIGHT
+	//#define UAVXBOARD
+	#define UAVXLIGHTBOARD
+	//#define I2C_HW
 	#define EXPERIMENTAL
-	//#define TESTING						
-	#define RX6CH 					// 6ch Receivers
+	#define TESTING						
+	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
+	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
 	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
-	#define UAVX_HW						// UAVX board using I2C hardware
-	//#define UAVX_HW_RX_PARALLEL			// Uses PORTB.4-PORTB.7 for Rx parallel input
-	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW
@@ -57,7 +57,12 @@
 // Airframe
 
 #if (defined UAVXLIGHTBOARD )
-	#define UAVXLITE
+	#define UAVX_HW
+	#define UAVX_HW_RX_PARALLEL
+#else
+	#if (defined UAVXBOARD )
+		#define UAVX_HW
+	#endif
 #endif
 
 #if ( defined TRICOPTER | defined QUADROCOPTER | defined HEXACOPTER )
@@ -983,7 +988,7 @@ extern void InitParameters(void);
 
 enum TxRxTypes { 
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
-	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, CustomTxRx };
+	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
@@ -1160,6 +1165,15 @@ enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPac
 	UAVXNavPacketTag};
 
 enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry, CustomTelemetry };
+
+//______________________________________________________________________________________________
+
+// temperature.c
+
+extern void GetTemperature(void);
+extern void InitTemperature(void);
+
+extern i16u AmbientTemperature;
 
 //______________________________________________________________________________________________
 

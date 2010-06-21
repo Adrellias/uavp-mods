@@ -59,6 +59,7 @@ void main(void)
 	InitRangefinder();
 	InitGPS();
 	InitNavigation();
+	InitTemperature();
 	InitBarometer();
 
 	ShowSetup(true);
