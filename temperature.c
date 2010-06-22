@@ -39,19 +39,27 @@ i16u AmbientTemperature;
 
 void GetTemperature(void)
 {
-	if ( WriteI2CByte(TEMPERATURE_I2C_RD) == I2C_ACK)
-	{
-		AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
-		AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
-		AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 4) * 5;
-		if ( AmbientTemperature.i16 > Stats[MaxTempS])
-			Stats[MaxTempS] = AmbientTemperature.i16;
-		else
-			if ( AmbientTemperature.i16 < Stats[MinTempS] )
-				Stats[MinTempS] = AmbientTemperature.i16;
-	}
+	I2CStart();
+	if( WriteI2CByte(TEMPERATURE_I2C_RD) != I2C_ACK ) goto Terror;
+	if( WriteI2CByte(TEMPERATURE_I2C_TMP) != I2C_ACK ) goto Terror;
+	AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
+	AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
+	I2CStop();
+
+	AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 4) * 5;
+	if ( AmbientTemperature.i16 > Stats[MaxTempS])
+		Stats[MaxTempS] = AmbientTemperature.i16;
 	else
-		AmbientTemperature.i16 = 0;
+		if ( AmbientTemperature.i16 < Stats[MinTempS] )
+			Stats[MinTempS] = AmbientTemperature.i16;
+
+	return;
+
+Terror:
+	I2CStop();
+
+	AmbientTemperature.i16 = 0;
+	return;
 } // GetTemperature
 
 void InitTemperature(void)
@@ -59,7 +67,7 @@ void InitTemperature(void)
 	static uint8 r;
 
 	I2CStart();
-	r = WriteI2CByte(TEMPERATURE_I2C_ID);
+	r = WriteI2CByte(TEMPERATURE_I2C_WR);
 	r = WriteI2CByte(TEMPERATURE_I2C_CMD);
 	r = WriteI2CByte(TEMPERATURE_I2C_CFG);
 	I2CStop();
