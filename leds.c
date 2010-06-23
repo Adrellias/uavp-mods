@@ -32,10 +32,8 @@ uint8 LEDCycles;
 
 void SendLEDs(void)
 {	
-	#ifndef UAVX_HW_RX_PARALLEL
 	PORTBbits.RB6 = (LEDShadow &  YellowM ) !=0;
 	PORTBbits.RB7 = (LEDShadow &  BlueM ) !=0;
-	#endif // !UAVX_HW_RX_PARALLEL
 	PORTCbits.RC0 = (LEDShadow &  RedM ) !=0;
 	PORTCbits.RC1 = (LEDShadow &  GreenM ) !=0;
 	PORTCbits.RC5 = (LEDShadow &  BeeperM ) !=0;

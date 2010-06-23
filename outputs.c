@@ -172,8 +172,6 @@ void MixAndLimitMotors(void)
 
 void MixAndLimitCam(void)
 {
-	#ifndef UAVX_HW_RX_PARALLEL
-
 	static int16 Cr, Cp;
 
 	// use only roll/pitch angle estimates
@@ -186,7 +184,6 @@ void MixAndLimitCam(void)
 	PWM[CamRollC] = Limit(Cr, 1, OUT_MAXIMUM);
 	PWM[CamPitchC] = Limit(Cp, 1, OUT_MAXIMUM);
 
-	#endif // !UAVX_HW_RX_PARALLEL
 } // MixAndLimitCam
 
 void OutSignals(void)
@@ -318,7 +315,6 @@ OS006:
 	} 
 	else
 	{ // I2C ESCs
-		#ifndef UAVX_HW_RX_PARALLEL
 		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
@@ -332,7 +328,6 @@ OS006:
 		{
 			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
 		}
-		#endif // !UAVX_HW_RX_PARALLEL
 
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
@@ -373,7 +368,6 @@ OS006:
 		#endif //  MULTICOPTER
 	}
 
-	#ifndef UAVX_HW_RX_PARALLEL
 	if ( ServoToggle )
 	{	
 		_asm
@@ -414,9 +408,6 @@ OS002:
 		EnableInterrupts;
 		SyncToTimer0AndDisableInterrupts();
 	}
-	#else // !UAVX_HW_RX_PARALLEL
-		ServoToggle = false;
-	#endif // !UAVX_HW_RX_PARALLEL
 
 	FastWriteTimer0(SaveTimer0.u16);
 	// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?

@@ -42,13 +42,8 @@ void InitPorts(void)
 	ADCON1 = 0b00000010;							// Vref used for Rangefinder
 
 	#ifdef UAVX_HW
-		#ifdef UAVX_HW_RX_PARALLEL
-			PORTB = 0b00000000;						// bottom 4 bits motor/servos, top Rx signals
-			TRISB = 0b11110000;	
-		#else
-			PORTB = 0b00000000;						// all outputs - motos/servos LEDs, buzzer
-			TRISB = 0b00000000;					
-		#endif // UAVX_HW_RX_PARALLEL
+		PORTB = 0b00000000;						// all outputs - motos/servos LEDs, buzzer
+		TRISB = 0b00000000;					
 	#else // UAVX_HW
 		PORTB = 0b11000000;							// all outputs to low, except RB6 & 7 (I2C)!
 		TRISB = 0b01000000;							// all servo and LED outputs

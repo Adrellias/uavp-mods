@@ -212,7 +212,7 @@ void ReadParametersEE(void)
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 
-		BatteryVoltsLimitADC = BatteryVoltsADC = (int16)P[LowVoltThres] << 3; // weird units
+		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
 		
 		ParametersChanged = false;
@@ -328,7 +328,7 @@ void UpdateParamSetChoice(void)
 		{		
 			F.TurnToWP = NewTurnToWP;
 			LEDBlue_ON;
-			if ( F.TurnToWP )
+		// do it either way	if ( F.TurnToWP )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;

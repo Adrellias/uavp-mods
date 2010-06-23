@@ -55,13 +55,9 @@ void ReceiverTest(void)
 	
 	TxString("\tRAW Rx frame values - neutrals NOT applied\r\n");
 
-	#ifdef UAVX_HW_RX_PARALLEL
-
-	#else
-		TxString("\tChannel order is: ");
-		for ( s = 0; s < RC_CONTROLS; s++)
-			TxChar(RxChMnem[RMap[s]-1]);
-	#endif //UAVX_HW_RX_PARALLEL
+	TxString("\tChannel order is: ");
+	for ( s = 0; s < RC_CONTROLS; s++)
+		TxChar(RxChMnem[RMap[s]-1]);
 
 	if ( F.Signal )
 		TxString("\r\nSignal OK ");
@@ -174,17 +170,15 @@ void BatteryTest(void)
 {
 	int32 v;
 
-	TxString("\r\nBattery test");
+	TxString("\r\nBattery test\r\n");
 
 	// Battery
-	v = ((int24)ADC(ADCBattVoltsChan)* 61L + 102L)/205L; // resistive divider
+	v = ((int24)ADC(ADCBattVoltsChan) * 278L )/1024L; // resistive divider 
 	TxString("Batt:\t");
 	TxVal32(v, 1, 'V');
-	if ( v < 90 )
-		TxString(" ** LIPO ALARM < 9V ** ");
-	else	
-	if ( v < 95 )
-		TxString(" ** LOW < 9.5V ** ");
+	TxString(" Limit > ");
+	v = ((int24)BatteryVoltsLimitADC * 278L )/1024L; // resistive divider ADCBattVoltsChan
+	TxVal32(v, 1, 'V');
 	TxNextLine();
 	
 } // BatteryTest

@@ -52,7 +52,7 @@
 	0, 				// MiddleFB,		25c
 	20, 			// CamPitchKp,		26
 	24, 			// CompassKp,		27
-	4, 				// AltKi,			28
+	8, 				// AltKi,			28
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
 
@@ -82,7 +82,7 @@
 	3,				// CompassOffsetQtr 53c
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
-	-16,			// AltKd			56		
+	-4,				// AltKd			56		
 
 	0,				// 57 - 64 unused currently	
 	

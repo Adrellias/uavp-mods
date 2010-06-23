@@ -45,7 +45,7 @@ uint24	mS[CompassUpdate+1];
 #pragma udata
 #pragma udata access isrvars
 near int24 	PrevEdge, CurrEdge;
-near uint8 CurrPattern;
+near uint8 	Intersection, PrevPattern, CurrPattern;
 near i16u 	Width, Timer0;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
@@ -56,20 +56,6 @@ near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near uint8	State, FailState;
 near boolean WaitingForSync;
 #pragma udata
-
-#ifdef UAVX_HW_RX_PARALLEL
-#define RX_BUFF_SIZE 32
-#pragma udata rxq
-struct {
-	uint8 Head, Tail;
-	uint16 Entries;
-	struct { 
-		int16 T;
-		uint8 P;
-		} B[RX_BUFF_SIZE];
-	} RxQ;
-#pragma udata
-#endif // UAVX_HW_RX_PARALLEL
 
 int8	SignalCount;
 uint16	RCGlitches;
@@ -127,16 +113,10 @@ void InitTimersAndInterrupts(void)
 	OpenTimer0(TIMER_INT_OFF&T0_16BIT&T0_SOURCE_INT&T0_PS_1_16);	
 	#endif // CLOCK_16MHZ
 	OpenTimer1(T1_8BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
-
-	#ifdef UAVX_HW_RX_PARALLEL
-		INTCONbits.RBIE = true; // interrupt on change PORTB bits 4..7
-		RxQ.Head = RxQ.Tail = RxQ.Entries = 0;
-	#else
-		OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
-	#endif // UAVX_HW_RX_PARALLEL
+	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 
 	DoRxPolarity();
-
+	
 	TxQ.Head = TxQ.Tail = 0;
 
 	for (i = Clock; i<= CompassUpdate; i++)
@@ -172,29 +152,6 @@ void low_isr_handler(void)
 #pragma interrupt high_isr_handler
 void high_isr_handler(void)
 {
-	#ifdef UAVX_HW_RX_PARALLEL
-	if( INTCONbits.RBIF )
-	{
-		// need fast timer - add time tagged transitions and bits 4..7 to queue
-		// process pulse widths outside interrupt routine
-		CurrEdge = CCPR1;
-		CurrPattern = PORTB;
-		if ( CurrEdge < PrevEdge )
-			PrevEdge -= (int24)0x00ffff;		// Deal with wraparound
-
-		Width.i16 = (int16)(CurrEdge - PrevEdge);
-		PrevEdge = CurrEdge;
-
-		RxQ.Head = (RxQ.Head + 1) & (RX_BUFF_SIZE - 1);
-		RxQ.B[RxQ.Tail].T = Width.i16;
-		RxQ.B[RxQ.Tail].P = CurrPattern & 0xf0;
-		RxQ.Entries++;
-
-		F.RCNewValues = F.Signal = true;
-
-		INTCONbits.RBIF = false;
-	}
-	#else
 	if( PIR1bits.CCP1IF ) 						// An Rx PPM pulse edge has been detected
 	{
 		CurrEdge = CCPR1;
@@ -259,7 +216,6 @@ void high_isr_handler(void)
 
 		PIR1bits.CCP1IF = false;
 	}
-	#endif // UAVX_HW_RX_PARALLEL	
 
 	if ( PIR1bits.RCIF & PIE1bits.RCIE )			// RCIE enabled for GPS
 	{

@@ -20,10 +20,6 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	//#define UAVX_HW					// UAVX board using I2C hardware
-	//#define UAVXBOARD
-	#define UAVXLIGHTBOARD
-	//#define I2C_HW
 	#define EXPERIMENTAL
 	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
@@ -34,11 +30,12 @@
 	//#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
+	//#define I2C_HW
 	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
-	#define GYRO_ITG3200				// Experimental I2C 3-axis Gyro
+	#define UAVXBOARD
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW
@@ -56,13 +53,9 @@
 
 // Airframe
 
-#if (defined UAVXLIGHTBOARD )
+#if (defined UAVXBOARD )
+	#define GYRO_ITG3200
 	#define UAVX_HW
-	#define UAVX_HW_RX_PARALLEL
-#else
-	#if (defined UAVXBOARD )
-		#define UAVX_HW
-	#endif
 #endif
 
 #if ( defined TRICOPTER | defined QUADROCOPTER | defined HEXACOPTER )
@@ -875,7 +868,7 @@ extern int16 RC[];
 extern near i16u PPM[];
 extern near int8 PPM_Index;
 extern near int24 PrevEdge, CurrEdge;
-extern near uint8 CurrPattern;
+extern near uint8 Intersection, PrevPattern, CurrPattern;
 extern near i16u Width, Timer0;
 extern near int24 PauseTime; // for tests
 extern near uint8 GPSRxState;
