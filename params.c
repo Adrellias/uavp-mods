@@ -101,7 +101,7 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 // 6 Aux1
 // 7 Aux2
 
-uint8	ParamSet;
+int8	ParamSet;
 boolean ParametersChanged;
 int8 RMap[CONTROLS];
 #pragma udata params
@@ -110,7 +110,7 @@ int8 P[MAX_PARAMETERS];
 
 void MapRC(void)
 {  // re-maps captured PPM to Rx channel sequence
-	static uint8 c;
+	static int8 c;
 	static int16 LastThrottle, Temp, i; 
 
 	LastThrottle = RC[ThrottleC];
@@ -133,7 +133,7 @@ void MapRC(void)
 
 void ReadParametersEE(void)
 {
-	uint8 i,b;
+	int8 i,b;
 	static uint16 a;
 
 	if ( ParametersChanged )
@@ -222,7 +222,7 @@ void ReadParametersEE(void)
 
 void WriteParametersEE(uint8 s)
 {
-	uint8 p;
+	int8 p;
 	uint8 b;
 	uint16 addr;
 	
@@ -233,7 +233,7 @@ void WriteParametersEE(uint8 s)
 
 void UseDefaultParameters(void)
 { // loads a representative set of initial parameters as a base for tuning
-	uint8 p;
+	int8 p;
 
 	for ( p = 0; p < MAX_PARAMETERS; p++ )
 		P[p] = DefaultParams[p];
@@ -252,7 +252,8 @@ void UpdateParamSetChoice(void)
 {
 	#define STICK_WINDOW 30
 
-	int8 NewParamSet, NewNavAltitudeHold, NewTurnToWP, Selector;
+	int8 NewParamSet, Selector;
+	uint8 NewNavAltitudeHold, NewTurnToWP;
 
 	NewParamSet = ParamSet;
 	NewNavAltitudeHold = F.NavAltitudeHold;

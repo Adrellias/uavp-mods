@@ -33,7 +33,7 @@ void NavGainSchedule(int16);
 void DoNavigation(void);
 void DoPPMFailsafe(void);
 void UAVXNavCommand(void);
-void GetWayPointEE(uint8);
+void GetWayPointEE(int8);
 void InitNavigation(void);
 
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
@@ -76,7 +76,7 @@ typedef union {
 uint8 BufferEE[256];
 #pragma udata
 		
-uint8 	CurrWP;
+int8 	CurrWP;
 int8 	NoOfWayPoints;
 int16	WPAltitude;
 int32 	WPLatitude, WPLongitude;
@@ -86,7 +86,7 @@ int16	WayHeading;
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude, CompassOffset;
 int24 	NavRTHTimeoutmS;
 
-uint8 	NavState;
+int8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
 int16 	AltSum;
 
@@ -505,7 +505,7 @@ void DoPPMFailsafe(void)
 void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
 
-	static uint16 b;
+	static int16 b;
 	static uint8 c, d, csum;
 
 	c = RxChar();
@@ -523,7 +523,7 @@ void UAVXNavCommand(void)
 			csum ^= d;
 			BufferEE[b] = d;
 		}
-		if ( csum == 0 )
+		if ( csum == (uint8)0 )
 		{
 			for ( b = 0; b < 256; b++)
 				WriteEE(NAV_ADDR_EE + b, BufferEE[b]);
@@ -570,7 +570,7 @@ void UAVXNavCommand(void)
 
 
 
-void GetWayPointEE(uint8 wp)
+void GetWayPointEE(int8 wp)
 { 
 	static uint16 w;
 	

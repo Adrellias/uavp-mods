@@ -108,7 +108,7 @@ void TxNextLine(void)
 
 void TxNibble(uint8 v)
 {
-	if ( v > 9)
+	if ( v > (uint8)9)
 		TxChar('A' + v - 10);
 	else
 		TxChar('0' + v);
@@ -275,7 +275,7 @@ void TxESCu8(uint8 ch)
 
 void TxESCi8(int8 b)
 {
-  if ((b==SOH)||(b==EOT)||(b==ESC))
+  if (((uint8)b==SOH)||((uint8)b==EOT)||((uint8)b==ESC))
 	TxChar(ESC);
   TxChar(b);
 } // TxESCu8

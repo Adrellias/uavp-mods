@@ -35,9 +35,10 @@ int16 CurrThrottle;
 
 #pragma udata access outputvars
 near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
-near uint8 ESCMin, ESCMax;
 near boolean ServoToggle;
 #pragma udata
+
+int16 ESCMin, ESCMax;
 
 #ifdef MULTICOPTER
 
@@ -192,7 +193,7 @@ void OutSignals(void)
 	// there is just sufficient time for one remaining interrupt latency before disabling 
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interupt. 
-	static uint8 m;
+	static int8 m;
 	static uint8 r;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
@@ -432,7 +433,8 @@ OS002:
 
 void InitI2CESCs(void)
 {
-	static uint8 m, r;
+	static int8 m;
+	static uint8 r;
 	
 	#ifdef MULTICOPTER
 

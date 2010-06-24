@@ -32,11 +32,11 @@ uint8 LEDCycles;
 
 void SendLEDs(void)
 {	
-	PORTBbits.RB6 = (LEDShadow &  YellowM ) !=0;
-	PORTBbits.RB7 = (LEDShadow &  BlueM ) !=0;
-	PORTCbits.RC0 = (LEDShadow &  RedM ) !=0;
-	PORTCbits.RC1 = (LEDShadow &  GreenM ) !=0;
-	PORTCbits.RC5 = (LEDShadow &  BeeperM ) !=0;
+	PORTBbits.RB6 = (LEDShadow &  YellowM ) != (uint8)0;
+	PORTBbits.RB7 = (LEDShadow &  BlueM ) != (uint8)0;
+	PORTCbits.RC0 = (LEDShadow &  RedM ) != (uint8)0;
+	PORTCbits.RC1 = (LEDShadow &  GreenM ) != (uint8)0;
+	PORTCbits.RC5 = (LEDShadow &  BeeperM ) != (uint8)0;
 } // SendLEDs
 
 

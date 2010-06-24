@@ -82,32 +82,32 @@ void InitAccelerometers(void)
 
 // LISL-Register mapping
 
-#define	LISL_WHOAMI		(0x0f)
-#define	LISL_OFFSET_X	(0x16)
-#define	LISL_OFFSET_Y	(0x17)
-#define	LISL_OFFSET_Z	(0x18)
-#define	LISL_GAIN_X		(0x19)
-#define	LISL_GAIN_Y		(0x1A)
-#define	LISL_GAIN_Z		(0x1B)
-#define	LISL_CTRLREG_1	(0x20)
-#define	LISL_CTRLREG_2	(0x21)
-#define	LISL_CTRLREG_3	(0x22)
-#define	LISL_STATUS		(0x27)
-#define LISL_OUTX_L		(0x28)
-#define LISL_OUTX_H		(0x29)
-#define LISL_OUTY_L		(0x2A)
-#define LISL_OUTY_H		(0x2B)
-#define LISL_OUTZ_L		(0x2C)
-#define LISL_OUTZ_H		(0x2D)
-#define LISL_FF_CFG		(0x30)
-#define LISL_FF_SRC		(0x31)
-#define LISL_FF_ACK		(0x32)
-#define LISL_FF_THS_L	(0x34)
-#define LISL_FF_THS_H	(0x35)
-#define LISL_FF_DUR		(0x36)
-#define LISL_DD_CFG		(0x38)
-#define LISL_INCR_ADDR	(0x40)
-#define LISL_READ		(0x80)
+#define	LISL_WHOAMI		(uint8)(0x0f)
+#define	LISL_OFFSET_X	(uint8)(0x16)
+#define	LISL_OFFSET_Y	(uint8)(0x17)
+#define	LISL_OFFSET_Z	(uint8)(0x18)
+#define	LISL_GAIN_X		(uint8)(0x19)
+#define	LISL_GAIN_Y		(uint8)(0x1A)
+#define	LISL_GAIN_Z		(uint8)(0x1B)
+#define	LISL_CTRLREG_1	(uint8)(0x20)
+#define	LISL_CTRLREG_2	(uint8)(0x21)
+#define	LISL_CTRLREG_3	(uint8)(0x22)
+#define	LISL_STATUS		(uint8)(0x27)
+#define LISL_OUTX_L		(uint8)(0x28)
+#define LISL_OUTX_H		(uint8)(0x29)
+#define LISL_OUTY_L		(uint8)(0x2A)
+#define LISL_OUTY_H		(uint8)(0x2B)
+#define LISL_OUTZ_L		(uint8)(0x2C)
+#define LISL_OUTZ_H		(uint8)(0x2D)
+#define LISL_FF_CFG		(uint8)(0x30)
+#define LISL_FF_SRC		(uint8)(0x31)
+#define LISL_FF_ACK		(uint8)(0x32)
+#define LISL_FF_THS_L	(uint8)(0x34)
+#define LISL_FF_THS_H	(uint8)(0x35)
+#define LISL_FF_DUR		(uint8)(0x36)
+#define LISL_DD_CFG		(uint8)(0x38)
+#define LISL_INCR_ADDR	(uint8)(0x40)
+#define LISL_READ		(uint8)(0x80)
 
 void SendCommand(int8 c)
 {
@@ -138,7 +138,7 @@ uint8 ReadLISL(uint8 c)
 	SPI_IO = RD_SPI;	// SDA is input
 	d=ReadLISLNext();
 	
-	if( (c & LISL_INCR_ADDR) == 0 )
+	if( (c & LISL_INCR_ADDR) == (uint8)0 )
 		SPI_CS = DSEL_LISL;
 	return(d);
 } // ReadLISL
@@ -153,7 +153,7 @@ uint8 ReadLISLNext(void)
 		SPI_SCL = 0;
 		SPI_LO_DELAY;
 		d <<= 1;
-		if( SPI_SDA == 1 )
+		if( SPI_SDA == (uint8)1 )
 			d |= 1;	
 		SPI_SCL = 1;
 		SPI_HI_DELAY;
@@ -208,7 +208,7 @@ void IsLISLActive(void)
 
 void ReadAccelerations()
 {
-	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == 0x3a; // Acc still there?
+	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a; // Acc still there?
 	if ( F.AccelerationsValid ) 
 	{
 		Ax.b0  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
@@ -244,7 +244,7 @@ void GetNeutralAccelerations(void)
 	LR = FB = DU = 0;
 	for ( i = 16; i; i--)
 	{
-		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == 0 );
+		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
 		ReadAccelerations();
 
 		if (F.UsingFlatAcc )

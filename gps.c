@@ -62,8 +62,8 @@ int32 	DesiredLatitude, DesiredLongitude;
 int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
 int16 	GPSVel, GPSROC;
-uint8 	GPSNoOfSats;
-uint8 	GPSFix;
+int8 	GPSNoOfSats;
+int8 	GPSFix;
 int16 	GPSHDilute;
 int32Q	GPSQ32;
 #pragma udata
@@ -111,7 +111,7 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 	// Positions are stored at 5 decimal minute NMEA resolution which is
 	// approximately 1.855 cm per LSB at the Equator.
 	static int32 dd, mm, dm, r;
-	static int8 dp;	
+	static uint8 dp;	
 	
 	r = 0;
 	if ( !EmptyField )
@@ -121,10 +121,10 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 
 	    dd = ConvertInt(lo, dp - 3);
 	    mm = ConvertInt(dp - 2 , dp - 1);
-		if ( ( hi - dp ) > 4 )
+		if ( ( hi - dp ) > (uint8)4 )
 			dm = ConvertInt(dp + 1, dp + 5);
 		else
-			dm = ConvertInt(dp + 1, dp + 4)* 10L;
+			dm = ConvertInt(dp + 1, dp + 4) * 10L;
 			
 	    r = dd * 6000000 + mm * 100000 + dm;
 	}
@@ -133,7 +133,7 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 } // ConvertLatLonM
 
 /*	
-int32 ConvertUTime(uint8 lo, uint8 hi)
+int32 ConvertUTime(int8 lo, int8 hi)
 {
 	int32 ival, hh;
 	int16 mm, ss;

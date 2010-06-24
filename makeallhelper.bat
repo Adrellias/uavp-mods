@@ -24,7 +24,7 @@ for /f "tokens=2 delims=: " %%m in ('time /T') do set minutes=%%m
 for /f "tokens=3 delims=: " %%a in ('time /T') do set ampm=%%a
 set NOW=%hour%%minutes%%ampm%
 
-set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder telemetry autonomous i2c outputs
+set CSRC=leds stats eeprom math params accel adc uavx irq menu control compass baro gyro tests serial utils gps rangefinder telemetry temperature autonomous i2c outputs
 set ASRC=bootl18f
 
 rem Set all the name tokens for the HEX files
@@ -57,7 +57,8 @@ if "%CLOCK%" == "CLOCK_40MHZ"     	set X=-40
 if "%EXP%" == "EXPERIMENTAL"     		set E=EXP-
 
 set CC="C:\MCC18\bin\mcc18" 
-set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+rem removed integer promotions set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+set CCMD=  -w3 -Opa- -DBATCHMODE
 
 set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
 set AEXE="C:\MCC18\mpasm\mpasmwin.exe"
@@ -74,19 +75,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.526gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.550gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX%L%-V1.526gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo compiled - UAVX%L%-V1.526gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX%L%-V1.550gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo compiled - UAVX%L%-V1.550gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX%L%-V1.526gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo failed - UAVX%L%-V1.526gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX%L%-V1.550gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo failed - UAVX%L%-V1.550gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

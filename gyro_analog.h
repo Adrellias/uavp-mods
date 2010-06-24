@@ -111,7 +111,7 @@ void CalcGyroRates(void)
 
 void ErectGyros(void)
 {
-	static uint8 i;
+	static int8 i;
 	static uint16 RollAv, PitchAv, YawAv;
 	
 	RollAv = PitchAv = YawAv = 0;	
@@ -170,7 +170,7 @@ void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
 
 void GyroTest(void)
 {
-	uint8 c, A[5], lv, hv, v;
+	int8 c, A[5], lv, hv, v;
 
 	for ( c = 1; c <= 5; c++ )
 		A[c] = ((int24)ADC(c) * 50L + 512L)/1024L;

@@ -92,7 +92,7 @@ void ShowRxSetup(void)
 
 void ShowSetup(boolean h)
 {
-	uint8 i;
+	int8 i;
 
 	if( h )
 	{

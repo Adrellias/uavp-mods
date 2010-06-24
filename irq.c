@@ -53,7 +53,7 @@ near int24 	PauseTime;
 near uint8 	GPSRxState;
 near uint8 	ll, tt, gps_ch;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
-near uint8	State, FailState;
+near int8	State, FailState;
 near boolean WaitingForSync;
 #pragma udata
 
@@ -105,7 +105,7 @@ void ReceivingGPSOnly(boolean r)
 
 void InitTimersAndInterrupts(void)
 {
-	static uint8 i;
+	static int8 i;
 
 	#ifdef CLOCK_16MHZ
 	OpenTimer0(TIMER_INT_OFF&T0_8BIT&T0_SOURCE_INT&T0_PS_1_16);
@@ -230,7 +230,7 @@ void high_isr_handler(void)
 			gps_ch = RCREG;
 			switch ( GPSRxState ) {
 			case WaitGPSCheckSum:
-				if (GPSCheckSumChar < 2)
+				if (GPSCheckSumChar < (uint8)2)
 				{
 					GPSTxCheckSum *= 16;
 					if ( gps_ch >= 'A' )
@@ -263,7 +263,7 @@ void high_isr_handler(void)
 					{
 						RxCheckSum ^= gps_ch;
 						NMEA.s[ll++] = gps_ch; 
-						if ( ll > ( GPSRXBUFFLENGTH-1 ) )
+						if ( ll > (uint8)( GPSRXBUFFLENGTH-1 ) )
 							GPSRxState = WaitGPSSentinel;
 					}
 							
@@ -271,7 +271,7 @@ void high_isr_handler(void)
 			case WaitNMEATag:
 				RxCheckSum ^= gps_ch;
 				if ( gps_ch == NMEATag[tt] ) 
-					if ( tt == MAXTAGINDEX )
+					if ( tt == (uint8)MAXTAGINDEX )
 						GPSRxState = WaitGPSBody;
 			        else
 						tt++;

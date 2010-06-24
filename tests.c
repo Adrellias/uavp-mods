@@ -46,7 +46,7 @@ void DoLEDs(void)
 
 void ReceiverTest(void)
 {
-	uint8 s;
+	int8 s;
 	uint16 v;
 
 	TxString("\r\nRx: ");
@@ -128,14 +128,15 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
-	uint8 s, m, mask, LEDSave;
+	int8 s, m;
+	uint8 mask, LEDSave;
 
 	LEDSave = LEDShadow;
 	LEDShadow  = 0;
 	SendLEDs();	
 
 	TxString("\r\nOutput test\r\n");
-	mask = 1;
+	mask = (uint8)1;
 	for ( m = 1; m <= 8; m++ )		
 	{
 		TxChar(m+'0');

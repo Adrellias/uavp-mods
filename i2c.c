@@ -113,7 +113,7 @@ boolean I2CWaitClkHi(void)
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 1;
 	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
-		if( ++s == 0 )
+		if( ++s == (uint8)0 )
 		{
 			Stats[I2CFailS]++;
 			return (false);
@@ -240,7 +240,7 @@ uint8 ReadI2CString(uint8 *S, uint8 l)
 
 uint8 ScanI2CBus(void)
 {
-	int16 s;
+	uint8 s;
 	uint8 d;
 
 	d = 0;
@@ -318,7 +318,7 @@ boolean ESCWaitClkHi(void)
 	ESC_CLK_FLOAT;
 	s = 1;						
 	while( !ESC_SCL ) 
-		if( ++s == 0 ) return (false);					
+		if( ++s == (uint8)0 ) return (false);					
 
 	return ( true );
 } // ESCWaitClkHi
@@ -420,9 +420,9 @@ boolean CheckESCBus(void)
 
 void ConfigureESCs(void)
 {
-	uint8 m, s;
+	int8 m;
 
-	if ( P[ESCType] == ESCYGEI2C )		
+	if ( (int8)P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )

@@ -52,7 +52,7 @@ void CheckTelemetry(void)
 
 void SendUAVX(void) // 800uS at 40MHz?
 {
-	static uint8 b;
+	static int8 b;
 	static i32u Temp;
 
 	F.TxToBuffer = true;
@@ -165,7 +165,7 @@ void SendArduStation(void)
 	// This form of telemetry using the flight controller to convert 
 	// to readable text is FAR to EXPENSIVE in computation time.
 
-	static uint8 Count = 0;
+	static int8 Count = 0;
 	/*      
 	Definitions of the low rate telemetry (1Hz):
     LAT: Latitude

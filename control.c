@@ -442,7 +442,7 @@ void CaptureTrims(void)
 
 void StopMotors(void)
 {
-	static uint8 m;
+	static int8 m;
 
 	#ifdef MULTICOPTER
 		for (m = 0; m < NoOfPWMOutputs; m++)

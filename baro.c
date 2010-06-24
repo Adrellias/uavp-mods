@@ -49,12 +49,12 @@ int32	OriginBaroPressure, CompBaroPressure;
 int24	BaroRelAltitude, BaroRelAltitudeP;
 int16	BaroROC;
 i16u	BaroVal;
-uint8	BaroType;
+int8	BaroType;
 int16 	BaroClimbAvailable, BaroDescentAvailable;
 
 #ifdef SIMULATE
 int24	FakeBaroRelAltitude;
-uint8 SimulateCycles = 0;
+int8 SimulateCycles = 0;
 #endif // SIMULATE
 
 // -----------------------------------------------------------
@@ -188,7 +188,7 @@ FreescaleInactive:
 
 void InitFreescaleBarometer(void)
 {
-	static uint8 s;
+	static int8 s;
 	static int16 BaroOriginAltitude, MinAltitude;
 
 	BaroTemperature = 0;
@@ -429,7 +429,7 @@ BoschInactive:
 
 void InitBoschBarometer(void)
 {
-	uint8 s;
+	int8 s;
 	int24 Temp;
 
 	AltComp = AltDiffSum = AltDSum = 0;

@@ -57,7 +57,8 @@ if "%CLOCK%" == "CLOCK_40MHZ"     	set X=-40
 if "%EXP%" == "EXPERIMENTAL"     		set E=EXP-
 
 set CC="C:\MCC18\bin\mcc18" 
-set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+rem removed integer promotions set CCMD=  -Oi -w1 -Opa- -DBATCHMODE
+set CCMD=  -w3 -Opa- -DBATCHMODE
 
 set ACMD=/q /d%CLOCK% /p%PROC% %%i.asm /l%%i.lst /e%%i.err /o%%i.o
 set AEXE="C:\MCC18\mpasm\mpasmwin.exe"

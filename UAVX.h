@@ -20,7 +20,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define EXPERIMENTAL
+	//#define EXPERIMENTAL
 	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
@@ -199,17 +199,17 @@
 #include <adc.h>
 
 // Useful Constants
-#define NUL 	0
-#define SOH 	1
-#define EOT 	4
-#define ACK		6
-#define HT 		9
-#define LF 		10
-#define CR 		13
-#define NAK 	21
-#define ESC 	27
-#define true 	1
-#define false 	0
+#define NUL 	(uint8)0
+#define SOH 	(uint8)1
+#define EOT 	(uint8)4
+#define ACK		(uint8)6
+#define HT 		(uint8)9
+#define LF 		(uint8)10
+#define CR 		(uint8)13
+#define NAK 	(uint8)21
+#define ESC 	(uint8)27
+#define true 	(uint8)1
+#define false 	(uint8)0
 
 #define MILLIPI 			3142 
 #define CENTIPI 			314 
@@ -383,7 +383,7 @@ typedef struct {
 #define ALL_LEDS_OFF	LEDsOff(BlueM|RedM|GreenM|YellowM)
 #define AUX_LEDS_OFF	LEDsOff(AUX1M|AUX2M|AUX3M)
 
-#define ALL_LEDS_ARE_OFF	( (LEDShadow&(BlueM|RedM|GreenM|YellowM))== 0 )
+#define ALL_LEDS_ARE_OFF	( (LEDShadow&(BlueM|RedM|GreenM|YellowM))== (uint8)0 )
 
 #define LEDRed_ON		LEDsOn(RedM)
 #define LEDBlue_ON		LEDsOn(BlueM)
@@ -396,13 +396,13 @@ typedef struct {
 #define LEDBlue_OFF		LEDsOff(BlueM)
 #define LEDGreen_OFF	LEDsOff(GreenM)
 #define LEDYellow_OFF	LEDsOff(YellowM)
-#define LEDYellow_TOG	if( (LEDShadow&YellowM) == 0 ) LEDsOn(YellowM); else LEDsOff(YellowM)
-#define LEDRed_TOG		if( (LEDShadow&RedM) == 0 ) LEDsOn(RedM); else LEDsOff(RedM)
-#define LEDBlue_TOG		if( (LEDShadow&BlueM) == 0 ) LEDsOn(BlueM); else LEDsOff(BlueM)
-#define LEDGreen_TOG	if( (LEDShadow&GreenM) == 0 ) LEDsOn(GreenM); else LEDsOff(GreenM)
+#define LEDYellow_TOG	if( (LEDShadow&YellowM) == (uint8)0 ) LEDsOn(YellowM); else LEDsOff(YellowM)
+#define LEDRed_TOG		if( (LEDShadow&RedM) == (uint8)0 ) LEDsOn(RedM); else LEDsOff(RedM)
+#define LEDBlue_TOG		if( (LEDShadow&BlueM) == (uint8)0 ) LEDsOn(BlueM); else LEDsOff(BlueM)
+#define LEDGreen_TOG	if( (LEDShadow&GreenM) == (uint8)0 ) LEDsOn(GreenM); else LEDsOff(GreenM)
 #define Beeper_OFF		LEDsOff(BeeperM)
 #define Beeper_ON		LEDsOn(BeeperM)
-#define Beeper_TOG		if( (LEDShadow&BeeperM) == 0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
+#define Beeper_TOG		if( (LEDShadow&BeeperM) == (uint8)0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
 
 // Bit definitions
 #define Armed			(PORTAbits.RA4)
@@ -587,7 +587,7 @@ typedef union {
 
 enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
-extern near uint8 State;
+extern near int8 State;
 
 // accel.c
 
@@ -638,7 +638,7 @@ extern void FakeFlight(void);
 extern void DoPPMFailsafe(void);
 extern void WriteWayPointEE(uint8, int32, int32, int16, uint8);
 extern void UAVXNavCommand(void);
-extern void GetWayPointEE(uint8);
+extern void GetWayPointEE(int8);
 extern void InitNavigation(void);
 
 typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
@@ -652,9 +652,9 @@ extern int16 NavRCorr, NavPCorr;
 extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeHeading;
 #endif // SIMULATE
 
-extern near uint8 FailState;
+extern near int8 FailState;
 extern WayPoint WP;
-extern uint8 CurrWP;
+extern int8 CurrWP;
 extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
@@ -663,7 +663,7 @@ extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavPro
 extern int16 NavRCorr, NavPCorr, NavYCorr;
 extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
-extern uint8 NavState;
+extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 AltSum;
 
@@ -705,7 +705,7 @@ extern boolean AcquiringPressure;
 extern int24 BaroRelAltitude, BaroRelAltitudeP;
 extern int16 BaroROC;
 extern i16u	BaroVal;
-extern uint8 BaroType;
+extern int8 BaroType;
 
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;
@@ -809,8 +809,8 @@ extern int32 DesiredLatitude, DesiredLongitude;
 extern int32 LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 extern int16 GPSLongitudeCorrection;
 extern int16 GPSVel, GPSROC;
-extern uint8 GPSNoOfSats;
-extern uint8 GPSFix;
+extern int8 GPSNoOfSats;
+extern int8 GPSFix;
 extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
@@ -965,8 +965,9 @@ extern int16 PWMSense[6];
 extern int16 ESCI2CFail[4];
 extern int16 CurrThrottle;
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
-extern near uint8 ESCMin, ESCMax;
 extern near boolean ServoToggle;
+
+extern int16 ESCMin, ESCMax;
 
 //______________________________________________________________________________________________
 
@@ -1081,7 +1082,7 @@ extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
 extern const rom uint8 ESCLimits [];
 extern const rom boolean PPMPosPolarity[];
 
-extern uint8 ParamSet;
+extern int8 ParamSet;
 extern boolean ParametersChanged;
 extern int8 P[];
 extern int8 RMap[];
@@ -1149,6 +1150,7 @@ extern void SendUAVX(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
 extern void SensorTrace(void);
+extern void CheckTelemetry(void);
 
 extern uint8 UAVXCurrPacketTag;
 

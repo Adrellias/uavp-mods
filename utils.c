@@ -64,7 +64,7 @@ void InitPorts(void)
 
 void InitMisc(void)
 {
-	uint8 i;
+	int8 i;
 
 	State = Starting;				// For trace preconditions
 	ServoToggle = false;
