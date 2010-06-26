@@ -20,8 +20,8 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	//#define EXPERIMENTAL
-	#define TESTING						
+	#define EXPERIMENTAL
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
@@ -49,11 +49,9 @@
 
 // Tests
 
-#define FLIGHT_STATS					// show flight stats
-
 // Airframe
 
-#if (defined UAVXBOARD )
+#ifdef UAVXBOARD
 	#define GYRO_ITG3200
 	#define UAVX_HW
 #endif
@@ -1137,7 +1135,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 
@@ -1157,7 +1155,7 @@ extern uint8 UAVXCurrPacketTag;
 enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
 	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
-	UAVXNavPacketTag};
+	UAVXNavPacketTag, UAVXStatsPacketTag};
 
 enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry, CustomTelemetry };
 

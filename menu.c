@@ -57,13 +57,13 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
+	#endif // TESTING
 	"S..Setup\r\n"
+	#ifdef TESTING
 	"T..All LEDs and buzzer test\r\n"
 	"V..Battery test\r\n"
 	#endif // TESTING
-	#ifdef FLIGHT_STATS
 	"X..Flight stats\r\n"
-	#endif // FLIGHT_STATS
 	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
 	#endif // TESTING
@@ -76,8 +76,6 @@ void ShowPrompt(void)
 {
 	TxString("\r\n>");
 } // ShowPrompt
-
-#ifdef TESTING
 
 void ShowRxSetup(void)
 {
@@ -287,23 +285,6 @@ void ShowSetup(boolean h)
 	
 	ShowPrompt();
 } // ShowSetup
-#else
-void ShowSetup(boolean h)
-{
-	if( h )
-	{
-		TxString(SerHello);
-		ParamSet = 1;	
-	}
-	TxString("\r\nUAVX FLIGHT V" Version);
-	#ifdef CLOCK_16MHZ
-	TxString(" 16MHz\r\n");
-	#else // CLOCK_40MHZ
-	TxString(" 40MHz\r\n");
-	#endif // CLOCK_16MHZ
-	ShowPrompt();
-} // ShowSetup
-#endif // TESTING
 
 void ProcessCommand(void)
 {

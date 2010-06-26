@@ -25,15 +25,20 @@
 #define I2C_IN			1
 #define I2C_OUT			0
 
+// These routine need much better tailoring to the I2C bus spec.
+// 16MHz 0.25uS/Cycle
+// 40MHz 0.1uS/Cycle
+
 #ifdef CLOCK_16MHZ
-#define	I2C_DELAY		Delay10TCY()
-#define I2C_DELAY2		
+	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()
+	#define I2C_DELAY2		
 #else // CLOCK_40MHZ
-#define	I2C_DELAY		Delay10TCYx(3)
-// ~102KHz (Compass limit!)
-#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
-// ~210KHz
-//#define I2C_DELAY2	
+	#define	I2C_DELAY_5US		Delay10TCYx(5) 
+	
+	// ~102KHz (Compass limit!)
+	#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
+	// ~210KHz
+	//#define I2C_DELAY2	
 #endif // CLOCK_16MHZ
 
 void InitI2C(uint8, uint8);
@@ -128,7 +133,7 @@ void I2CStart(void)
 	I2C_DATA_FLOAT;
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
-	I2C_DELAY; // zzz
+	I2C_DELAY_5US;
 	I2C_CLK_LOW;
 } // I2CStart
 
@@ -140,7 +145,7 @@ void I2CStop(void)
 	r = I2CWaitClkHi();
 	I2C_DATA_FLOAT;
 
-	I2C_DELAY;
+	I2C_DELAY_5US;
 
 } // I2CStop 
 
@@ -330,7 +335,7 @@ void ESCI2CStart(void)
 	ESC_DATA_FLOAT;
 	r = ESCWaitClkHi();
 	ESC_DATA_LOW;
-	I2C_DELAY;		
+	I2C_DELAY_5US;		
 	ESC_CLK_LOW;				
 } // ESCI2CStart
 
@@ -340,7 +345,7 @@ void ESCI2CStop(void)
 	ESCWaitClkHi();
 	ESC_DATA_FLOAT;
 
-    I2C_DELAY;
+    I2C_DELAY_5US;
 
 } // ESCI2CStop
 

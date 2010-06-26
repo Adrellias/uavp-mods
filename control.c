@@ -488,6 +488,7 @@ void LightsAndSirens(void)
 	do
 	{
 		ProcessCommand();
+
 		if( F.Signal )
 		{
 			LEDGreen_ON;

@@ -29,6 +29,8 @@ void ShowStats(void);
 int16 	Stats[MAX_STATS];
 #pragma udata
 
+#define INIT_MIN 1000L
+
 void ZeroStats(void)
 {
 	int8 s;
@@ -36,13 +38,13 @@ void ZeroStats(void)
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Stats[s] = 0;
 
-	Stats[MinHDiluteS] = 1000L;
+	Stats[MinHDiluteS] = INIT_MIN;
 	Stats[MaxHDiluteS] = 0;
-	Stats[MinBaroROCS] = 0;
+	Stats[MinBaroROCS] = INIT_MIN;
 	Stats[MaxBaroROCS] = 0;
-	Stats[GPSMinSatsS] = 50;
+	Stats[GPSMinSatsS] = INIT_MIN;
 	Stats[GPSMaxSatsS] = 0;
-	Stats[MinTempS] = 1000L;
+	Stats[MinTempS] = INIT_MIN;
 	Stats[MaxTempS] = 0;
 
 } // ZeroStats
@@ -64,9 +66,6 @@ void WriteStatsEE()
 		for ( i = 0; i < NoOfPWMOutputs; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
 
-	if ( SumBaroRelAltitude != 0 )
-		Stats[GPSBaroScaleS] = (SumGPSRelAltitude * (int16)P[BaroScale])/SumBaroRelAltitude; 
-
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
 
@@ -77,8 +76,12 @@ void WriteStatsEE()
 
 void ShowStats(void)
 {
-	#ifdef FLIGHT_STATS	
 	TxString("\r\nFlight Statistics\r\n");
+
+	if ( Stats[BadS] != 0 )
+	{
+		TxString("Misc(gke):     \t");TxVal32((int32)Stats[BadS],0,' '); TxNextLine();
+	}
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
 	TxString("I2CBus:   \t");TxVal32((int32)Stats[I2CFailS],0,0); TxNextLine();
@@ -89,18 +92,24 @@ void ShowStats(void)
 	TxString("Baro:     \t");TxVal32((int32)Stats[BaroFailS],0 , 0); TxNextLine();
 	if ( P[ESCType] != ESCPPM )
 	{
-		TxString("I2CESC:     \t");TxVal32((int32)Stats[ESCI2CFailS],0 , 0); TxNextLine();
+		TxString("I2CESC:   \t");TxVal32((int32)Stats[ESCI2CFailS],0 , 0); TxNextLine();
 	}
 	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
 	TxString("Failsafes:\t");TxVal32((int32)Stats[RCFailsafesS],0,' '); TxNextLine();
-
+	
 	TxString("\r\nBaro\r\n"); // can only display to 3276M
 	TxString("Alt:      \t");TxVal32((int32)Stats[BaroRelAltitudeS], 1, ' '); TxString("M \r\n");
-	TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
+	if ( Stats[MinBaroROCS] < INIT_MIN )
+	{
+		TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
 							TxVal32((int32)Stats[MaxBaroROCS], 1, ' '); TxString("M/S\r\n");
-	TxString("Scale:    \t");TxVal32((int32)Stats[GPSBaroScaleS], 0, ' '); TxNextLine();
-	TxString("Ambient:  \t");TxVal32((int32)Stats[MinTempS], 1, ' '); 
+	}
+	
+	if ( Stats[MinTempS] < INIT_MIN )
+	{
+		TxString("Ambient:  \t");TxVal32((int32)Stats[MinTempS], 1, ' '); 
 							TxVal32((int32)Stats[MaxTempS], 1, ' '); TxString("C\r\n");
+	}
 
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1, ' '); TxString("M\r\n");
@@ -108,17 +117,22 @@ void ShowStats(void)
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED
 
-	TxString("Sats:     \t");TxVal32((int32)Stats[GPSMinSatsS], 0, ' ');
-	TxVal32((int32)Stats[GPSMaxSatsS], 0, 0); TxNextLine();
+	if ( Stats[GPSMinSatsS] < INIT_MIN )
+	{
+		TxString("Sats:     \t");TxVal32((int32)Stats[GPSMinSatsS], 0, ' ');
+		TxVal32((int32)Stats[GPSMaxSatsS], 0, 0); TxNextLine();
+	}
 
-	TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
-	TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
+	if ( Stats[MinHDiluteS] < INIT_MIN )
+	{
+		TxString("HDilute:  \t");TxVal32((int32)Stats[MinHDiluteS], 2, ' ');
+		TxVal32((int32)Stats[MaxHDiluteS], 2, 0); TxNextLine();
+	}
+
 	if ( Stats[NavValidS] )
 		TxString("Navigation ENABLED\r\n");	
 	else
 		TxString("Navigation DISABLED (No fix at launch)\r\n");
-	#endif // FLIGHT_STATS
-
 } // ShowStats
 
 

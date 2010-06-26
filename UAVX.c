@@ -170,6 +170,7 @@ void main(void)
 			AltitudeHold();
 
 			while ( WaitingForSync ) {};
+
 			mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
 
 			GetRollPitchGyroValues();				// Second gyro sample

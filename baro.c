@@ -479,7 +479,6 @@ void InitBoschBarometer(void)
 // -----------------------------------------------------------
 
 #ifdef TESTING
-
 void BaroTest(void)
 {
 	TxString("\r\nAltitude test\r\n");
@@ -489,6 +488,7 @@ void BaroTest(void)
 		case BaroSMD500: TxString("Type:\tSMD500\r\n"); break;
 		case BaroBMP085: TxString("Type:\tBMP085\r\n"); break;
 		case BaroUnknown: TxString("Type:\tNone\r\n"); break;
+		default: break;
 	}
 	
 	TxString("Ambient :\t");

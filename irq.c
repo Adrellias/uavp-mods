@@ -112,7 +112,8 @@ void InitTimersAndInterrupts(void)
 	#else // CLOCK_40MHZ
 	OpenTimer0(TIMER_INT_OFF&T0_16BIT&T0_SOURCE_INT&T0_PS_1_16);	
 	#endif // CLOCK_16MHZ
-	OpenTimer1(T1_8BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
+
+	OpenTimer1(T1_16BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
 	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 
 	DoRxPolarity();
@@ -302,17 +303,27 @@ void high_isr_handler(void)
 		#else // CLOCK_40MHZ
 			Timer0.b0 = TMR0L;
 			Timer0.b1 = TMR0H;
-			Timer0.u16 += TMR0_1MS; // ???
+			Timer0.u16 += TMR0_1MS; 
 			TMR0H = Timer0.b1;
 			TMR0L = Timer0.b0;
 		#endif // CLOCK_40MHZ
+
 		mS[Clock]++;
+
+		if ( mS[UpdateTimeout] - mS[Clock] > 15 ) // should not happen!
+		{
+			WaitingForSync = false;
+			if ( State == InFlight )
+				Stats[BadS]++;
+		}
+		else
+			WaitingForSync = mS[Clock] < mS[UpdateTimeout];
+
 		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{
 			F.Signal = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
-		WaitingForSync =  mS[Clock] < mS[UpdateTimeout];
 
 		#ifndef TESTING // not used for testing - make space!
 		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
