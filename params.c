@@ -253,64 +253,15 @@ void UpdateParamSetChoice(void)
 	#define STICK_WINDOW 30
 
 	int8 NewParamSet, Selector;
-	uint8 NewNavAltitudeHold, NewTurnToWP;
+	uint8 NewTurnToWP;
 
 	NewParamSet = ParamSet;
-	NewNavAltitudeHold = F.NavAltitudeHold;
 	NewTurnToWP = F.TurnToWP;
 
 	if ( F.UsingTxMode2 )
 		Selector = DesiredRoll;
 	else
 		Selector = -DesiredYaw;
-
-	if ( (Abs(DesiredPitch) > STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW) )
-	{
-		if ( DesiredPitch > STICK_WINDOW ) // bottom
-		{
-			if ( Selector < -STICK_WINDOW ) // left
-			{ // bottom left
-				NewParamSet = 1;
-				NewNavAltitudeHold = true;
-			}
-			else
-				if ( Selector > STICK_WINDOW ) // right
-				{ // bottom right
-					NewParamSet = 2;
-					NewNavAltitudeHold = true;
-				}
-		}		
-		else
-			if ( DesiredPitch < -STICK_WINDOW ) // top
-			{		
-				if ( Selector < -STICK_WINDOW ) // left
-				{
-					NewNavAltitudeHold = false;
-					NewParamSet = 1;
-				}
-				else 
-					if ( Selector > STICK_WINDOW ) // right
-					{
-						NewNavAltitudeHold = false;
-						NewParamSet = 2;
-					}
-			}
-
-		if ( ( NewParamSet != ParamSet ) || ( NewNavAltitudeHold != F.NavAltitudeHold ) )
-		{	
-			ParamSet = NewParamSet;
-			F.NavAltitudeHold = NewNavAltitudeHold;
-			LEDBlue_ON;
-			DoBeep100mSWithOutput(2, 2);
-			if ( ParamSet == 2 )
-				DoBeep100mSWithOutput(2, 2);
-			if ( F.NavAltitudeHold )
-				DoBeep100mSWithOutput(4, 4);
-			ParametersChanged |= true;
-			Beeper_OFF;
-			LEDBlue_OFF;
-		}
-	}
 
 	if ( F.UsingTxMode2 )
 		Selector = -DesiredYaw;

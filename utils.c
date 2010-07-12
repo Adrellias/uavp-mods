@@ -70,9 +70,9 @@ void InitMisc(void)
 	ServoToggle = false;
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
-		F.AllFlags[i] = 0;
-	F.BeeperInUse = false; 
-	F.NavAltitudeHold = F.ParametersValid = F.AcquireNewPosition = true;
+		F.AllFlags[i] = false;
+ 
+	F.ParametersValid = F.AcquireNewPosition = true;
 
 	#ifdef SIMULATE
 	F.Simulation = true;

@@ -43,6 +43,7 @@ void high_isr_handler(void);
 #pragma udata clocks
 uint24	mS[CompassUpdate+1];
 #pragma udata
+
 #pragma udata access isrvars
 near int24 	PrevEdge, CurrEdge;
 near uint8 	Intersection, PrevPattern, CurrPattern;

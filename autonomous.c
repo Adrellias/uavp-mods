@@ -99,15 +99,8 @@ void FailsafeHoldPosition(void)
 
 void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
-	if ( F.NavAltitudeHold )
-	{
-		AltSum = 0;	
-		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
-	}
-	else
-	{
-		// manual control of altitude
-	}
+	AltSum = 0;	
+	DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
 } // SetDesiredAltitude
 
 void DoFailsafeLanding(void)
@@ -173,7 +166,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	WayHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff));
 
-	if ( ( EffNavSensitivity > NAV_GAIN_THRESHOLD ) && !F.WayPointCentred )
+	if ( ( EffNavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
 	{	
 		#ifdef NAV_WING
 		
@@ -464,7 +457,7 @@ void DoPPMFailsafe(void)
 			break;
 		case Aborting:
 			FailsafeHoldPosition();
-			F.NavAltitudeHold = true;
+			F.AltHoldEnabled = true;
 			SetDesiredAltitude((int16)P[NavRTHAlt]);
 			if( mSClock() > mS[NavStateTimeout] )
 			{

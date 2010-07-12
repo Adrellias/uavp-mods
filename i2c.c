@@ -155,7 +155,8 @@ uint8 ReadI2CByte(uint8 r)
 
 	I2C_DATA_FLOAT;
 	d = 0;
-	for ( s = 8; s ; s-- )
+	s = 8;
+	do {
 		if( I2CWaitClkHi() )
 		{ 
 			d <<= 1;
@@ -167,6 +168,7 @@ uint8 ReadI2CByte(uint8 r)
 			Stats[I2CFailS]++;
 			return(false);
 		}
+	} while ( --s );
 
 	I2C_SDA_SW = r;
 	I2C_DELAY2;
@@ -188,11 +190,12 @@ uint8 ReadI2CByte(uint8 r)
 
 uint8 WriteI2CByte(uint8 d)
 {
-	static uint8 s;
+	static uint8 s, dd;
 
-	for ( s = 8; s ; s-- )
-	{
-		if( d & 0x80 )
+	dd = d;  // a little faster
+	s = 8;
+	do {
+		if( dd & 0x80 )
 			I2C_DATA_FLOAT
 		else
 			I2C_DATA_LOW
@@ -200,14 +203,14 @@ uint8 WriteI2CByte(uint8 d)
 		if( I2CWaitClkHi() )
 		{ 	
 			I2C_CLK_LOW;
-			d <<= 1;
+			dd <<= 1;
 		}
 		else
 		{
 			Stats[I2CFailS]++;
 			return(I2C_NACK);
 		}
-	}
+	} while ( --s );
 
 	I2C_DATA_FLOAT;
 	if( I2CWaitClkHi() )
@@ -322,7 +325,7 @@ boolean ESCWaitClkHi(void)
 
 	ESC_CLK_FLOAT;
 	s = 1;						
-	while( !ESC_SCL ) 
+	while( !ESC_SCL )
 		if( ++s == (uint8)0 ) return (false);					
 
 	return ( true );
@@ -350,12 +353,13 @@ void ESCI2CStop(void)
 } // ESCI2CStop
 
 uint8 WriteESCI2CByte(uint8 d)
-{
-	static uint8 s, t;
+{ // ~320KHz @ 40MHz
+	static uint8 s, t, dd;
 
-	for ( s = 8; s ; s-- )
-	{
-		if( d & 0x80 )
+	dd = d; // a little faster
+	s = 8;
+	do {
+		if( dd & 0x80 )
 			ESC_DATA_FLOAT
 		else
 			ESC_DATA_LOW
@@ -363,20 +367,19 @@ uint8 WriteESCI2CByte(uint8 d)
 		if( ESCWaitClkHi() )
 		{ 	
 			ESC_CLK_LOW;
-			d <<= 1;
+			dd <<= 1;
 		}
 		else
 			return(I2C_NACK);	
-	}
+	} while ( --s );
 
 	ESC_DATA_FLOAT;
 	if( ESCWaitClkHi() )
-		s = ESC_SDA;
+		return( ESC_SDA );
 	else
 		return(I2C_NACK);	
 	ESC_CLK_LOW;
-										
-	return( s );
+
 } // WriteESCI2CByte
 
 #ifdef TESTING

@@ -262,10 +262,6 @@ void ShowSetup(boolean h)
 	else
 		TxString("\tAuto descend disabled\r\n");
 
-	if ( F.NavAltitudeHold )
-		TxString("\tAlt. hold enabled\r\n");
-	else
-		TxString("\tAlt. hold DISABLED\r\n");
 	if ( F.TurnToWP )
 		TxString("\tTurn toward Way Point\r\n");
 	else

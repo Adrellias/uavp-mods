@@ -332,7 +332,8 @@ OS006:
 
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
-		// ACK (r) not checked as no recovery is possible.
+		// ACK (r) not checked as no recovery is possible. 
+		// Octocopters may have ESCs paired with common address so ACK is meaningless.
 		// All motors driven with fourth motor ignored for Tricopter.	
 		if ( P[ESCType] ==  ESCHolger )
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )

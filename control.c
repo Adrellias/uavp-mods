@@ -135,7 +135,7 @@ void AltitudeHold()
 
 	GetBaroAltitude();
 
-	if ( F.NewBaroValue ) // sync on Baro which MUST be working
+	if ( F.NewBaroValue && F.AltHoldEnabled ) // sync on Baro which MUST be working
 	{		
 		F.NewBaroValue = false;
 		GetRangefinderAltitude();
@@ -164,9 +164,7 @@ void AltitudeHold()
 		{  // Navigating - using CruiseThrottle
 			F.HoldingAlt = true;
 			DoAltitudeHold(Altitude, ROC);
-		}
-
-		
+		}		
 	}
 } // AltitudeHold
 
@@ -378,6 +376,8 @@ void UpdateControls(void)
 			NavSensitivity = RC[NavGainC];
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
+
+		F.AltHoldEnabled = NavSensitivity > NAV_SENS_THRESHOLD;
 	
 		#ifdef ATTITUDE_NO_LIMITS
 		RollPitchScale = 128L;

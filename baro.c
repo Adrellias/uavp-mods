@@ -66,6 +66,7 @@ int16 FreescaleToDM(int24);
 void GetFreescaleBaroAltitude(void);
 void ZeroFreescaleBaroOriginAltitude(void);
 boolean IsFreescaleBaroActive(void);
+void SetFreescaleOffset(void);
 void InitFreescaleBarometer(void);
 
 #define FREESCALE_TIME_MS	49
@@ -185,6 +186,15 @@ FreescaleInactive:
 	return(false);
 
 } // IsFreescaleBaroActive
+
+void SetFreescaleOffset(void)
+{
+
+
+// MCP4725
+
+
+} // SetFreescaleOffset
 
 void InitFreescaleBarometer(void)
 {

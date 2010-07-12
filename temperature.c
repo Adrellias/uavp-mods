@@ -26,11 +26,11 @@ void GetTemperature(void);
 void InitTemperature(void);
 
 #define TEMPERATURE_MAX_ADC 	4095 		// 12 bits
-#define TEMPERATURE_I2C_ID		0x96 		// ADS7823 ADC
-#define TEMPERATURE_I2C_WR		0x96 		// ADS7823 ADC
-#define TEMPERATURE_I2C_RD		0x97 		// ADS7823 ADC
+#define TEMPERATURE_I2C_ID		0x96 		
+#define TEMPERATURE_I2C_WR		0x96 		// Write
+#define TEMPERATURE_I2C_RD		0x97 		// Read	
 #define TEMPERATURE_I2C_TMP		0x00		// Temperature
-#define TEMPERATURE_I2C_CMD		0x01 
+#define TEMPERATURE_I2C_CMD		0x01 	
 #define TEMPERATURE_I2C_LOW		0x02 		// Alarm low limit
 #define TEMPERATURE_I2C_HI		0x03 		// Alarm high limit
 #define TEMPERATURE_I2C_CFG		0b00000000	// 0.5 deg resolution continuous
@@ -41,12 +41,12 @@ void GetTemperature(void)
 {
 	I2CStart();
 	if( WriteI2CByte(TEMPERATURE_I2C_RD) != I2C_ACK ) goto Terror;
-	if( WriteI2CByte(TEMPERATURE_I2C_TMP) != I2C_ACK ) goto Terror;
 	AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
 	AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
 	I2CStop();
 
-	AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 4) * 5;
+	// Top 9 bits 0.5C res. scale to 0.1C
+	AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 7) * 5;	 
 	if ( AmbientTemperature.i16 > Stats[MaxTempS])
 		Stats[MaxTempS] = AmbientTemperature.i16;
 	else
@@ -57,8 +57,8 @@ void GetTemperature(void)
 
 Terror:
 	I2CStop();
-
 	AmbientTemperature.i16 = 0;
+
 	return;
 } // GetTemperature
 
@@ -70,6 +70,11 @@ void InitTemperature(void)
 	r = WriteI2CByte(TEMPERATURE_I2C_WR);
 	r = WriteI2CByte(TEMPERATURE_I2C_CMD);
 	r = WriteI2CByte(TEMPERATURE_I2C_CFG);
+	I2CStop();
+
+	I2CStart();
+	r = WriteI2CByte(TEMPERATURE_I2C_WR);	
+	r = WriteI2CByte(TEMPERATURE_I2C_TMP);  // Select temperature
 	I2CStop();
 
 	GetTemperature();

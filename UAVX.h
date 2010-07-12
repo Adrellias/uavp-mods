@@ -20,7 +20,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define EXPERIMENTAL
+	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
@@ -91,7 +91,7 @@
 
 // Altitude Hold
 
-#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
+//#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
 #define ALT_HOLD_MAX_ROC_DMPS		5L		// Must be changing altitude at less than this for alt. hold to be detected
 
 // Accelerometers
@@ -129,7 +129,7 @@
 
 // Navigation
 
-#define NAV_ACQUIRE_BEEPER
+//#define NAV_ACQUIRE_BEEPER
 
 //#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
 
@@ -160,8 +160,8 @@
 #define GPS_ORIGIN_SENTENCES 		30L		// Number of sentences needed to obtain reasonable Origin
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
 
-#define	NAV_GAIN_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
-#define NAV_GAIN_6CH				80L		// Low GPS gain for 6ch Rx
+#define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
+#define NAV_SENS_6CH				80L		// Low GPS gain for 6ch Rx
 
 #define	NAV_YAW_LIMIT				10L		// yaw slew rate for RTH
 #define NAV_MAX_TRIM				20L		// max trim offset for altitude hold
@@ -526,7 +526,7 @@ typedef union {
 	uint8 AllFlags[FLAG_BYTES];
 	struct { // Order of these flags subject to change
 		uint8
-		NavAltitudeHold:1,	// stick programmed
+		AltHoldEnabled:1,	
 		TurnToWP:1,			// stick programmed
 		GyroFailure:1,
 		LostModel:1,
@@ -575,7 +575,7 @@ typedef union {
 		UsingTelemetry:1,
 		TxToBuffer:1,
 		NewBaroValue:1,
-		BeeperInUse:1, 
+		BeeperInUse:1,
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		RFInInches:1,
@@ -872,9 +872,10 @@ extern near int24 PauseTime; // for tests
 extern near uint8 GPSRxState;
 extern near uint8 ll, tt, gps_ch;
 extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
+extern near boolean WaitingForSync;
+
 extern int8	SignalCount;
 extern uint16 RCGlitches;
-extern near boolean WaitingForSync;
 
 //______________________________________________________________________________________________
 
