@@ -50,7 +50,8 @@ void DoMulticopterMix(int16 CurrThrottle)
 		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 		if ( F.UsingAltOrientation ) // K1 forward
 		{
-			Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
+		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
+			Temp = SRS16(Pl * 56, 7);
 			PWM[K1] -= Pl ;				// front motor
 			PWM[K2] += (Temp - Rl);		// right rear
 			PWM[K3] += (Temp + Rl); 	// left rear
@@ -58,7 +59,8 @@ void DoMulticopterMix(int16 CurrThrottle)
 		}
 		else // Y K1 rearwards
 		{
-			Temp = -(Pl * 50)/115; 
+		//	Temp = -(Pl * 50)/115;
+			Temp = SRS16(Pl * -56, 7);  
 			PWM[K1] += Pl ;				// rear motor
 			PWM[K2] += (Temp + Rl);		// left front
 			PWM[K3] += (Temp - Rl); 	// right front
@@ -113,7 +115,7 @@ void CheckDemand(int16 CurrThrottle)
 		if ( Scale < 256 )
 		{
 			MotorDemandRescale = true;
-			Rl = (Rl * Scale)/256;  
+			Rl = (Rl * Scale)/256;  // could get rid of the divides
 			Pl = (Pl * Scale)/256; 
 			Yl = (Yl * Scale)/256; 
 		}
