@@ -73,7 +73,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 		TxESCu8(UAVXFlightPacketTag);
-		TxESCu8(45 + FLAG_BYTES);
+		TxESCu8(48 + FLAG_BYTES);
 		for ( b = 0; b < FLAG_BYTES; b++ )
 			TxESCu8(F.AllFlags[b]); 
 		
@@ -108,7 +108,9 @@ void SendUAVX(void) // 800uS at 40MHz?
 
 		for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 		TxESCu8(PWM[b]);
-		
+
+		TxESCi24(mSClock());		// mS. maybe make it arm relative?
+
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
 	
@@ -116,7 +118,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE)
 		{
 			TxESCu8(UAVXNavPacketTag);
-			TxESCu8(49);
+			TxESCu8(51);
 		
 			TxESCu8(NavState);
 			TxESCu8(FailState);
@@ -147,6 +149,8 @@ void SendUAVX(void) // 800uS at 40MHz?
 			TxESCi32(DesiredLongitude);
 	
 			TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
+	
+			TxESCi16(AmbientTemperature.i16);		// 0.1C	
 		}
 		else
 		{
