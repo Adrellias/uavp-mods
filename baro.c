@@ -33,6 +33,7 @@ void BaroTest(void);
 
 uint16	BaroPressure, BaroTemperature;
 boolean AcquiringPressure;
+int16	BaroOffsetDAC;
 
 #define BARO_MIN_CLIMB		2000	// dM minimum available barometer climb from origin
 #define BARO_MIN_DESCENT	-500	// dM minimum available barometer descent from origin
@@ -109,35 +110,78 @@ void SetFreescaleMCP4725_EPROM(int16 d)
 	I2CStop();
  } // SetFreescaleMCP4725_EPROM
 
+//#define GKEOFFSET
+#ifdef GKEOFFSET
+
 void SetFreescaleOffset(void)
 {
-	static int16 DACSet;
-	//I have a 1uf cap on the + input to the opamp so some settling time may be required 
+	static int16 lo, hi;
+	static int8 i;
+
+	lo = 0;
+	hi = 4095;
+
+	SetFreescaleMCP4725(0);
+	Delay100mSWithOutput(2);
+
+	ReadFreescaleBaro();
+	if ( BaroVal.u16 < 4095 ) // sum of 4 samples - aiming for 25% of FS on Baro ADC
+	{
+		for (i = 0; i < 12; i++) // 8 should be OK
+		{
+			BaroOffsetDAC = (hi-lo)>>1;
+			SetFreescaleMCP4725(BaroOffsetDAC);			Delay100mSWithOutput(2);
+			ReadFreescaleBaro();
+			if ( BaroVal.u16 > 4095 )
+				lo = BaroOffsetDAC;
+			else
+				hi = BaroOffsetDAC;
+		}
+	}
+	else
+		F.BaroAltitudeValid = false;
+
+} // SetFreescaleOffset
+
+#else
+
+void SetFreescaleOffset(void)
+{
+	// Steve: I have a 1uf cap on the + input to the opamp so some settling time may be required 
 	// if we care exactly where it cals
 	// my board runs at 4 mhz so delays for UAVX will need to be applied
 	// This go mine to settle in about 200ms with the same count each time.
 
-	DACSet = 4095;
+	BaroOffsetDAC = 4095;
 
-	while(Altitude > 1200)				// first loop gets close
+	SetFreescaleMCP4725(BaroOffsetDAC); 
+	Delay100mSWithOutput(2);
+	ReadFreescaleBaro();
+	while ( (BaroVal.u16 > 4800) && (BaroOffsetDAC>0) )	// first loop gets close
 	{
-		DACSet = DACSet - 20;			// approach at 20 steps out of 4095
-		SetFreescaleMCP4725(DACSet); 
+		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
+		SetFreescaleMCP4725(BaroOffsetDAC); 
+		Delay100mSWithOutput(2);
 		ReadFreescaleBaro();
 	}
 	
-	DACSet = DACSet + 100;				// move back up to come at it a little slower
-	SetFreescaleMCP4725(DACSet);
-//	Delay_ms(10);
+	BaroOffsetDAC += 100;						// move back up to come at it a little slower
+	SetFreescaleMCP4725(BaroOffsetDAC);
+	Delay100mSWithOutput(2);
 	ReadFreescaleBaro();
 
-	while(Altitude >= 1000)				// step down at a 2 steps until we = 1000;
+	while( (BaroVal.u16 > 4000) && (BaroOffsetDAC > 0) )
 	{
-		DACSet = DACSet - 2;
-		SetFreescaleMCP4725(DACSet);	//	delay_ms(1);
+		BaroOffsetDAC -= 2;
+		SetFreescaleMCP4725(BaroOffsetDAC);		Delay100mSWithOutput(2);
 		ReadFreescaleBaro();
 	}
+
+	F.BaroAltitudeValid = BaroOffsetDAC > 0;
+	
 } // SetFreescaleOffset
+
+#endif // GKEOFFSET
 
 void ReadFreescaleBaro(void)
 {
@@ -257,10 +301,14 @@ void InitFreescaleBarometer(void)
 
 	BaroTemperature = 0;
 
+	F.BaroAltitudeValid = true; // optimistic
+	SetFreescaleOffset();
+
 	CompBaroPressure = 0;
 	BaroQ.Head = 0;	
 	for (s = 0; s < 8; s++ )
 	{
+		while ( mSClock() < mS[BaroUpdate] ) {};
 		ReadFreescaleBaro();
 		BaroPressure = (int24)BaroVal.u16;
 		BaroQ.B[s] = BaroPressure; 					
@@ -273,7 +321,7 @@ void InitFreescaleBarometer(void)
 	BaroDescentAvailable = MinAltitude - BaroOriginAltitude;
 	BaroClimbAvailable = -BaroOriginAltitude;
 
-	// zzz F.BaroAltitudeValid = (( BaroClimbAvailable >= BARO_MIN_CLIMB ) && (BaroDescentAvailable <= BARO_MIN_DESCENT));
+	//F.BaroAltitudeValid &= (( BaroClimbAvailable >= BARO_MIN_CLIMB ) && (BaroDescentAvailable <= BARO_MIN_DESCENT));
 
 	#ifdef SIMULATE
 	FakeBaroRelAltitude = 0;
@@ -575,6 +623,7 @@ void BaroTest(void)
 		TxVal32((int32) BaroDescentAvailable,1, ' ');
 		TxString("-> ");
 		TxVal32((int32) BaroClimbAvailable,1, 'M');
+		TxString("Offset  :\t");TxVal32((int32)BaroOffsetDAC, 0,0); TxNextLine();
 
 		if (( BaroClimbAvailable < BARO_MIN_CLIMB ) || (BaroDescentAvailable > BARO_MIN_DESCENT))
 			TxString(" Insufficient climb or descent range - inappropriate offset adjustment?");

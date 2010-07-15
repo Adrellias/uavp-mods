@@ -107,10 +107,7 @@ void main(void)
 					break;
 				case Landed:
 					if ( DesiredThrottle < IdleThrottle )
-					{
 						SetGPSOrigin();
-						// ZeroBaroOriginAltitude(); // maybe a problem if throttle is closed for more than 5 Sec in flight
-					}
 					else
 					{
 						#ifdef SIMULATE

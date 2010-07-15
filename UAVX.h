@@ -20,9 +20,9 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	//#define EXPERIMENTAL
-	//#define TESTING						
-	//#define RX6CH 					// 6ch Receivers
+	#define EXPERIMENTAL
+	#define TESTING						
+	#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -91,7 +91,7 @@
 
 // Altitude Hold
 
-//#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
+#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
 #define ALT_HOLD_MAX_ROC_DMPS		5L		// Must be changing altitude at less than this for alt. hold to be detected
 
 // Accelerometers
@@ -129,7 +129,7 @@
 
 // Navigation
 
-//#define NAV_ACQUIRE_BEEPER
+#define NAV_ACQUIRE_BEEPER
 
 //#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
 
@@ -161,6 +161,7 @@
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
 
 #define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
+#define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
 #define NAV_SENS_6CH				80L		// Low GPS gain for 6ch Rx
 
 #define	NAV_YAW_LIMIT				10L		// yaw slew rate for RTH

@@ -377,7 +377,7 @@ void UpdateControls(void)
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
 
-		F.AltHoldEnabled = NavSensitivity > NAV_SENS_THRESHOLD;
+		F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
 	
 		#ifdef ATTITUDE_NO_LIMITS
 		RollPitchScale = 128L;
