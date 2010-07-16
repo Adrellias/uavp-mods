@@ -23,7 +23,6 @@
 #include "uavx.h"
 
 void GetBaroAltitude(void);
-void ZeroBaroOriginAltitude(void);
 void InitBarometer(void);
 
 void BaroTest(void);
@@ -35,7 +34,7 @@ uint16	BaroPressure, BaroTemperature;
 boolean AcquiringPressure;
 int16	BaroOffsetDAC;
 
-#define BARO_MIN_CLIMB		2000	// dM minimum available barometer climb from origin
+#define BARO_MIN_CLIMB		1500	// dM minimum available barometer climb from origin
 #define BARO_MIN_DESCENT	-500	// dM minimum available barometer descent from origin
 
 #define BARO_BUFF_SIZE 8
@@ -62,12 +61,12 @@ int8 SimulateCycles = 0;
 
 // Freescale ex Motorola MPX4115 Barometer with ADS7823 12bit ADC
 
+void SetFreescaleMCP4725(int16);
+void SetFreescaleOffset(void);
 void ReadFreescaleBaro(void);
 int16 FreescaleToDM(int24);
 void GetFreescaleBaroAltitude(void);
-void ZeroFreescaleBaroOriginAltitude(void);
 boolean IsFreescaleBaroActive(void);
-void SetFreescaleOffset(void);
 void InitFreescaleBarometer(void);
 
 #define FS_ADC_TIME_MS	49
@@ -89,53 +88,40 @@ void SetFreescaleMCP4725(int16 d)
 
 	dd.u16 = d << 4; // left align
 	I2CStart();
-	r = WriteI2CByte(FS_DAC_MCP_WR) != I2C_ACK;
-	r = WriteI2CByte(FS_DAC_MCP_CMD) != I2C_ACK;
-	r = WriteI2CByte(dd.b1) != I2C_ACK;
-	r = WriteI2CByte(dd.b0) != I2C_ACK;
+		r = WriteI2CByte(FS_DAC_MCP_WR) != I2C_ACK;
+		r = WriteI2CByte(FS_DAC_MCP_CMD) != I2C_ACK;
+		r = WriteI2CByte(dd.b1) != I2C_ACK;
+		r = WriteI2CByte(dd.b0) != I2C_ACK;
 	I2CStop();
 } // SetFreescaleMCP4725
-
-void SetFreescaleMCP4725_EPROM(int16 d)
-{
-	static int8 r;
-	static i16u dd;
-
-	dd.u16 = d << 4;
-	I2CStart();
-	r = WriteI2CByte(FS_DAC_MCP_WR) != I2C_ACK;
-	r = WriteI2CByte(FS_DAC_MCP_EPROM) != I2C_ACK;
-	r = WriteI2CByte(dd.b1) != I2C_ACK;
-	r = WriteI2CByte(dd.b0) != I2C_ACK;
-	I2CStop();
- } // SetFreescaleMCP4725_EPROM
 
 //#define GKEOFFSET
 #ifdef GKEOFFSET
 
 void SetFreescaleOffset(void)
 {
-	static int16 lo, hi;
+	static int16 Hop;
 	static int8 i;
 
-	lo = 0;
-	hi = 4095;
+	BaroOffsetDAC = 0;
+	Hop = BaroOffsetDAC >> 2;
 
-	SetFreescaleMCP4725(0);
-	Delay100mSWithOutput(2);
+	SetFreescaleMCP4725(BaroOffsetDAC);
+	Delay1mS(2);
 
 	ReadFreescaleBaro();
 	if ( BaroVal.u16 < 4095 ) // sum of 4 samples - aiming for 25% of FS on Baro ADC
 	{
 		for (i = 0; i < 12; i++) // 8 should be OK
 		{
-			BaroOffsetDAC = (hi-lo)>>1;
-			SetFreescaleMCP4725(BaroOffsetDAC);			Delay100mSWithOutput(2);
+			BaroOffsetDAC += Hop;
+			Hop >>= 2;
+			SetFreescaleMCP4725(BaroOffsetDAC);			Delay1mS(2);
 			ReadFreescaleBaro();
 			if ( BaroVal.u16 > 4095 )
-				lo = BaroOffsetDAC;
+				BaroOffsetDAC -= Hop;
 			else
-				hi = BaroOffsetDAC;
+				BaroOffsetDAC += Hop;
 		}
 	}
 	else
@@ -146,34 +132,31 @@ void SetFreescaleOffset(void)
 #else
 
 void SetFreescaleOffset(void)
-{
-	// Steve: I have a 1uf cap on the + input to the opamp so some settling time may be required 
-	// if we care exactly where it cals
-	// my board runs at 4 mhz so delays for UAVX will need to be applied
-	// This go mine to settle in about 200ms with the same count each time.
+{ 	// Steve Westerfeld
+	// 470 Ohm, 1uF RC 0.47mS use 2mS for settling?
 
 	BaroOffsetDAC = 4095;
 
 	SetFreescaleMCP4725(BaroOffsetDAC); 
-	Delay100mSWithOutput(2);
+	Delay1mS(2);
 	ReadFreescaleBaro();
-	while ( (BaroVal.u16 > 4800) && (BaroOffsetDAC>0) )	// first loop gets close
+	while ( (BaroVal.u16 > 4800) && (BaroOffsetDAC > 20) )	// first loop gets close
 	{
 		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
 		SetFreescaleMCP4725(BaroOffsetDAC); 
-		Delay100mSWithOutput(2);
+		Delay1mS(2);
 		ReadFreescaleBaro();
 	}
 	
 	BaroOffsetDAC += 100;						// move back up to come at it a little slower
 	SetFreescaleMCP4725(BaroOffsetDAC);
-	Delay100mSWithOutput(2);
+	Delay1mS(2);
 	ReadFreescaleBaro();
 
-	while( (BaroVal.u16 > 4000) && (BaroOffsetDAC > 0) )
+	while( (BaroVal.u16 > 4000) && (BaroOffsetDAC > 2) )
 	{
 		BaroOffsetDAC -= 2;
-		SetFreescaleMCP4725(BaroOffsetDAC);		Delay100mSWithOutput(2);
+		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(2);
 		ReadFreescaleBaro();
 	}
 
@@ -222,7 +205,11 @@ FSError:
 
 int16 FreescaleToDM(int24 p)
 { // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
+#ifdef JIM_MPX_INVERT
 	return(-(p * 2 )/(int16)P[BaroScale]);
+#else
+	return((p * 2 )/(int16)P[BaroScale]);
+#endif // JIM_MPX_INVERT
 }  // FreescaleToDM
 
 void GetFreescaleBaroAltitude(void)
@@ -239,8 +226,6 @@ void GetFreescaleBaroAltitude(void)
 			BaroQ.B[BaroQ.Head] = BaroPressure;
 			CompBaroPressure += BaroPressure; // contains the sum of the last 32 baro samples
 			BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);			
-		
-			GetTemperature(); // most likely use is in altitude compensation so read here!
 
 			// Pressure queue has 8 entries corresponding to an average delay at 20Hz of 0.2Sec
 			BaroRelAltitude = FreescaleToDM(CompBaroPressure-OriginBaroPressure);
@@ -271,11 +256,6 @@ void GetFreescaleBaroAltitude(void)
 	else
 		F.NewBaroValue = false;	
 } // GetFreescaleBaroAltitude
-
-void ZeroFreescaleBaroOriginAltitude(void)
-{
-	InitFreescaleBarometer();
-} // ZeroFreescaleBaroOriginAltitude
 
 boolean IsFreescaleBaroActive(void)
 { // check for Freescale Barometer
@@ -337,7 +317,6 @@ void StartBoschBaroADC(boolean);
 int24 CompensatedBoschPressure(uint16, uint16);
 
 void GetBoschBaroAltitude(void);
-void ZeroBoschBaroOriginAltitude(void);
 boolean IsBoschBaroActive(void);
 void InitBoschBarometer(void);
 
@@ -377,13 +356,13 @@ void StartBoschBaroADC(boolean ReadPressure)
 	}
 
 	I2CStart();
-	if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto SBerror;
-
-	// access control register, start measurement
-	if( WriteI2CByte(BOSCH_CTL) != I2C_ACK ) goto SBerror;
-
-	// select 32kHz input, measure temperature
-	if( WriteI2CByte(TempOrPress) != I2C_ACK ) goto SBerror;
+		if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto SBerror;
+	
+		// access control register, start measurement
+		if( WriteI2CByte(BOSCH_CTL) != I2C_ACK ) goto SBerror;
+	
+		// select 32kHz input, measure temperature
+		if( WriteI2CByte(TempOrPress) != I2C_ACK ) goto SBerror;
 	I2CStop();
 
 	F.BaroAltitudeValid = true;
@@ -398,19 +377,19 @@ void ReadBoschBaro(void)
 {
 	// Possible I2C protocol error - split read of ADC
 	I2CStart();
-	if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto RVerror;
-	if( WriteI2CByte(BOSCH_ADC_MSB) != I2C_ACK ) goto RVerror;
-	I2CStart();	// restart
-	if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto RVerror;
-	BaroVal.b1 = ReadI2CByte(I2C_NACK);
+		if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto RVerror;
+		if( WriteI2CByte(BOSCH_ADC_MSB) != I2C_ACK ) goto RVerror;
+		I2CStart();	// restart
+		if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto RVerror;
+		BaroVal.b1 = ReadI2CByte(I2C_NACK);
 	I2CStop();
 			
 	I2CStart();
-	if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto RVerror;
-	if( WriteI2CByte(BOSCH_ADC_LSB) != I2C_ACK ) goto RVerror;
-	I2CStart();	// restart
-	if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto RVerror;
-	BaroVal.b0 = ReadI2CByte(I2C_NACK);
+		if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto RVerror;
+		if( WriteI2CByte(BOSCH_ADC_LSB) != I2C_ACK ) goto RVerror;
+		I2CStart();	// restart
+		if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto RVerror;
+		BaroVal.b0 = ReadI2CByte(I2C_NACK);
 	I2CStop();
 
 	return;
@@ -509,22 +488,16 @@ void GetBoschBaroAltitude(void)
 		
 } // GetBoschBaroAltitude
 
-void ZeroBoschBaroOriginAltitude(void)
-{
-	OriginBaroPressure = 0;
-	OriginBaroPressure = CompensatedBoschPressure(BaroPressure, BaroTemperature);
-} // ZeroBoschBaroOriginAltitude
-
 boolean IsBoschBaroActive(void)
 { // check for Bosch Barometers
 	static uint8 r;
 
 	I2CStart();
-	if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto BoschInactive;
-	if( WriteI2CByte(BOSCH_TYPE) != I2C_ACK ) goto BoschInactive;
-	I2CStart();	// restart
-	if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto BoschInactive;
-	r = ReadI2CByte(I2C_NACK);
+		if( WriteI2CByte(BOSCH_I2C_ID) != I2C_ACK ) goto BoschInactive;
+		if( WriteI2CByte(BOSCH_TYPE) != I2C_ACK ) goto BoschInactive;
+		I2CStart();	// restart
+		if( WriteI2CByte(BOSCH_I2C_ID+1) != I2C_ACK ) goto BoschInactive;
+		r = ReadI2CByte(I2C_NACK);
 	I2CStop();
 
 	if (r == BOSCH_ID_BMP085 )
@@ -668,14 +641,6 @@ void GetBaroAltitude(void)
 
 } // GetBaroAltitude
 
-void ZeroBaroOriginAltitude(void)
-{
-	if ( BaroType == BaroMPX4115 )
-		ZeroFreescaleBaroOriginAltitude();
-	else
-		ZeroBoschBaroOriginAltitude();
-} // ZeroBaroAltitude
-
 void InitBarometer(void)
 {
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
@@ -686,7 +651,7 @@ void InitBarometer(void)
 	if ( IsBoschBaroActive() )
 		InitBoschBarometer();
 	else
-		if ( IsFreescaleBaroActive() )
+		if ( IsFreescaleBaroActive() )	
 			InitFreescaleBarometer();
 		else
 		{

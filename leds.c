@@ -23,10 +23,20 @@
 void SendLEDs(void);
 void LEDsOn(uint8);
 void LEDsOff(uint8);
-void LEDGame(void);
+void LEDChaser(void);
 
 uint8 LEDShadow;		// shadow register
-uint8 LEDCycles;
+uint8 LEDPattern = 0;
+boolean PrevHolding = false;
+const uint8 LEDChase[7] = {
+		AUX1M,	
+		AUX2M,
+		AUX3M,
+		YellowM,
+		RedM,
+		GreenM,
+		BlueM
+	};
 
 #ifdef UAVX_HW
 
@@ -84,30 +94,23 @@ void LEDsOff(uint8 l)
 	SendLEDs();
 } // LEDsOff
 
-void LEDGame(void)
+void LEDChaser(void)
 {
-	// ? needs rewriting
-	if( --LEDCycles == 0 )
+//	#define LED_NO 		2	// just AUX LEDs
+	#define LED_NO		6	// all LEDs
+
+	if ( mSClock() > mS[LEDChaserUpdate] )
 	{
-		LEDCycles = (( 255 - DesiredThrottle ) >> 3) + 5;	// new setup
-		if( F.HoldingAlt )
-			AUX_LEDS_ON;	// baro locked, all Aux-LEDs on
+		if ( F.HoldingAlt )
+			ALL_LEDS_ON;
 		else
-			if( LEDShadow & AUX1M )
-			{
-				AUX_LEDS_OFF;
-				LEDAUX2_ON;
-			}
-			else
-				if( LEDShadow & AUX2M )
-				{
-					AUX_LEDS_OFF;
-					LEDAUX3_ON;
-				}
-				else
-				{
-					AUX_LEDS_OFF;
-					LEDAUX1_ON;
-				}
+		{
+			LEDShadow ^= LEDChase[LEDPattern];
+			if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;
+			LEDShadow |= LEDChase[LEDPattern];
+			SendLEDs();
+		}
+		mS[LEDChaserUpdate] = mSClock() + 50;
 	}
-} // LEDGame
+} // LEDChaser
+

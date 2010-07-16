@@ -109,7 +109,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 		for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 		TxESCu8(PWM[b]);
 
-		TxESCi24(mSClock());		// mS. maybe make it arm relative?
+		TxESCi24(mSClock()); // - mS[TakeoffTime]);
 
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;

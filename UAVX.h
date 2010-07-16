@@ -1,4 +1,6 @@
 
+//#define JIM_MPX_INVERT
+
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
 // =                             Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -20,9 +22,9 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define EXPERIMENTAL
-	#define TESTING						
-	#define RX6CH 					// 6ch Receivers
+	//#define EXPERIMENTAL
+	//#define TESTING						
+	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -677,23 +679,22 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
 
+extern void SetFreescaleMCP4725(int16);
+extern void SetFreescaleOffset(void);
+extern void ReadFreescaleBaro(void);
+extern int16 FreescaleToDM(int24);
+extern void GetFreescaleBaroAltitude(void);
+extern boolean IsFreescaleBaroActive(void);
+extern void InitFreescaleBarometer(void);
+
 extern void StartBoschBaroADC(boolean);
 extern void ReadBoschBaro(void);
 extern int24 CompensatedBoschPressure(uint16, uint16);
 extern void GetBoschBaroAltitude(void);
-extern void ZeroBoschBaroOriginAltitude(void);
 extern boolean IsBoschBaroActive(void);
 extern void InitBoschBarometer(void);
 
-extern void ReadFreescaleBaro(void);
-extern int16 FreescaleToDM(int24);
-extern void GetFreescaleBaroAltitude(void);
-extern void ZeroFreescaleBaroOriginAltitude(void);
-extern boolean IsFreescaleBaroActive(void);
-extern void InitFreescaleBarometer(void);
-
 extern void GetBaroAltitude(void);
-extern void ZeroBaroOriginAltitude(void);
 extern void InitBarometer(void);
 
 extern void BaroTest(void);
@@ -856,7 +857,7 @@ extern uint24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, 
-	GPSTimeout, GPSROCUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
+	GPSTimeout, GPSROCUpdate, TakeoffTime, LEDChaserUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
@@ -906,10 +907,10 @@ extern void ConfigureESCs(void);
 extern void SendLEDs(void);
 extern void LEDsOn(uint8);
 extern void LEDsOff(uint8);
-extern void LEDGame(void);
+extern void LEDChaser(void);
 
 extern uint8 LEDShadow;		// shadow register
-extern uint8 LEDCycles;		// for altitude hold light display
+extern uint8 LEDPattern;	// for altitude hold light display
 
 //______________________________________________________________________________________________
 

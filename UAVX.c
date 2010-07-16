@@ -72,7 +72,7 @@ void main(void)
 		ReceivingGPSOnly(false);
 		EnableInterrupts;
 
-		LightsAndSirens();	// Check for Rx Signal, Disarmed on power up, Throttle closed, Gyros ONLINE
+		LightsAndSirens();	// Check for Rx signal, disarmed on power up, throttle closed, gyros ONLINE
 
 		State = Starting;
 
@@ -84,7 +84,7 @@ void main(void)
 			UpdateGPS();
 			UpdateControls();
 
-			if ( F.Signal )//zzz&& ( FailState == MonitoringRx ) )
+			if ( ( F.Signal ) && ( FailState == MonitoringRx ) )
 			{
 				switch ( State  ) {
 				case Starting:	// this state executed once only after arming
@@ -101,7 +101,7 @@ void main(void)
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
 					ZeroStats();
 					DoStartingBeepsWithOutput(3);
- 					ZeroBaroOriginAltitude();
+ 					InitBarometer();
 
 					State = Landed;
 					break;
@@ -114,8 +114,9 @@ void main(void)
 						FakeBaroRelAltitude = 0;
 						#endif // SIMULATE
 						InitHeading();						
-						LEDCycles = 1;
+						LEDPattern = 0;
 						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
+						mS[TakeoffTime] = mSClock();
 						Stats[RCGlitchesS] = RCGlitches; // start of flight
 						State = InFlight;	
 					}
@@ -147,7 +148,8 @@ void main(void)
 						&& ( mSClock() > mS[NavActiveTime]) )
 						DoNavigation();
 					
-					LEDGame();
+					LEDChaser();
+
 					if ( DesiredThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mSClock() + THROTTLE_LOW_DELAY_MS;
@@ -178,6 +180,7 @@ void main(void)
 			MixAndLimitCam();
 			OutSignals();							// some jitter because sync precedes this
 
+			GetTemperature(); 
 			CheckAlarms();			CheckTelemetry();
 
 			SensorTrace();
