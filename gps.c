@@ -132,11 +132,9 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 	return(r);
 } // ConvertLatLonM
 
-/*	
-int32 ConvertUTime(int8 lo, int8 hi)
+int32 ConvertUTime(uint8 lo, uint8 hi)
 {
-	int32 ival, hh;
-	int16 mm, ss;
+	static int32 ival;
 	
 	ival=0;
 	if ( !EmptyField )
@@ -146,7 +144,6 @@ int32 ConvertUTime(int8 lo, int8 hi)
 	      
 	return(ival);
 } // ConvertUTime
-*/
 
 void UpdateField(void)
 {
@@ -169,7 +166,7 @@ void ParseGPGGASentence(void)
     UpdateField();
     
     UpdateField();   //UTime
-	//GPSMissionTime=ConvertUTime(lo,hi);
+	GPSMissionTime = ConvertUTime(lo,hi);
 
 	UpdateField();   	//Lat
     GPSLatitude = ConvertLatLonM(lo, hi);

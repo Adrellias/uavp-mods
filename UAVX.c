@@ -116,7 +116,6 @@ void main(void)
 						InitHeading();						
 						LEDPattern = 0;
 						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
-						mS[TakeoffTime] = mSClock();
 						Stats[RCGlitchesS] = RCGlitches; // start of flight
 						State = InFlight;	
 					}

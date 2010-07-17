@@ -109,7 +109,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 		for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 		TxESCu8(PWM[b]);
 
-		TxESCi24(mSClock()); // - mS[TakeoffTime]);
+		TxESCi24(mSClock());
 
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
@@ -118,7 +118,7 @@ void SendUAVX(void) // 800uS at 40MHz?
 		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE)
 		{
 			TxESCu8(UAVXNavPacketTag);
-			TxESCu8(51);
+			TxESCu8(55);
 		
 			TxESCu8(NavState);
 			TxESCu8(FailState);
@@ -150,7 +150,8 @@ void SendUAVX(void) // 800uS at 40MHz?
 	
 			TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
 	
-			TxESCi16(AmbientTemperature.i16);		// 0.1C	
+			TxESCi16(AmbientTemperature.i16);			// 0.1C
+			TxESCi32(GPSMissionTime);	
 		}
 		else
 		{
