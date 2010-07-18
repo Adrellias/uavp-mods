@@ -530,7 +530,7 @@ typedef union {
 	struct { // Order of these flags subject to change
 		uint8
 		AltHoldEnabled:1,	
-		TurnToWP:1,			// stick programmed
+		AllowTurnToWP:1,			// stick programmed
 		GyroFailure:1,
 		LostModel:1,
 		NearLevel:1,
@@ -582,7 +582,9 @@ typedef union {
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		RFInInches:1,
-		Simulation:1;
+		Simulation:1,
+
+		AllowNavAltitudeHold:1;			// stick programmed
 		};
 } Flags;
 

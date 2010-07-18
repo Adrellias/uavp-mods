@@ -140,7 +140,7 @@ void SetFreescaleOffset(void)
 	SetFreescaleMCP4725(BaroOffsetDAC); 
 	Delay1mS(2);
 	ReadFreescaleBaro();
-	while ( (BaroVal.u16 > 4800) && (BaroOffsetDAC > 20) )	// first loop gets close
+	while ( (BaroVal.u16 < 11600) && (BaroOffsetDAC > 20) )	// first loop gets close
 	{
 		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
 		SetFreescaleMCP4725(BaroOffsetDAC); 
@@ -153,7 +153,7 @@ void SetFreescaleOffset(void)
 	Delay1mS(2);
 	ReadFreescaleBaro();
 
-	while( (BaroVal.u16 > 4000) && (BaroOffsetDAC > 2) )
+	while( (BaroVal.u16 < 12300 ) && (BaroOffsetDAC > 2) )
 	{
 		BaroOffsetDAC -= 2;
 		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(2);
@@ -186,6 +186,9 @@ void ReadFreescaleBaro(void)
 	B3.b0 = B[7]; B3.b1 = B[6];
 
 	BaroVal.u16 = B0.u16 + B1.u16 + B2.u16 + B3.u16;
+	#ifndef JIM_MPX_INVERT
+	BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
+	#endif // !JIM_MPX_INVERT
 
 	mS[BaroUpdate] = mSClock() + FS_ADC_TIME_MS;
 
@@ -205,11 +208,7 @@ FSError:
 
 int16 FreescaleToDM(int24 p)
 { // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-#ifdef JIM_MPX_INVERT
 	return(-(p * 2 )/(int16)P[BaroScale]);
-#else
-	return((p * 2 )/(int16)P[BaroScale]);
-#endif // JIM_MPX_INVERT
 }  // FreescaleToDM
 
 void GetFreescaleBaroAltitude(void)

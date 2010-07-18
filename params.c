@@ -252,16 +252,64 @@ void UpdateParamSetChoice(void)
 {
 	#define STICK_WINDOW 30
 
-	int8 NewParamSet, Selector;
-	uint8 NewTurnToWP;
+	int8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP, Selector;
 
 	NewParamSet = ParamSet;
-	NewTurnToWP = F.TurnToWP;
+	NewAllowNavAltitudeHold = F.AllowNavAltitudeHold;
+	NewAllowTurnToWP = F.AllowTurnToWP;
 
 	if ( F.UsingTxMode2 )
 		Selector = DesiredRoll;
 	else
 		Selector = -DesiredYaw;
+
+	if ( (Abs(DesiredPitch) > STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW) )
+	{
+		if ( DesiredPitch > STICK_WINDOW ) // bottom
+		{
+			if ( Selector < -STICK_WINDOW ) // left
+			{ // bottom left
+				NewParamSet = 1;
+				NewAllowNavAltitudeHold = true;
+			}
+			else
+				if ( Selector > STICK_WINDOW ) // right
+				{ // bottom right
+					NewParamSet = 2;
+					NewAllowNavAltitudeHold = true;
+				}
+		}		
+		else
+			if ( DesiredPitch < -STICK_WINDOW ) // top
+			{		
+				if ( Selector < -STICK_WINDOW ) // left
+				{
+					NewAllowNavAltitudeHold = false;
+					NewParamSet = 1;
+				}
+				else 
+					if ( Selector > STICK_WINDOW ) // right
+					{
+						NewAllowNavAltitudeHold = false;
+						NewParamSet = 2;
+					}
+			}
+
+		if ( ( NewParamSet != ParamSet ) || ( NewAllowNavAltitudeHold != F.AllowNavAltitudeHold ) )
+		{	
+			ParamSet = NewParamSet;
+			F.AllowNavAltitudeHold = NewAllowNavAltitudeHold;
+			LEDBlue_ON;
+			DoBeep100mSWithOutput(2, 2);
+			if ( ParamSet == 2 )
+				DoBeep100mSWithOutput(2, 2);
+			if ( F.AllowNavAltitudeHold )
+				DoBeep100mSWithOutput(4, 4);
+			ParametersChanged |= true;
+			Beeper_OFF;
+			LEDBlue_OFF;
+		}
+	}
 
 	if ( F.UsingTxMode2 )
 		Selector = -DesiredYaw;
@@ -271,16 +319,16 @@ void UpdateParamSetChoice(void)
 	if ( (Abs(RC[ThrottleC]) < STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW ) )
 	{
 		if ( Selector < -STICK_WINDOW ) // left
-			NewTurnToWP = false;
+			NewAllowTurnToWP = false;
 		else
 			if ( Selector > STICK_WINDOW ) // left
-				NewTurnToWP = true; // right
+				NewAllowTurnToWP = true; // right
 			
-		if ( NewTurnToWP != F.TurnToWP )
+		if ( NewAllowTurnToWP != F.AllowTurnToWP )
 		{		
-			F.TurnToWP = NewTurnToWP;
+			F.AllowTurnToWP = NewAllowTurnToWP;
 			LEDBlue_ON;
-		// do it either way	if ( F.TurnToWP )
+		// do it either way		if ( F.AllowTurnToWP )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;

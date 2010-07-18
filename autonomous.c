@@ -249,7 +249,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		NavPCorrP = NavPCorr;
 				
 		// Yaw
-		if ( F.TurnToWP && !F.WayPointAchieved )
+		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
 			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 			NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
@@ -415,6 +415,9 @@ void DoNavigation(void)
 	#endif // !TESTING
 } // DoNavigation
 
+//#define USE_PPM_FAILSAFE
+#ifdef USE_PPM_FAILSAFE
+
 void CheckFailsafeAbort(void)
 {
 	if ( mSClock() > mS[AbortTimeout] )
@@ -431,8 +434,6 @@ void CheckFailsafeAbort(void)
 	else
 		mS[AbortTimeout] += ABORT_UPDATE_MS;
 } // CheckFailsafeAbort
-
-
 
 void DoPPMFailsafe(void)
 { // only relevant to PPM Rx or Quad NOT synchronising with Rx
@@ -475,14 +476,14 @@ void DoPPMFailsafe(void)
 		case MonitoringRx:
 			if ( mSClock() > mS[FailsafeTimeout] ) 
 			{
+				// use last "good" throttle
 				Stats[RCFailsafesS]++;
 				if ( F.GPSValid && F.CompassValid )
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_GPS_MS;
 				else
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_NO_GPS_MS;
 				mS[AbortTimeout] = mSClock() + ABORT_UPDATE_MS;
-				FailState = Aborting;
-				// use last "good" throttle; 
+				FailState = Aborting; 
 			}
 			break;
 		} // Switch FailState
@@ -493,7 +494,7 @@ void DoPPMFailsafe(void)
 			
 } // DoPPMFailsafe
 
-
+#endif // USE_PPM_FAILSAFE
 
 void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed

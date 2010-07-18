@@ -262,10 +262,16 @@ void ShowSetup(boolean h)
 	else
 		TxString("\tAuto descend disabled\r\n");
 
-	if ( F.TurnToWP )
+	if ( F.AllowTurnToWP )
 		TxString("\tTurn toward Way Point\r\n");
 	else
 		TxString("\tHold heading\r\n");
+
+	if ( F.AllowNavAltitudeHold )
+		TxString("\tAllow Nav Altitude Hold\r\n");
+	else
+		TxString("\tWARNING: Manual Nav Altitude Hold\r\n");
+
 	TxString("\r\nALARM (if any):\r\n");
 	if ( F.GyroFailure )
 		TxString("\tGyro failure?\r\n");

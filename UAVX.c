@@ -161,9 +161,16 @@ void main(void)
 				FailState = MonitoringRx;
 			}
 			else
+			#ifdef USE_PPM_FAILSAFE
 				DoPPMFailsafe();
+			#else
+			{
+				Stats[RCFailsafesS]++;
+				DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = 0;
+			}
+			#endif // USE_PPM_FAILSAFE
 
-			GetRollPitchGyroValues();				// First gyro sample
+			GetRollPitchGyroValues();				// first gyro sample
 			GetHeading();
 			AltitudeHold();
 
@@ -171,7 +178,7 @@ void main(void)
 
 			mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
 
-			GetRollPitchGyroValues();				// Second gyro sample
+			GetRollPitchGyroValues();				// second gyro sample
 			
 			DoControl();
 

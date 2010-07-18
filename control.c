@@ -365,8 +365,9 @@ void UpdateControls(void)
 			if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
 				DesiredThrottle = 0;
 		}
-		else // Automatic
-			DesiredThrottle = CruiseThrottle;
+		else // Autonomous
+			if ( F.AllowNavAltitudeHold )
+				DesiredThrottle = CruiseThrottle;
 		
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;
