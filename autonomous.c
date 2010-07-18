@@ -99,8 +99,11 @@ void FailsafeHoldPosition(void)
 
 void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
-	AltSum = 0;	
-	DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
+	if ( F.AllowNavAltitudeHold )
+	{
+		AltSum = 0;	
+		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
+	}
 } // SetDesiredAltitude
 
 void DoFailsafeLanding(void)
