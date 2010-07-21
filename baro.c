@@ -69,8 +69,10 @@ void GetFreescaleBaroAltitude(void);
 boolean IsFreescaleBaroActive(void);
 void InitFreescaleBarometer(void);
 
+#define FS_DAC_MAX	 	4095 // 12 bits
+
 #define FS_ADC_TIME_MS	49
-#define FS_ADC_MAX_ADC 	4095 // 12 bits
+#define FS_ADC_MAX	 	4095 // 12 bits
 #define FS_ADC_I2C_ID	0x90 // ADS7823 ADC
 #define FS_ADC_I2C_WR	0x90 // ADS7823 ADC
 #define FS_ADC_I2C_RD	0x91 // ADS7823 ADC
@@ -104,21 +106,21 @@ void SetFreescaleOffset(void)
 	static int8 i;
 
 	BaroOffsetDAC = 0;
-	Hop = BaroOffsetDAC >> 2;
+	Hop = FS_DAC_MAX >> 1;
 
 	SetFreescaleMCP4725(BaroOffsetDAC);
 	Delay1mS(2);
 
 	ReadFreescaleBaro();
-	if ( BaroVal.u16 < 4095 ) // sum of 4 samples - aiming for 25% of FS on Baro ADC
+	if ( BaroVal.u16 < 16380 ) // sum of 4 samples - aiming for 25% of FS on Baro ADC
 	{
 		for (i = 0; i < 12; i++) // 8 should be OK
 		{
 			BaroOffsetDAC += Hop;
-			Hop >>= 2;
+			Hop >>= 2 + 1; // avoid zero hop
 			SetFreescaleMCP4725(BaroOffsetDAC);			Delay1mS(2);
 			ReadFreescaleBaro();
-			if ( BaroVal.u16 > 4095 )
+			if ( BaroVal.u16 > (uint16)(((uint24)FS_ADC_MAX*4*3)/4) )
 				BaroOffsetDAC -= Hop;
 			else
 				BaroOffsetDAC += Hop;
@@ -135,12 +137,12 @@ void SetFreescaleOffset(void)
 { 	// Steve Westerfeld
 	// 470 Ohm, 1uF RC 0.47mS use 2mS for settling?
 
-	BaroOffsetDAC = 4095;
+	BaroOffsetDAC = FS_DAC_MAX;
 
 	SetFreescaleMCP4725(BaroOffsetDAC); 
 	Delay1mS(2);
 	ReadFreescaleBaro();
-	while ( (BaroVal.u16 < 11600) && (BaroOffsetDAC > 20) )	// first loop gets close
+	while ( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4*7)/10) ) && (BaroOffsetDAC > 20) )	// first loop gets close
 	{
 		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
 		SetFreescaleMCP4725(BaroOffsetDAC); 
@@ -153,7 +155,7 @@ void SetFreescaleOffset(void)
 	Delay1mS(2);
 	ReadFreescaleBaro();
 
-	while( (BaroVal.u16 < 12300 ) && (BaroOffsetDAC > 2) )
+	while( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4*3)/4) ) && (BaroOffsetDAC > 2) )
 	{
 		BaroOffsetDAC -= 2;
 		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(2);
@@ -295,7 +297,7 @@ void InitFreescaleBarometer(void)
 	}
 	OriginBaroPressure = CompBaroPressure;
 
-	MinAltitude = FreescaleToDM((int24)FS_ADC_MAX_ADC*4*BARO_BUFF_SIZE);
+	MinAltitude = FreescaleToDM((int24)FS_ADC_MAX*4*BARO_BUFF_SIZE);
 	BaroOriginAltitude = FreescaleToDM(OriginBaroPressure);
 	BaroDescentAvailable = MinAltitude - BaroOriginAltitude;
 	BaroClimbAvailable = -BaroOriginAltitude;

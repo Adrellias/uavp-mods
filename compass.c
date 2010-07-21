@@ -89,7 +89,7 @@ void GetCompassParameters(void)
 
 	Delay1mS(COMPASS_TIME_MS);
 
-	for (r = 0; r <= 8; r++)
+	for (r = 0; r <= (uint8)8; r++)
 	{
 		CP[r] = 0xff;
 
@@ -146,7 +146,7 @@ void DoCompassTest(void)
 	TxString("Registers\r\n");
 	TxString("0:\tI2C"); 
 	TxString("\t 0x"); TxValH(CP[0]); 
-	if ( CP[0] != 0x42 ) 
+	if ( CP[0] != (uint8)0x42 ) 
 		TxString("\t Error expected 0x42 for HMC6352");
 	TxNextLine();
 

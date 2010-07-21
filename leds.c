@@ -96,8 +96,8 @@ void LEDsOff(uint8 l)
 
 void LEDChaser(void)
 {
-//	#define LED_NO 		2	// just AUX LEDs
-	#define LED_NO		6	// all LEDs
+//	#define LED_NO 		(uint8)2	// just AUX LEDs
+	#define LED_NO		(uint8)6	// all LEDs
 
 	if ( mSClock() > mS[LEDChaserUpdate] )
 	{

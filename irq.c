@@ -311,7 +311,7 @@ void high_isr_handler(void)
 
 		mS[Clock]++;
 
-		if ( mS[UpdateTimeout] - mS[Clock] > 15 ) // should not happen!
+		if ( ( mS[UpdateTimeout] - mS[Clock] ) > (uint24)15 ) // should not happen!
 		{
 			WaitingForSync = false;
 			if ( State == InFlight )

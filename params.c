@@ -69,7 +69,8 @@ const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 1,2,3,4,5,6,7 },	// Graupner MX16S
 	{ 5,1,3,4,2,6,7 },	// Spektrum DX6i/AR6200
 
-	{ 5,1,3,2,4,6,7 }	// Custom
+	{ 3,1,2,4,5,6,7 }	// Custom
+//{ 5,1,3,2,4,6,7 }	// Custom
 	};
 
 // Rx signalling polarity used only for serial PPM frames usually
@@ -101,7 +102,7 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 // 6 Aux1
 // 7 Aux2
 
-int8	ParamSet;
+uint8	ParamSet;
 boolean ParametersChanged;
 int8 RMap[CONTROLS];
 #pragma udata params
@@ -252,7 +253,8 @@ void UpdateParamSetChoice(void)
 {
 	#define STICK_WINDOW 30
 
-	int8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP, Selector;
+	uint8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP;
+	int8 Selector;
 
 	NewParamSet = ParamSet;
 	NewAllowNavAltitudeHold = F.AllowNavAltitudeHold;
@@ -301,7 +303,7 @@ void UpdateParamSetChoice(void)
 			F.AllowNavAltitudeHold = NewAllowNavAltitudeHold;
 			LEDBlue_ON;
 			DoBeep100mSWithOutput(2, 2);
-			if ( ParamSet == 2 )
+			if ( ParamSet == (uint8)2 )
 				DoBeep100mSWithOutput(2, 2);
 			if ( F.AllowNavAltitudeHold )
 				DoBeep100mSWithOutput(4, 4);

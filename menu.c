@@ -301,7 +301,7 @@ void ProcessCommand(void)
 		if ( ch != NUL   )
 		{
 			if( islower(ch))							// check lower case
-				ch=toupper(ch);
+				ch = toupper(ch);
 			
 			switch( ch )
 			{
@@ -328,36 +328,36 @@ void ProcessCommand(void)
 				ShowPrompt();
 				break;
 			case 'M'  : // modify parameters
-					// no reprogramming in flight!!!!!!!!!!!!!!!
-					LEDBlue_ON;
-					TxString("\r\nRegister ");
-					p = (uint16)(RxNumU()-1);
-					// Attempts to block use of old versions of UAVPSet not compatible with UAVX
-					// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
-					if ( p < (MAX_PARAMETERS-1) )
-						F.ParametersValid = false;
-					else
-						if ( p == (MAX_PARAMETERS-1) )
-							F.ParametersValid = true; 	// ALL parameters must be written 
-					TxString(" = ");
-					d = RxNumS();
-					if ( p < MAX_PARAMETERS )
+				// no reprogramming in flight!!!!!!!!!!!!!!!
+				LEDBlue_ON;
+				TxString("\r\nRegister ");
+				p = (uint16)(RxNumU()-1);
+				// Attempts to block use of old versions of UAVPSet not compatible with UAVX
+				// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
+				if ( p < (MAX_PARAMETERS-1) )
+					F.ParametersValid = false;
+				else
+					if ( p == (MAX_PARAMETERS-1) )
+						F.ParametersValid = true; 	// ALL parameters must be written 
+				TxString(" = ");
+				d = RxNumS();
+				if ( p < MAX_PARAMETERS )
+				{
+					// Keep RAM based set up to date.
+					if( ParamSet == (uint8)1 )
 					{
-						// Keep RAM based set up to date.
-						if( ParamSet == 1 )
-						{
-							WriteEE(p, d);
-							if ( ComParms[p] )
-								WriteEE(MAX_PARAMETERS + p, d);
-						}
-						else
-						{
-							if ( !ComParms[p] )
-								WriteEE(MAX_PARAMETERS + p, d);
-						}
-						ParametersChanged = true;
+						WriteEE(p, d);
+						if ( ComParms[p] )
+							WriteEE(MAX_PARAMETERS + p, d);
 					}
-					LEDBlue_OFF;
+					else
+					{
+						if ( !ComParms[p] )
+							WriteEE(MAX_PARAMETERS + p, d);
+					}
+					ParametersChanged = true;
+				}
+				LEDBlue_OFF;
 				ShowPrompt();
 				break;
 			case 'N' :	// neutral values
@@ -445,8 +445,7 @@ void ProcessCommand(void)
 				TxString("\r\nOutput test\r\n");
 				TxChar(ch);
 				TxChar(':');
-				switch( ch )
-				{
+				switch( ch ) {
 					case '1': TxString("Aux2");  break;
 					case '2': TxString("Blue");  break;
 					case '3': TxString("Red");   break;

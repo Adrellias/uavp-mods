@@ -1085,7 +1085,7 @@ extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
 extern const rom uint8 ESCLimits [];
 extern const rom boolean PPMPosPolarity[];
 
-extern int8 ParamSet;
+extern uint8 ParamSet;
 extern boolean ParametersChanged;
 extern int8 P[];
 extern int8 RMap[];
