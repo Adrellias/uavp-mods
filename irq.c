@@ -89,13 +89,23 @@ void ReceivingGPSOnly(boolean r)
 
 		#ifndef TESTING // not used for testing - make space!
 		if ( F.ReceivingGPS )
-			#ifdef CLOCK_16MHZ
-			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
-			#else // CLOCK_40MHZ
-			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
-			#endif // CLOCK_16MHZ
+			#ifdef USE_RX_INT
+				#ifdef CLOCK_16MHZ
+				OpenUSART(USART_TX_INT_ON&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
+				#else // CLOCK_40MHZ
+				OpenUSART(USART_TX_INT_ON&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
+				#endif // CLOCK_16MHZ
+			#else
+				#ifdef CLOCK_16MHZ
+				OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
+				#else // CLOCK_40MHZ
+				OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
+				#endif // CLOCK_16MHZ
+			#endif // USE_TX_INT
 		else
 		#endif // !TESTING
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
@@ -326,6 +336,23 @@ void high_isr_handler(void)
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
 
+		#ifndef USE_TX_INT
+		#ifndef TESTING // not used for testing - make space!
+		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
+			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
+			{
+				TXREG = TxQ.B[TxQ.Head];
+				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
+			}
+		#endif // TESTING
+		#endif // !USE_TX_INT
+
+		INTCONbits.TMR0IF = false;	
+	}
+
+	#ifdef USE_TX_INT
+	if ( PIR1bits.TXIF )  
+	{
 		#ifndef TESTING // not used for testing - make space!
 		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
 			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
@@ -335,8 +362,10 @@ void high_isr_handler(void)
 			}
 		#endif // TESTING
 
-		INTCONbits.TMR0IF = false;	
+		PIR1bits.TXIF = false;	
 	}
+	#endif // USE_TX_INT
+
 } // high_isr_handler
 	
 #pragma code high_isr = 0x08

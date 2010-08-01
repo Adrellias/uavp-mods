@@ -98,8 +98,6 @@ void ShowSetup(boolean h)
 		ParamSet = 1;	
 	}
 
-	TxString("\r\nUAVX TEST V" Version);
-
 	#ifdef CLOCK_16MHZ
 	TxString(" 16MHz\r\n");
 	#else // CLOCK_40MHZ
@@ -273,6 +271,9 @@ void ShowSetup(boolean h)
 		TxString("\tWARNING: Manual Nav Altitude Hold\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
+	#ifdef TESTING
+		TxString("\tTEST VERSION - No Motors\r\n");
+	#endif // TESTING
 	if ( F.GyroFailure )
 		TxString("\tGyro failure?\r\n");
 	if ( !F.Signal )

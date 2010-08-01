@@ -1,3 +1,4 @@
+#define USE_TX_INT
 
 //#define JIM_MPX_INVERT
 
@@ -85,7 +86,8 @@
 
 #define UAVX_TELEMETRY_INTERVAL_MS		250L	// mS. emit an interleaved telemetry packet
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
-#define CUSTOM_TELEMETRY_INTERVAL_MS	100L	// mS.
+#define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 250L	// mS. flags and flight control only
+#define CUSTOM_TELEMETRY_INTERVAL_MS	250L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
 
@@ -1150,6 +1152,10 @@ extern int16 Stats[];
 
 extern void SendTelemetry(void);
 extern void SendUAVX(void);
+extern void SendUAVXControl(void);
+extern void SendFlightPacket(void);
+extern void SendNavPacket(void);
+extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
 extern void SensorTrace(void);
@@ -1162,7 +1168,7 @@ enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPac
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
 	UAVXNavPacketTag, UAVXStatsPacketTag};
 
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, ArduStationTelemetry, CustomTelemetry };
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, ArduStationTelemetry, CustomTelemetry };
 
 //______________________________________________________________________________________________
 

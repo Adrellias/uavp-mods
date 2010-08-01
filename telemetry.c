@@ -22,6 +22,10 @@
 
 void SendTelemetry(void);
 void SendUAVX(void);
+void SendUAVXControl(void);
+void SendFlightPacket(void);
+void SendNavPacket(void);
+void SendStatsPacket(void);
 void SendArduStation(void);
 void SendCustom(void);
 void SensorTrace(void);
@@ -36,6 +40,10 @@ void CheckTelemetry(void)
 		case UAVXTelemetry: 
 			SendUAVX(); 
 			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS;
+			break;
+		case UAVXControlTelemetry: 
+			SendUAVXControl(); 
+			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TELEMETRY_INTERVAL_MS;
 			break;
 		case ArduStationTelemetry: 
 			SendArduStation(); 
@@ -53,6 +61,124 @@ void CheckTelemetry(void)
 #define NAV_STATS_INTERLEAVE	10
 static int8 StatsNavAlternate = 0; 
 
+void SendFlightPacket(void)
+{
+	static int8 b;
+
+	TxESCu8(UAVXFlightPacketTag);
+	TxESCu8(48 + FLAG_BYTES);
+	for ( b = 0; b < FLAG_BYTES; b++ )
+		TxESCu8(F.AllFlags[b]); 
+		
+	TxESCu8(State);	
+
+	TxESCi16(BatteryVoltsADC);
+	TxESCi16(BatteryCurrentADC);
+	TxESCi16(BatteryChargeUsedmAH);
+ 
+	TxESCi16(RCGlitches);			
+	TxESCi16(DesiredThrottle);
+
+	TxESCi16(DesiredRoll);
+	TxESCi16(DesiredPitch);
+	TxESCi16(DesiredYaw);
+
+	TxESCi16(RollRateADC - GyroMidRoll);
+	TxESCi16(PitchRateADC - GyroMidPitch);
+	TxESCi16(YawRateADC - GyroMidYaw);
+
+	TxESCi16(RollSum);
+	TxESCi16(PitchSum);
+	TxESCi16(YawSum);
+
+	TxESCi16(LRAcc);
+	TxESCi16(FBAcc);
+	TxESCi16(DUAcc);
+	TxESCi8((int8)LRComp);
+	TxESCi8((int8)FBComp);
+	TxESCi8((int8)DUComp);
+	TxESCi8((int8)AltComp);
+
+	for ( b = 0; b < 6; b++ ) // motor/servo channels
+	 	TxESCu8(PWM[b]);
+
+	TxESCi24(mSClock());
+} // 
+
+void SendNavPacket(void)
+{
+	TxESCu8(UAVXNavPacketTag);
+	TxESCu8(55);
+		
+	TxESCu8(NavState);
+	TxESCu8(FailState);
+	TxESCu8(GPSNoOfSats);
+	TxESCu8(GPSFix);
+	
+	TxESCu8(CurrWP);	
+	
+	TxESCi16(BaroROC); 							// dm/S
+	TxESCi24(BaroRelAltitude);
+	
+	TxESCi16(RangefinderROC); 					// dm/S 
+	TxESCi16(RangefinderAltitude); 				// dm
+	
+	TxESCi16(GPSHDilute);
+	TxESCi16(Heading);
+	TxESCi16(WayHeading);
+	
+	TxESCi16(GPSVel);
+	TxESCi16(GPSROC); 							// dm/S
+	
+	TxESCi24(GPSRelAltitude); 					// dm
+	TxESCi32(GPSLatitude); 						// 5 decimal minute units
+	TxESCi32(GPSLongitude); 
+	
+	TxESCi24(DesiredAltitude);
+	TxESCi32(DesiredLatitude); 
+	TxESCi32(DesiredLongitude);
+	
+	TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
+	
+	TxESCi16(AmbientTemperature.i16);			// 0.1C
+	TxESCi32(GPSMissionTime);	
+} // SendNavPacket
+
+void SendStatsPacket(void) 
+{
+	TxESCu8(UAVXStatsPacketTag);
+	TxESCu8(44);
+	
+	TxESCi16(Stats[I2CFailS]);
+	TxESCi16(Stats[GPSInvalidS]); 
+	TxESCi16(Stats[AccFailS]); 
+	TxESCi16(Stats[GyroFailS]); 
+	TxESCi16(Stats[CompassFailS]); 
+	TxESCi16(Stats[BaroFailS]); 
+	TxESCi16(Stats[ESCI2CFailS]); 
+			 
+	TxESCi16(Stats[RCFailsafesS]); 
+			
+	TxESCi16(Stats[GPSAltitudeS]);
+	TxESCi16(Stats[GPSVelS]);
+	TxESCi16(Stats[GPSMinSatsS]);
+	TxESCi16(Stats[GPSMaxSatsS]);
+	TxESCi16(Stats[MinHDiluteS]);
+	TxESCi16(Stats[MaxHDiluteS]);
+			
+	TxESCi16(Stats[BaroRelAltitudeS]);
+	TxESCi16(Stats[MinBaroROCS]);
+	TxESCi16(Stats[MaxBaroROCS]);
+			
+	TxESCi16(Stats[MinTempS]);
+	TxESCi16(Stats[MaxTempS]);
+	
+	TxESCi16(Stats[BadS]);
+
+	// spare
+	TxESCi16(0);
+	TxESCi16(0);
+} // SendStatsPacket
 
 void SendUAVX(void) // 800uS at 40MHz?
 {
@@ -72,122 +198,17 @@ void SendUAVX(void) // 800uS at 40MHz?
 	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
-		TxESCu8(UAVXFlightPacketTag);
-		TxESCu8(48 + FLAG_BYTES);
-		for ( b = 0; b < FLAG_BYTES; b++ )
-			TxESCu8(F.AllFlags[b]); 
-		
-		TxESCu8(State);	
-
-		TxESCi16(BatteryVoltsADC);
-		TxESCi16(BatteryCurrentADC);
-		TxESCi16(BatteryChargeUsedmAH);
- 
-		TxESCi16(RCGlitches);			
-		TxESCi16(DesiredThrottle);
-
-		TxESCi16(DesiredRoll);
-		TxESCi16(DesiredPitch);
-		TxESCi16(DesiredYaw);
-
-		TxESCi16(RollRateADC - GyroMidRoll);
-		TxESCi16(PitchRateADC - GyroMidPitch);
-		TxESCi16(YawRateADC - GyroMidYaw);
-
-		TxESCi16(RollSum);
-		TxESCi16(PitchSum);
-		TxESCi16(YawSum);
-
-		TxESCi16(LRAcc);
-		TxESCi16(FBAcc);
-		TxESCi16(DUAcc);
-		TxESCi8((int8)LRComp);
-		TxESCi8((int8)FBComp);
-		TxESCi8((int8)DUComp);
-		TxESCi8((int8)AltComp);
-
-		for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 		TxESCu8(PWM[b]);
-
-		TxESCi24(mSClock());
+		SendFlightPacket();
 
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;
 	
 	case UAVXNavPacketTag:
 		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE)
-		{
-			TxESCu8(UAVXNavPacketTag);
-			TxESCu8(55);
-		
-			TxESCu8(NavState);
-			TxESCu8(FailState);
-			TxESCu8(GPSNoOfSats);
-			TxESCu8(GPSFix);
-	
-			TxESCu8(CurrWP);	
-	
-			TxESCi16(BaroROC); 							// dm/S
-			TxESCi24(BaroRelAltitude);
-	
-			TxESCi16(RangefinderROC); 					// dm/S 
-			TxESCi16(RangefinderAltitude); 				// dm
-	
-			TxESCi16(GPSHDilute);
-			TxESCi16(Heading);
-			TxESCi16(WayHeading);
-	
-			TxESCi16(GPSVel);
-			TxESCi16(GPSROC); 							// dm/S
-	
-			TxESCi24(GPSRelAltitude); 					// dm
-			TxESCi32(GPSLatitude); 						// 5 decimal minute units
-			TxESCi32(GPSLongitude); 
-	
-			TxESCi24(DesiredAltitude);
-			TxESCi32(DesiredLatitude); 
-			TxESCi32(DesiredLongitude);
-	
-			TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
-	
-			TxESCi16(AmbientTemperature.i16);			// 0.1C
-			TxESCi32(GPSMissionTime);	
-		}
+			SendNavPacket();		
 		else
 		{
-			TxESCu8(UAVXStatsPacketTag);
-			TxESCu8(44);
-	
-			TxESCi16(Stats[I2CFailS]);
-			TxESCi16(Stats[GPSInvalidS]); 
-			TxESCi16(Stats[AccFailS]); 
-			TxESCi16(Stats[GyroFailS]); 
-			TxESCi16(Stats[CompassFailS]); 
-			TxESCi16(Stats[BaroFailS]); 
-			TxESCi16(Stats[ESCI2CFailS]); 
-			 
-			TxESCi16(Stats[RCFailsafesS]); 
-			
-			TxESCi16(Stats[GPSAltitudeS]);
-			TxESCi16(Stats[GPSVelS]);
-			TxESCi16(Stats[GPSMinSatsS]);
-			TxESCi16(Stats[GPSMaxSatsS]);
-			TxESCi16(Stats[MinHDiluteS]);
-			TxESCi16(Stats[MaxHDiluteS]);
-			
-			TxESCi16(Stats[BaroRelAltitudeS]);
-			TxESCi16(Stats[MinBaroROCS]);
-			TxESCi16(Stats[MaxBaroROCS]);
-			
-			TxESCi16(Stats[MinTempS]);
-			TxESCi16(Stats[MaxTempS]);
-	
-			TxESCi16(Stats[BadS]);
-
-			// spare
-			TxESCi16(0);
-			TxESCi16(0);
-
+			SendStatsPacket();
 			StatsNavAlternate = 0;
 		}
 
@@ -208,6 +229,34 @@ void SendUAVX(void) // 800uS at 40MHz?
 	F.TxToBuffer = false; 
 	
 } // SendUAVX
+
+void SendUAVXControl(void) // 0.516mS at 40MHz?
+{
+	static int8 b;
+	static i32u Temp;
+
+	F.TxToBuffer = true;
+
+	#ifdef TELEMETRY_PREAMBLE
+	for (b=10;b;b--) 
+		TxChar(0x55);
+	#endif // TELEMETRY_PREAMBLE
+	      
+	TxChar(0xff); // synchronisation to "jolt" USART	
+	TxChar(SOH);	
+	TxCheckSum = 0;
+	
+	SendFlightPacket();
+
+	TxESCu8(TxCheckSum);	
+	TxChar(EOT);
+	
+	TxChar(CR);
+	TxChar(LF); 
+
+	F.TxToBuffer = false; 
+	
+} // SendUAVXControl
 
 void SendArduStation(void)
 {
@@ -277,7 +326,7 @@ void SendArduStation(void)
 
 } // SendArduStation
 
-void SendCustom(void)
+void SendCustom(void) // 1.2mS @ 40MHz
 { // user defined telemetry human readable OK for small amounts of data < 1mS
 
 	F.TxToBuffer = true;
