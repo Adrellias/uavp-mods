@@ -71,7 +71,7 @@
 	1,				// VertDampDecay    42c
 	1,				// HorizDampDecay	43c
 	56,				// BaroScale		44c
-	UAVXTelemetry,	// TelemetryType	45c
+	NoTelemetry,	// TelemetryType	45c
 	-8,				// MaxDescentRateDmpS 	46
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48
