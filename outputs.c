@@ -52,19 +52,19 @@ void DoMulticopterMix(int16 CurrThrottle)
 		{
 		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
 			Temp = SRS16(Pl * 56, 7);
-			PWM[K1] -= Pl ;				// front motor
-			PWM[K2] += (Temp - Rl);		// right rear
-			PWM[K3] += (Temp + Rl); 	// left rear
-			PWM[K4] = Yl + RC_NEUTRAL;	// yaw servo
+			PWM[FrontC] -= Pl ;				// front motor
+			PWM[LeftC] += (Temp - Rl);		// right rear
+			PWM[RightC] += (Temp + Rl); 	// left rear
+			PWM[BackC] = Yl + RC_NEUTRAL;	// yaw servo
 		}
 		else // Y K1 rearwards
 		{
 		//	Temp = -(Pl * 50)/115;
 			Temp = SRS16(Pl * -56, 7);  
-			PWM[K1] += Pl ;				// rear motor
-			PWM[K2] += (Temp + Rl);		// left front
-			PWM[K3] += (Temp - Rl); 	// right front
-			PWM[K4] = Yl + RC_NEUTRAL;	// yaw servo
+			PWM[FrontC] += Pl ;				// rear motor
+			PWM[LeftC] += (Temp + Rl);		// left front
+			PWM[RightC] += (Temp - Rl); 	// right front
+			PWM[BackC] = Yl + RC_NEUTRAL;	// yaw servo
 		}	
 	#else
 	    #ifdef HEXACOPTER

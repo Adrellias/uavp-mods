@@ -1,1 +1,7 @@
 Starting makeall uavp 
+compiled - UAVX-V1.1111gke--16-QUAD.hex 
+compiled - UAVX-V1.1111gke--16-TRI.hex 
+failed - UAVX-V1.1111gke-18F2620-16-HEX.hex 
+compiled - UAVX-V1.1111gke--16-HELI.hex 
+compiled - UAVX-V1.1111gke--16-AILERON.hex 
+compiled - UAVX-V1.1111gke--16-ELEVON.hex 
