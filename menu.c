@@ -35,7 +35,7 @@ const rom uint8 SerHello[] = "UAVX " Version
 #endif // TESTING
 
  							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
-							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n"
+							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY "
 							  "see http://www.gnu.org/licenses/!\r\n";
 
 #pragma idata
@@ -92,19 +92,23 @@ void ShowSetup(boolean h)
 {
 	int8 i;
 
+	TxNextLine();
 	if( h )
-	{
-		TxString(SerHello);
 		ParamSet = 1;	
-	}
+
+	TxString(SerHello);
+
+	#ifdef EXPERIMENTAL
+	TxString("WARNING - EXPERIMENTAL\r\n");
+	#endif // EXPERIMENTAL
 
 	#ifdef CLOCK_16MHZ
-	TxString(" 16MHz\r\n");
+	TxString("Clock: 16MHz\r\n");
 	#else // CLOCK_40MHZ
-	TxString(" 40MHz\r\n");
+	TxString("Clock: 40MHz\r\n");
 	#endif // CLOCK_16MHZ
 
-	TxString("Accelerometers ");
+	TxString("Accelerometers: ");
 	if( F.AccelerationsValid )
 		if ( F.UsingFlatAcc )
 			TxString("ONLINE (horiz.)\r\n");
@@ -113,7 +117,7 @@ void ShowSetup(boolean h)
 	else
 		TxString("not available\r\n");
 
-	TxString("Compass ");
+	TxString("Compass: ");
 	if( F.CompassValid )
 	{
 		TxString("ONLINE (");
@@ -123,17 +127,17 @@ void ShowSetup(boolean h)
 	else
 		TxString("not available\r\n");
 
-	TxString("Baro ");
+	TxString("Baro: ");
 	if ( F.BaroAltitudeValid )
 		switch ( BaroType ) {
-		case BaroMPX4115: TxString("Type:\tMPX4115 ONLINE\r\n"); break;
-		case BaroSMD500: TxString("Type:\tSMD500 ONLINE\r\n"); break;
-		case BaroBMP085: TxString("Type:\tBMP085 ONLINE\r\n"); break;
+		case BaroMPX4115: TxString("MPX4115 ONLINE\r\n"); break;
+		case BaroSMD500: TxString("SMD500 ONLINE\r\n"); break;
+		case BaroBMP085: TxString("BMP085 ONLINE\r\n"); break;
 	}
 	else
 		TxString("not available\r\n");
 
-	TxString("Rangefinder ");
+	TxString("Rangefinder: ");
 	if ( F.RangefinderAltitudeValid )
 		if ( F.RFInInches )
 			TxString("ONLINE (inches)\r\n");
@@ -227,13 +231,13 @@ void ShowSetup(boolean h)
 	else
 	{	
 		for ( i = 0; i < RC_CONTROLS; i++)
-			TxChar(RxChMnem[RMap[i]-1]);
+			TxChar(RxChMnem[RMap[i]]);
 		
 		TxString("} connect {");
 		
 		for ( i = 0; i < RC_CONTROLS; i+=2)
 		{
-			TxChar(RxChMnem[RMap[i]-1]);
+			TxChar(RxChMnem[RMap[i]]);
 			TxChar(' ');
 		}
 	}

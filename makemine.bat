@@ -52,7 +52,7 @@ for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in 
 
 set PROC=18F2620
 set DBG=TESTING SIMULATE 
-set RX=RX7CH
+set RX=RX7CH RX6CH
 set CFG=QUADROCOPTER
 set BRD=UAVPBLACK
 

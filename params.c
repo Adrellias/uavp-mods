@@ -330,7 +330,7 @@ void UpdateParamSetChoice(void)
 		{		
 			F.AllowTurnToWP = NewAllowTurnToWP;
 			LEDBlue_ON;
-		// do it either way		if ( F.AllowTurnToWP )
+			if ( F.AllowTurnToWP )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;
