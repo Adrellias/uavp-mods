@@ -44,9 +44,11 @@ void main(void)
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
 
 	InitADC();
-	InitI2C(MASTER, SLEW_ON);		
+	InitI2C(MASTER, SLEW_ON);
+
+	InitParameters();		
+	InitRC();
 	InitTimersAndInterrupts();
-	InitParameters();
 
 	StopMotors();
 	INTCONbits.PEIE = true;	

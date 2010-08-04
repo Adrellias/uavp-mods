@@ -61,8 +61,8 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"S..Setup\r\n"
 	#ifdef TESTING
 	"T..All LEDs and buzzer test\r\n"
-	"V..Battery test\r\n"
 	#endif // TESTING
+	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
 	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
@@ -430,10 +430,6 @@ void ProcessCommand(void)
 				ReceiverTest();
 				ShowPrompt();
 				break;
-			case 'V' :	// Battery test
-				BatteryTest();
-				ShowPrompt();
-				break;
 
 			case 'Y':	// configure YGE30i EScs
 				ConfigureESCs();
@@ -469,6 +465,10 @@ void ProcessCommand(void)
 				ShowPrompt();
 				break;
 			#endif // TESTING
+			case 'V' :	// Battery test
+				BatteryTest();
+				ShowPrompt();
+				break;
 			case '?'  :  // help
 				TxString(SerHelp);
 				ShowPrompt();

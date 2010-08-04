@@ -47,7 +47,7 @@ void SendPacket(uint8, uint8, uint8 *, boolean);
 
 #pragma udata txbuffer
 uint8 TxCheckSum;
-uint8Q TxQ;
+uint8x128Q TxQ;
 #pragma udata
 
 void TxString(const rom uint8 *pch)

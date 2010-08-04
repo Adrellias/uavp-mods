@@ -65,7 +65,7 @@ int16 	GPSVel, GPSROC;
 int8 	GPSNoOfSats;
 int8 	GPSFix;
 int16 	GPSHDilute;
-int32Q	GPSQ32;
+int32x4Q	GPSQ32;
 #pragma udata
 
 #ifdef SIMULATE

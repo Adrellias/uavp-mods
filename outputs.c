@@ -55,7 +55,7 @@ void DoMulticopterMix(int16 CurrThrottle)
 			PWM[FrontC] -= Pl ;				// front motor
 			PWM[LeftC] += (Temp - Rl);		// right rear
 			PWM[RightC] += (Temp + Rl); 	// left rear
-			PWM[BackC] = Yl + RC_NEUTRAL;	// yaw servo
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
 		}
 		else // Y K1 rearwards
 		{
@@ -64,7 +64,7 @@ void DoMulticopterMix(int16 CurrThrottle)
 			PWM[FrontC] += Pl ;				// rear motor
 			PWM[LeftC] += (Temp + Rl);		// left front
 			PWM[RightC] += (Temp - Rl); 	// right front
-			PWM[BackC] = Yl + RC_NEUTRAL;	// yaw servo
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
 		}	
 	#else
 	    #ifdef HEXACOPTER
@@ -208,11 +208,15 @@ void OutSignals(void)
 	if ( !F.MotorsArmed )
 	{
 		#ifdef MULTICOPTER
-		PWM[FrontC] = PWM[BackC] = 
-		PWM[LeftC] = PWM[RightC] = ESCMin;	
-		#else
-		PWM[ThrottleC] = ESCMin;
-		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
+			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+				#ifdef TRICOPTER
+					PWM[BackC] = OUT_NEUTRAL;
+				#else
+					PWM[BackC] = ESCMin;
+				#endif	
+			#else
+			PWM[ThrottleC] = ESCMin;
+			PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
 		#endif // MULTICOPTER
 	}
 

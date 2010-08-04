@@ -33,7 +33,6 @@
 //#define RC_FILTER
 
 void SyncToTimer0AndDisableInterrupts(void);
-void DoRxPolarity(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
 uint24 mSClock(void);
@@ -72,14 +71,6 @@ void SyncToTimer0AndDisableInterrupts(void)
 	INTCONbits.TMR0IF = false;			// quit TMR0 interrupt
 } // SyncToTimer0AndDisableInterrupts
 
-void DoRxPolarity(void)
-{
-	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
-		CCP1CONbits.CCP1M0 = PPMPosPolarity[TxRxType];
-	else
-		CCP1CONbits.CCP1M0 = 1;	
-}  // DoRxPolarity
-
 void ReceivingGPSOnly(boolean r)
 {
 	if ( r != F.ReceivingGPS )
@@ -88,24 +79,14 @@ void ReceivingGPSOnly(boolean r)
 		F.ReceivingGPS = r;
 
 		#ifndef TESTING // not used for testing - make space!
-		if ( F.ReceivingGPS )
-			#ifdef USE_RX_INT
-				#ifdef CLOCK_16MHZ
-				OpenUSART(USART_TX_INT_ON&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
-				#else // CLOCK_40MHZ
-				OpenUSART(USART_TX_INT_ON&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
-				#endif // CLOCK_16MHZ
-			#else
-				#ifdef CLOCK_16MHZ
-				OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
-				#else // CLOCK_40MHZ
-				OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-					USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
-				#endif // CLOCK_16MHZ
-			#endif // USE_TX_INT
+		if ( F.ReceivingGPS )			
+			#ifdef CLOCK_16MHZ
+			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B9600);
+			#else // CLOCK_40MHZ
+			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
+			#endif // CLOCK_16MHZ
 		else
 		#endif // !TESTING
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
@@ -116,7 +97,7 @@ void ReceivingGPSOnly(boolean r)
 
 void InitTimersAndInterrupts(void)
 {
-	static int8 i;
+	static int8 i, j;
 
 	#ifdef CLOCK_16MHZ
 	OpenTimer0(TIMER_INT_OFF&T0_8BIT&T0_SOURCE_INT&T0_PS_1_16);
@@ -127,21 +108,11 @@ void InitTimersAndInterrupts(void)
 	OpenTimer1(T1_16BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
 	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
 
-	DoRxPolarity();
-	
-	TxQ.Head = TxQ.Tail = 0;
+	TxQ.Head = TxQ.Tail = RxCheckSum = 0;
 
 	for (i = Clock; i<= CompassUpdate; i++)
 		mS[i] = 0;
 
-	for (i = 0; i < RC_CONTROLS; i++)
-		PPM[i].i16 = RC[i] = 0;
-	
-	RC[RollC] = RC[PitchC] = RC[YawC] = RC_NEUTRAL;
-
-	PPM_Index = PrevEdge = RCGlitches = RxCheckSum =  0;
-	SignalCount = -RC_GOOD_BUCKET_MAX;
-	F.Signal = F.RCNewValues = false;
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
@@ -336,7 +307,6 @@ void high_isr_handler(void)
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
 
-		#ifndef USE_TX_INT
 		#ifndef TESTING // not used for testing - make space!
 		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
 			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
@@ -345,26 +315,15 @@ void high_isr_handler(void)
 				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
 			}
 		#endif // TESTING
-		#endif // !USE_TX_INT
+  
+	//	if ( !BusyADC())
+	//	{
+	//		SetChanADC(Channel<<3);		// using automatic acq
+	//		ConvertADC();
+	//	}
 
 		INTCONbits.TMR0IF = false;	
 	}
-
-	#ifdef USE_TX_INT
-	if ( PIR1bits.TXIF )  
-	{
-		#ifndef TESTING // not used for testing - make space!
-		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
-			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
-			{
-				TXREG = TxQ.B[TxQ.Head];
-				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
-			}
-		#endif // TESTING
-
-		PIR1bits.TXIF = false;	
-	}
-	#endif // USE_TX_INT
 
 } // high_isr_handler
 	

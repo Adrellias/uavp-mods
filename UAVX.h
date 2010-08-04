@@ -1,4 +1,3 @@
-#define USE_TX_INT
 
 //#define JIM_MPX_INVERT
 
@@ -280,17 +279,22 @@ typedef union {
 typedef struct {
 	uint8 Head, Tail;
 	uint8 B[128];
-	} uint8Q;	
+	} uint8x128Q;
+
+typedef struct {
+	uint8 Head;
+	int16 B[4][8];
+	} int16x8x4Q;	
 
 typedef struct {
 	uint8 Head, Tail;
 	int24 B[8];
-	} int24Q;	
+	} int24x8Q;	
 
 typedef struct {
 	uint8 Head, Tail;
 	int32 B[4];
-	} int32Q;	
+	} int32x4Q;	
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -443,7 +447,13 @@ typedef struct {
 #define RC_GOOD_RATIO		4
 
 #define RC_MINIMUM			0
-#define RC_MAXIMUM			238
+
+#ifdef CLOCK_16MHZ
+	#define RC_MAXIMUM		238
+#else
+	#define RC_MAXIMUM		240	// adjust for faster arithmetic in RCMap
+#endif // CLOCK_40MHZ
+
 #define RC_NEUTRAL			((RC_MAXIMUM-RC_MINIMUM+1)/2)
 
 #define RC_MAX_ROLL_PITCH	(170)	
@@ -748,7 +758,6 @@ extern void CheckThrottleMoved(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
-extern int16 RC[];
 extern int16 RE, PE, YE, HE;					// gyro rate error	
 extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
 extern int16 Rl,Pl,Yl;							// PID output values
@@ -853,7 +862,6 @@ extern int16 RollRateADC, PitchRateADC, YawRateADC;
 // irq.c
 
 extern void SyncToTimer0AndDisableInterrupts(void);
-extern void DoRxPolarity(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
@@ -978,6 +986,8 @@ extern int16 ESCMin, ESCMax;
 
 // params.c
 
+extern void DoRxPolarity(void);
+extern void InitRC(void);
 extern void MapRC(void);
 extern void ReadParametersEE(void);
 extern void WriteParametersEE(uint8);
@@ -1092,6 +1102,10 @@ extern boolean ParametersChanged;
 extern int8 P[];
 extern int8 RMap[];
 
+#define PPMQMASK 3
+extern int16 PPMQSum[];
+extern int16x8x4Q PPMQ;
+
 //__________________________________________________________________________________________
 
 // rangefinder.c
@@ -1128,7 +1142,7 @@ extern void SendPacket(uint8, uint8, uint8 *, boolean);
 
 #define TX_BUFF_MASK	127
 extern uint8 	TxCheckSum;
-extern uint8Q 	TxQ;
+extern uint8x128Q 	TxQ;
 
 //______________________________________________________________________________________________
 

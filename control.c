@@ -368,7 +368,7 @@ void UpdateControls(void)
 		else // Autonomous
 			if ( F.AllowNavAltitudeHold )
 				DesiredThrottle = CruiseThrottle;
-		
+			
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;
 			// NavSensitivity set in ReadParametersEE
@@ -377,22 +377,22 @@ void UpdateControls(void)
 			NavSensitivity = RC[NavGainC];
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
-
-		F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
 	
+		F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
+		
 		#ifdef ATTITUDE_NO_LIMITS
 		RollPitchScale = 128L;
 		#else
 		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
 		#endif // ATTITUDE_NO_LIMITS
-	
+		
 		DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
 		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
-	
+		
 		DesiredYaw = RC[YawC] - RC_NEUTRAL;
-	
+		
 		F.ReturnHome = F.Navigate = false;
-	
+		
 		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
 			#ifdef DEBUG_FORCE_NAV
 			F.Navigate = true;
@@ -402,16 +402,16 @@ void UpdateControls(void)
 		else
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )
 				F.Navigate = true;
-	
+		
 		if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 			DesiredAltitude = Altitude;
-	
+		
 		HoldRoll = DesiredRoll - RollTrim;
 		HoldRoll = Abs(HoldRoll);
 		HoldPitch = DesiredPitch - PitchTrim;
 		HoldPitch = Abs(HoldPitch);
 		CurrMaxRollPitch = Max(HoldRoll, HoldPitch);
-	
+		
 		if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
 			if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
 				F.AttitudeHold = false;
@@ -426,7 +426,7 @@ void UpdateControls(void)
 			if ( AttitudeHoldResetCount > 1 )
 				AttitudeHoldResetCount -= 2;		// Faster decay
 		}
-	
+		
 		F.NewCommands = true;
 	}
 } // UpdateControls

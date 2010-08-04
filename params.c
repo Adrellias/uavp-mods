@@ -20,6 +20,8 @@
 
 #include "uavx.h"
 
+void DoRxPolarity(void);
+void InitRC(void);
 void MapRC(void);
 void ReadParametersEE(void);
 void WriteParametersEE(uint8);
@@ -54,23 +56,23 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 #endif 
 
 const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
-	{ 3,1,2,4,5,6,7 }, 	// Futaba Thr 3 Throttle
-	{ 2,1,4,3,5,6,7 },	// Futaba Thr 2 Throttle
-	{ 5,3,2,1,6,4,7 },	// Futaba 9C Spektrum DM8/AR7000
-	{ 1,2,3,4,5,6,7 },	// JR XP8103/PPM
-	{ 7,1,4,6,3,5,2 },	// JR 9XII Spektrum DM9 ?
+	{ 2,0,1,3,4,5,6 }, 	// Futaba Thr 3 Throttle
+	{ 1,0,3,2,4,5,6 },	// Futaba Thr 2 Throttle
+	{ 4,2,1,0,5,3,6 },	// Futaba 9C Spektrum DM8/AR7000
+	{ 0,1,2,3,4,5,6 },	// JR XP8103/PPM
+	{ 6,0,3,5,2,4,1 },	// JR 9XII Spektrum DM9 ?
 
-	{ 6,1,4,7,3,2,5 },	// JR DXS12 
-	{ 6,1,4,7,3,2,5 },	// Spektrum DX7/AR7000
-	{ 5,1,4,6,3,2,7 },	// Spektrum DX7/AR6200
+	{ 5,0,3,6,2,1,4 },	// JR DXS12 
+	{ 5,0,3,6,2,1,4 },	// Spektrum DX7/AR7000
+	{ 4,0,3,5,2,1,6 },	// Spektrum DX7/AR6200
 
-	{ 3,1,2,4,5,7,6 }, 	// Futaba Thr 3 Sw 6/7
-	{ 1,2,3,4,5,6,7 },	// Spektrum DX7/AR6000
-	{ 1,2,3,4,5,6,7 },	// Graupner MX16S
-	{ 5,1,3,4,2,6,7 },	// Spektrum DX6i/AR6200
+	{ 2,0,1,3,4,6,5 }, 	// Futaba Thr 3 Sw 6/7
+	{ 0,1,2,3,4,5,6 },	// Spektrum DX7/AR6000
+	{ 0,1,2,3,4,5,6 },	// Graupner MX16S
+	{ 4,0,2,3,1,5,6 },	// Spektrum DX6i/AR6200
 
-	{ 3,1,2,4,5,6,7 }	// Custom
-//{ 5,1,3,2,4,6,7 }	// Custom
+	{ 2,0,1,3,4,5,6 }	// Custom
+//{ 4,0,2,1,3,5,6 }	// Custom
 	};
 
 // Rx signalling polarity used only for serial PPM frames usually
@@ -94,13 +96,13 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 	};
 
 // Reference Internal Quadrocopter Channel Order
-// 1 Throttle
-// 2 Aileron
-// 3 Elevator
-// 4 Rudder
-// 5 Gear
-// 6 Aux1
-// 7 Aux2
+// 0 Throttle
+// 1 Aileron
+// 2 Elevator
+// 3 Rudder
+// 4 Gear
+// 5 Aux1
+// 6 Aux2
 
 uint8	ParamSet;
 boolean ParametersChanged;
@@ -109,22 +111,82 @@ int8 RMap[CONTROLS];
 int8 P[MAX_PARAMETERS];
 #pragma udata
 
-void MapRC(void)
+#pragma udata ppmq
+int16x8x4Q PPMQ;
+int16 PPMQSum[CONTROLS];
+#pragma udata
+
+void DoRxPolarity(void)
+{
+	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
+		CCP1CONbits.CCP1M0 = PPMPosPolarity[TxRxType];
+	else
+		CCP1CONbits.CCP1M0 = 1;	
+}  // DoRxPolarity
+
+void InitRC(void)
+{
+	int8 c, q;
+
+	DoRxPolarity();
+
+	SignalCount = -RC_GOOD_BUCKET_MAX;
+	F.Signal = F.RCNewValues = false;
+	
+	for (c = 0; c < RC_CONTROLS; c++)
+	{
+		PPM[c].i16 = 0;
+		RC[c] = RC_NEUTRAL;
+
+		#ifdef CLOCK_16MHZ
+		for (q = 0; q <= PPMQMASK; q++)
+			PPMQ.B[q][c] = RC_NEUTRAL;
+		PPMQSum[c] = RC_NEUTRAL * 4;
+		#else
+		for (q = 0; q <= PPMQMASK; q++)
+			PPMQ.B[q][c] = 625;
+		PPMQSum[c] = 2500;
+		#endif // CLOCK_16MHZ
+	}
+	PPMQ.Head = 0;
+
+	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+	RollRate = PitchRate = YawRate = 0;
+	DesiredRollP = DesiredPitchP = 0;
+	RollTrim = PitchTrim = YawTrim = 0;
+
+
+	PPM_Index = PrevEdge = RCGlitches = 0;
+} // InitRC
+
+void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 {  // re-maps captured PPM to Rx channel sequence
 	static int8 c;
-	static int16 LastThrottle, Temp, i; 
+	static int16 LastThrottle, Temp, i;
+	static uint16 Sum;
+	static i32u Temp2; 
 
 	LastThrottle = RC[ThrottleC];
 
-	for (c = 0 ; c < RC_CONTROLS ; c++)
+	for (c = 0 ; c < RC_CONTROLS ; c++) 
 	{
-		i = Map[P[TxRxType]][c]-1;
+		Sum = PPM[c].u16;
+		PPMQSum[c] -= PPMQ.B[PPMQ.Head][c];
+		PPMQ.B[PPMQ.Head][c] = Sum;
+		PPMQSum[c] += Sum;
+		PPMQ.Head = (PPMQ.Head + 1) & PPMQMASK;
+	}
+
+	for (c = 0 ; c < RC_CONTROLS ; c++) 
+	{
+		i = Map[P[TxRxType]][c];
 		#ifdef CLOCK_16MHZ
-		Temp = PPM[i].b0; // clip to bottom byte 0..255
-		#else // CLOCK_40MHZ
-		Temp = ( (int32)PPM[i].i16 * RC_MAXIMUM + 625L )/1250L; // scale to 4uS res. for now
-		#endif // CLOCK_16MHZ
-		RC[c] = RxFilter(RC[c], Temp);		
+			RC[c] = SRS16(PPMQSum[i], 2) & 0xff; // clip to bottom byte 0..255
+		#else // CLOCK_40MHZ	
+			//RC[c] = ( (int32)PPMQSum[i] * RC_MAXIMUM + 2500L )/5000L; // scale to 4uS res. for now	
+			Temp2.i32 = (int32)PPMQSum[i] * (RC_MAXIMUM * 13L) + 32768L; 
+			RC[c] = (uint8)Temp2.w1;
+		#endif // CLOCK_16MHZ		
 	}
 
 	if ( THROTTLE_SLEW_LIMIT > 0 )
@@ -169,9 +231,8 @@ void ReadParametersEE(void)
 		#endif // RX6CH
 
 		for ( i = 0; i < CONTROLS; i++) // make reverse map
-			RMap[Map[P[TxRxType]][i]-1] = i+1;
+			RMap[Map[P[TxRxType]][i]] = i;
 	
-
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
@@ -330,7 +391,7 @@ void UpdateParamSetChoice(void)
 		{		
 			F.AllowTurnToWP = NewAllowTurnToWP;
 			LEDBlue_ON;
-			if ( F.AllowTurnToWP )
+		//	if ( F.AllowTurnToWP )
 				DoBeep100mSWithOutput(4, 2);
 
 			LEDBlue_OFF;

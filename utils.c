@@ -38,25 +38,25 @@ int32 BatteryChargeADC, BatteryCurrent;
 void InitPorts(void)
 {
 	// general ports setup
-	TRISA = 0b00111111;								// all inputs
-	ADCON1 = 0b00000010;							// Vref used for Rangefinder
+	TRISA = 0b00111111;				// all inputs
+	ADCON1 = 0b00000010;			// Vref used for Rangefinder
 
 	#ifdef UAVX_HW
-		PORTB = 0b00000000;						// all outputs - motos/servos LEDs, buzzer
+		PORTB = 0b00000000;			// all outputs - motos/servos LEDs, buzzer
 		TRISB = 0b00000000;					
 	#else // UAVX_HW
-		PORTB = 0b11000000;							// all outputs to low, except RB6 & 7 (I2C)!
-		TRISB = 0b01000000;							// all servo and LED outputs
+		PORTB = 0b11000000;			// all outputs to low, except RB6 & 7 (I2C)!
+		TRISB = 0b01000000;			// all servo and LED outputs
 	#endif // UAVX_HW
 
-	PORTC = 0b01100000;								// all outputs to low, except TxD and CS
+	PORTC = 0b01100000;				// all outputs to low, except TxD and CS
 	#ifdef HAVE_CUTOFF_SW
-		TRISC = 0b10000101;							// RC7, RC2, RC0 are inputs
+		TRISC = 0b10000101;			// RC7, RC2, RC0 are inputs
 	#else
-		TRISC = 0b10000100;							// RC7, RC2 are inputs
+		TRISC = 0b10000100;			// RC7, RC2 are inputs
 	#endif // HAVE_CUTOFF_SW
 
-	SSPSTATbits.CKE = true;							// low logic threshold for LISL
+	SSPSTATbits.CKE = true;			// low logic threshold for LISL
 	
 	INTCON2bits.NOT_RBPU = false;	// WEAK PULLUPS MUST BE ENABLED OTHERWISE I2C VERSIONS 
 									// WITHOUT ESCS INSTALLED WILL PREVENT ANY FURTHER BOOTLOADS
@@ -84,11 +84,7 @@ void InitMisc(void)
 	IdleThrottle = ((10L*OUT_MAXIMUM)/100);
 	InitialThrottle = RC_MAXIMUM;
 	ESCMin = OUT_MINIMUM;
-	ESCMax = OUT_MAXIMUM;
-
-	RollRate = PitchRate = YawRate = 0;
-	DesiredRollP = DesiredPitchP = 0;
-	RollTrim = PitchTrim = YawTrim = 0;	
+	ESCMax = OUT_MAXIMUM;	
 
 	LEDShadow = 0;
     ALL_LEDS_OFF;

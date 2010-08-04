@@ -57,7 +57,7 @@ void ReceiverTest(void)
 
 	TxString("\tChannel order is: ");
 	for ( s = 0; s < RC_CONTROLS; s++)
-		TxChar(RxChMnem[RMap[s]-1]);
+		TxChar(RxChMnem[RMap[s]]);
 
 	if ( F.Signal )
 		TxString("\r\nSignal OK ");
@@ -73,7 +73,7 @@ void ReceiverTest(void)
 	{
 		TxChar(s+'1');
 		TxString(": ");
-		TxChar(RxChMnem[RMap[s]-1]);
+		TxChar(RxChMnem[RMap[s]]);
 		TxString(":\t");
  
 		#ifdef CLOCK_16MHZ
@@ -167,6 +167,8 @@ void LEDsAndBuzzer(void)
 	TxString("Test Finished\r\n");		
 } // PowerOutput
 
+#endif // TESTING
+
 void BatteryTest(void)
 {
 	int32 v;
@@ -184,4 +186,4 @@ void BatteryTest(void)
 	
 } // BatteryTest
 
-#endif // TESTING
+
