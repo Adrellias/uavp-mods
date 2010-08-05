@@ -319,8 +319,6 @@ void DoOrientationTransform(void)
 
 void DoControl(void)
 {
-	static int16 Temp;
-				
 	CalcGyroRates();
 	CompensateRollPitchGyros();	
 	InertialDamping();
@@ -366,10 +364,10 @@ void DoControl(void)
 	YE += DesiredYaw;
 	LimitYawSum();
 
-	Temp  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
-	Temp += SRS16(YawSum * (int16)P[YawKi], 8);
-	Temp = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
-	Yl = SlewLimit(YlP, Temp, 1); 
+	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
+	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
+	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
+	Yl = SlewLimit(YlP, Yl, YAW_SLEW_LIMIT); 
 	YlP = Yl;
 
 	REp = RE;

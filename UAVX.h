@@ -1,6 +1,8 @@
 
 //#define JIM_MPX_INVERT
 
+#define YAW_SLEW_LIMIT 5
+
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
 // =                             Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -26,8 +28,8 @@
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
-	//#define QUADROCOPTER
-	#define TRICOPTER
+	#define QUADROCOPTER
+	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
