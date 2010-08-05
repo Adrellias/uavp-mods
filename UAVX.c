@@ -168,7 +168,7 @@ void main(void)
 			#else
 			{
 				Stats[RCFailsafesS]++;
-				DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = 0;
+				DesiredRoll = DesiredPitch = DesiredYaw = 0;
 			}
 			#endif // USE_PPM_FAILSAFE
 

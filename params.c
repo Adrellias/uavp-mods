@@ -111,6 +111,8 @@ int8 RMap[CONTROLS];
 int8 P[MAX_PARAMETERS];
 #pragma udata
 
+uint8 UAVXAirframe;
+
 #pragma udata ppmq
 int16x8x4Q PPMQ;
 int16 PPMQSum[CONTROLS];
@@ -152,7 +154,7 @@ void InitRC(void)
 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 	RollRate = PitchRate = YawRate = 0;
-	DesiredRollP = DesiredPitchP = 0;
+	ControlRollP = ControlPitchP = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
 
 
@@ -401,6 +403,8 @@ void UpdateParamSetChoice(void)
 
 void InitParameters(void)
 {
+	UAVXAirframe = AF_TYPE;
+
 	ALL_LEDS_ON;
 	ParamSet = 1;
 

@@ -27,6 +27,7 @@ void InertialDamping(void);
 void LimitRollSum(void);
 void LimitPitchSum(void);
 void LimitYawSum(void);
+void DoOrientationTransform(void);
 void DoControl(void);
 
 void UpdateControls(void);
@@ -48,7 +49,7 @@ int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
 int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-int16 DesiredRollP, DesiredPitchP;
+int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 int16 CurrMaxRollPitch;
 
 int16 ThrLow, ThrHigh, ThrNeutral;
@@ -287,11 +288,44 @@ void LimitYawSum(void)
 
 } // LimitYawSum
 
+void DoOrientationTransform(void)
+{
+	// can be generalised easily into an arbitrary orientation of the control vectors
+
+	static int16 Temp;
+
+	ControlRoll = DesiredRoll;
+	ControlPitch = DesiredPitch;
+
+	#if ( defined QUADROCOPTER | defined TRICOPTER )
+		#ifdef TRICOPTER
+		if ( !F.UsingAltOrientation ) // K1 forward
+		{
+			ControlRoll = -ControlRoll;
+			ControlPitch = -ControlPitch;
+		}		
+		#else
+		if ( F.UsingAltOrientation )
+		{
+			ControlRoll = (-DesiredPitch + DesiredRoll) * 6L;
+			ControlRoll = SRS16(ControlRoll, 3);
+
+			ControlPitch = (DesiredPitch + DesiredRoll) * 6L;
+			ControlPitch = SRS16(ControlPitch, 3);		
+		}
+		#endif // TRICOPTER
+	#endif // QUADROCOPTER | TRICOPTER 
+} // DoOrientationTransform
+
 void DoControl(void)
-{				
+{
+	static int16 Temp;
+				
 	CalcGyroRates();
 	CompensateRollPitchGyros();	
 	InertialDamping();
+
+	DoOrientationTransform();
 
 	#ifdef SIMULATE
 
@@ -311,9 +345,9 @@ void DoControl(void)
  
 	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
-	Rl -= DesiredRoll + SRS16((DesiredRoll - DesiredRollP) * ATTITUDE_FF_DIFF, 4);
+	Rl -= ControlRoll + SRS16((ControlRoll - ControlRollP) * ATTITUDE_FF_DIFF, 4);
 	Rl -= LRComp;
-	DesiredRollP = DesiredRoll;
+	ControlRollP = ControlRoll;
 
 	// Pitch
 
@@ -322,9 +356,9 @@ void DoControl(void)
 
 	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
-	Pl -= DesiredPitch + SRS16((DesiredPitch - DesiredPitchP) * ATTITUDE_FF_DIFF, 4);
+	Pl -= ControlPitch + SRS16((ControlPitch - ControlPitchP) * ATTITUDE_FF_DIFF, 4);
 	Pl -= FBComp;
-	DesiredPitchP = DesiredPitch;
+	ControlPitchP = ControlPitch;
 
 	// Yaw
 
@@ -332,9 +366,11 @@ void DoControl(void)
 	YE += DesiredYaw;
 	LimitYawSum();
 
-	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
-	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
-	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
+	Temp  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
+	Temp += SRS16(YawSum * (int16)P[YawKi], 8);
+	Temp = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
+	Yl = SlewLimit(YlP, Temp, 1); 
+	YlP = Yl;
 
 	REp = RE;
 	PEp = PE;
@@ -546,6 +582,7 @@ void InitControl(void)
 {
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
+	ControlRollP = ControlPitchP = YlP = 0;
 	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
 	AltSum = 0;

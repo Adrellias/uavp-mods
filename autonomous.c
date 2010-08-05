@@ -491,7 +491,7 @@ void DoPPMFailsafe(void)
 			break;
 		} // Switch FailState
 	else
-		DesiredRoll = DesiredRollP = DesiredPitch = DesiredPitchP = DesiredYaw = DesiredThrottle = 0;
+		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 
 	#endif // !TESTING
 			

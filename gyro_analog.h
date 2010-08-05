@@ -84,25 +84,6 @@ void CalcGyroRates(void)
 				PitchRate = SRS16(PitchRate, 1);
 			}
 		}
-
-	#if ( defined QUADROCOPTER | defined TRICOPTER )
-		#ifdef TRICOPTER
-		if ( F.UsingAltOrientation ) // K1 forward
-		{
-			RollRate = -RollRate;
-			PitchRate = -PitchRate;
-		}		
-		#else
-		if ( F.UsingAltOrientation )
-		{
-			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
-			Temp = RollRate + PitchRate;	
-			PitchRate -= RollRate;	
-			RollRate = (Temp * 7L)/10L;
-			PitchRate = (PitchRate * 7L)/10L; 
-		}
-		#endif // TRICOPTER
-	#endif // QUADROCOPTER | TRICOPTER 
 	
 	// Yaw is sampled only once every frame
 	GetYawGyroValue();	

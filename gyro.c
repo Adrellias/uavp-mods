@@ -83,26 +83,7 @@ void CompensateRollPitchGyros(void)
 
 		LRAcc = AccFilter((int32)LRAcc, (int32)NewLRAcc);
 		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
-		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);
-
-		#if ( defined QUADROCOPTER | defined TRICOPTER )
-			#ifdef TRICOPTER
-			if ( F.UsingAltOrientation ) // K1 forward
-			{
-				FBAcc = -FBAcc;	
-				LRAcc = -LRAcc;
-			}
-			#else
-			if ( F.UsingAltOrientation )
-			{
-				// "Real" LR =  0.707 * (LR + FB), FB = 0.707 * ( FB - LR )
-				Temp24 = FBAcc + LRAcc;	
-				FBAcc -= LRAcc;		
-				FBAcc = (FBAcc * 7L)/10L;
-				LRAcc = (Temp24 * 7L)/10L;
-			}
-			#endif // TRICOPTER
-		#endif // QUADROCOPTER | TRICOPTER 
+		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);	
 			
 		// Roll
 

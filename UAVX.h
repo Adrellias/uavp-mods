@@ -26,8 +26,8 @@
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
-	#define QUADROCOPTER
-	//#define TRICOPTER
+	//#define QUADROCOPTER
+	#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -66,6 +66,25 @@
 	#if ( defined AILERON | defined ELEVON )
 		#define NAV_WING
 	#endif
+#endif
+
+#ifdef QUADROCOPTER
+	#define AF_TYPE QuadAF
+#endif
+#ifdef TRICOPTER
+	#define AF_TYPE TriAF
+#endif
+#ifdef HEXACOPTER
+	#define AF_TYPE HexAF
+#endif
+#ifdef HELICOPTER
+	#define AF_TYPE HeliAF
+#endif
+#ifdef ELEVON
+	#define AF_TYPE ElevAF
+#endif
+#ifdef AILERON
+	#define AF_TYPE AilAF
 #endif
 
 #define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
@@ -760,14 +779,14 @@ extern void InitControl(void);
 
 extern int16 RE, PE, YE, HE;					// gyro rate error	
 extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
-extern int16 Rl,Pl,Yl;							// PID output values
+extern int16 Rl,Pl,Yl, YlP;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-extern int16 DesiredRollP, DesiredPitchP;
+extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
 extern int16 AltComp, AltDiffSum, AltD, AltDSum;
@@ -1001,6 +1020,7 @@ enum TxRxTypes {
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
+enum AFs { QuadAF, TriAF, HexAF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
 	RollKp, 			// 01
@@ -1101,6 +1121,8 @@ extern uint8 ParamSet;
 extern boolean ParametersChanged;
 extern int8 P[];
 extern int8 RMap[];
+
+extern uint8 UAVXAirframe;
 
 #define PPMQMASK 3
 extern int16 PPMQSum[];

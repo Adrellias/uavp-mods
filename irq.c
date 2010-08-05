@@ -316,10 +316,13 @@ void high_isr_handler(void)
 			}
 		#endif // TESTING
   
-	//	if ( !BusyADC())
+		//	if ( !ADCON0bits.GO)
 	//	{
-	//		SetChanADC(Channel<<3);		// using automatic acq
-	//		ConvertADC();
+	//		ADC[ADCChannel] = (((uint16)ADRESH)<<8)|(ADRESL);
+	//		if ( ++ADCChannel > 123 )
+	//			ADCChannel = 0;
+  	//		ADCON0 = ((ADCChannel << 2) & 0b00111100) | (ADCON0 & 0b11000011);
+	//		ADCON0bits.GO = true;
 	//	}
 
 		INTCONbits.TMR0IF = false;	

@@ -176,7 +176,7 @@ void SendStatsPacket(void)
 	TxESCi16(Stats[BadS]);
 
 	// spare
-	TxESCi16(0);
+	TxESCi16(UAVXAirframe);
 	TxESCi16(0);
 } // SendStatsPacket
 

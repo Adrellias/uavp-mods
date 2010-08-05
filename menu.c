@@ -108,6 +108,17 @@ void ShowSetup(boolean h)
 	TxString("Clock: 40MHz\r\n");
 	#endif // CLOCK_16MHZ
 
+	TxString("Aircraft: ");
+	switch ( UAVXAirframe ) {
+		case QuadAF: TxString("QUADROCOPTER\r\n"); break;
+		case TriAF: TxString("TRICOPTER\r\n"); break;
+		case HexAF: TxString("HEXACOPTER\r\n"); break;
+		case HeliAF: TxString("HELICOPTER\r\n"); break;
+		case ElevAF: TxString("FLYING WING\r\n"); break;
+		case AilAF: TxString("AILERON\r\n"); break;
+		default: TxString("UNKNOWN\r\n");
+	}
+
 	TxString("Accelerometers: ");
 	if( F.AccelerationsValid )
 		if ( F.UsingFlatAcc )

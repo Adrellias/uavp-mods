@@ -48,24 +48,12 @@ void DoMulticopterMix(int16 CurrThrottle)
 
 	#ifdef TRICOPTER
 		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
-		if ( F.UsingAltOrientation ) // K1 forward
-		{
 		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
-			Temp = SRS16(Pl * 56, 7);
-			PWM[FrontC] -= Pl ;				// front motor
-			PWM[LeftC] += (Temp - Rl);		// right rear
-			PWM[RightC] += (Temp + Rl); 	// left rear
-			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
-		}
-		else // Y K1 rearwards
-		{
-		//	Temp = -(Pl * 50)/115;
-			Temp = SRS16(Pl * -56, 7);  
-			PWM[FrontC] += Pl ;				// rear motor
-			PWM[LeftC] += (Temp + Rl);		// left front
-			PWM[RightC] += (Temp - Rl); 	// right front
-			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
-		}	
+		Temp = SRS16(Pl * 56, 7);
+		PWM[FrontC] -= Pl ;				// front motor
+		PWM[LeftC] += (Temp - Rl);		// right rear
+		PWM[RightC] += (Temp + Rl); 	// left rear
+		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
 	#else
 	    #ifdef HEXACOPTER
 
@@ -74,20 +62,10 @@ void DoMulticopterMix(int16 CurrThrottle)
 		#else // QUADROCOPTER
 			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 			PWM[BackC] = CurrThrottle;
-			if( F.UsingAltOrientation )
-			{	// "Cross" Mode
-				PWM[LeftC]  +=  Pl - Rl - Yl;
-				PWM[RightC] += -Pl + Rl - Yl;
-				PWM[FrontC] += -Pl - Rl + Yl;
-				PWM[BackC]  +=  Pl + Rl + Yl; 
-			}
-			else
-			{	// Normal "Plus" Mode
-				PWM[LeftC]  += -Rl - Yl;	
-				PWM[RightC] +=  Rl - Yl;
-				PWM[FrontC] += -Pl + Yl;
-				PWM[BackC]  +=  Pl + Yl;
-			}
+			PWM[LeftC]  += -Rl - Yl;	
+			PWM[RightC] +=  Rl - Yl;
+			PWM[FrontC] += -Pl + Yl;
+			PWM[BackC]  +=  Pl + Yl;
 		#endif
 	#endif
 

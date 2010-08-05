@@ -159,25 +159,6 @@ void CalcGyroRates(void)
 	// ITG-3200 Gyro rescaled 1/8
 	RollRate = SRS16( RollRate - GyroMidRollBy2, 4);	
 	PitchRate = SRS16( PitchRate - GyroMidPitchBy2, 4);
-
-	#if ( defined QUADROCOPTER | defined TRICOPTER )
-		#ifdef TRICOPTER
-		if ( F.UsingAltOrientation ) // K1 forward
-		{
-			RollRate = -RollRate;
-			PitchRate = -PitchRate;
-		}		
-		#else
-		if ( F.UsingAltOrientation )
-		{
-			// "Real" Roll = 0.707 * (P + R), Pitch = 0.707 * (P - R)
-			Temp = RollRate + PitchRate;	
-			PitchRate -= RollRate;	
-			RollRate = (Temp * 7L)/10L;
-			PitchRate = (PitchRate * 7L)/10L; 
-		}
-		#endif // TRICOPTER
-	#endif // QUADROCOPTER | TRICOPTER 
 	
 	YawRate = YawRateADC - GyroMidYaw; 
 	YawRate = SRS16(YawRate, 1);	
