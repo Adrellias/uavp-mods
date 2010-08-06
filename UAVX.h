@@ -1,7 +1,6 @@
+#define YAW_SLEW_LIMIT 5
 
 //#define JIM_MPX_INVERT
-
-#define YAW_SLEW_LIMIT 5
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -297,25 +296,30 @@ typedef union {
 	};
 } i32u;
 
-typedef struct {
+typedef struct { // Tx
 	uint8 Head, Tail;
 	uint8 B[128];
 	} uint8x128Q;
 
-typedef struct {
+typedef struct { // PPM
 	uint8 Head;
 	int16 B[4][8];
 	} int16x8x4Q;	
 
-typedef struct {
+typedef struct { // Baro
 	uint8 Head, Tail;
 	int24 B[8];
 	} int24x8Q;	
 
-typedef struct {
+typedef struct { // GPS
 	uint8 Head, Tail;
-	int32 B[4];
-	} int32x4Q;	
+	int32 Lat[4], Lon[4];
+	} int32x4Q;
+
+typedef struct { // ADC
+	uint8 Head;
+	int16 B[8][8];
+	} int16x8x8Q;	
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -454,6 +458,11 @@ typedef struct {
 #define WR_SPI			0
 #define DSEL_LISL  		1
 #define SEL_LISL  		0
+
+// ADC
+#define ADC_MAX_CHANNELS 	(uint8)8
+#define ADC_TOP_CHANNEL		(uint8)5
+#define	ADC_SCALE			3		// buffer is 8 deep
 
 // RC
 
@@ -658,6 +667,12 @@ extern void InitADC(void);
 #define IDGADCPitchChan 	1
 #define ADCAltChan 			3 	// Altitude
 #define ADCYawChan			4
+#define TopADCChannel		4
+
+#define ADCMASK (ADC_MAX_CHANNELS-1)
+extern int16x8x8Q ADCQ;
+extern int16 ADCQSum[];
+extern uint8 ADCChannel;
 
 //______________________________________________________________________________________________
 
@@ -860,11 +875,10 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 // gyro.c
 
 extern void CompensateRollPitchGyros(void);
-extern void GetRollPitchGyroValues(void);
-extern void GetYawGyroValue(void);
+extern void GetGyroValues(void);
+extern void CalculateGyroRates(void);
 extern void CheckGyroFault(uint8, uint8, uint8);
 extern void ErectGyros(void);
-extern void CalcGyroRates(void);
 extern void GyroTest(void);
 extern void InitGyros(void);
 
@@ -874,7 +888,7 @@ extern uint8 ReadByteITG3200(uint8);
 extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 
-extern int16 GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
+extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw;
 extern int16 RollRate, PitchRate, YawRate;
 extern int16 RollRateADC, PitchRateADC, YawRateADC;
 

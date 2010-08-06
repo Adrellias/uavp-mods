@@ -140,13 +140,10 @@ void InitWII(void)
 	WriteByteWII(WII_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
 } // InitWII
 
-void GetRollPitchGyroValues(void)
+void GetGyroValues(void)
 { // invoked TWICE per control cycle so roll/pitch "rates" are double actual
 
 	BlockReadWII();
-
-	RollRate = RollRate + RollRateADC;
-	PitchRate = PitchRate + PitchRateADC;
 
 } // GetRollPitchGyroValues
 
@@ -157,8 +154,8 @@ void CalcGyroRates(void)
 	// RollRate & PitchRate hold the sum of 2 consecutive conversions
 	// 300 Deg/Sec is the "reference" gyro full scale rate
 	// ITG-3200 Gyro rescaled 1/8
-	RollRate = SRS16( RollRate - GyroMidRollBy2, 4);	
-	PitchRate = SRS16( PitchRate - GyroMidPitchBy2, 4);
+	RollRate = SRS16( RollRateADC - GyroMidRoll, 3);	
+	PitchRate = SRS16( PitchRateADC - GyroMidPitch, 3);
 	
 	YawRate = YawRateADC - GyroMidYaw; 
 	YawRate = SRS16(YawRate, 1);	
@@ -185,10 +182,6 @@ void ErectGyros(void)
 	GyroMidRoll = SRS32(RollAv, 5);	
 	GyroMidPitch = SRS32(PitchAv, 5);
 	GyroMidYaw = SRS32(YawAv, 5);
-
-	// compute here to remove from main control loop
-	GyroMidRollBy2 = GyroMidRoll * 2;
-	GyroMidPitchBy2 = GyroMidPitch * 2;
 	
 	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
 

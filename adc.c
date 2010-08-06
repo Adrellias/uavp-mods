@@ -23,27 +23,48 @@
 int16 ADC(uint8);
 void InitADC(void);
 
-int16 ADC(uint8 Channel)
+#pragma udata adcq
+int16x8x8Q ADCQ;
+int16 ADCQSum[8];
+#pragma udata
+uint8 ADCChannel;
+
+int16 ADC(uint8 ADCChannel)
 { // all ADC reads use 5V reference
+	static uint16 ADCVal;
 
-	SetChanADC(Channel<<3);		// using automatic acq
-	ConvertADC();  
-	while (BusyADC()){};
+	DisableInterrupts; // make atomic
+		ADCVal = ADCQSum[ADCChannel]; 
+	EnableInterrupts;
 
-	return ( ReadADC() ); 
+	return ( ADCVal >> ADC_SCALE ); 
 } // ADC
 
 void InitADC()
 {
+	static uint8 i, c;
 
- OpenADC(ADC_FOSC_32 & 
+	OpenADC(ADC_FOSC_32 & 
           ADC_RIGHT_JUST &
-          ADC_12_TAD,
+          ADC_20_TAD,		// 12 TAD?
 		  ADC_CH0 &
 		  ADC_INT_OFF &
           ADC_VREFPLUS_VDD &
           ADC_VREFMINUS_VSS,	  
           ADCPORTCONFIG);
+
+	for ( i = 0; i < ADC_MAX_CHANNELS; i++)
+	{
+		for ( c = 0; c < ADC_MAX_CHANNELS; c++)
+			ADCQ.B[i][c] = 512;
+		ADCQSum[i] = (512L * ADC_MAX_CHANNELS);
+	}
+	ADCQ.Head = 0;
+	
+	ADCChannel = 0;
+	SetChanADC(	ADCChannel);		// using automatic acq
+	ConvertADC();
+
 } // InitADC
 
 

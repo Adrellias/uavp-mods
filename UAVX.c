@@ -172,7 +172,6 @@ void main(void)
 			}
 			#endif // USE_PPM_FAILSAFE
 
-			GetRollPitchGyroValues();				// first gyro sample
 			GetHeading();
 			AltitudeHold();
 
@@ -180,7 +179,7 @@ void main(void)
 
 			mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
 
-			GetRollPitchGyroValues();				// second gyro sample
+			GetGyroValues();
 			
 			DoControl();
 

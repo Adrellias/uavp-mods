@@ -319,7 +319,7 @@ void DoOrientationTransform(void)
 
 void DoControl(void)
 {
-	CalcGyroRates();
+	CalculateGyroRates();
 	CompensateRollPitchGyros();	
 	InertialDamping();
 

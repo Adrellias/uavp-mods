@@ -23,15 +23,14 @@
 #include "uavx.h"
 
 void CompensateRollPitchGyros(void);
-void GetRollPitchGyroValues(void);
-void GetYawGyroValue(void);
+void GetGyroValues(void);
+void CalculateGyroRates(void);
 void CheckGyroFault(uint8, uint8, uint8);
 void ErectGyros(void);
-void CalcGyroRates(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16	GyroMidRoll, GyroMidRollBy2, GyroMidPitch, GyroMidPitchBy2, GyroMidYaw;
+int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	RollRate, PitchRate, YawRate;
 int16	RollRateADC, PitchRateADC, YawRateADC;
 
