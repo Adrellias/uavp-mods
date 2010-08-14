@@ -1,6 +1,10 @@
-#define YAW_SLEW_LIMIT 5
 
 //#define JIM_MPX_INVERT
+
+#define	ADC_ATT_FREQ			50		// Hz Roll and Pitch
+#define	ADC_BATT_FREQ			5
+#define	ADC_ALT_FREQ			20
+#define	ADC_YAW_FREQ			10
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -279,6 +283,10 @@ typedef union {
 		uint8 b1;
 		uint8 b2;
 	};
+	struct {
+		uint8 pad;
+		int16 b2_1;
+	};
 } i24u;
 
 typedef union {
@@ -293,6 +301,10 @@ typedef union {
 		uint8 b1;
 		uint8 b2;
 		uint8 b3;
+	};
+	struct {
+		uint8 pad;
+		int24 b3_1;
 	};
 } i32u;
 
@@ -315,11 +327,13 @@ typedef struct { // GPS
 	uint8 Head, Tail;
 	int32 Lat[4], Lon[4];
 	} int32x4Q;
-
-typedef struct { // ADC
-	uint8 Head;
-	int16 B[8][8];
-	} int16x8x8Q;	
+	
+typedef struct {
+	i24u v;
+	int16 a;
+	uint8 dt;
+	uint8 f;
+	} SensorStruct;
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -399,43 +413,6 @@ typedef struct { // ADC
 	#define GetTimer0		{Timer0.b0=TMR0L;Timer0.b1=TMR0H;}	
 #endif // CLOCK_16MHZ
 
-// LEDs
-#define AUX2M			0x01
-#define BlueM			0x02
-#define RedM			0x04
-#define GreenM			0x08
-#define AUX1M			0x10
-#define YellowM			0x20
-#define AUX3M			0x40
-#define BeeperM			0x80
-
-#define ALL_LEDS_ON		LEDsOn(BlueM|RedM|GreenM|YellowM)
-#define AUX_LEDS_ON		LEDsOn(AUX1M|AUX2M|AUX3M)
-
-#define ALL_LEDS_OFF	LEDsOff(BlueM|RedM|GreenM|YellowM)
-#define AUX_LEDS_OFF	LEDsOff(AUX1M|AUX2M|AUX3M)
-
-#define ALL_LEDS_ARE_OFF	( (LEDShadow&(BlueM|RedM|GreenM|YellowM))== (uint8)0 )
-
-#define LEDRed_ON		LEDsOn(RedM)
-#define LEDBlue_ON		LEDsOn(BlueM)
-#define LEDGreen_ON		LEDsOn(GreenM)
-#define LEDYellow_ON	LEDsOn(YellowM) 
-#define LEDAUX1_ON		LEDsOn(AUX1M)
-#define LEDAUX2_ON		LEDsOn(AUX2M)
-#define LEDAUX3_ON		LEDsOn(AUX3M)
-#define LEDRed_OFF		LEDsOff(RedM)
-#define LEDBlue_OFF		LEDsOff(BlueM)
-#define LEDGreen_OFF	LEDsOff(GreenM)
-#define LEDYellow_OFF	LEDsOff(YellowM)
-#define LEDYellow_TOG	if( (LEDShadow&YellowM) == (uint8)0 ) LEDsOn(YellowM); else LEDsOff(YellowM)
-#define LEDRed_TOG		if( (LEDShadow&RedM) == (uint8)0 ) LEDsOn(RedM); else LEDsOff(RedM)
-#define LEDBlue_TOG		if( (LEDShadow&BlueM) == (uint8)0 ) LEDsOn(BlueM); else LEDsOff(BlueM)
-#define LEDGreen_TOG	if( (LEDShadow&GreenM) == (uint8)0 ) LEDsOn(GreenM); else LEDsOff(GreenM)
-#define Beeper_OFF		LEDsOff(BeeperM)
-#define Beeper_ON		LEDsOn(BeeperM)
-#define Beeper_TOG		if( (LEDShadow&BeeperM) == (uint8)0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
-
 // Bit definitions
 #define Armed			(PORTAbits.RA4)
 
@@ -444,78 +421,6 @@ typedef struct { // ADC
 #else
 #define InTheAir		true	 
 #endif // HAVE_CUTOFF_SW
-
-
-#define	I2C_ACK			((uint8)(0))
-#define	I2C_NACK		((uint8)(1))
-
-#define SPI_CS			PORTCbits.RC5
-#define SPI_SDA			PORTCbits.RC4
-#define SPI_SCL			PORTCbits.RC3
-#define SPI_IO			TRISCbits.TRISC4
-
-#define	RD_SPI			1
-#define WR_SPI			0
-#define DSEL_LISL  		1
-#define SEL_LISL  		0
-
-// ADC
-#define ADC_MAX_CHANNELS 	(uint8)8
-#define ADC_TOP_CHANNEL		(uint8)5
-#define	ADC_SCALE			3		// buffer is 8 deep
-
-// RC
-
-#define CONTROLS 			7
-#define MAX_CONTROLS 		12 	// maximum Rx channels
-
-#define RxFilter			MediumFilterU
-//#define RxFilter			SoftFilterU
-//#define RxFilter			NoFilter
-
-#define	RC_GOOD_BUCKET_MAX	20
-#define RC_GOOD_RATIO		4
-
-#define RC_MINIMUM			0
-
-#ifdef CLOCK_16MHZ
-	#define RC_MAXIMUM		238
-#else
-	#define RC_MAXIMUM		240	// adjust for faster arithmetic in RCMap
-#endif // CLOCK_40MHZ
-
-#define RC_NEUTRAL			((RC_MAXIMUM-RC_MINIMUM+1)/2)
-
-#define RC_MAX_ROLL_PITCH	(170)	
-
-#define RC_THRES_STOP		((6L*RC_MAXIMUM)/100)		
-#define RC_THRES_START		((10L*RC_MAXIMUM)/100)		
-
-#define RC_FRAME_TIMEOUT_MS 	25
-#define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
-#define RC_THR_MAX 			RC_MAXIMUM
-
-#define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
-
-#ifdef RX6CH 
-	#define RC_CONTROLS 5			
-#else
-	#define RC_CONTROLS CONTROLS
-#endif //RX6CH
-
-// ESC
-#define OUT_MINIMUM			1			// Required for PPM timing loops
-#define OUT_MAXIMUM			200			// to reduce Rx capture and servo pulse output interaction
-#define OUT_NEUTRAL			105			// 1.503mS @ 105 16MHz
-#define OUT_HOLGER_MAXIMUM	225
-#define OUT_YGEI2C_MAXIMUM	240
-#define OUT_X3D_MAXIMUM		200
-
-// Compass sensor
-#define COMPASS_I2C_ID		0x42		// I2C slave address
-#define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
-#define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
-#define COMPASS_TIME_MS		50			// 20Hz
 
 // EEPROM
 
@@ -541,27 +446,6 @@ typedef struct { // ADC
 #define WAYPOINT_REC_SIZE 	(4 + 4 + 2 + 1)		// Lat + Lon + Alt + Loiter
 #define NAV_MAX_WAYPOINTS	((256 - 24 - 1)/WAYPOINT_REC_SIZE)
 	 
-// Sanity checks
-
-// check the Rx and PPM ranges
-#if ( OUT_MINIMUM >= OUT_MAXIMUM )
-#error OUT_MINIMUM < OUT_MAXIMUM!
-#endif
-#if (OUT_MAXIMUM < OUT_NEUTRAL)
-#error OUT_MAXIMUM < OUT_NEUTRAL !
-#endif
-
-#if RC_MINIMUM >= RC_MAXIMUM
-#error RC_MINIMUM < RC_MAXIMUM!
-#endif
-#if (RC_MAXIMUM < RC_NEUTRAL)
-#error RC_MAXIMUM < RC_NEUTRAL !
-#endif
-
-#if (( defined TRICOPTER + defined QUADROCOPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
-#error None or more than one aircraft configuration defined !
-#endif
-
 //______________________________________________________________________________________________
 
 // main.c
@@ -651,14 +535,15 @@ extern i16u Ax, Ay, Az;
 extern int8 LRIntCorr, FBIntCorr;
 extern int8 NeutralLR, NeutralFB, NeutralDU;
 extern int16 DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+
 //______________________________________________________________________________________________
 
 // adc.c
 
-extern int16 ADC(uint8);
-extern void InitADC(void);
 
-// ADC Channels
+
+#define ADC_TOP_CHANNEL		(uint8)4
+
 #define ADCPORTCONFIG 		0b00001010 // AAAAA
 #define ADCBattVoltsChan 	0 
 #define NonIDGADCRollChan 	1
@@ -669,9 +554,10 @@ extern void InitADC(void);
 #define ADCYawChan			4
 #define TopADCChannel		4
 
-#define ADCMASK (ADC_MAX_CHANNELS-1)
-extern int16x8x8Q ADCQ;
-extern int16 ADCQSum[];
+extern int16 ADC(uint8);
+extern void InitADC(void);
+	
+extern SensorStruct ADCVal[];
 extern uint8 ADCChannel;
 
 //______________________________________________________________________________________________
@@ -764,6 +650,11 @@ extern int24 FakeBaroRelAltitude;
 
 // compass.c
 
+#define COMPASS_I2C_ID		0x42		// I2C slave address
+#define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
+#define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
+#define COMPASS_TIME_MS		50			// 20Hz
+
 extern void GetHeading(void);
 extern void GetCompassParameters(void);
 extern void DoCompassTest(void);
@@ -796,7 +687,7 @@ extern void InitControl(void);
 
 extern int16 RE, PE, YE, HE;					// gyro rate error	
 extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
-extern int16 Rl,Pl,Yl, YlP;							// PID output values
+extern int16 Rl,Pl,Yl;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;
@@ -896,6 +787,43 @@ extern int16 RollRateADC, PitchRateADC, YawRateADC;
 
 // irq.c
 
+#define CONTROLS 			7
+#define MAX_CONTROLS 		12 	// maximum Rx channels
+
+#define RxFilter			MediumFilterU
+//#define RxFilter			SoftFilterU
+//#define RxFilter			NoFilter
+
+#define	RC_GOOD_BUCKET_MAX	20
+#define RC_GOOD_RATIO		4
+
+#define RC_MINIMUM			0
+
+#ifdef CLOCK_16MHZ
+	#define RC_MAXIMUM		238
+#else
+	#define RC_MAXIMUM		240	// adjust for faster arithmetic in RCMap
+#endif // CLOCK_40MHZ
+
+#define RC_NEUTRAL			((RC_MAXIMUM-RC_MINIMUM+1)/2)
+
+#define RC_MAX_ROLL_PITCH	(170)	
+
+#define RC_THRES_STOP		((6L*RC_MAXIMUM)/100)		
+#define RC_THRES_START		((10L*RC_MAXIMUM)/100)		
+
+#define RC_FRAME_TIMEOUT_MS 	25
+#define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
+#define RC_THR_MAX 			RC_MAXIMUM
+
+#define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
+
+#ifdef RX6CH 
+	#define RC_CONTROLS 5			
+#else
+	#define RC_CONTROLS CONTROLS
+#endif //RX6CH
+
 extern void SyncToTimer0AndDisableInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
@@ -930,6 +858,19 @@ extern uint16 RCGlitches;
 
 // i2c.c
 
+#define	I2C_ACK			((uint8)(0))
+#define	I2C_NACK		((uint8)(1))
+
+#define SPI_CS			PORTCbits.RC5
+#define SPI_SDA			PORTCbits.RC4
+#define SPI_SCL			PORTCbits.RC3
+#define SPI_IO			TRISCbits.TRISC4
+
+#define	RD_SPI			1
+#define WR_SPI			0
+#define DSEL_LISL  		1
+#define SEL_LISL  		0
+
 extern void InitI2C(uint8, uint8);
 extern boolean I2CWaitClkHi(void);
 extern void I2CStart(void);
@@ -950,6 +891,42 @@ extern void ConfigureESCs(void);
 //______________________________________________________________________________________________
 
 // leds.c
+
+#define AUX2M			0x01
+#define BlueM			0x02
+#define RedM			0x04
+#define GreenM			0x08
+#define AUX1M			0x10
+#define YellowM			0x20
+#define AUX3M			0x40
+#define BeeperM			0x80
+
+#define ALL_LEDS_ON		LEDsOn(BlueM|RedM|GreenM|YellowM)
+#define AUX_LEDS_ON		LEDsOn(AUX1M|AUX2M|AUX3M)
+
+#define ALL_LEDS_OFF	LEDsOff(BlueM|RedM|GreenM|YellowM)
+#define AUX_LEDS_OFF	LEDsOff(AUX1M|AUX2M|AUX3M)
+
+#define ALL_LEDS_ARE_OFF	( (LEDShadow&(BlueM|RedM|GreenM|YellowM))== (uint8)0 )
+
+#define LEDRed_ON		LEDsOn(RedM)
+#define LEDBlue_ON		LEDsOn(BlueM)
+#define LEDGreen_ON		LEDsOn(GreenM)
+#define LEDYellow_ON	LEDsOn(YellowM) 
+#define LEDAUX1_ON		LEDsOn(AUX1M)
+#define LEDAUX2_ON		LEDsOn(AUX2M)
+#define LEDAUX3_ON		LEDsOn(AUX3M)
+#define LEDRed_OFF		LEDsOff(RedM)
+#define LEDBlue_OFF		LEDsOff(BlueM)
+#define LEDGreen_OFF	LEDsOff(GreenM)
+#define LEDYellow_OFF	LEDsOff(YellowM)
+#define LEDYellow_TOG	if( (LEDShadow&YellowM) == (uint8)0 ) LEDsOn(YellowM); else LEDsOff(YellowM)
+#define LEDRed_TOG		if( (LEDShadow&RedM) == (uint8)0 ) LEDsOn(RedM); else LEDsOff(RedM)
+#define LEDBlue_TOG		if( (LEDShadow&BlueM) == (uint8)0 ) LEDsOn(BlueM); else LEDsOff(BlueM)
+#define LEDGreen_TOG	if( (LEDShadow&GreenM) == (uint8)0 ) LEDsOn(GreenM); else LEDsOff(GreenM)
+#define Beeper_OFF		LEDsOff(BeeperM)
+#define Beeper_ON		LEDsOn(BeeperM)
+#define Beeper_TOG		if( (LEDShadow&BeeperM) == (uint8)0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
 
 extern void SendLEDs(void);
 extern void LEDsOn(uint8);
@@ -992,6 +969,13 @@ extern const rom uint8 RxChMnem[];
 //______________________________________________________________________________________________
 
 // outputs.c
+
+#define OUT_MINIMUM			1			// Required for PPM timing loops
+#define OUT_MAXIMUM			200			// to reduce Rx capture and servo pulse output interaction
+#define OUT_NEUTRAL			105			// 1.503mS @ 105 16MHz
+#define OUT_HOLGER_MAXIMUM	225
+#define OUT_YGEI2C_MAXIMUM	240
+#define OUT_X3D_MAXIMUM		200
 
 extern uint8 SaturInt(int16);
 extern void DoMulticopterMix(int16 CurrThrottle);
@@ -1265,7 +1249,28 @@ extern void PowerOutput(int8);
 extern void LEDsAndBuzzer(void);
 extern void BatteryTest(void);
 
+//______________________________________________________________________________________________
 
+// Sanity checks
+
+// check the Rx and PPM ranges
+#if ( OUT_MINIMUM >= OUT_MAXIMUM )
+#error OUT_MINIMUM < OUT_MAXIMUM!
+#endif
+#if (OUT_MAXIMUM < OUT_NEUTRAL)
+#error OUT_MAXIMUM < OUT_NEUTRAL !
+#endif
+
+#if RC_MINIMUM >= RC_MAXIMUM
+#error RC_MINIMUM < RC_MAXIMUM!
+#endif
+#if (RC_MAXIMUM < RC_NEUTRAL)
+#error RC_MAXIMUM < RC_NEUTRAL !
+#endif
+
+#if (( defined TRICOPTER + defined QUADROCOPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
+#error None or more than one aircraft configuration defined !
+#endif
 
 
 

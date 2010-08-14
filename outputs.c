@@ -300,6 +300,10 @@ OS006:
 	} 
 	else
 	{ // I2C ESCs
+	
+		PWM4 = PWM[CamRollC];
+		PWM5 = PWM[CamPitchC];
+		
 		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm

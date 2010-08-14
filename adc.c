@@ -24,20 +24,19 @@ int16 ADC(uint8);
 void InitADC(void);
 
 #pragma udata adcq
-int16x8x8Q ADCQ;
-int16 ADCQSum[8];
+SensorStruct ADCVal[(ADC_TOP_CHANNEL+1)];
 #pragma udata
 uint8 ADCChannel;
 
 int16 ADC(uint8 ADCChannel)
 { // all ADC reads use 5V reference
-	static uint16 ADCVal;
+	static uint16 v;
 
 	DisableInterrupts; // make atomic
-		ADCVal = ADCQSum[ADCChannel]; 
+		v = ADCVal[ADCChannel].v.b2_1; // rescale by 256
 	EnableInterrupts;
 
-	return ( ADCVal >> ADC_SCALE ); 
+	return ( v ); 
 } // ADC
 
 void InitADC()
@@ -53,16 +52,23 @@ void InitADC()
           ADC_VREFMINUS_VSS,	  
           ADCPORTCONFIG);
 
-	for ( i = 0; i < ADC_MAX_CHANNELS; i++)
+	for ( i = 0; i <= ADC_TOP_CHANNEL; i++)
 	{
-		for ( c = 0; c < ADC_MAX_CHANNELS; c++)
-			ADCQ.B[i][c] = 512;
-		ADCQSum[i] = (512L * ADC_MAX_CHANNELS);
+		ADCVal[i].v.i24 = 512L * 256L;
+		ADCVal[i].a = 0;
+		ADCVal[i].dt = ADC_TOP_CHANNEL;			// mS - channels are processed cyclically on each mS clock tick
+		ADCVal[i].f = ADC_ATT_FREQ;				// Hz
 	}
-	ADCQ.Head = 0;
 	
+	ADCVal[ADCBattVoltsChan].f = ADC_BATT_FREQ;		
+	ADCVal[ADCAltChan].f = ADC_ALT_FREQ;		
+	ADCVal[ADCYawChan].f = ADC_YAW_FREQ;
+	
+	for ( i = 0; i <= ADC_TOP_CHANNEL; i++ )
+		ADCVal[i].a	 = ( (int24) ADCVal[i].dt * 256L) / ( 1000L / ( 6L * (int24) ADCVal[i].f ) + (int24) ADCVal[i].dt );
+
 	ADCChannel = 0;
-	SetChanADC(	ADCChannel);		// using automatic acq
+	SetChanADC(	ADCChannel);					// using automatic acq
 	ConvertADC();
 
 } // InitADC

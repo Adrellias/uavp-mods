@@ -367,8 +367,6 @@ void DoControl(void)
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
-	Yl = SlewLimit(YlP, Yl, YAW_SLEW_LIMIT); 
-	YlP = Yl;
 
 	REp = RE;
 	PEp = PE;
@@ -580,7 +578,7 @@ void InitControl(void)
 {
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
-	ControlRollP = ControlPitchP = YlP = 0;
+	ControlRollP = ControlPitchP = 0;
 	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
 	AltSum = 0;
