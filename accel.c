@@ -193,7 +193,7 @@ void IsLISLActive(void)
 	r = ReadLISL(LISL_WHOAMI + LISL_READ);
 	if( r == 0x3A )	// a LIS03L sensor is there!
 	{
-		WriteLISL(0b11000111, LISL_CTRLREG_1); // on always, 40Hz, enable all axis
+		WriteLISL(0b11000111, LISL_CTRLREG_1); // on always, 40Hz sampling rate,  10Hz LP cutoff, enable all axes
 		WriteLISL(0b00000000, LISL_CTRLREG_3);
 		WriteLISL(0b01000000, LISL_FF_CFG); // latch, no interrupts; 
 		WriteLISL(0b00000000, LISL_FF_THS_L);
@@ -211,11 +211,11 @@ void ReadAccelerations()
 	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a; // Acc still there?
 	if ( F.AccelerationsValid ) 
 	{
-		Ax.b0  = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
+		Ax.b0 = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
 		Ax.b1 = ReadLISLNext();
-		Ay.b0  = ReadLISLNext();
+		Ay.b0 = ReadLISLNext();
 		Ay.b1 = ReadLISLNext();
-		Az.b0  = ReadLISLNext();
+		Az.b0 = ReadLISLNext();
 		Az.b1 = ReadLISLNext();
 		SPI_CS = DSEL_LISL;	// end transmission
 	}

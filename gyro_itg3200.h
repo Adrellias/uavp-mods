@@ -154,7 +154,7 @@ void CalculateGyroRates(void)
 	PitchRate = SRS16( PitchRateADC - GyroMidPitch, 3);
 	
 	YawRate = YawRateADC - GyroMidYaw; 
-	YawRate = SRS16(YawRate, 1);	
+	YawRate = SRS16(YawRate, 4);	
 
 } // CalculateGyroRates
 

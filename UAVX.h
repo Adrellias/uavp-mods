@@ -1,6 +1,8 @@
 
 //#define JIM_MPX_INVERT
 
+#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs
+
 #define	ADC_ATT_FREQ			50		// Hz Roll and Pitch
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20
@@ -828,7 +830,7 @@ extern void SyncToTimer0AndDisableInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
-extern uint24 mSClock(void);
+extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, 
@@ -837,7 +839,7 @@ enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, T
 
 enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
 
-extern uint24 mS[];
+extern int24 mS[];
 extern int16 RC[];
 
 extern near i16u PPM[];
@@ -1178,7 +1180,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinBaroROCS, MaxBaroROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS, BadNumS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 

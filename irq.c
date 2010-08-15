@@ -35,12 +35,12 @@
 void SyncToTimer0AndDisableInterrupts(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
-uint24 mSClock(void);
+int24 mSClock(void);
 void low_isr_handler(void);
 void high_isr_handler(void);
 
 #pragma udata clocks
-uint24	mS[CompassUpdate+1];
+int24	mS[CompassUpdate+1];
 #pragma udata
 
 #pragma udata access isrvars
@@ -118,9 +118,9 @@ void InitTimersAndInterrupts(void)
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
-uint24 mSClock(void)
+int24 mSClock(void)
 { // MUST make locked accesses to the millisecond clock
-	static uint24 m;
+	static int24 m;
 
 	DisableInterrupts;
 	m = mS[Clock];
@@ -294,11 +294,14 @@ void high_isr_handler(void)
 
 		mS[Clock]++;
 
-		if ( ( mS[UpdateTimeout] - mS[Clock] ) > (uint24)15 ) // should not happen!
+		if ( ( mS[UpdateTimeout] - mS[Clock] ) > 15 ) // should not happen! 
 		{
 			WaitingForSync = false;
 			if ( State == InFlight )
+			{
 				Stats[BadS]++;
+				Stats[BadNumS] = mS[UpdateTimeout] - mS[Clock];
+			}
 		}
 		else
 			WaitingForSync = mS[Clock] < mS[UpdateTimeout];
@@ -325,8 +328,12 @@ void high_isr_handler(void)
 			ADCValue.b1 = ADRESL;
 			//ADCVal.b0 = 0;
 			
-			ADCTemp.i32 = (int32)ADCVal[ADCChannel].a * (int32)(ADCValue.i24 - ADCVal[ADCChannel].v.i24);
-			ADCVal[ADCChannel].v.i24 += ADCTemp.b3_1;
+			#ifdef USE_ADC_FILTERS
+				ADCTemp.i32 = (int32)ADCVal[ADCChannel].a * (int32)(ADCValue.i24 - ADCVal[ADCChannel].v.i24);
+				ADCVal[ADCChannel].v.i24 += ADCTemp.b3_1;
+			#else
+				ADCVal[ADCChannel].v.i24 = ADCValue.i24;
+			#endif // USE_ADC_FILTERS
 
 			if ( ++ADCChannel > ADC_TOP_CHANNEL )
 				ADCChannel = 0;

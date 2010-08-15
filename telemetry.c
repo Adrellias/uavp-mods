@@ -177,7 +177,7 @@ void SendStatsPacket(void)
 
 	// spare
 	TxESCi16(UAVXAirframe);
-	TxESCi16(0);
+	TxESCi16(Stats[BadNumS]);
 } // SendStatsPacket
 
 void SendUAVX(void) // 800uS at 40MHz?

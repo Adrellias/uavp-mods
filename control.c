@@ -511,7 +511,7 @@ void CheckThrottleMoved(void)
 
 void LightsAndSirens(void)
 {
-	static uint24 Timeout;
+	static int24 Timeout;
 
 	LEDYellow_TOG;
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;

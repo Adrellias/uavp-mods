@@ -80,7 +80,7 @@ void ShowStats(void)
 
 	if ( Stats[BadS] != 0 )
 	{
-		TxString("Misc(gke):     \t");TxVal32((int32)Stats[BadS],0,' '); TxNextLine();
+		TxString("Misc(gke):     \t");TxVal32((int32)Stats[BadS],0,' '); TxVal32((int32)Stats[BadNumS],0,' ');TxNextLine();
 	}
 
 	TxString("\r\nSensor/Rx Failures (Count)\r\n");
