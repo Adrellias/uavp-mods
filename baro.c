@@ -120,7 +120,7 @@ void SetFreescaleOffset(void)
 			Hop >>= 2 + 1; // avoid zero hop
 			SetFreescaleMCP4725(BaroOffsetDAC);			Delay1mS(2);
 			ReadFreescaleBaro();
-			if ( BaroVal.u16 > (uint16)(((uint24)FS_ADC_MAX*4*3)/4) )
+			if ( BaroVal.u16 > (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) )
 				BaroOffsetDAC -= Hop;
 			else
 				BaroOffsetDAC += Hop;
@@ -576,32 +576,17 @@ void BaroTest(void)
 		case BaroUnknown: TxString("Type:\tNone\r\n"); break;
 		default: break;
 	}
-	
-	TxString("Ambient :\t");
-	TxVal32((int32)AmbientTemperature.i16, 1, ' ');
-	TxString("C\r\n");
-	
-	TxString("R.Finder: \t");
-	if ( F.RangefinderAltitudeValid )
-	{
-		GetRangefinderAltitude();
-		TxVal32((int32)RangefinderAltitude, 2, ' ');
-		TxString("M\r\n");
-	}
-	else
-		TxString("no rangefinder\r\n");	
-
+		
 	if ( BaroType == BaroMPX4115 )
 	{
 		TxString("Range   :\t");			
 		TxVal32((int32) BaroDescentAvailable,1, ' ');
 		TxString("-> ");
 		TxVal32((int32) BaroClimbAvailable,1, 'M');
-		TxString("Offset  :\t");TxVal32((int32)BaroOffsetDAC, 0,0); TxNextLine();
-
+		TxString(" {Offset ");TxVal32((int32)BaroOffsetDAC, 0,'}'); 
 		if (( BaroClimbAvailable < BARO_MIN_CLIMB ) || (BaroDescentAvailable > BARO_MIN_DESCENT))
-			TxString(" Insufficient climb or descent range - inappropriate offset adjustment?");
-		TxString("\r\n");
+			TxString(" Bad climb or descent range - offset adjustment?");
+		TxNextLine();
 	}
 
 	if ( !F.BaroAltitudeValid ) goto BAerror;	
@@ -613,6 +598,20 @@ void BaroTest(void)
 	TxString("Alt.:     \t");	
 	TxVal32((int32)BaroRelAltitude, 1, ' ');
 	TxString("M\r\n");
+
+	TxString("\r\nR.Finder: \t");
+	if ( F.RangefinderAltitudeValid )
+	{
+		GetRangefinderAltitude();
+		TxVal32((int32)RangefinderAltitude, 2, ' ');
+		TxString("M\r\n");
+	}
+	else
+		TxString("no rangefinder\r\n");
+	
+	TxString("\r\nAmbient :\t");
+	TxVal32((int32)AmbientTemperature.i16, 1, ' ');
+	TxString("C\r\n");
 
 	return;
 BAerror:

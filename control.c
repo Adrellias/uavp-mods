@@ -367,6 +367,11 @@ void DoControl(void)
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
+	#ifdef TRICOPTER
+		Yl *= 4;
+		Yl = SlewLimit(Ylp, Yl, 2);
+	#endif // TRICOPTER
+	Ylp = Yl;
 
 	REp = RE;
 	PEp = PE;
@@ -475,14 +480,16 @@ void CaptureTrims(void)
 
 void StopMotors(void)
 {
-	static int8 m;
-
 	#ifdef MULTICOPTER
-		for (m = 0; m < NoOfPWMOutputs; m++)
-			PWM[m] = ESCMin;
+	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+		#ifdef TRICOPTER
+			PWM[BackC] = OUT_NEUTRAL;
+		#else
+			PWM[BackC] = ESCMin;
+		#endif	
 	#else
 		PWM[ThrottleC] = ESCMin;
-		PWM[1], PWM[2] = PWM[3] = OUT_NEUTRAL;
+		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
 	#endif // MULTICOPTER
 
 	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
@@ -578,7 +585,7 @@ void InitControl(void)
 {
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
-	ControlRollP = ControlPitchP = 0;
+	ControlRollP = ControlPitchP = Ylp = 0;
 	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
 	AltSum = 0;

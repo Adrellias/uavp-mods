@@ -24,13 +24,13 @@ void GetGyroValues(void)
 { 
 	if ( P[GyroRollPitchType] == IDG300 ) // 500 Deg/Sec
 	{
-		RollRateADC = (int16)ADC(IDGADCRollChan);
-		PitchRateADC = (int16)ADC(IDGADCPitchChan);
+		RollRateADC = ADC(IDGADCRollChan);
+		PitchRateADC = ADC(IDGADCPitchChan);
 	}
 	else
 	{
-		RollRateADC = (int16)ADC(NonIDGADCRollChan);
-		PitchRateADC = (int16)ADC(NonIDGADCPitchChan);
+		RollRateADC = ADC(NonIDGADCRollChan);
+		PitchRateADC = ADC(NonIDGADCPitchChan);
 	}
 
 	YawRateADC = ADC(ADCYawChan);

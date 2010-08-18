@@ -30,7 +30,7 @@ uint8 ADCChannel;
 
 int16 ADC(uint8 ADCChannel)
 { // all ADC reads use 5V reference
-	static uint16 v;
+	static int16 v;
 
 	DisableInterrupts; // make atomic
 		v = ADCVal[ADCChannel].v.b2_1; // rescale by 256

@@ -184,19 +184,7 @@ void OutSignals(void)
 		PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
 
 	if ( !F.MotorsArmed )
-	{
-		#ifdef MULTICOPTER
-			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
-				#ifdef TRICOPTER
-					PWM[BackC] = OUT_NEUTRAL;
-				#else
-					PWM[BackC] = ESCMin;
-				#endif	
-			#else
-			PWM[ThrottleC] = ESCMin;
-			PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
-		#endif // MULTICOPTER
-	}
+		StopMotors();
 
 	// Save TMR0 and reset
 	DisableInterrupts;
@@ -206,6 +194,9 @@ void OutSignals(void)
 	FastWriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
 	EnableInterrupts;
+
+	PWM4 = PWM[CamRollC];
+	PWM5 = PWM[CamPitchC];
 
 	if ( P[ESCType] == ESCPPM )
 	{
@@ -234,9 +225,6 @@ void OutSignals(void)
 				PWM3 = PWM[RudderC];
 			#endif
 		#endif // MULTICOPTER
-
-		PWM4 = PWM[CamRollC];
-		PWM5 = PWM[CamPitchC];
 
 		SyncToTimer0AndDisableInterrupts();
 
@@ -300,11 +288,7 @@ OS006:
 	} 
 	else
 	{ // I2C ESCs
-	
-		PWM4 = PWM[CamRollC];
-		PWM5 = PWM[CamPitchC];
-		
-		if( ServoToggle )	// driver cam servos only every 2nd pulse
+			if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
 			_asm
 			MOVLB	0					// select Bank0
