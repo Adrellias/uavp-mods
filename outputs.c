@@ -178,6 +178,10 @@ void OutSignals(void)
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
+	#ifdef UAVX_HW
+		ServoToggle = false;
+	#endif // UAVX_HW
+
 	#if !( defined SIMULATE | defined TESTING )
 
 	for ( m = 0; m < 6; m++ )

@@ -25,20 +25,15 @@
 #define I2C_IN			1
 #define I2C_OUT			0
 
-// These routine need much better tailoring to the I2C bus spec.
-// 16MHz 0.25uS/Cycle
-// 40MHz 0.1uS/Cycle
-
 #ifdef CLOCK_16MHZ
-	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()
-	#define I2C_DELAY2		
+#define	I2C_DELAY		Delay10TCY()
+#define I2C_DELAY2		
 #else // CLOCK_40MHZ
-	#define	I2C_DELAY_5US		Delay10TCYx(5) 
-	
-	// ~102KHz (Compass limit!)
-	#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
-	// ~210KHz
-	//#define I2C_DELAY2	
+#define	I2C_DELAY		Delay10TCYx(3)
+// ~102KHz (Compass limit!)
+#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
+// ~210KHz
+//#define I2C_DELAY2	
 #endif // CLOCK_16MHZ
 
 void InitI2C(uint8, uint8);
@@ -133,7 +128,7 @@ void I2CStart(void)
 	I2C_DATA_FLOAT;
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
-	I2C_DELAY_5US;
+	I2C_DELAY; // zzz
 	I2C_CLK_LOW;
 } // I2CStart
 
@@ -145,7 +140,7 @@ void I2CStop(void)
 	r = I2CWaitClkHi();
 	I2C_DATA_FLOAT;
 
-	I2C_DELAY_5US;
+	I2C_DELAY;
 
 } // I2CStop 
 
@@ -155,8 +150,7 @@ uint8 ReadI2CByte(uint8 r)
 
 	I2C_DATA_FLOAT;
 	d = 0;
-	s = 8;
-	do {
+	for ( s = 8; s ; s-- )
 		if( I2CWaitClkHi() )
 		{ 
 			d <<= 1;
@@ -168,7 +162,6 @@ uint8 ReadI2CByte(uint8 r)
 			Stats[I2CFailS]++;
 			return(false);
 		}
-	} while ( --s );
 
 	I2C_SDA_SW = r;
 	I2C_DELAY2;
@@ -190,12 +183,11 @@ uint8 ReadI2CByte(uint8 r)
 
 uint8 WriteI2CByte(uint8 d)
 {
-	static uint8 s, dd;
+	static uint8 s;
 
-	dd = d;  // a little faster
-	s = 8;
-	do {
-		if( dd & 0x80 )
+	for ( s = 8; s ; s-- )
+	{
+		if( d & 0x80 )
 			I2C_DATA_FLOAT
 		else
 			I2C_DATA_LOW
@@ -203,14 +195,14 @@ uint8 WriteI2CByte(uint8 d)
 		if( I2CWaitClkHi() )
 		{ 	
 			I2C_CLK_LOW;
-			dd <<= 1;
+			d <<= 1;
 		}
 		else
 		{
 			Stats[I2CFailS]++;
 			return(I2C_NACK);
 		}
-	} while ( --s );
+	}
 
 	I2C_DATA_FLOAT;
 	if( I2CWaitClkHi() )
@@ -248,7 +240,7 @@ uint8 ReadI2CString(uint8 *S, uint8 l)
 
 uint8 ScanI2CBus(void)
 {
-	uint8 s;
+	int16 s;
 	uint8 d;
 
 	d = 0;
@@ -325,7 +317,7 @@ boolean ESCWaitClkHi(void)
 
 	ESC_CLK_FLOAT;
 	s = 1;						
-	while( !ESC_SCL )
+	while( !ESC_SCL ) 
 		if( ++s == (uint8)0 ) return (false);					
 
 	return ( true );
@@ -338,7 +330,7 @@ void ESCI2CStart(void)
 	ESC_DATA_FLOAT;
 	r = ESCWaitClkHi();
 	ESC_DATA_LOW;
-	I2C_DELAY_5US;		
+	I2C_DELAY;		
 	ESC_CLK_LOW;				
 } // ESCI2CStart
 
@@ -348,18 +340,17 @@ void ESCI2CStop(void)
 	ESCWaitClkHi();
 	ESC_DATA_FLOAT;
 
-    I2C_DELAY_5US;
+    I2C_DELAY;
 
 } // ESCI2CStop
 
 uint8 WriteESCI2CByte(uint8 d)
-{ // ~320KHz @ 40MHz
-	static uint8 s, t, dd;
+{
+	static uint8 s, t;
 
-	dd = d; // a little faster
-	s = 8;
-	do {
-		if( dd & 0x80 )
+	for ( s = 8; s ; s-- )
+	{
+		if( d & 0x80 )
 			ESC_DATA_FLOAT
 		else
 			ESC_DATA_LOW
@@ -367,19 +358,20 @@ uint8 WriteESCI2CByte(uint8 d)
 		if( ESCWaitClkHi() )
 		{ 	
 			ESC_CLK_LOW;
-			dd <<= 1;
+			d <<= 1;
 		}
 		else
 			return(I2C_NACK);	
-	} while ( --s );
+	}
 
 	ESC_DATA_FLOAT;
 	if( ESCWaitClkHi() )
-		return( ESC_SDA );
+		s = ESC_SDA;
 	else
 		return(I2C_NACK);	
 	ESC_CLK_LOW;
-
+										
+	return( s );
 } // WriteESCI2CByte
 
 #ifdef TESTING
@@ -428,9 +420,9 @@ boolean CheckESCBus(void)
 
 void ConfigureESCs(void)
 {
-	int8 m;
+	uint8 m, s;
 
-	if ( (int8)P[ESCType] == ESCYGEI2C )		
+	if ( P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )

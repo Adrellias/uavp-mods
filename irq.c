@@ -29,9 +29,6 @@
 #endif //  CLOCK_16MHZ
 // no less than 1500
 
-// Simple averaging of last two channel captures
-//#define RC_FILTER
-
 void SyncToTimer0AndDisableInterrupts(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
@@ -55,8 +52,7 @@ near uint8 	ll, tt, gps_ch;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near int8	State, FailState;
 near boolean WaitingForSync;
-near i24u 	ADCValue;
-near i32u 	ADCTemp;
+near i16u 	ADCValue;
 #pragma udata
 
 int8	SignalCount;
@@ -158,7 +154,7 @@ void high_isr_handler(void)
 			{
 				#ifdef CLOCK_16MHZ	
 				Width.i16 >>= 1; 				// Width in 4us ticks.	
-				if ( Width.b1 == 1 ) 			// Check pulse is 1.024 to 2.048mS
+				if ( Width.b1 == (uint8)1 ) 			// Check pulse is 1.024 to 2.048mS
 					PPM[PPM_Index].i16 = (int16) Width.i16;	
 				#else // CLOCK_40MHZ
 				if ( (Width.i16 >= 1250 ) && (Width.i16 <= 2500) ) // Width in 0.8uS ticks 	
@@ -324,15 +320,13 @@ void high_isr_handler(void)
 		// Scan ADC ports even if using ITG-3200
 		if ( !ADCON0bits.GO)
 		{
-			ADCValue.b2 = ADRESH;
-			ADCValue.b1 = ADRESL;
-			//ADCVal.b0 = 0;
+			ADCValue.b1 = ADRESH;
+			ADCValue.b0 = ADRESL;
 			
 			#ifdef USE_ADC_FILTERS
-				ADCTemp.i32 = (int32)ADCVal[ADCChannel].a * (int32)(ADCValue.i24 - ADCVal[ADCChannel].v.i24);
-				ADCVal[ADCChannel].v.i24 += ADCTemp.b3_1;
+				ADCVal[ADCChannel].v.i24 += (int24)(ADCValue.i16 - ADCVal[ADCChannel].v.b2_1) * ADCVal[ADCChannel].a;
 			#else
-				ADCVal[ADCChannel].v.i24 = ADCValue.i24;
+				ADCVal[ADCChannel].v.i24 = ADCValue.i16;
 			#endif // USE_ADC_FILTERS
 
 			if ( ++ADCChannel > ADC_TOP_CHANNEL )

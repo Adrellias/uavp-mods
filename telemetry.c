@@ -66,8 +66,8 @@ void SendFlightPacket(void)
 	static int8 b;
 
 	TxESCu8(UAVXFlightPacketTag);
-	TxESCu8(48 + FLAG_BYTES);
-	for ( b = 0; b < FLAG_BYTES; b++ )
+	TxESCu8(48 + TELEMETRY_FLAG_BYTES);
+	for ( b = 0; b < TELEMETRY_FLAG_BYTES; b++ )
 		TxESCu8(F.AllFlags[b]); 
 		
 	TxESCu8(State);	
@@ -175,8 +175,8 @@ void SendStatsPacket(void)
 	
 	TxESCi16(Stats[BadS]);
 
-	// spare
-	TxESCi16(UAVXAirframe);
+	TxESCu8(UAVXAirframe);
+	TxESCu8(Orientation);
 	TxESCi16(Stats[BadNumS]);
 } // SendStatsPacket
 

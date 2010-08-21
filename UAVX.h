@@ -1,9 +1,10 @@
 
 //#define JIM_MPX_INVERT
 
-//#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs
+//#define USE_ORIENT				// requires UAVPSet 4.08!!!!
+//#define USE_POSITION_LOCK			// requires UAVPSet 4.08!!!!
 
-#define	ADC_ATT_FREQ			50		// Hz Roll and Pitch
+#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20
 #define	ADC_YAW_FREQ			10
@@ -42,6 +43,10 @@
 	//#define I2C_HW
 	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
+
+#ifdef CLOCK_40MHZ
+	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
+#endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
 	#define UAVXBOARD
@@ -310,6 +315,13 @@ typedef union {
 	};
 } i32u;
 
+typedef struct {
+	i24u v;
+	int16 a;
+	int16 f;
+	uint8 dt;
+	} SensorStruct;
+
 typedef struct { // Tx
 	uint8 Head, Tail;
 	uint8 B[128];
@@ -329,13 +341,6 @@ typedef struct { // GPS
 	uint8 Head, Tail;
 	int32 Lat[4], Lon[4];
 	} int32x4Q;
-	
-typedef struct {
-	i24u v;
-	int16 a;
-	uint8 dt;
-	uint8 f;
-	} SensorStruct;
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -406,7 +411,7 @@ typedef struct {
 
 // This is messy - trial and error to determine worst case interrupt latency!
 #ifdef CLOCK_16MHZ
-	#define INT_LATENCY		(uint16)(256 - 35) // x 4uS
+	#define INT_LATENCY		(uint16)(256 - 35) // x 4uS 
 	#define FastWriteTimer0(t) TMR0L=(uint8)t
 	#define GetTimer0		Timer0.u16=(uint16)TMR0L
 #else // CLOCK_40MHZ
@@ -452,7 +457,8 @@ typedef struct {
 
 // main.c
 
-#define FLAG_BYTES 6
+#define FLAG_BYTES 8
+#define TELEMETRY_FLAG_BYTES 6
 typedef union {
 	uint8 AllFlags[FLAG_BYTES];
 	struct { // Order of these flags subject to change
@@ -485,6 +491,16 @@ typedef union {
 		UsingRangefinderAlt:1,
 
 		// internal flags not really useful externally
+
+		AllowNavAltitudeHold:1,	// stick programmed
+		UsingPositionHoldLock:1,
+		LockHoldPosition:1,
+		Simulation:1,
+		AcquireNewPosition:1, 
+		MotorsArmed:1,
+		u1:1,
+		u2:1,
+
 		Signal:1,
 		RCFrameOK:1, 
 		ParametersValid:1,
@@ -503,16 +519,14 @@ typedef union {
 		UsingTxMode2:1,
 		UsingAltOrientation:1,
 
+		// outside telemetry flags
+
 		UsingTelemetry:1,
 		TxToBuffer:1,
 		NewBaroValue:1,
 		BeeperInUse:1,
-		AcquireNewPosition:1, 
-		MotorsArmed:1,
-		RFInInches:1,
-		Simulation:1,
-
-		AllowNavAltitudeHold:1;			// stick programmed
+		RFInInches:1;
+			
 		};
 } Flags;
 
@@ -541,8 +555,6 @@ extern int16 DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 //______________________________________________________________________________________________
 
 // adc.c
-
-
 
 #define ADC_TOP_CHANNEL		(uint8)4
 
@@ -693,6 +705,8 @@ extern int16 Rl, Pl, Yl, Ylp;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;
+extern int16 YawFilterA;
+extern i24u  YawRateF;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
@@ -1082,14 +1096,18 @@ enum Params { // MAX 64
 	ServoSense,			// 52c
 	CompassOffsetQtr,	// 53c
 	BatteryCapacity,	// 54c
-	GyroYawType,			// 55c
-	AltKd				// 56
+	GyroYawType,		// 55c
+	AltKd,				// 56
+	Orient				// 57
 	
 	// 56 - 64 unused currently
 	};
 
 #define FlyXMode 			0
 #define FlyAltOrientationMask 		0x01
+
+#define UsePositionHoldLock 0
+#define UsePositionHoldLockMask 	0x01
 
 #define UseRTHDescend 		1
 #define	UseRTHDescendMask	0x02
@@ -1118,6 +1136,9 @@ extern const rom int8 DefaultParams[];
 extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
 extern const rom uint8 ESCLimits [];
 extern const rom boolean PPMPosPolarity[];
+
+extern int16 OSin[], OCos[];
+extern uint8 Orientation;
 
 extern uint8 ParamSet;
 extern boolean ParametersChanged;

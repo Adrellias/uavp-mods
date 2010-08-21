@@ -46,7 +46,7 @@ void SendLEDs(void)
 	PORTBbits.RB7 = (LEDShadow &  BlueM ) != (uint8)0;
 	PORTCbits.RC0 = (LEDShadow &  RedM ) != (uint8)0;
 	PORTCbits.RC1 = (LEDShadow &  GreenM ) != (uint8)0;
-	PORTCbits.RC5 = (LEDShadow &  BeeperM ) != (uint8)0;
+	PORTCbits.RC5 = (LEDShadow &  BeeperM ) = (uint8)0; // active low
 } // SendLEDs
 
 

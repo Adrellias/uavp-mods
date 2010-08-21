@@ -140,9 +140,9 @@ void SetFreescaleOffset(void)
 	BaroOffsetDAC = FS_DAC_MAX;
 
 	SetFreescaleMCP4725(BaroOffsetDAC); 
-	Delay1mS(2);
+	Delay1mS(20); // initial settling
 	ReadFreescaleBaro();
-	while ( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4*7)/10) ) && (BaroOffsetDAC > 20) )	// first loop gets close
+	while ( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4L*7L)/10L) ) && (BaroOffsetDAC > 20) )	// first loop gets close
 	{
 		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
 		SetFreescaleMCP4725(BaroOffsetDAC); 

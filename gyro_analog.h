@@ -39,25 +39,22 @@ void GetGyroValues(void)
 
 void CalculateGyroRates(void)
 {
-	// 300 Deg/Sec is the "reference" gyro full scale rate
-
-	if ( P[GyroRollPitchType] == IDG300 ) // 2.0
+	if ( P[GyroRollPitchType] == IDG300 ) 
 	{ 	// 500 Deg/Sec 
-		RollRate = (RollRateADC - GyroMidRoll) * 2;
-		PitchRate = (PitchRateADC - GyroMidPitch) * 2;
+		RollRate = RollRateADC - GyroMidRoll;
+		PitchRate = PitchRateADC - GyroMidPitch;
 		RollRate = -RollRate;			// adjust for reversed roll gyro sense
  	}
 	else
 		if ( P[GyroRollPitchType] == Gyro300D3V ) 
 		{ 	// 300 Deg/Sec
-			RollRate = (RollRateADC - GyroMidRoll) * 2;
-			PitchRate = (PitchRateADC - GyroMidPitch) * 2;
+			RollRate = RollRateADC - GyroMidRoll;
+			PitchRate = PitchRateADC - GyroMidPitch;
 	 	}
 		else
-		{ 	// 1.0 - includes ITG-3200
-			// Average of two readings
-			RollRate = RollRateADC - GyroMidRoll;	
-			PitchRate = PitchRateADC - GyroMidPitch;
+		{ 	// includes ITG-3200
+			RollRate = SRS16(RollRateADC - GyroMidRoll, 1);	
+			PitchRate = SRS16(PitchRateADC - GyroMidPitch, 1);
 	
 			if ( P[GyroRollPitchType] == Gyro150D5V )
 			{ // 150 Deg/Sec

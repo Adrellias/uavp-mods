@@ -36,7 +36,7 @@ int16 ADC(uint8 ADCChannel)
 		v = ADCVal[ADCChannel].v.b2_1; // rescale by 256
 	EnableInterrupts;
 
-	return ( v ); 
+	return ( v );
 } // ADC
 
 void InitADC()
@@ -52,6 +52,8 @@ void InitADC()
           ADC_VREFMINUS_VSS,	  
           ADCPORTCONFIG);
 
+	#ifdef USE_ADC_FILTERS
+
 	for ( i = 0; i <= ADC_TOP_CHANNEL; i++)
 	{
 		ADCVal[i].v.i24 = 512L * 256L;
@@ -66,6 +68,8 @@ void InitADC()
 	
 	for ( i = 0; i <= ADC_TOP_CHANNEL; i++ )
 		ADCVal[i].a	 = ( (int24) ADCVal[i].dt * 256L) / ( 1000L / ( 6L * (int24) ADCVal[i].f ) + (int24) ADCVal[i].dt );
+
+	#endif // USE_ADC_FILTERS
 
 	ADCChannel = 0;
 	SetChanADC(	ADCChannel);					// using automatic acq

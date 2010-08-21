@@ -43,6 +43,9 @@ int16 RE, PE, YE, HE;					// gyro rate error
 int16 REp, PEp, YEp, HEp;				// previous error for derivative
 int16 RollSum, PitchSum, YawSum;		// integral 	
 
+int16 YawFilterA;
+i24u  YawRateF;
+
 int16 RollTrim, PitchTrim, YawTrim;
 int16 HoldYaw;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
@@ -239,7 +242,7 @@ void InertialDamping(void)
 
 void LimitRollSum(void)
 {
-	RollSum += SRS16(RollRate, 1);		// use 9 bit res. for I controller
+	RollSum += RollRate;
 	RollSum = Limit(RollSum, -RollIntLimit256, RollIntLimit256);
 	#ifdef ATTITUDE_ENABLE_DECAY
 	RollSum = Decay1(RollSum);			// damps to zero even if still rolled
@@ -249,7 +252,7 @@ void LimitRollSum(void)
 
 void LimitPitchSum(void)
 {
-	PitchSum += SRS16(PitchRate, 1);
+	PitchSum += PitchRate;
 	PitchSum = Limit(PitchSum, -PitchIntLimit256, PitchIntLimit256);
 	#ifdef ATTITUDE_ENABLE_DECAY
 	PitchSum = Decay1(PitchSum); 
@@ -292,33 +295,49 @@ void DoOrientationTransform(void)
 {
 	// can be generalised easily into an arbitrary orientation of the control vectors
 
-	static int16 Temp;
 
-	ControlRoll = DesiredRoll;
-	ControlPitch = DesiredPitch;
+	static i24u Temp;
 
-	#if ( defined QUADROCOPTER | defined TRICOPTER )
-		#ifdef TRICOPTER
-		if ( !F.UsingAltOrientation ) // K1 forward
-		{
-			ControlRoll = -ControlRoll;
-			ControlPitch = -ControlPitch;
-		}		
-		#else
-		if ( F.UsingAltOrientation )
-		{
-			ControlRoll = (-DesiredPitch + DesiredRoll) * 6L;
-			ControlRoll = SRS16(ControlRoll, 3);
+	#ifdef USE_ORIENT
+		// -PS+RC
+		Temp.i24 = -DesiredPitch * OSin[Orientation] + DesiredRoll * OCos[Orientation];
+		ControlRoll = Temp.b2_1;
+		
+		// PC+RS
+		Temp.i24 = DesiredPitch * OCos[Orientation] + DesiredRoll * OSin[Orientation];
+		ControlPitch = Temp.b2_1;
+	#else
 
-			ControlPitch = (DesiredPitch + DesiredRoll) * 6L;
-			ControlPitch = SRS16(ControlPitch, 3);		
-		}
-		#endif // TRICOPTER
-	#endif // QUADROCOPTER | TRICOPTER 
+		ControlRoll = DesiredRoll;
+		ControlPitch = DesiredPitch;
+	
+		#if ( defined QUADROCOPTER | defined TRICOPTER )
+			#ifdef TRICOPTER
+			if ( !F.UsingAltOrientation ) // K1 forward
+			{
+				ControlRoll = -ControlRoll;
+				ControlPitch = -ControlPitch;
+			}		
+			#else
+			if ( F.UsingAltOrientation )
+			{
+				ControlRoll = (-DesiredPitch + DesiredRoll) * 6L;
+				ControlRoll = SRS16(ControlRoll, 3);
+	
+				ControlPitch = (DesiredPitch + DesiredRoll) * 6L;
+				ControlPitch = SRS16(ControlPitch, 3);		
+			}
+			#endif // TRICOPTER
+		#endif // QUADROCOPTER | TRICOPTER 
+
+	#endif // USE_ORIENT
+
 } // DoOrientationTransform
 
 void DoControl(void)
 {
+	static int32 YawTemp;
+
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
 	InertialDamping();
@@ -338,7 +357,7 @@ void DoControl(void)
 
 	// Roll
 				
-	RE = SRS16(RollRate, 2); // discard 2 bits of resolution!
+	RE = SRS16(RollRate, 1); // discard 1 bit of resolution!
 	LimitRollSum();
  
 	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
@@ -349,7 +368,7 @@ void DoControl(void)
 
 	// Pitch
 
-	PE = SRS16(PitchRate, 2); // discard 2 bits of resolution!
+	PE = SRS16(PitchRate, 1); // discard 1 bit of resolution!
 	LimitPitchSum();
 
 	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
@@ -360,7 +379,13 @@ void DoControl(void)
 
 	// Yaw
 
-	YE = YawRate;	
+	#ifdef USE_ADC_FILTER
+		YE = YawRate;
+	#else
+   		YawRateF.i24 += (YawRate - YawRateF.b2_1) * YawFilterA;
+		YE = YawRateF.b2_1;
+	#endif
+	
 	YE += DesiredYaw;
 	LimitYawSum();
 
@@ -369,7 +394,6 @@ void DoControl(void)
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
 	#ifdef TRICOPTER
 		Yl *= 4;
-		Yl = SlewLimit(Ylp, Yl, 2);
 	#endif // TRICOPTER
 	Ylp = Yl;
 
@@ -406,11 +430,21 @@ void UpdateControls(void)
 			if ( F.AllowNavAltitudeHold )
 				DesiredThrottle = CruiseThrottle;
 			
+		F.LockHoldPosition = false;
 		#ifdef RX6CH
 			DesiredCamPitchTrim = RC_NEUTRAL;
 			// NavSensitivity set in ReadParametersEE
 		#else
-			DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
+			#ifdef USE_POSITION_LOCK
+			if ( F.UsingPositionHoldLock )
+			{
+				DesiredCamPitchTrim = RC_NEUTRAL;
+				F.LockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
+			}
+			else
+			#endif // USE_POSITION_LOCK
+				DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
+
 			NavSensitivity = RC[NavGainC];
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		#endif // !RX6CH
@@ -587,7 +621,7 @@ void InitControl(void)
 	RollTrim = PitchTrim = YawTrim = 0;
 	ControlRollP = ControlPitchP = Ylp = 0;
 	AltComp = 0;
-	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = 0;	
+	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = YawRateF.i24 = 0;	
 	AltSum = 0;
 } // InitControl
 

@@ -83,10 +83,9 @@
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
 	-32,			// AltKd			56		
-
-	0,				// 57 - 64 unused currently	
+	0,				// Orient			57				
 	
-	0,
+	0,				// 58 - 64 unused currently	
 	0,
 	0,
 

@@ -149,9 +149,9 @@ void CalculateGyroRates(void)
 {
 	static int16 Temp;
 
-	// ITG-3200 Gyro rescaled 1/8
-	RollRate = SRS16( RollRateADC - GyroMidRoll, 3);	
-	PitchRate = SRS16( PitchRateADC - GyroMidPitch, 3);
+	// ITG-3200 Gyro
+	RollRate = SRS16( RollRateADC - GyroMidRoll, 4);	
+	PitchRate = SRS16( PitchRateADC - GyroMidPitch, 4);
 	
 	YawRate = YawRateADC - GyroMidYaw; 
 	YawRate = SRS16(YawRate, 4);	

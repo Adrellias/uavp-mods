@@ -111,6 +111,11 @@ int8 RMap[CONTROLS];
 int8 P[MAX_PARAMETERS];
 #pragma udata
 
+#pragma udata orient
+int16 OSin[48], OCos[48];
+#pragma udata
+uint8 Orientation;
+
 uint8 UAVXAirframe;
 
 #pragma udata ppmq
@@ -229,7 +234,10 @@ void ReadParametersEE(void)
 		}
 
 		#ifdef RX6CH
-		NavSensitivity = ((int16)P[PercentNavSens6Ch] * RC_MAXIMUM)/100L;
+			NavSensitivity = ((int16)P[PercentNavSens6Ch] * RC_MAXIMUM)/100L;
+			F.UsingPositionHoldLock = false;
+		#else
+			F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
 		#endif // RX6CH
 
 		for ( i = 0; i < CONTROLS; i++) // make reverse map
@@ -251,16 +259,35 @@ void ReadParametersEE(void)
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
+
 		F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
-		#if ( defined QUADROCOPTER | defined TRICOPTER )
+
+		#ifdef USE_ORIENT
+			Orientation = P[Orient];			
 			#ifdef TRICOPTER
-			if ( F.UsingAltOrientation ) // K1 forward
-				CompassOffset -= MILLIPI;
+				if ( F.UsingAltOrientation ) // K1 forward
+					Orientation = 0;
+				else
+					Orientation = 24;
 			#else
-			if ( F.UsingAltOrientation )
-				CompassOffset -= QUARTERMILLIPI;
+				if ( F.UsingAltOrientation )
+					Orientation = 6;
+				else
+					Orientation = 0;
 			#endif // TRICOPTER
-		#endif // QUADROCOPTER | TRICOPTER
+			CompassOffset -= (MILLIPI * Orientation) / 24L;
+		#else // USE_ORIENT
+			#if ( defined QUADROCOPTER | defined TRICOPTER )
+				#ifdef TRICOPTER
+					if ( F.UsingAltOrientation ) // K1 forward
+						CompassOffset -= MILLIPI;
+				#else
+					if ( F.UsingAltOrientation )
+						CompassOffset -= QUARTERMILLIPI;
+				#endif // TRICOPTER
+			#endif // QUADROCOPTER | TRICOPTER
+
+		#endif // USE_ORIENT
 	
 		F.UsingSerialPPM = ((P[ConfigBits] & RxSerialPPMMask) != 0);
 		PIE1bits.CCP1IE = false;
@@ -275,6 +302,10 @@ void ReadParametersEE(void)
 		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
+
+		#ifndef USE_ADC_FILTERS
+			YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
+		#endif // USE_ADC_FILTERS
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
@@ -403,14 +434,29 @@ void UpdateParamSetChoice(void)
 
 void InitParameters(void)
 {
+	static int8 i;
+	static int16 A;
+
 	UAVXAirframe = AF_TYPE;
+
+	for (i = 0; i < 48; i++)
+	{
+		A = (int16)(((int32)i * MILLIPI)/24L);
+		OSin[i] = int16sin(A);
+		OCos[i] = int16cos(A);
+	}
+	Orientation = 0;
 
 	ALL_LEDS_ON;
 	ParamSet = 1;
 
 	if ( ReadEE((uint16)TxRxType) == -1 )
 		UseDefaultParameters();
-	
+
+	#ifndef USE_ADC_FILTERS
+		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
+	#endif // USE_ADC_FILTERS
+
 	ParamSet = 1;
 	ParametersChanged = true;
 	ReadParametersEE();

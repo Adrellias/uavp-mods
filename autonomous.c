@@ -377,7 +377,7 @@ void DoNavigation(void)
 		case HoldingStation:
 			if ( F.AttitudeHold )
 			{		
-				if ( F.AcquireNewPosition )
+				if ( F.AcquireNewPosition & !F.LockHoldPosition )
 				{
 					AcquireHoldPosition();
 					#ifdef NAV_ACQUIRE_BEEPER
