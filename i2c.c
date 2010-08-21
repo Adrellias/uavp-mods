@@ -30,10 +30,7 @@
 #define I2C_DELAY2		
 #else // CLOCK_40MHZ
 #define	I2C_DELAY		Delay10TCYx(3)
-// ~102KHz (Compass limit!)
-#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
-// ~210KHz
-//#define I2C_DELAY2	
+#define I2C_DELAY2		Delay1TCY();Delay1TCY()	
 #endif // CLOCK_16MHZ
 
 void InitI2C(uint8, uint8);
@@ -113,7 +110,7 @@ boolean I2CWaitClkHi(void)
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 1;
 	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
-		if( ++s == (uint8)0 )
+		if( ++s == 0 )
 		{
 			Stats[I2CFailS]++;
 			return (false);
@@ -128,7 +125,6 @@ void I2CStart(void)
 	I2C_DATA_FLOAT;
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
-	I2C_DELAY; // zzz
 	I2C_CLK_LOW;
 } // I2CStart
 
@@ -318,7 +314,7 @@ boolean ESCWaitClkHi(void)
 	ESC_CLK_FLOAT;
 	s = 1;						
 	while( !ESC_SCL ) 
-		if( ++s == (uint8)0 ) return (false);					
+		if( ++s == 0 ) return (false);					
 
 	return ( true );
 } // ESCWaitClkHi
