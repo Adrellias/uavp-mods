@@ -293,44 +293,15 @@ void LimitYawSum(void)
 
 void DoOrientationTransform(void)
 {
-	// can be generalised easily into an arbitrary orientation of the control vectors
-
-
 	static i24u Temp;
 
-	#ifdef USE_ORIENT
-		// -PS+RC
-		Temp.i24 = -DesiredPitch * OSin[Orientation] + DesiredRoll * OCos[Orientation];
-		ControlRoll = Temp.b2_1;
+	// -PS+RC
+	Temp.i24 = -DesiredPitch * OSin[Orientation] + DesiredRoll * OCos[Orientation];
+	ControlRoll = Temp.b2_1;
 		
-		// PC+RS
-		Temp.i24 = DesiredPitch * OCos[Orientation] + DesiredRoll * OSin[Orientation];
-		ControlPitch = Temp.b2_1;
-	#else
-
-		ControlRoll = DesiredRoll;
-		ControlPitch = DesiredPitch;
-	
-		#if ( defined QUADROCOPTER | defined TRICOPTER )
-			#ifdef TRICOPTER
-			if ( !F.UsingAltOrientation ) // K1 forward
-			{
-				ControlRoll = -ControlRoll;
-				ControlPitch = -ControlPitch;
-			}		
-			#else
-			if ( F.UsingAltOrientation )
-			{
-				ControlRoll = (-DesiredPitch + DesiredRoll) * 6L;
-				ControlRoll = SRS16(ControlRoll, 3);
-	
-				ControlPitch = (DesiredPitch + DesiredRoll) * 6L;
-				ControlPitch = SRS16(ControlPitch, 3);		
-			}
-			#endif // TRICOPTER
-		#endif // QUADROCOPTER | TRICOPTER 
-
-	#endif // USE_ORIENT
+	// PC+RS
+	Temp.i24 = DesiredPitch * OCos[Orientation] + DesiredRoll * OSin[Orientation];
+	ControlPitch = Temp.b2_1;
 
 } // DoOrientationTransform
 

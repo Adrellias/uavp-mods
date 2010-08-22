@@ -99,13 +99,13 @@ void ShowSetup(boolean h)
 	TxString(SerHello);
 
 	#ifdef EXPERIMENTAL
-	TxString("WARNING - EXPERIMENTAL\r\n");
+		TxString("WARNING - EXPERIMENTAL\r\n");
 	#endif // EXPERIMENTAL
 
 	#ifdef CLOCK_16MHZ
-	TxString("Clock: 16MHz\r\n");
+		TxString("Clock: 16MHz\r\n");
 	#else // CLOCK_40MHZ
-	TxString("Clock: 40MHz\r\n");
+		TxString("Clock: 40MHz\r\n");
 	#endif // CLOCK_16MHZ
 
 	TxString("Aircraft: ");
@@ -157,44 +157,36 @@ void ShowSetup(boolean h)
 	else
 		TxString("not available\r\n");
 
-	#if ( defined QUADROCOPTER | defined TRICOPTER )
-		#ifdef TRICOPTER
-		if ( F.UsingAltOrientation )
-			TxString("Orientation: ^\r\n");
-		else
-			TxString("Orientation: Y\r\n");
-		#else
-		if ( F.UsingAltOrientation )
-			TxString("Orientation: X\r\n");
-		else
-			TxString("Orientation: +\r\n");
-		#endif // TRICOPTER
-	#endif // QUADROCOPTER | TRICOPTER
+	#ifdef MULTICOPTER
+		TxString("Forward Flight: ");
+		TxVal32((int16)Orientation * 75L, 1, 0);
+		TxString("deg CW from K1 motor(s)\r\n");
+	#endif // MULTICOPTER
 	
 	TxString("Roll/Pitch Gyros: ");
 	#ifdef GYRO_ITG3200
-	TxString("ITG-3200 3-axis I2C ");
-	if (F.GyroFailure )
-		TxString("FAILED\r\n");
-	else
-		TxString("ONLINE\r\n");
+		TxString("ITG-3200 3-axis I2C ");
+		if (F.GyroFailure )
+			TxString("FAILED\r\n");
+		else
+			TxString("ONLINE\r\n");
 	#else 
-	switch ( P[GyroRollPitchType] ) {
-	case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
-	case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
-	case IDG300:TxString("IDG300\r\n"); break;
-	case Gyro300D3V:TxString("ST-AY530\r\n"); break;
-	case CustomGyro:TxString("Custom\r\n"); break;
-	}
-	
-	TxString("Yaw Gyro: ");
-	switch ( P[GyroYawType] ) {
-	case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
-	case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
-	case IDG300:TxString("INVALID\r\n"); break;
-	case Gyro300D3V:TxString("ST-AY530\r\n"); break;
-	case CustomGyro:TxString("Custom\r\n"); break;
-	}
+		switch ( P[GyroRollPitchType] ) {
+		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
+		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
+		case IDG300:TxString("IDG300\r\n"); break;
+		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
+		case CustomGyro:TxString("Custom\r\n"); break;
+		}
+		
+		TxString("Yaw Gyro: ");
+		switch ( P[GyroYawType] ) {
+		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
+		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
+		case IDG300:TxString("INVALID\r\n"); break;
+		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
+		case CustomGyro:TxString("Custom\r\n"); break;
+		}
 	#endif // GYRO_ITG3200
 
 	TxString("Motor ESCs: ");	
@@ -217,8 +209,9 @@ void ShowSetup(boolean h)
 	TxNextLine();
 	
 	#ifdef RX6CH
-	TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
+		TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
 	#endif // RX6CH
+
 	TxString("Tx/Rx: ");
 	
 	switch ( P[TxRxType] ) {

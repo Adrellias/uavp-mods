@@ -648,12 +648,12 @@ void InitBarometer(void)
 
 	F.BaroAltitudeValid= true; // optimistic
 
-	if ( IsBoschBaroActive() )
-		InitBoschBarometer();
+	if ( IsFreescaleBaroActive() )	
+		InitFreescaleBarometer();
 	else
-		if ( IsFreescaleBaroActive() )	
-			InitFreescaleBarometer();
-		else
+		if ( IsBoschBaroActive() )
+			InitBoschBarometer();
+		else	
 		{
 			F.BaroAltitudeValid = F.HoldingAlt = false;
 			Stats[BaroFailS]++;

@@ -37,7 +37,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,1,1,1,1,0,0,0,0,0,
+	1,1,1,1,1,0,1,0,0,0,
 	0,0,0,0
 	};
 
@@ -262,32 +262,27 @@ void ReadParametersEE(void)
 
 		F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
 
-		#ifdef USE_ORIENT
-			Orientation = P[Orient];			
-			#ifdef TRICOPTER
-				if ( F.UsingAltOrientation ) // K1 forward
-					Orientation = 0;
-				else
-					Orientation = 24;
-			#else
-				if ( F.UsingAltOrientation )
-					Orientation = 6;
-				else
-					Orientation = 0;
-			#endif // TRICOPTER
-			CompassOffset -= (MILLIPI * Orientation) / 24L;
-		#else // USE_ORIENT
-			#if ( defined QUADROCOPTER | defined TRICOPTER )
-				#ifdef TRICOPTER
-					if ( F.UsingAltOrientation ) // K1 forward
-						CompassOffset -= MILLIPI;
-				#else
-					if ( F.UsingAltOrientation )
-						CompassOffset -= QUARTERMILLIPI;
-				#endif // TRICOPTER
-			#endif // QUADROCOPTER | TRICOPTER
-
-		#endif // USE_ORIENT
+		#ifdef MULTICOPTER
+			#ifdef USE_ORIENT
+				Orientation = P[Orient];
+				if (Orientation == 0xff ) // uninitialised
+					Orientation = 0;			
+			#else // USE_ORIENT
+				Orientation = 0;
+				#if ( defined QUADROCOPTER | defined TRICOPTER )
+					#ifdef TRICOPTER
+						if ( !F.UsingAltOrientation ) // K1 forward
+							Orientation = 24;
+					#else
+						if ( F.UsingAltOrientation )
+							Orientation = 6;
+					#endif // TRICOPTER
+				#endif // QUADROCOPTER | TRICOPTER
+			#endif // USE_ORIENT
+			CompassOffset -= (MILLIPI * (int16)Orientation) / 24L;
+		#else
+			Orientation = 0;
+		#endif // MULTICOPTER
 	
 		F.UsingSerialPPM = ((P[ConfigBits] & RxSerialPPMMask) != 0);
 		PIE1bits.CCP1IE = false;

@@ -1,7 +1,7 @@
 
 //#define JIM_MPX_INVERT
 
-//#define USE_ORIENT				// requires UAVPSet 4.08!!!!
+//#define USE_ORIENT					// requires UAVPSet 4.08!!!!
 //#define USE_POSITION_LOCK			// requires UAVPSet 4.08!!!!
 
 #define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
@@ -34,8 +34,8 @@
 	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
-	#define QUADROCOPTER
-	//#define TRICOPTER
+	//#define QUADROCOPTER
+	#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
