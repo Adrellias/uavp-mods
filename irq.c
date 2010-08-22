@@ -326,7 +326,7 @@ void high_isr_handler(void)
 			#ifdef USE_ADC_FILTERS
 				ADCVal[ADCChannel].v.i24 += (int24)(ADCValue.i16 - ADCVal[ADCChannel].v.b2_1) * ADCVal[ADCChannel].a;
 			#else
-				ADCVal[ADCChannel].v.i24 = ADCValue.i16;
+				ADCVal[ADCChannel].v.b2_1 = ADCValue.i16;
 			#endif // USE_ADC_FILTERS
 
 			if ( ++ADCChannel > ADC_TOP_CHANNEL )

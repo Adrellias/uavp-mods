@@ -30,8 +30,8 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define EXPERIMENTAL
-	//#define TESTING						
+	//#define EXPERIMENTAL
+	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	#define QUADROCOPTER
