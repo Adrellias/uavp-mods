@@ -90,7 +90,7 @@ void ShowRxSetup(void)
 
 void ShowSetup(boolean h)
 {
-	int8 i;
+	int8 i, NoOfChannels;
 
 	TxNextLine();
 	if( h )
@@ -208,6 +208,7 @@ void ShowSetup(boolean h)
 	}	
 	TxNextLine();
 	
+
 	#ifdef RX6CH
 		TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
 	#endif // RX6CH
@@ -226,7 +227,8 @@ void ShowSetup(boolean h)
 	case CustomTxRx: TxString("Custom {"); break;
 	case FutabaCh3_6_7: TxString("Futaba Th 2 Swap 6&7 {"); break;
 	case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break;
-	case DX6iAR6200: TxString("Spektrum DX6i & AR6200 {"); break; 
+	case DX6iAR6200: TxString("Spektrum DX6i & AR6200 {"); break;
+	case FutabaCh3_R617FS: TxString("Futaba Th 3 & R617FS {"); break; 
 	case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 	}
 	

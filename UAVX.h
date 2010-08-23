@@ -30,6 +30,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
+	#define RX6CH
 	//#define EXPERIMENTAL
 	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
@@ -1032,7 +1033,7 @@ extern void InitParameters(void);
 
 enum TxRxTypes { 
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
-	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, CustomTxRx };
+	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
