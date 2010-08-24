@@ -1,8 +1,8 @@
 
 //#define JIM_MPX_INVERT
 
-//#define USE_ORIENT					// requires UAVPSet 4.08!!!!
-//#define USE_POSITION_LOCK			// requires UAVPSet 4.08!!!!
+#define USE_ORIENT					// requires UAVPSet 4.08!!!!
+#define USE_POSITION_LOCK			// requires UAVPSet 4.08!!!!
 
 #define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
 #define	ADC_BATT_FREQ			5
@@ -30,13 +30,13 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define RX6CH
+	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
-	//#define QUADROCOPTER
-	#define TRICOPTER
+	#define QUADROCOPTER
+	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -950,8 +950,7 @@ extern void LEDsOn(uint8);
 extern void LEDsOff(uint8);
 extern void LEDChaser(void);
 
-extern uint8 LEDShadow;		// shadow register
-extern uint8 LEDPattern;	// for altitude hold light display
+extern uint8 LEDShadow, SaveLEDs, LEDPattern;
 
 //______________________________________________________________________________________________
 

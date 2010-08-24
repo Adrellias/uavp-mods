@@ -46,8 +46,8 @@ void DoMulticopterMix(int16 CurrThrottle)
 {
 	static int16 Temp;
 
+	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
 	#ifdef TRICOPTER
-		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
 		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
 		Temp = SRS16(Pl * 56, 7);
 		PWM[FrontC] -= Pl ;				// front motor
@@ -56,12 +56,28 @@ void DoMulticopterMix(int16 CurrThrottle)
 		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
 	#else
 	    #ifdef HEXACOPTER
-
-			#error NO HEXACOPTER YET!
-
+			#define YAWNEG 4 
+			#define YAWPOS 2
+  
+			PWM[FrontC]  +=  ( Rl/2 + Pl/2 ); 
+			PWM[LeftC]  -= Rl; 
+			PWM[RightC] += Rl; PWM[BackC] -= ( Rl/2+Pl/2 );
+  
+			if ( Yl < 0) 
+			{
+				PWM[FrontC]  += Yl / YAWNEG; 
+				PWM[LeftC]  -= Yl / YAWNEG/2; 
+				PWM[RightC] -= Yl / YAWNEG/2 ; 
+				PWM[BackC]+= Yl / YAWNEG ;
+			 } 
+			else 
+			{ 
+				PWM[FrontC] += Yl / YAWPOS;
+			 	PWM[LeftC]  -= Yl / YAWPOS/2;
+			 	PWM[RightC] -= Yl / YAWPOS/2; 
+				PWM[BackC] += Yl / YAWPOS; 
+			}
 		#else // QUADROCOPTER
-			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
-			PWM[BackC] = CurrThrottle;
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
 			PWM[FrontC] += -Pl + Yl;

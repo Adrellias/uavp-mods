@@ -25,8 +25,7 @@ void LEDsOn(uint8);
 void LEDsOff(uint8);
 void LEDChaser(void);
 
-uint8 LEDShadow;		// shadow register
-uint8 LEDPattern = 0;
+uint8 LEDShadow, SaveLEDs, LEDPattern = 0;
 boolean PrevHolding = false;
 const uint8 LEDChase[7] = {
 		AUX1M,	
@@ -101,8 +100,11 @@ void LEDChaser(void)
 
 	if ( mSClock() > mS[LEDChaserUpdate] )
 	{
-		if ( F.HoldingAlt )
-			ALL_LEDS_ON;
+		if ( !F.HoldingAlt )
+		{
+			LEDShadow = SaveLEDs;
+			SendLEDs();
+		}
 		else
 		{
 			LEDShadow ^= LEDChase[LEDPattern];

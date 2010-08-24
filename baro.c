@@ -518,8 +518,6 @@ void InitBoschBarometer(void)
 	int8 s;
 	int24 Temp;
 
-	AltComp = AltDiffSum = AltDSum = 0;
-
 	do // occasional I2C misread of Temperature so keep doing it until the Origin is stable!!
 	{	
 		BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;	
@@ -645,6 +643,8 @@ void InitBarometer(void)
 {
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
 	BaroType = BaroUnknown;
+
+	AltComp = AltDiffSum = AltDSum = 0;
 
 	F.BaroAltitudeValid= true; // optimistic
 

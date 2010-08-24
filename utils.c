@@ -72,7 +72,7 @@ void InitMisc(void)
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
  
-	F.ParametersValid = F.AcquireNewPosition = F.AllowNavAltitudeHold = F.AllowTurnToWP = true;
+	F.ParametersValid = F.AcquireNewPosition = F.AllowNavAltitudeHold = true;
 
 	#ifdef SIMULATE
 	F.Simulation = true;
