@@ -139,37 +139,43 @@ void AltitudeHold()
 
 	GetBaroAltitude();
 
-	if ( F.NewBaroValue && F.AltHoldEnabled ) // sync on Baro which MUST be working
-	{		
-		F.NewBaroValue = false;
-		GetRangefinderAltitude();
-		UpdateAltitudeSource();
-
-		if ( NavState == HoldingStation ) // Using Manual Throttle
-		{
-			CheckThrottleMoved();
-			if ( F.ThrottleMoving )
+	if ( F.AltHoldEnabled )
+	{
+		if ( F.NewBaroValue  ) // sync on Baro which MUST be working
+		{		
+			F.NewBaroValue = false;
+			GetRangefinderAltitude();
+			UpdateAltitudeSource();
+	
+			if ( NavState == HoldingStation ) // Using Manual Throttle
 			{
-				F.HoldingAlt = false;
-				DesiredAltitude = Altitude;
+				CheckThrottleMoved();
+				if ( F.ThrottleMoving )
+				{
+					F.HoldingAlt = false;
+					DesiredAltitude = Altitude;
+					AltComp = Decay1(AltComp);
+				}
+				else
+				{
+					F.HoldingAlt = true;
+					if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
+					{
+						NewCruiseThrottle = DesiredThrottle + AltComp;
+						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
+					}
+					DoAltitudeHold(Altitude, ROC);
+				}
 			}
 			else
-			{
+			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
-				if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
-				{
-					NewCruiseThrottle = DesiredThrottle + AltComp;
-					CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
-				}
 				DoAltitudeHold(Altitude, ROC);
-			}
+			}		
 		}
-		else
-		{  // Navigating - using CruiseThrottle
-			F.HoldingAlt = true;
-			DoAltitudeHold(Altitude, ROC);
-		}		
 	}
+	else
+		AltComp = Decay1(AltComp);
 } // AltitudeHold
 
 void InertialDamping(void)
