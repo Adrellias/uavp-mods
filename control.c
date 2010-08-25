@@ -175,7 +175,10 @@ void AltitudeHold()
 		}
 	}
 	else
+	{
 		AltComp = Decay1(AltComp);
+		F.HoldingAlt = false;
+	}
 } // AltitudeHold
 
 void InertialDamping(void)
@@ -390,6 +393,7 @@ void DoControl(void)
 void UpdateControls(void)
 {
 	static int16 HoldRoll, HoldPitch, RollPitchScale;
+	static boolean NewLockHoldPosition;
 
 	if ( F.RCNewValues )
 	{
@@ -416,7 +420,15 @@ void UpdateControls(void)
 			if ( F.UsingPositionHoldLock )
 			{
 				DesiredCamPitchTrim = RC_NEUTRAL;
-				F.LockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
+
+				NewLockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
+
+				if ( NewLockHoldPosition & !F.LockHoldPosition )
+					F.AllowTurnToWP = true;
+				else
+					F.AllowTurnToWP = SaveAllowTurnToWP;
+
+				F.LockHoldPosition = NewLockHoldPosition;			
 			}
 			else
 			#endif // USE_POSITION_LOCK
@@ -443,9 +455,9 @@ void UpdateControls(void)
 		
 		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
 			#ifdef DEBUG_FORCE_NAV
-			F.Navigate = true;
+				F.Navigate = true;
 			#else
-			F.ReturnHome = true;
+				F.ReturnHome = true;
 			#endif // DEBUG_FORCE_NAV
 		else
 			if ( RC[RTHC] > (RC_NEUTRAL/2) )

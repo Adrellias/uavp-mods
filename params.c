@@ -107,7 +107,8 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 // 6 Aux2
 
 uint8	ParamSet;
-boolean ParametersChanged;
+boolean ParametersChanged, SaveAllowTurnToWP;
+
 int8 RMap[CONTROLS];
 #pragma udata params
 int8 P[MAX_PARAMETERS];
@@ -427,6 +428,9 @@ void UpdateParamSetChoice(void)
 			LEDBlue_OFF;
 		}
 	}
+	
+	SaveAllowTurnToWP = F.AllowTurnToWP;
+
 } // UpdateParamSetChoice
 
 void InitParameters(void)
@@ -446,6 +450,8 @@ void InitParameters(void)
 
 	ALL_LEDS_ON;
 	ParamSet = 1;
+
+	SaveAllowTurnToWP = F.AllowTurnToWP;
 
 	if ( ReadEE((uint16)TxRxType) == -1 )
 		UseDefaultParameters();

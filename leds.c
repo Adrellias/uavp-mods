@@ -100,18 +100,19 @@ void LEDChaser(void)
 
 	if ( mSClock() > mS[LEDChaserUpdate] )
 	{
-		if ( !F.HoldingAlt )
-		{
-			LEDShadow = SaveLEDs;
-			SendLEDs();
-		}
-		else
+		if ( F.HoldingAlt )
 		{
 			LEDShadow ^= LEDChase[LEDPattern];
 			if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;
 			LEDShadow |= LEDChase[LEDPattern];
 			SendLEDs();
 		}
+		else
+		{
+			LEDShadow = SaveLEDs;
+			SendLEDs();
+		}
+	
 		mS[LEDChaserUpdate] = mSClock() + 50;
 	}
 } // LEDChaser

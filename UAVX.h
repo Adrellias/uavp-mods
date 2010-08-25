@@ -1141,7 +1141,7 @@ extern int16 OSin[], OCos[];
 extern uint8 Orientation;
 
 extern uint8 ParamSet;
-extern boolean ParametersChanged;
+extern boolean ParametersChanged, SaveAllowTurnToWP;
 extern int8 P[];
 extern int8 RMap[];
 
