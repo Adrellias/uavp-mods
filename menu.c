@@ -260,7 +260,7 @@ void ShowSetup(boolean h)
 	TxChar('0' + ParamSet);	
 	TxNextLine();
 
-	TxString("\r\nRTH: \r\n");
+	TxString("\r\nNav: \r\n");
 	if ( F.UsingGPSAlt )
 		TxString("\tGPS is alt. source\r\n");
 	else
@@ -284,6 +284,10 @@ void ShowSetup(boolean h)
 	#ifdef TESTING
 		TxString("\tTEST VERSION - No Motors\r\n");
 	#endif // TESTING
+
+	if ( !F.ParametersValid )
+		TxString("\tOne or more flight parameters are INVALID!\r\n");
+	
 	if ( F.GyroFailure )
 		TxString("\tGyro failure?\r\n");
 	if ( !F.Signal )

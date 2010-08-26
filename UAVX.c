@@ -84,7 +84,8 @@ void main(void)
 			ReceivingGPSOnly(true); 
 
 			UpdateGPS();
-			UpdateControls();
+			if ( F.RCNewValues )
+				UpdateControls();
 
 			if ( ( F.Signal ) && ( FailState == MonitoringRx ) )
 			{
@@ -120,7 +121,10 @@ void main(void)
 						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
 						Stats[RCGlitchesS] = RCGlitches; // start of flight
 						SaveLEDs = LEDShadow;
-						State = InFlight;	
+						if ( ParameterSanityCheck() )
+							State = InFlight;
+						else
+							ALL_LEDS_ON;	
 					}
 						
 					break;

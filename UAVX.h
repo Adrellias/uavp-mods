@@ -35,6 +35,7 @@
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
+	//#define HEXACOPTER
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define HELICOPTER
@@ -217,6 +218,10 @@
 #define THROTTLE_SLEW_LIMIT			0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
 #define THROTTLE_MIDDLE				10  	// throttle stick dead zone for baro 
 #define THROTTLE_MIN_ALT_HOLD		75		// min throttle stick for altitude lock
+
+// RC
+
+#define RC_INIT_FRAMES				32		// number of initial RC frames to allow filters to settle
 
 //________________________________________________________________________________________
 
@@ -1028,6 +1033,7 @@ extern void ReadParametersEE(void);
 extern void WriteParametersEE(uint8);
 extern void UseDefaultParameters(void);
 extern void UpdateParamSetChoice(void);
+extern boolean ParameterSanityCheck(void);
 extern void InitParameters(void);
 
 enum TxRxTypes { 

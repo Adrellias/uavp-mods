@@ -27,6 +27,7 @@ void ReadParametersEE(void);
 void WriteParametersEE(uint8);
 void UseDefaultParameters(void);
 void UpdateWhichParamSet(void);
+boolean ParameterSanityCheck(void);
 void InitParameters(void);
 
 const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
@@ -164,7 +165,6 @@ void InitRC(void)
 	RollRate = PitchRate = YawRate = 0;
 	ControlRollP = ControlPitchP = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
-
 
 	PPM_Index = PrevEdge = RCGlitches = 0;
 } // InitRC
@@ -308,6 +308,8 @@ void ReadParametersEE(void)
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
 		
+		F.ParametersValid = ParameterSanityCheck();
+
 		ParametersChanged = false;
 	}
 	
@@ -433,6 +435,17 @@ void UpdateParamSetChoice(void)
 
 } // UpdateParamSetChoice
 
+boolean ParameterSanityCheck(void)
+{
+	static boolean Fail;
+
+	Fail = 	(P[RollKp] == 0) || 
+			(P[PitchKp] == 0) || 
+			(P[YawKp] == 0);
+
+	return ( !Fail );
+} // ParameterSanityCheck
+
 void InitParameters(void)
 {
 	static int8 i;
@@ -451,8 +464,6 @@ void InitParameters(void)
 	ALL_LEDS_ON;
 	ParamSet = 1;
 
-	SaveAllowTurnToWP = F.AllowTurnToWP;
-
 	if ( ReadEE((uint16)TxRxType) == -1 )
 		UseDefaultParameters();
 
@@ -461,8 +472,9 @@ void InitParameters(void)
 	#endif // USE_ADC_FILTERS
 
 	ParamSet = 1;
-	ParametersChanged = true;
 	ReadParametersEE();
+	ParametersChanged = true;
+
 	ALL_LEDS_OFF;
 } // InitParameters
 

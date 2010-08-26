@@ -395,100 +395,98 @@ void UpdateControls(void)
 	static int16 HoldRoll, HoldPitch, RollPitchScale;
 	static boolean NewLockHoldPosition;
 
-	if ( F.RCNewValues )
-	{
-		F.RCNewValues = false;
+	F.RCNewValues = false;
 
-		MapRC();								// remap channel order for specific Tx/Rx
+	MapRC();								// remap channel order for specific Tx/Rx
 
-		if ( NavState == HoldingStation )
-		{ // Manual
-			DesiredThrottle = RC[ThrottleC];
-			if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
-				DesiredThrottle = 0;
-		}
-		else // Autonomous
-			if ( F.AllowNavAltitudeHold )
-				DesiredThrottle = CruiseThrottle;
+	if ( NavState == HoldingStation )
+	{ // Manual
+		DesiredThrottle = RC[ThrottleC];
+		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
+			DesiredThrottle = 0;
+	}
+	else // Autonomous
+		if ( F.AllowNavAltitudeHold )
+			DesiredThrottle = CruiseThrottle;
 			
-		F.LockHoldPosition = false;
-		#ifdef RX6CH
+	F.LockHoldPosition = false;
+	#ifdef RX6CH
+		DesiredCamPitchTrim = RC_NEUTRAL;
+		// NavSensitivity set in ReadParametersEE
+	#else
+		#ifdef USE_POSITION_LOCK
+		if ( F.UsingPositionHoldLock )
+		{
 			DesiredCamPitchTrim = RC_NEUTRAL;
-			// NavSensitivity set in ReadParametersEE
-		#else
-			#ifdef USE_POSITION_LOCK
-			if ( F.UsingPositionHoldLock )
-			{
-				DesiredCamPitchTrim = RC_NEUTRAL;
 
-				NewLockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
+			NewLockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
 
-				if ( NewLockHoldPosition & !F.LockHoldPosition )
-					F.AllowTurnToWP = true;
-				else
-					F.AllowTurnToWP = SaveAllowTurnToWP;
-
-				F.LockHoldPosition = NewLockHoldPosition;			
-			}
+			if ( NewLockHoldPosition & !F.LockHoldPosition )
+				F.AllowTurnToWP = true;
 			else
-			#endif // USE_POSITION_LOCK
-				DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
+				F.AllowTurnToWP = SaveAllowTurnToWP;
 
-			NavSensitivity = RC[NavGainC];
-			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
-		#endif // !RX6CH
-	
-		F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
-		
-		#ifdef ATTITUDE_NO_LIMITS
-		RollPitchScale = 128L;
-		#else
-		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
-		#endif // ATTITUDE_NO_LIMITS
-		
-		DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
-		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
-		
-		DesiredYaw = RC[YawC] - RC_NEUTRAL;
-		
-		F.ReturnHome = F.Navigate = false;
-		
-		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
-			#ifdef DEBUG_FORCE_NAV
-				F.Navigate = true;
-			#else
-				F.ReturnHome = true;
-			#endif // DEBUG_FORCE_NAV
+			F.LockHoldPosition = NewLockHoldPosition;			
+		}
 		else
-			if ( RC[RTHC] > (RC_NEUTRAL/2) )
-				F.Navigate = true;
+		#endif // USE_POSITION_LOCK
+			DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
+
+		NavSensitivity = RC[NavGainC];
+		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
+	#endif // !RX6CH
+	
+	F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
 		
-		if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
-			DesiredAltitude = Altitude;
+	#ifdef ATTITUDE_NO_LIMITS
+	RollPitchScale = 128L;
+	#else
+	RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
+	#endif // ATTITUDE_NO_LIMITS
 		
-		HoldRoll = DesiredRoll - RollTrim;
-		HoldRoll = Abs(HoldRoll);
-		HoldPitch = DesiredPitch - PitchTrim;
-		HoldPitch = Abs(HoldPitch);
-		CurrMaxRollPitch = Max(HoldRoll, HoldPitch);
+	DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
+	DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
 		
-		if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
-			if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
-				F.AttitudeHold = false;
-			else
-			{
-				AttitudeHoldResetCount++;
-				F.AttitudeHold = true;
-			}
+	DesiredYaw = RC[YawC] - RC_NEUTRAL;
+		
+	F.ReturnHome = F.Navigate = false;
+		
+	if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+		#ifdef DEBUG_FORCE_NAV
+			F.Navigate = true;
+		#else
+			F.ReturnHome = true;
+		#endif // DEBUG_FORCE_NAV
+	else
+		if ( RC[RTHC] > (RC_NEUTRAL/2) )
+			F.Navigate = true;
+		
+	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+		DesiredAltitude = Altitude;
+		
+	HoldRoll = DesiredRoll - RollTrim;
+	HoldRoll = Abs(HoldRoll);
+	HoldPitch = DesiredPitch - PitchTrim;
+	HoldPitch = Abs(HoldPitch);
+	CurrMaxRollPitch = Max(HoldRoll, HoldPitch);
+		
+	if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
+		if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
+			F.AttitudeHold = false;
 		else
 		{
-			F.AttitudeHold = true;	
-			if ( AttitudeHoldResetCount > 1 )
-				AttitudeHoldResetCount -= 2;		// Faster decay
+			AttitudeHoldResetCount++;
+			F.AttitudeHold = true;
 		}
-		
-		F.NewCommands = true;
+	else
+	{
+		F.AttitudeHold = true;	
+		if ( AttitudeHoldResetCount > 1 )
+			AttitudeHoldResetCount -= 2;		// Faster decay
 	}
+		
+	F.NewCommands = true;
+
 } // UpdateControls
 
 void CaptureTrims(void)
@@ -539,6 +537,8 @@ void CheckThrottleMoved(void)
 	}
 } // CheckThrottleMoved
 
+static int8 RCStart = RC_INIT_FRAMES;
+
 void LightsAndSirens(void)
 {
 	static int24 Timeout;
@@ -546,7 +546,7 @@ void LightsAndSirens(void)
 	LEDYellow_TOG;
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
-	Beeper_OFF; 
+	Beeper_OFF;
 	Timeout = mSClock() + 500L; 					// mS.
 	do
 	{
@@ -558,7 +558,12 @@ void LightsAndSirens(void)
 			if( F.RCNewValues )
 			{
 				UpdateControls();
-				UpdateParamSetChoice();
+				if ( --RCStart == 0 ) // wait until RC filters etc. have settled
+				{
+					UpdateParamSetChoice();
+					RCStart = 1;
+				}
+
 				GetBaroAltitude();
 				MixAndLimitCam();
 				InitialThrottle = DesiredThrottle;
@@ -566,7 +571,7 @@ void LightsAndSirens(void)
 				OutSignals();
 				if( mSClock() > Timeout )
 				{
-					if ( F.Navigate || F.ReturnHome )
+					if ( F.Navigate || F.ReturnHome || !F.ParametersValid )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;
@@ -587,7 +592,7 @@ void LightsAndSirens(void)
 		ReadParametersEE();	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome || F.GyroFailure ||
-		( InitialThrottle >= RC_THRES_START ) );
+		( InitialThrottle >= RC_THRES_START ) || !F.ParametersValid  );
 				
 	FirstPass = false;
 

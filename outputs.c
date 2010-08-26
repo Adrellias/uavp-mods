@@ -44,7 +44,7 @@ int16 ESCMin, ESCMax;
 
 void DoMulticopterMix(int16 CurrThrottle)
 {
-	static int16 Temp;
+	static int16 Temp, YlNeg, YlNegOn2, YlPos, YlPosOn2, RlOn2, PlOn2;
 
 	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
 	#ifdef TRICOPTER
@@ -56,26 +56,36 @@ void DoMulticopterMix(int16 CurrThrottle)
 		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
 	#else
 	    #ifdef HEXACOPTER
-			#define YAWNEG 4 
-			#define YAWPOS 2
+
+			NOT YET!
+
+			#define NEG_SHIFT 2 
+			#define POS_SHIFT 1
+
+			RlOn2 = SRS16(Rl, 1);
+			PlOn2 = SRS16(Pl, 1);
   
-			PWM[FrontC]  +=  ( Rl/2 + Pl/2 ); 
+			PWM[FrontC]  +=  ( RlOn2 + PlOn2 ); 
 			PWM[LeftC]  -= Rl; 
-			PWM[RightC] += Rl; PWM[BackC] -= ( Rl/2+Pl/2 );
+			PWM[RightC] += Rl; PWM[BackC] -= ( RlOn2 + PlOn2 );
   
 			if ( Yl < 0) 
 			{
-				PWM[FrontC]  += Yl / YAWNEG; 
-				PWM[LeftC]  -= Yl / YAWNEG/2; 
-				PWM[RightC] -= Yl / YAWNEG/2 ; 
-				PWM[BackC]+= Yl / YAWNEG ;
+				YlNeg = SRS16(Yl, NEG_SHIFT);
+				YlNegOn2 = SRS16(YlNeg, 1);
+				PWM[FrontC] += YlNeg; 
+				PWM[LeftC]  -= YlNegOn2; 
+				PWM[RightC] -= YlNegOn2; 
+				PWM[BackC]  += YlNeg;
 			 } 
 			else 
 			{ 
-				PWM[FrontC] += Yl / YAWPOS;
-			 	PWM[LeftC]  -= Yl / YAWPOS/2;
-			 	PWM[RightC] -= Yl / YAWPOS/2; 
-				PWM[BackC] += Yl / YAWPOS; 
+				YlPos = SRS16(Yl, POS_SHIFT);
+				YlPosOn2 = SRS16(YlNeg, 1);
+				PWM[FrontC] += YlPos;
+			 	PWM[LeftC]  -= YlPosOn2;
+			 	PWM[RightC] -= YlPosOn2; 
+				PWM[BackC]  += YlPos; 
 			}
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
