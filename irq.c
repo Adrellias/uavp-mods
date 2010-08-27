@@ -153,19 +153,19 @@ void high_isr_handler(void)
 			if (PPM_Index < RC_CONTROLS)
 			{
 				#ifdef CLOCK_16MHZ	
-				Width.i16 >>= 1; 				// Width in 4us ticks.	
-				if ( Width.b1 == (uint8)1 ) 			// Check pulse is 1.024 to 2.048mS
-					PPM[PPM_Index].i16 = (int16) Width.i16;	
+					Width.i16 >>= 1; 				// Width in 4us ticks.	
+					if ( Width.b1 == (uint8)1 ) 	// Check pulse is 1.024 to 2.048mS
+						PPM[PPM_Index].i16 = (int16) Width.i16;	
 				#else // CLOCK_40MHZ
-				if ( (Width.i16 >= 1250 ) && (Width.i16 <= 2500) ) // Width in 0.8uS ticks 	
-					PPM[PPM_Index].i16 = Width.i16 - 1250;	
+					if ( (Width.i16 >= 1250 ) && (Width.i16 <= 2500) ) // Width in 0.8uS ticks 	
+						PPM[PPM_Index].i16 = (int16) Width.i16 - 1250;	
 				#endif // CLOCK_16MHZ	
-				else
-				{
-					// preserve old value i.e. default hold
-					RCGlitches++;
-					F.RCFrameOK = false;
-				}
+					else
+					{
+						// preserve old value i.e. default hold
+						RCGlitches++;
+						F.RCFrameOK = false;
+					}
 				
 				PPM_Index++;
 				// MUST demand rock solid RC frames for autonomous functions not

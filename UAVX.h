@@ -7,7 +7,7 @@
 #define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20
-#define	ADC_YAW_FREQ			10
+#define	ADC_YAW_FREQ			20
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -666,6 +666,7 @@ extern int8 BaroType;
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;
 #endif // SIMULATE
+
 //______________________________________________________________________________________________
 
 // compass.c
@@ -698,10 +699,6 @@ extern void LimitYawSum(void);
 extern void InertialDamping(void);
 extern void DoControl(void);
 
-extern void UpdateControls(void);
-extern void CaptureTrims(void);
-extern void StopMotors(void);
-extern void CheckThrottleMoved(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
@@ -1005,6 +1002,7 @@ extern void MixAndLimitMotors(void);
 extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void InitI2CESCs(void);
+extern void StopMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
@@ -1026,9 +1024,6 @@ extern int16 ESCMin, ESCMax;
 
 // params.c
 
-extern void DoRxPolarity(void);
-extern void InitRC(void);
-extern void MapRC(void);
 extern void ReadParametersEE(void);
 extern void WriteParametersEE(uint8);
 extern void UseDefaultParameters(void);
@@ -1139,9 +1134,9 @@ enum Params { // MAX 64
 
 extern const rom int8 ComParms[];
 extern const rom int8 DefaultParams[];
-extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
+
 extern const rom uint8 ESCLimits [];
-extern const rom boolean PPMPosPolarity[];
+
 
 extern int16 OSin[], OCos[];
 extern uint8 Orientation;
@@ -1149,13 +1144,8 @@ extern uint8 Orientation;
 extern uint8 ParamSet;
 extern boolean ParametersChanged, SaveAllowTurnToWP;
 extern int8 P[];
-extern int8 RMap[];
 
 extern uint8 UAVXAirframe;
-
-#define PPMQMASK 3
-extern int16 PPMQSum[];
-extern int16x8x4Q PPMQ;
 
 //__________________________________________________________________________________________
 
@@ -1165,6 +1155,25 @@ extern void GetRangefinderAltitude(void);
 extern void InitRangefinder(void);
 
 extern int16 RangefinderAltitude, RangefinderAltitudeP, RangefinderROC;
+
+//__________________________________________________________________________________________
+
+// rc.c
+
+extern void DoRxPolarity(void);
+extern void InitRC(void);
+extern void MapRC(void);
+extern void UpdateControls(void);
+extern void CaptureTrims(void);
+extern void CheckThrottleMoved(void);
+
+extern const rom boolean PPMPosPolarity[];
+extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
+extern int8 RMap[];
+
+#define PPMQMASK 3
+extern int16 PPMQSum[];
+extern int16x8x4Q PPMQ;
 
 //__________________________________________________________________________________________
 

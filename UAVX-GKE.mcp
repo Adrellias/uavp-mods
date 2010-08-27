@@ -57,6 +57,7 @@ file_029=.
 file_030=.
 file_031=.
 file_032=.
+file_033=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -91,6 +92,7 @@ file_029=no
 file_030=no
 file_031=no
 file_032=no
+file_033=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -125,6 +127,7 @@ file_029=no
 file_030=no
 file_031=no
 file_032=no
+file_033=no
 [FILE_INFO]
 file_000=utils.c
 file_001=accel.c
@@ -151,14 +154,15 @@ file_021=bootl18f.asm
 file_022=rangefinder.c
 file_023=telemetry.c
 file_024=temperature.c
-file_025=UAVX.h
-file_026=uavx_multicopter.h
-file_027=uavx_aileron.h
-file_028=uavx_elevon.h
-file_029=uavx_helicopter.h
-file_030=gyro_itg3200.h
-file_031=gyro_analog.h
-file_032=gyro_wii.h
+file_025=rc.c
+file_026=UAVX.h
+file_027=uavx_multicopter.h
+file_028=uavx_aileron.h
+file_029=uavx_elevon.h
+file_030=uavx_helicopter.h
+file_031=gyro_itg3200.h
+file_032=gyro_analog.h
+file_033=gyro_wii.h
 [SUITE_INFO]
 suite_guid={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 suite_state=

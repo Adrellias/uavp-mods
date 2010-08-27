@@ -26,6 +26,7 @@ void MixAndLimitMotors(void);
 void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
+void StopMotors(void);
 
 boolean OutToggle;
 int16 PWM[6];
@@ -474,6 +475,27 @@ void InitI2CESCs(void)
 			}
 	#endif // MULTICOPTER
 } // InitI2CESCs
+
+void StopMotors(void)
+{
+	#ifdef MULTICOPTER
+	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+		#ifdef TRICOPTER
+			PWM[BackC] = OUT_NEUTRAL;
+		#else
+			PWM[BackC] = ESCMin;
+		#endif	
+	#else
+		PWM[ThrottleC] = ESCMin;
+		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
+	#endif // MULTICOPTER
+
+	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
+
+	F.MotorsArmed = false;
+} // StopMotors
+
+
 
 
 

@@ -67,6 +67,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
 	#endif // TESTING
+	"Zn..Set Parameter Set n\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
@@ -256,7 +257,7 @@ void ShowSetup(boolean h)
 		TxString(" Tx Mode 1");
 	TxNextLine();
 
-	TxString("Selected parameter set: ");
+	TxString("Selected parameter set: "); // must be exactly this string as UAVPSet expects it
 	TxChar('0' + ParamSet);	
 	TxNextLine();
 
@@ -386,6 +387,15 @@ void ProcessCommand(void)
 				TxString("   V:");	
 				TxValS(NeutralDU);
 				ShowPrompt();
+				break;
+			case 'Z' : // set Paramset
+				p = RxNumU();
+				if ( p != ParamSet )
+				{
+					ParamSet = p;
+					ParametersChanged = true;
+					ReadParametersEE();
+				}
 				break;
 			case 'W' :	// comms with UAVXNav utility NOT UAVPSet
 				UAVXNavCommand();

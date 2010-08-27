@@ -20,9 +20,6 @@
 
 #include "uavx.h"
 
-void DoRxPolarity(void);
-void InitRC(void);
-void MapRC(void);
 void ReadParametersEE(void);
 void WriteParametersEE(uint8);
 void UseDefaultParameters(void);
@@ -56,61 +53,10 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	#endif
 #endif 
 
-const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
-	{ 2,0,1,3,4,5,6 }, 	// Futaba Thr 3 Throttle
-	{ 1,0,3,2,4,5,6 },	// Futaba Thr 2 Throttle
-	{ 4,2,1,0,5,3,6 },	// Futaba 9C Spektrum DM8/AR7000
-	{ 0,1,2,3,4,5,6 },	// JR XP8103/PPM
-	{ 6,0,3,5,2,4,1 },	// JR 9XII Spektrum DM9 ?
-
-	{ 5,0,3,6,2,1,4 },	// JR DXS12 
-	{ 5,0,3,6,2,1,4 },	// Spektrum DX7/AR7000
-	{ 4,0,3,5,2,1,6 },	// Spektrum DX7/AR6200
-
-	{ 2,0,1,3,4,6,5 }, 	// Futaba Thr 3 Sw 6/7
-	{ 0,1,2,3,4,5,6 },	// Spektrum DX7/AR6000
-	{ 0,1,2,3,4,5,6 },	// Graupner MX16S
-	{ 4,0,2,3,1,5,6 },	// Spektrum DX6i/AR6200
-	{ 2,0,1,3,4,5,6 },	// Futaba Th 3/R617FS
-
-	{ 2,0,1,3,4,5,6 },	// Custom
-//{ 4,0,2,1,3,5,6 }	// Custom
-	};
-
-// Rx signalling polarity used only for serial PPM frames usually
-// by tapping internal Rx circuitry.
-const rom boolean PPMPosPolarity[CustomTxRx+1] =
-	{
-		false, 	// Futaba Ch3 Throttle
-		false,	// Futaba Ch2 Throttle
-		true,	// Futaba 9C Spektrum DM8/AR7000
-		true,	// JR XP8103/PPM
-		true,	// JR 9XII Spektrum DM9/AR7000
-
-		true,	// JR DXS12
-		true,	// Spektrum DX7/AR7000
-		true,	// Spektrum DX7/AR6200
-		false,	// Futaba Thr 3 Sw 6/7
-		true,	// Spektrum DX7/AR6000
-		true,	// Graupner MX16S
-		true,	// Graupner DX6i/AR6200
-		true,	// Futaba Thr 3/R617FS
-		true	// custom Tx/Rx combination
-	};
-
-// Reference Internal Quadrocopter Channel Order
-// 0 Throttle
-// 1 Aileron
-// 2 Elevator
-// 3 Rudder
-// 4 Gear
-// 5 Aux1
-// 6 Aux2
 
 uint8	ParamSet;
 boolean ParametersChanged, SaveAllowTurnToWP;
 
-int8 RMap[CONTROLS];
 #pragma udata params
 int8 P[MAX_PARAMETERS];
 #pragma udata
@@ -119,90 +65,7 @@ int8 P[MAX_PARAMETERS];
 int16 OSin[48], OCos[48];
 #pragma udata
 uint8 Orientation;
-
 uint8 UAVXAirframe;
-
-#pragma udata ppmq
-int16x8x4Q PPMQ;
-int16 PPMQSum[CONTROLS];
-#pragma udata
-
-void DoRxPolarity(void)
-{
-	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
-		CCP1CONbits.CCP1M0 = PPMPosPolarity[TxRxType];
-	else
-		CCP1CONbits.CCP1M0 = 1;	
-}  // DoRxPolarity
-
-void InitRC(void)
-{
-	int8 c, q;
-
-	DoRxPolarity();
-
-	SignalCount = -RC_GOOD_BUCKET_MAX;
-	F.Signal = F.RCNewValues = false;
-	
-	for (c = 0; c < RC_CONTROLS; c++)
-	{
-		PPM[c].i16 = 0;
-		RC[c] = RC_NEUTRAL;
-
-		#ifdef CLOCK_16MHZ
-		for (q = 0; q <= PPMQMASK; q++)
-			PPMQ.B[q][c] = RC_NEUTRAL;
-		PPMQSum[c] = RC_NEUTRAL * 4;
-		#else
-		for (q = 0; q <= PPMQMASK; q++)
-			PPMQ.B[q][c] = 625;
-		PPMQSum[c] = 2500;
-		#endif // CLOCK_16MHZ
-	}
-	PPMQ.Head = 0;
-
-	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
-	RollRate = PitchRate = YawRate = 0;
-	ControlRollP = ControlPitchP = 0;
-	RollTrim = PitchTrim = YawTrim = 0;
-
-	PPM_Index = PrevEdge = RCGlitches = 0;
-} // InitRC
-
-void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
-{  // re-maps captured PPM to Rx channel sequence
-	static int8 c;
-	static int16 LastThrottle, Temp, i;
-	static uint16 Sum;
-	static i32u Temp2; 
-
-	LastThrottle = RC[ThrottleC];
-
-	for (c = 0 ; c < RC_CONTROLS ; c++) 
-	{
-		Sum = PPM[c].u16;
-		PPMQSum[c] -= PPMQ.B[PPMQ.Head][c];
-		PPMQ.B[PPMQ.Head][c] = Sum;
-		PPMQSum[c] += Sum;
-		PPMQ.Head = (PPMQ.Head + 1) & PPMQMASK;
-	}
-
-	for (c = 0 ; c < RC_CONTROLS ; c++) 
-	{
-		i = Map[P[TxRxType]][c];
-		#ifdef CLOCK_16MHZ
-			RC[c] = SRS16(PPMQSum[i], 2) & 0xff; // clip to bottom byte 0..255
-		#else // CLOCK_40MHZ	
-			//RC[c] = ( (int32)PPMQSum[i] * RC_MAXIMUM + 2500L )/5000L; // scale to 4uS res. for now	
-			Temp2.i32 = (int32)PPMQSum[i] * (RC_MAXIMUM * 13L) + 32768L; 
-			RC[c] = (uint8)Temp2.w1;
-		#endif // CLOCK_16MHZ		
-	}
-
-	if ( THROTTLE_SLEW_LIMIT > 0 )
-		RC[ThrottleC] = SlewLimit(LastThrottle, RC[ThrottleC], THROTTLE_SLEW_LIMIT);
-
-} // MapRC
 
 void ReadParametersEE(void)
 {
@@ -464,7 +327,7 @@ void InitParameters(void)
 	ALL_LEDS_ON;
 	ParamSet = 1;
 
-	if ( ReadEE((uint16)TxRxType) == -1 )
+	if ( ( ReadEE((uint16)TxRxType) == -1 ) || (ReadEE(MAX_PARAMETERS + (uint16)TxRxType) == -1 ) )
 		UseDefaultParameters();
 
 	#ifndef USE_ADC_FILTERS
