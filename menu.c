@@ -122,12 +122,12 @@ void ShowSetup(boolean h)
 
 	TxString("Accelerometers: ");
 	if( F.AccelerationsValid )
-		if ( F.UsingFlatAcc )
-			TxString("ONLINE (horiz.)\r\n");
-		else
-			TxString("ONLINE\r\n");
-	else
-		TxString("not available\r\n");
+	#ifdef USE_FLAT_ACC
+		TxString("ONLINE (horiz.)\r\n");
+	#else
+		TxString("ONLINE\r\n");
+	#endif // USE_FLAT_ACC
+	TxString("not available\r\n");
 
 	TxString("Compass: ");
 	if( F.CompassValid )
@@ -390,7 +390,7 @@ void ProcessCommand(void)
 				break;
 			case 'Z' : // set Paramset
 				p = RxNumU();
-				if ( p != ParamSet )
+				if ( p != (int8)ParamSet )
 				{
 					ParamSet = p;
 					ParametersChanged = true;

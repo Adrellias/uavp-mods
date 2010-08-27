@@ -57,18 +57,15 @@ void CompensateRollPitchGyros(void)
 	{
 		ReadAccelerations();
 
-		if ( F.UsingFlatAcc ) // chip up and twisted over
-		{
+		#ifdef USE_FLAT_ACC // chip up and twisted over
 			NewLRAcc = -Ax.i16;	
 			NewFBAcc = Ay.i16;
 			NewDUAcc = Az.i16;
-		}
-		else
-		{	
+		#else	
 			NewLRAcc = Ax.i16;
 			NewDUAcc = Ay.i16;
 			NewFBAcc = Az.i16;
-		}
+		#endif // USE_FLAT_ACC
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.

@@ -126,14 +126,13 @@ void ReadParametersEE(void)
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
 
-		F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
-
 		#ifdef MULTICOPTER
 			#ifdef USE_ORIENT
 				Orientation = P[Orient];
 				if (Orientation == 0xff ) // uninitialised
 					Orientation = 0;			
 			#else // USE_ORIENT
+				F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
 				Orientation = 0;
 				#if ( defined QUADROCOPTER | defined TRICOPTER )
 					#ifdef TRICOPTER
@@ -156,7 +155,7 @@ void ReadParametersEE(void)
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
 
-		F.UsingFlatAcc = ((P[ConfigBits] & UseFlatAccMask) != 0);
+		F.UsingPolar = ((P[ConfigBits] & UsePolarMask) != 0);
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
@@ -181,7 +180,6 @@ void ReadParametersEE(void)
 void WriteParametersEE(uint8 s)
 {
 	int8 p;
-	uint8 b;
 	uint16 addr;
 	
 	addr = (s - 1)* MAX_PARAMETERS;

@@ -247,18 +247,15 @@ void GetNeutralAccelerations(void)
 		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
 		ReadAccelerations();
 
-		if (F.UsingFlatAcc )
-		{
-			LR -= Ax.i16;
-			FB += Ay.i16;
-			DU += Az.i16;
-		}
-		else
-		{
-			LR += Ax.i16;
-			DU += Ay.i16;
-			FB += Az.i16;
-		}
+	#ifdef USE_FLAT_ACC
+		LR -= Ax.i16;
+		FB += Ay.i16;
+		DU += Az.i16;
+	#else
+		LR += Ax.i16;
+		DU += Ay.i16;
+		FB += Az.i16;
+	#endif // USE_FLAT_ACC
 	}	
 
 	LR = SRS16(LR, 4);

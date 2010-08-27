@@ -516,7 +516,7 @@ typedef union {
 		CompassValid:1,
 		CompassMissRead:1,
 
-		UsingFlatAcc:1,
+		UsingPolar:1,
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
 		NavComputed:1,
@@ -1127,8 +1127,8 @@ enum Params { // MAX 64
 #define UseGPSAlt 			5
 #define	UseGPSAltMask		0x20
 
-#define UseFlatAcc 			6
-#define	UseFlatAccMask		0x40
+#define UsePolar 			6
+#define	UsePolarMask		0x40
 
 // bit 7 unusable in UAVPSet
 

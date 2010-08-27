@@ -181,29 +181,11 @@ void UpdateControls(void)
 		if ( F.AllowNavAltitudeHold )
 			DesiredThrottle = CruiseThrottle;
 			
-	F.LockHoldPosition = false;
 	#ifdef RX6CH
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE
 	#else
-		#ifdef USE_POSITION_LOCK
-		if ( F.UsingPositionHoldLock )
-		{
-			DesiredCamPitchTrim = RC_NEUTRAL;
-
-			NewLockHoldPosition = RC[CamPitchC] > RC_NEUTRAL;
-
-			if ( NewLockHoldPosition & !F.LockHoldPosition )
-				F.AllowTurnToWP = true;
-			else
-				F.AllowTurnToWP = SaveAllowTurnToWP;
-
-			F.LockHoldPosition = NewLockHoldPosition;			
-		}
-		else
-		#endif // USE_POSITION_LOCK
-			DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
-
+		DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
 		NavSensitivity = RC[NavGainC];
 		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 	#endif // !RX6CH
@@ -222,16 +204,30 @@ void UpdateControls(void)
 	DesiredYaw = RC[YawC] - RC_NEUTRAL;
 		
 	F.ReturnHome = F.Navigate = false;
-		
-	if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
-		#ifdef DEBUG_FORCE_NAV
-			F.Navigate = true;
-		#else
-			F.ReturnHome = true;
-		#endif // DEBUG_FORCE_NAV
+	#ifdef USE_POSITION_LOCK
+	if ( F.UsingPositionHoldLock )
+	{
+		NewLockHoldPosition = RC[RTHC] > RC_NEUTRAL;
+
+		if ( NewLockHoldPosition & !F.LockHoldPosition )
+			F.AllowTurnToWP = true;
+		else
+			F.AllowTurnToWP = SaveAllowTurnToWP;
+
+		F.LockHoldPosition = NewLockHoldPosition;			
+	}
+
 	else
-		if ( RC[RTHC] > (RC_NEUTRAL/2) )
-			F.Navigate = true;
+	#endif // USE_POSITION_LOCK
+		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+			#ifdef DEBUG_FORCE_NAV
+				F.Navigate = true;
+			#else
+				F.ReturnHome = true;
+			#endif // DEBUG_FORCE_NAV
+		else
+			if ( RC[RTHC] > (RC_NEUTRAL/2) )
+				F.Navigate = true;		
 		
 	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 		DesiredAltitude = Altitude;

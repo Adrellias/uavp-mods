@@ -326,8 +326,8 @@ void DoControl(void)
 	FakeDesiredPitch = DesiredPitch;
 	FakeDesiredRoll = DesiredRoll;
 	FakeDesiredYaw = DesiredYaw;
-	RollSum = SlewLimit(RollSum, -FakeDesiredRoll<<5, 4);
-	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch<<5, 4);
+	RollSum = SlewLimit(RollSum, -FakeDesiredRoll * 16, 4);
+	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch * 16, 4);
 	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4); 
 
     #else
