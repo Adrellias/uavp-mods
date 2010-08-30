@@ -1092,7 +1092,7 @@ enum Params { // MAX 64
 	DescentDelayS,		// 47c
 	NavIntLimit,		// 48
 	AltIntLimit,		// 49
-	GravComp,			// 50c
+	UnusedGravComp,		// 50c
 	CompSteps,			// 51c
 	ServoSense,			// 52c
 	CompassOffsetQtr,	// 53c

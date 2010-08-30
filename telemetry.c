@@ -100,7 +100,7 @@ void SendFlightPacket(void)
 	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 	TxESCu8(PWM[b]);
+	 	TxESCu8((uint8)PWM[b]);
 
 	TxESCi24(mSClock());
 } // 

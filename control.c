@@ -317,7 +317,7 @@ void DoControl(void)
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
-	InertialDamping();
+    InertialDamping();
 
 	DoOrientationTransform();
 
@@ -370,7 +370,7 @@ void DoControl(void)
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
 	#ifdef TRICOPTER
-		Yl *= 4;
+	Yl *= 2;
 	#endif // TRICOPTER
 	Ylp = Yl;
 

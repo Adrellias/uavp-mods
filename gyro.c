@@ -48,6 +48,7 @@ int16	RollRateADC, PitchRateADC, YawRateADC;
 
 void CompensateRollPitchGyros(void)
 {
+	#define GRAV_COMP 11L
 	static int16 Temp;
 	static int24 Temp24;
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
@@ -84,7 +85,7 @@ void CompensateRollPitchGyros(void)
 		// Roll
 
 		// static compensation due to Gravity
-		LRGrav = -SRS16(RollSum * (int16)P[GravComp], 5); 
+		LRGrav = -SRS16(RollSum * GRAV_COMP, 5); 
 	
 		// dynamic correction of moved mass
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_ROLL
@@ -100,7 +101,7 @@ void CompensateRollPitchGyros(void)
 		// Pitch
 
 		// static compensation due to Gravity
-		FBGrav = -SRS16(PitchSum * (int16)P[GravComp], 5); 
+		FBGrav = -SRS16(PitchSum * GRAV_COMP, 5); 
 	
 		// dynamic correction of moved mass		
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_PITCH

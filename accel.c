@@ -72,13 +72,13 @@ void InitAccelerometers(void)
 
 #else
 
-//#ifdef CLOCK_16MHZ
+#ifdef CLOCK_16MHZ
 	#define SPI_HI_DELAY Delay10TCY()
 	#define SPI_LO_DELAY Delay10TCY()
-//#else // CLOCK_40MHZ
-//	#define SPI_HI_DELAY Delay10TCYx(2)
-//	#define SPI_LO_DELAY Delay10TCYx(2)
-//#endif // CLOCK_16MHZ
+#else // CLOCK_40MHZ
+	#define SPI_HI_DELAY Delay10TCYx(2)
+	#define SPI_LO_DELAY Delay10TCYx(2)
+#endif // CLOCK_16MHZ
 
 // LISL-Register mapping
 

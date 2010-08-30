@@ -46,17 +46,17 @@ void CalculateGyroRates(void)
 		RollRate = -RollRate;			// adjust for reversed roll gyro sense
  	}
 	else
-		if ( P[GyroRollPitchType] == Gyro300D3V ) 
+		if ( P[GyroRollPitchType] == Gyro300D3V ) // LY530ALH 300deg/S 3.3V gyro
 		{ 	// 300 Deg/Sec
 			RollRate = RollRateADC - GyroMidRoll;
 			PitchRate = PitchRateADC - GyroMidPitch;
 	 	}
 		else
-		{ 	// includes ITG-3200
+		{ 	// ADXRS610/300 Melexis90609, ITG3200 or generically 300deg/S 5V gyros.
 			RollRate = SRS16(RollRateADC - GyroMidRoll, 1);	
 			PitchRate = SRS16(PitchRateADC - GyroMidPitch, 1);
 	
-			if ( P[GyroRollPitchType] == Gyro150D5V )
+			if ( P[GyroRollPitchType] == Gyro150D5V ) // ADXRS613/150 or generically 150deg/S 5V gyros.
 			{ // 150 Deg/Sec
 				RollRate = SRS16(RollRate, 1); 
 				PitchRate = SRS16(PitchRate, 1);

@@ -67,7 +67,6 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
 	#endif // TESTING
-	"Zn..Set Parameter Set n\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 

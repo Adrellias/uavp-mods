@@ -76,7 +76,7 @@
 	30,				// DescentDelayS	47c
 	1,				// NavIntLimit		48
 	2,				// AltIntLimit		49
-	11,				// GravComp			50c
+	11,				// was GravComp		50c
 	1,				// CompSteps		51c
 	0,				// ServoSense		52c	
 	3,				// CompassOffsetQtr 53c
