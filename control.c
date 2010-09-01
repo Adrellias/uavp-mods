@@ -135,13 +135,14 @@ void AltitudeHold()
 	static int16 NewCruiseThrottle;
 
 	GetBaroAltitude();
+	GetRangefinderAltitude();
 
 	if ( F.AltHoldEnabled )
 	{
 		if ( F.NewBaroValue  ) // sync on Baro which MUST be working
 		{		
 			F.NewBaroValue = false;
-			GetRangefinderAltitude();
+
 			UpdateAltitudeSource();
 	
 			if ( NavState == HoldingStation ) // Using Manual Throttle
