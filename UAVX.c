@@ -150,8 +150,9 @@ void main(void)
 					break;
 				case InFlight:
 					F.MotorsArmed = true;
-					if ( F.GPSValid && F.CompassValid  && F.NewCommands && F.AltHoldEnabled 
-						&& ( mSClock() > mS[NavActiveTime]) )
+					F.NavigationActive = F.GPSValid && F.CompassValid  && F.NewCommands && F.AltHoldEnabled 
+						&& ( mSClock() > mS[NavActiveTime]);
+					if ( F.NavigationActive )
 						DoNavigation();
 					
 					LEDChaser();

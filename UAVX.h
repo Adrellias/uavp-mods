@@ -504,7 +504,7 @@ typedef union {
 		Simulation:1,
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
-		u1:1,
+		NavigationActive:1,
 		u2:1,
 
 		Signal:1,

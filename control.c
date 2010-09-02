@@ -136,6 +136,7 @@ void AltitudeHold()
 
 	GetBaroAltitude();
 	GetRangefinderAltitude();
+	CheckThrottleMoved();
 
 	if ( F.AltHoldEnabled )
 	{
@@ -144,10 +145,13 @@ void AltitudeHold()
 			F.NewBaroValue = false;
 
 			UpdateAltitudeSource();
-	
-			if ( NavState == HoldingStation ) // Using Manual Throttle
-			{
-				CheckThrottleMoved();
+
+			if ( F.NavigationActive && ( NavState != HoldingStation ) ) 
+			{  // Navigating - using CruiseThrottle
+				F.HoldingAlt = true;
+				DoAltitudeHold(Altitude, ROC);
+			}	
+			else
 				if ( F.ThrottleMoving )
 				{
 					F.HoldingAlt = false;
@@ -163,13 +167,7 @@ void AltitudeHold()
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
 					}
 					DoAltitudeHold(Altitude, ROC);
-				}
-			}
-			else
-			{  // Navigating - using CruiseThrottle
-				F.HoldingAlt = true;
-				DoAltitudeHold(Altitude, ROC);
-			}		
+				}	
 		}
 	}
 	else
