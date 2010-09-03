@@ -64,8 +64,6 @@ void main(void)
 	InitTemperature();
 	InitBarometer();
 
-OutSignals(); // zzz
-
 	ShowSetup(true);
 
 	FirstPass = true;
@@ -73,6 +71,7 @@ OutSignals(); // zzz
 	while( true )
 	{
 		StopMotors();
+
 		ReceivingGPSOnly(false);
 		EnableInterrupts;
 
@@ -186,7 +185,7 @@ OutSignals(); // zzz
 
 			while ( WaitingForSync ) {};
 
-			mS[UpdateTimeout] = mSClock() + (uint24)P[TimeSlots];
+			mS[UpdateTimeout] += (int24)P[TimeSlots];
 
 			GetGyroValues();
 			

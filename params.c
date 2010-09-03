@@ -173,6 +173,9 @@ void ReadParametersEE(void)
 		F.ParametersValid = ParameterSanityCheck();
 
 		ParametersChanged = false;
+
+		ServoInterval = ( 24 + (P[TimeSlots] >> 1) ) / P[TimeSlots];
+		ServoToggle = 0;
 	}
 	
 } // ReadParametersEE

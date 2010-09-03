@@ -299,13 +299,17 @@ void LimitYawSum(void)
 void DoOrientationTransform(void)
 {
 	static i24u Temp;
+	static int24 OSO, OCO;
+
+	OSO = OSin[Orientation];
+	OCO = OCos[Orientation];
 
 	// -PS+RC
-	Temp.i24 = -DesiredPitch * OSin[Orientation] + DesiredRoll * OCos[Orientation];
+	Temp.i24 = -DesiredPitch * OSO + DesiredRoll * OCO;
 	ControlRoll = Temp.b2_1;
 		
 	// PC+RS
-	Temp.i24 = DesiredPitch * OCos[Orientation] + DesiredRoll * OSin[Orientation];
+	Temp.i24 = DesiredPitch * OCO + DesiredRoll * OSO;
 	ControlPitch = Temp.b2_1;
 
 } // DoOrientationTransform
@@ -378,8 +382,6 @@ void DoControl(void)
 	#endif // SIMULATE		
 
 	F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
-
-	RollRate = PitchRate = 0;
 
 } // DoControl
 

@@ -58,6 +58,8 @@ file_030=.
 file_031=.
 file_032=.
 file_033=.
+file_034=.
+file_035=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -93,6 +95,8 @@ file_030=no
 file_031=no
 file_032=no
 file_033=no
+file_034=no
+file_035=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -128,6 +132,8 @@ file_030=no
 file_031=no
 file_032=no
 file_033=no
+file_034=no
+file_035=no
 [FILE_INFO]
 file_000=utils.c
 file_001=accel.c
@@ -163,6 +169,8 @@ file_030=uavx_helicopter.h
 file_031=gyro_itg3200.h
 file_032=gyro_analog.h
 file_033=gyro_wii.h
+file_034=outputs_copter.h
+file_035=outputs_conventional.h
 [SUITE_INFO]
 suite_guid={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 suite_state=

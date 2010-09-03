@@ -36,8 +36,8 @@
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
-	//#define QUADROCOPTER
-	#define TRICOPTER
+	#define QUADROCOPTER
+	//#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -697,6 +697,7 @@ extern void LimitRollSum(void);
 extern void LimitPitchSum(void);
 extern void LimitYawSum(void);
 extern void InertialDamping(void);
+extern void DoOrientationTransform(void);
 extern void DoControl(void);
 
 extern void LightsAndSirens(void);
@@ -1015,8 +1016,10 @@ extern int16 PWM[6];
 extern int16 PWMSense[6];
 extern int16 ESCI2CFail[4];
 extern int16 CurrThrottle;
+extern int8 ServoInterval;
+
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
-extern near boolean ServoToggle;
+extern near int8 ServoToggle;
 
 extern int16 ESCMin, ESCMax;
 

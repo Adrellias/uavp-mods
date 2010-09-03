@@ -67,7 +67,8 @@ void InitMisc(void)
 	int8 i;
 
 	State = Starting;				// For trace preconditions
-	ServoToggle = false;
+	ServoToggle = 0;
+	ServoInterval = 2;
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
