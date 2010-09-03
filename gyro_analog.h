@@ -39,38 +39,42 @@ void GetGyroValues(void)
 
 void CalculateGyroRates(void)
 {
-	if ( P[GyroRollPitchType] == IDG300 ) 
-	{ 	// 500 Deg/Sec 
-		RollRate = RollRateADC - GyroMidRoll;
-		PitchRate = PitchRateADC - GyroMidPitch;
-		RollRate = -RollRate;			// adjust for reversed roll gyro sense
- 	}
-	else
-		if ( P[GyroRollPitchType] == Gyro300D3V ) // LY530ALH 300deg/S 3.3V gyro
-		{ 	// 300 Deg/Sec
-			RollRate = RollRateADC - GyroMidRoll;
-			PitchRate = PitchRateADC - GyroMidPitch;
-	 	}
-		else
-		{ 	// ADXRS610/300 Melexis90609, ITG3200 or generically 300deg/S 5V gyros.
-			RollRate = SRS16(RollRateADC - GyroMidRoll, 1);	
-			PitchRate = SRS16(PitchRateADC - GyroMidPitch, 1);
-	
-			if ( P[GyroRollPitchType] == Gyro150D5V ) // ADXRS613/150 or generically 150deg/S 5V gyros.
-			{ // 150 Deg/Sec
-				RollRate = SRS16(RollRate, 1); 
-				PitchRate = SRS16(PitchRate, 1);
-			}
-		}
+	RollRate = RollRateADC - GyroMidRoll;
+	PitchRate = PitchRateADC - GyroMidPitch;
+
+	switch ( P[GyroRollPitchType] ) {
+	case CustomGyro: break;
+	case IDG300:// 500 Deg/Sec 
+		RollRate = -RollRate; // adjust for reversed roll gyro sense
+		break;
+ 	case Gyro300D3V:// LY530ALH 300deg/S 3.3V
+		break;
+	case Gyro300D5V:// ADXRS610/300 Melexis90609, ITG3200 or generically 300deg/S 5V
+		RollRate = SRS16(RollRate, 1);	
+		PitchRate = SRS16(PitchRate, 1);
+		break;
+	case Gyro150D5V:	 // ADXRS613/150 or generically 150deg/S 5V
+		RollRate = SRS16(RollRate, 2); 
+		PitchRate = SRS16(PitchRate, 2);
+		break;
+	} // GyroRollPitchType
 
 	YawRate = (int16)YawRateADC - GyroMidYaw;
-	if ( P[GyroYawType] == Gyro150D5V )
+
+	switch ( P[GyroYawType] ) {
+	case CustomGyro: break;
+	case IDG300:
+		// dual not used for Yaw 
+		break;
+ 	case Gyro300D3V:
+		break;
+	case Gyro300D5V:
+		YawRate = SRS16(YawRate, 1);
+		break;
+	case Gyro150D5V:
 		YawRate = SRS16(YawRate, 2);
-	else // 
-		if ( P[GyroYawType] == Gyro300D5V )
-			YawRate = SRS16(YawRate, 1);
-	//	else // Gyro300D3V  
-	//		YawRate = YawRate;
+		break;
+	} // GyroYawType
 
 } // GetGyroValues
 

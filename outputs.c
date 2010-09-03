@@ -217,6 +217,9 @@ void OutSignals(void)
 	if ( !F.MotorsArmed )
 		StopMotors();
 
+	PWM4 = PWM[CamRollC];
+	PWM5 = PWM[CamPitchC];
+
 	// Save TMR0 and reset
 	DisableInterrupts;
 	SaveClockmS = mS[Clock];
@@ -226,18 +229,24 @@ void OutSignals(void)
 	INTCONbits.TMR0IF = false;
 	EnableInterrupts;
 
-	PWM4 = PWM[CamRollC];
-	PWM5 = PWM[CamPitchC];
-
 	if ( P[ESCType] == ESCPPM )
 	{
+		#ifdef TRICOPTER
+			PORTB |= 0x07;
+		#else
+			PORTB |= 0x0f;
+		#endif // TRICOPTER
+
 		_asm
 		MOVLB	0						// select Bank0
-		MOVLW	0x0f					// turn on motors
+		#ifdef TRICOPTER
+			MOVLW	0x07					// turn on 3 motors
+		#else
+			MOVLW	0x0f					// turn on all motors
+		#endif // TRICOPTER
 		MOVWF	SHADOWB,1
-		_endasm	
-		PORTB |= 0x0f;
-	
+		_endasm
+
 		#ifdef MULTICOPTER	
 			PWM0 = PWM[FrontC];
 			PWM1 = PWM[LeftC];
@@ -261,16 +270,21 @@ void OutSignals(void)
 
 		if( ServoToggle )	// driver cam servos only every 2nd pulse
 		{
+			PORTB |= 0x3f;
 			_asm
 			MOVLB	0						// select Bank0
 			MOVLW	0x3f					// turn on all motors
 			MOVWF	SHADOWB,1
 			_endasm	
-			PORTB |= 0x3f;
 		}
 		else
 		{
-			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY();
 		}
 
 		_asm
@@ -278,7 +292,11 @@ void OutSignals(void)
 OS005:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
-		ANDLW	0x0f
+		#ifdef TRICOPTER
+			ANDLW	0x07		
+		#else
+			ANDLW	0x0f
+		#endif //TRICOPTER
 		BZ		OS006
 			
 		DECFSZ	PWM0,1,1				
@@ -295,18 +313,33 @@ OS008:
 		GOTO	OS009
 					
 		BCF		SHADOWB,2,1
+
 OS009:
+		#ifndef TRICOPTER
 		DECFSZ	PWM3,1,1	
 		GOTO	OS010
 						
-		BCF		SHADOWB,3,1			
+		BCF		SHADOWB,3,1	
+		#endif // !TRICOPTER		
 
 OS010:
 		_endasm
+
+		#ifdef TRICOPTER
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY();  
+		#endif // TRICOPTER 
+
 		#ifdef CLOCK_40MHZ
-		Delay10TCYx(2); 
-		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
-		Delay1TCY(); Delay1TCY(); 
+			Delay10TCYx(2); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
 		#endif // CLOCK_40MHZ
 		_asm				
 		GOTO	OS005
@@ -315,7 +348,6 @@ OS006:
 		
 		EnableInterrupts;
 		SyncToTimer0AndDisableInterrupts();	
-
 	} 
 	else
 	{ // I2C ESCs
@@ -323,21 +355,36 @@ OS006:
 		{
 			_asm
 			MOVLB	0					// select Bank0
-			MOVLW	0x30				// turn on motors
+			#ifdef TRICOPTER
+				MOVLW	0x38				// turn on 3 servoes
+			#else
+				MOVLW	0x30				// turn on 2 servoes
+			#endif // TRICOPTER
 			MOVWF	SHADOWB,1
 			_endasm	
-			PORTB |= 0x30;
+
+			#ifdef TRICOPTER
+				PORTB |= 0x38;
+			#else
+				PORTB |= 0x30;
+			#endif // TRICOPTER
 		}
 		else
 		{
-			Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY();
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY();
 		}
 
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible. 
 		// Octocopters may have ESCs paired with common address so ACK is meaningless.
-		// All motors driven with fourth motor ignored for Tricopter.	
+		// All motors driven with fourth motor ignored for Tricopter.
+	
 		if ( P[ESCType] ==  ESCHolger )
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
@@ -380,28 +427,53 @@ OS006:
 OS001:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
-		ANDLW	0x30		
+		#ifdef TRICOPTER
+			ANDLW	0x38
+		#else
+			ANDLW	0x30
+		#endif  // TRICOPTER		
 		BZ		OS002	
 	
 		DECFSZ	PWM4,1,1
 		GOTO	OS003
-	
+
 		BCF		SHADOWB,4,1
+	
 OS003:
 		DECFSZ	PWM5,1,1
 		GOTO	OS004
 	
 		BCF		SHADOWB,5,1
+
 OS004:
+		#ifdef TRICOPTER
+			DECFSZ	PWM3,1,1
+			GOTO	OS0011
+	
+			BCF		SHADOWB,3,1
+		#endif // TRICOPTER
+OS0011:
 		_endasm
 	
-		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
+		#ifndef TRICOPTER
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+		#endif // !TRICOPTER
+ 
+		Delay1TCY();
+		Delay1TCY(); 
 		Delay1TCY();
 	
 		#ifdef CLOCK_40MHZ
-		Delay10TCYx(2); 
-		Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); Delay1TCY(); 
-		Delay1TCY(); Delay1TCY(); 
+			Delay10TCYx(2); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
+			Delay1TCY(); 
 		#endif // CLOCK_40MHZ
 	
 		_asm

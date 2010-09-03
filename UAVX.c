@@ -64,6 +64,8 @@ void main(void)
 	InitTemperature();
 	InitBarometer();
 
+OutSignals(); // zzz
+
 	ShowSetup(true);
 
 	FirstPass = true;

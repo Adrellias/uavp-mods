@@ -368,9 +368,6 @@ void DoControl(void)
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
-	#ifdef TRICOPTER
-	Yl *= 2;
-	#endif // TRICOPTER
 	Ylp = Yl;
 
 	REp = RE;

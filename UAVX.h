@@ -36,8 +36,8 @@
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
-	#define QUADROCOPTER
-	//#define TRICOPTER
+	//#define QUADROCOPTER
+	#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
