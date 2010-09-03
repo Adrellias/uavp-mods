@@ -705,7 +705,7 @@ extern void InitControl(void);
 
 extern int16 RE, PE, YE, HE;					// gyro rate error	
 extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
-extern int16 Rl, Pl, Yl, Ylp;							// PID output values
+extern int16 Rl, Pl, Yl;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;

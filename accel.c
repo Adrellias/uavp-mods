@@ -36,7 +36,7 @@ void InitAccelerometers(void);
 #pragma udata accs
 i16u	Ax, Ay, Az;
 int8	LRIntCorr, FBIntCorr;
-int16	Rl, Pl, Yl, Ylp;						// PID output values
+int16	Rl, Pl, Yl;						// PID output values
 int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 #pragma udata
