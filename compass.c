@@ -29,12 +29,12 @@ void CalibrateCompass(void);
 void InitHeading(void);
 void InitCompass(void);
 
+i16u Compass;
 int16 	CompassFilterA;
 i32u 	CompassValF;
 
 void GetHeading(void)
 {
-	static i16u Compass;
 	static i24u CompassVal;
 	static i32u Temp;
 
