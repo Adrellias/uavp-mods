@@ -8,6 +8,7 @@
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20
 #define	ADC_YAW_FREQ			20
+#define COMPASS_FREQ			2		// 0.1Hz
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -254,6 +255,7 @@
 #define CENTIPI 			314 
 #define HALFMILLIPI 		1571 
 #define QUARTERMILLIPI		785
+#define SIXTHMILLIPI		524
 #define TWOMILLIPI 			6284
 
 #define MILLIRAD 			18 
@@ -322,7 +324,7 @@ typedef union {
 } i32u;
 
 typedef struct {
-	i24u v;
+	i32u v;
 	int16 a;
 	int16 f;
 	uint8 dt;
@@ -617,7 +619,6 @@ extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
-extern int16 NavRCorr, NavPCorr, NavYCorr;
 extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
@@ -625,6 +626,7 @@ extern int16 NavSensitivity, RollPitchMax;
 extern int16 AltSum;
 
 extern int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
+extern int8 NavYCorrLimit;
 extern int16 EffNavSensitivity;
 extern int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
@@ -683,7 +685,8 @@ extern void CalibrateCompass(void);
 extern void InitHeading(void);
 extern void InitCompass(void);
 
-extern i16u Compass;
+extern int16 CompassFilterA;
+extern i32u CompassValF;
 
 //______________________________________________________________________________________________
 
@@ -710,7 +713,7 @@ extern int16 RollSum, PitchSum, YawSum;			// integral/angle
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw;
 extern int16 YawFilterA;
-extern i24u  YawRateF;
+extern i32u  YawRateF;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
@@ -1102,7 +1105,8 @@ enum Params { // MAX 64
 	BatteryCapacity,	// 54c
 	GyroYawType,		// 55c
 	AltKd,				// 56
-	Orient				// 57
+	Orient,				// 57
+	NavYawLimit			// 58
 	
 	// 56 - 64 unused currently
 	};

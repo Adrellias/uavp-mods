@@ -51,7 +51,7 @@
 	0, 				// MiddleLR,		24c
 	0, 				// MiddleFB,		25c
 	20, 			// CamPitchKp,		26
-	24, 			// CompassKp,		27
+	10, 			// CompassKp,		27
 	8, 				// AltKi,			28
 	30, 			// NavRadius,		29
 	8, 				// NavKi,			30 
@@ -85,8 +85,8 @@
 	-32,			// AltKd			56		
 	0,				// Orient			57				
 	
+	12,				// NavYawLimit		58
 	0,				// 58 - 64 unused currently	
-	0,
 	0,
 
 	0,

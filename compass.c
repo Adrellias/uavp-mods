@@ -29,11 +29,14 @@ void CalibrateCompass(void);
 void InitHeading(void);
 void InitCompass(void);
 
-i16u 	Compass;
+int16 	CompassFilterA;
+i32u 	CompassValF;
 
 void GetHeading(void)
 {
-	static int32 Temp;
+	static i16u Compass;
+	static i24u CompassVal;
+	static i32u Temp;
 
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
@@ -43,9 +46,22 @@ void GetHeading(void)
 		Compass.b0 = ReadI2CByte(I2C_NACK);
 		I2CStop();
 
-		Temp = ConvertDDegToMPi(Compass.i16) - CompassOffset;
-		Heading = Make2Pi((int16) Temp);
+		Compass.i16 = Make2Pi((int16) ConvertDDegToMPi(Compass.i16) - CompassOffset);
 
+		if ( Abs( Compass.i16 - Heading ) >= TWOMILLIPI )
+		{
+			Heading = Compass.i16;
+			CompassValF.w0 = 0;
+			CompassValF.w1 = Compass.i16;
+		}
+		else // ~13uS @ 40MHz
+		{
+			CompassVal.b0 = 0;
+			CompassVal.b2_1 = Compass.i16;
+			CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.b3_1) * CompassFilterA;
+		}
+
+		Heading = CompassValF.w1; 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
 	}
 	else
@@ -107,6 +123,7 @@ void GetCompassParameters(void)
 		if( WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
 		CP[r] = ReadI2CByte(I2C_NACK);
 		I2CStop();
+
 	}
 
 	Delay1mS(7);
@@ -251,6 +268,10 @@ CCerror:
 
 void InitCompass(void)
 {
+
+	CompassFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
+	CompassValF.i32 = 0;
+
 	// 20Hz continuous read with periodic reset.
 	#ifdef SUPPRESS_COMPASS_SR
 		#define COMP_OPMODE 0b01100010
@@ -280,7 +301,7 @@ void InitCompass(void)
 	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
-	Delay1mS(50);
+	Delay1mS(COMPASS_TIME_MS);
 
 	// use default heading mode (1/10th degrees)
 
@@ -297,6 +318,7 @@ CTerror:
 void InitHeading(void)
 {
 	GetHeading();
+
 	#ifdef SIMULATE
 		FakeHeading = Heading = 0;
 	#endif // SIMULATE

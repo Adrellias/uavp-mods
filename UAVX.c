@@ -58,6 +58,7 @@ void main(void)
 	InitAccelerometers();
 	InitGyros();
 	InitCompass();
+	InitHeading();
 	InitRangefinder();
 	InitGPS();
 	InitNavigation();

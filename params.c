@@ -35,7 +35,7 @@ const rom int8	ComParms[]={ // mask giving common variables across parameter set
 	1,1,1,1,1,0,0,0,0,0,
 	0,0,0,1,1,1,1,0,0,1,
 	0,1,1,1,1,0,1,0,0,1,
-	1,1,1,1,1,0,1,0,0,0,
+	1,1,1,1,1,0,1,1,0,0,
 	0,0,0,0
 	};
 
@@ -123,6 +123,8 @@ void ReadParametersEE(void)
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
+
+		NavYCorrLimit = Limit((int16)P[NavYawLimit], 0, 99);
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
 
@@ -331,13 +333,13 @@ void InitParameters(void)
 	if ( ( ReadEE((uint16)TxRxType) == -1 ) || (ReadEE(MAX_PARAMETERS + (uint16)TxRxType) == -1 ) )
 		UseDefaultParameters();
 
-	#ifndef USE_ADC_FILTERS
-		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
-	#endif // USE_ADC_FILTERS
-
 	ParamSet = 1;
 	ReadParametersEE();
 	ParametersChanged = true;
+
+	#ifndef USE_ADC_FILTERS
+		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
+	#endif // USE_ADC_FILTERS
 
 	ALL_LEDS_OFF;
 } // InitParameters

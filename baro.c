@@ -173,6 +173,8 @@ void ReadFreescaleBaro(void)
 	static uint8 B[8], r;
 	static i16u B0, B1, B2, B3;
 
+	mS[BaroUpdate] = mSClock() + FS_ADC_TIME_MS;
+
 	I2CStart();  // start conversion
 	if( WriteI2CByte(FS_ADC_I2C_WR) != I2C_ACK ) goto FSError;
 	if( WriteI2CByte(FS_ADC_I2C_CMD) != I2C_ACK ) goto FSError;
@@ -191,8 +193,6 @@ void ReadFreescaleBaro(void)
 	#ifndef JIM_MPX_INVERT
 	BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
 	#endif // !JIM_MPX_INVERT
-
-	mS[BaroUpdate] = mSClock() + FS_ADC_TIME_MS;
 
 	F.BaroAltitudeValid = true;
 	return;
@@ -343,7 +343,8 @@ void InitBoschBarometer(void);
 
 void StartBoschBaroADC(boolean ReadPressure)
 {
-	uint8 TempOrPress;
+	static uint8 TempOrPress;
+
 	if ( ReadPressure )
 	{
 		TempOrPress = BOSCH_PRESS;
@@ -370,6 +371,7 @@ void StartBoschBaroADC(boolean ReadPressure)
 
 	F.BaroAltitudeValid = true;
 	return;
+
 SBerror:
 	I2CStop();
 	F.BaroAltitudeValid = F.HoldingAlt = false; 

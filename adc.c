@@ -33,7 +33,7 @@ int16 ADC(uint8 ADCChannel)
 	static int16 v;
 
 	DisableInterrupts; // make atomic
-		v = ADCVal[ADCChannel].v.b2_1; // rescale by 256
+		v = ADCVal[ADCChannel].v.w1; // rescale by 256
 	EnableInterrupts;
 
 	return ( v );
@@ -56,7 +56,7 @@ void InitADC()
 
 	for ( i = 0; i <= ADC_TOP_CHANNEL; i++)
 	{
-		ADCVal[i].v.i24 = 512L * 256L;
+		ADCVal[i].v.i32 = 512L * 256L * 256L;
 		ADCVal[i].a = 0;
 		ADCVal[i].dt = ADC_TOP_CHANNEL;			// mS - channels are processed cyclically on each mS clock tick
 		ADCVal[i].f = ADC_ATT_FREQ;				// Hz

@@ -41,7 +41,7 @@ int16 REp, PEp, YEp, HEp;				// previous error for derivative
 int16 RollSum, PitchSum, YawSum;		// integral 	
 
 int16 YawFilterA;
-i24u  YawRateF;
+i32u  YawRateF;
 
 int16 RollTrim, PitchTrim, YawTrim;
 int16 HoldYaw;
@@ -283,7 +283,7 @@ void LimitYawSum(void)
 		else
 		{
 			HE = MakePi(DesiredHeading - Heading);
-			HE = Limit(HE, -(MILLIPI/6), MILLIPI/6); // 30 deg limit
+			HE = Limit(HE, -SIXTHMILLIPI, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)P[CompassKp], 12);  
 			YE -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
 		}
@@ -317,6 +317,7 @@ void DoOrientationTransform(void)
 void DoControl(void)
 {
 	static int32 YawTemp;
+	static i24u Temp;
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
@@ -358,12 +359,13 @@ void DoControl(void)
 	ControlPitchP = ControlPitch;
 
 	// Yaw
-
 	#ifdef USE_ADC_FILTER
 		YE = YawRate;
-	#else
-   		YawRateF.i24 += (YawRate - YawRateF.b2_1) * YawFilterA;
-		YE = YawRateF.b2_1;
+	#else // ~13uS @ 40MHz
+		Temp.b0 = 0;
+		Temp.b2_1 = YawRate;
+   		YawRateF.i32 += ((int32)Temp.i24 - YawRateF.b3_1) * YawFilterA;
+		YE = YawRate = YawRateF.w1;
 	#endif
 	
 	YE += DesiredYaw;
@@ -465,7 +467,7 @@ void InitControl(void)
 	RollTrim = PitchTrim = YawTrim = 0;
 	ControlRollP = ControlPitchP = 0;
 	AltComp = 0;
-	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = YawRateF.i24 = 0;	
+	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = YawRateF.i32 = 0;	
 	AltSum = 0;
 } // InitControl
 

@@ -114,6 +114,7 @@ void ErectGyros(void)
 void InitGyros(void)
 {
 	// nothing to be done for analog gyros - could check nominal midpoints?
+
 	F.GyroFailure = false;
 } // InitGyros
 

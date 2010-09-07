@@ -37,6 +37,7 @@ void GetWayPointEE(int8);
 void InitNavigation(void);
 
 int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
+int8 NavYCorrLimit;
 int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
@@ -255,8 +256,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
 			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
-			NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
-			NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
+			NavYCorr = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
+			NavYCorr = Limit(NavYCorr, -NavYCorrLimit, NavYCorrLimit); // gently!
 		}
 		else
 			NavYCorr = 0;

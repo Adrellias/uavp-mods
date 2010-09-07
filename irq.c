@@ -52,7 +52,7 @@ near uint8 	ll, tt, gps_ch;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near int8	State, FailState;
 near boolean WaitingForSync;
-near i16u 	ADCValue;
+near i24u 	ADCValue, Temp;
 #pragma udata
 
 int8	SignalCount;
@@ -320,13 +320,15 @@ void high_isr_handler(void)
 		// Scan ADC ports even if using ITG-3200
 		if ( !ADCON0bits.GO)
 		{
-			ADCValue.b1 = ADRESH;
-			ADCValue.b0 = ADRESL;
+			ADCValue.b2 = ADRESH;
+			ADCValue.b1 = ADRESL;
+			ADCValue.b0 = 0;
 			
-			#ifdef USE_ADC_FILTERS
-				ADCVal[ADCChannel].v.i24 += (int24)(ADCValue.i16 - ADCVal[ADCChannel].v.b2_1) * ADCVal[ADCChannel].a;
+			#ifdef USE_ADC_FILTERS // ~17uS @ 40MHz
+				ADCVal[ADCChannel].v.i32 += ((int32)ADCValue.i24 - ADCVal[ADCChannel].v.b3_1) * ADCVal[ADCChannel].a;
 			#else
-				ADCVal[ADCChannel].v.b2_1 = ADCValue.i16;
+				// ADCVal[ADCChannel].v.w0 = 0;
+				ADCVal[ADCChannel].v.w1 = ADCValue.b2_1;
 			#endif // USE_ADC_FILTERS
 
 			if ( ++ADCChannel > ADC_TOP_CHANNEL )
