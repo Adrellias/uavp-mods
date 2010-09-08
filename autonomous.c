@@ -151,11 +151,7 @@ void DoPolarOrientation(void)
 	while ( P < 0 ) P +=24;
 
 	PolarOrientation = P;
-
-	NavRCorr = NavPCorr = NavYCorr = 0;
 	
-	F.NavComputed = true;
-
 } // DoPolarOrientation
 
 void Navigate(int32 NavLatitude, int32 NavLongitude )
@@ -310,8 +306,14 @@ void DoNavigation(void)
 	#ifndef TESTING // not used for testing - make space!
 
 	if ( !F.NavComputed )
-		if ( F.UsingPolar )
-			DoPolarOrientation();
+		if ( F.UsingPolarCoordinates )
+		{
+			if ( F.UsingPolar )
+				DoPolarOrientation();
+
+			NavRCorr = NavPCorr = NavYCorr = 0;
+			F.NavComputed = true;
+		}
 		else 
 			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 			case Touchdown:
