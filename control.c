@@ -301,7 +301,7 @@ void DoOrientationTransform(void)
 	static i24u Temp;
 	static int24 OSO, OCO;
 
-	if ( F.Ch5Active & F.UsingPolarCoordinates & F.NavigationActive )
+	if ( F.Ch5Active & F.UsingPolarCoordinates & F.NavigationActive & F.NavValid )
 	{
 		OSO = OSin[PolarOrientation];
 		OCO = OCos[PolarOrientation];

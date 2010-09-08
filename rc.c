@@ -204,12 +204,9 @@ void UpdateControls(void)
 	DesiredYaw = RC[YawC] - RC_NEUTRAL;
 		
 	F.ReturnHome = F.Navigate = false;
-
 	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
 	if ( F.UsingPolarCoordinates )
-	{
-
-	}	
+		F.Ch5Active = NewCh5Active;	
 	else
 		if ( F.UsingPositionHoldLock )
 			if ( NewCh5Active & !F.Ch5Active )
