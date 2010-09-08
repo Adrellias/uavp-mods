@@ -512,7 +512,7 @@ typedef union {
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		NavigationActive:1,
-		UsingPolarCoordinates:1,
+		UsingPolar:1,
 
 		Signal:1,
 		RCFrameOK:1, 
@@ -523,7 +523,7 @@ typedef union {
 		CompassValid:1,
 		CompassMissRead:1,
 
-		UsingPolar:1,
+		UsingPolarCoordinates:1,
 		ReceivingGPS:1,
 		GPSSentenceReceived:1,
 		NavComputed:1,

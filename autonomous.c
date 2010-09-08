@@ -310,7 +310,7 @@ void DoNavigation(void)
 	#ifndef TESTING // not used for testing - make space!
 
 	if ( !F.NavComputed )
-		if ( F.Ch5Active & F.UsingPolarCoordinates & F.NavValid )
+		if ( F.UsingPolar )
 			DoPolarOrientation();
 		else 
 			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
