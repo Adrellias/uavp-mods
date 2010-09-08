@@ -325,7 +325,7 @@ void high_isr_handler(void)
 			ADCValue.b0 = 0;
 			
 			#ifdef USE_ADC_FILTERS // ~17uS @ 40MHz
-				ADCVal[ADCChannel].v.i32 += ((int32)ADCValue.i24 - ADCVal[ADCChannel].v.b3_1) * ADCVal[ADCChannel].a;
+				ADCVal[ADCChannel].v.i32 += ((int32)ADCValue.i24 - ADCVal[ADCChannel].v.i3_1) * ADCVal[ADCChannel].a;
 			#else
 				// ADCVal[ADCChannel].v.w0 = 0;
 				ADCVal[ADCChannel].v.w1 = ADCValue.i2_1;
