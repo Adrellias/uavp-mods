@@ -44,7 +44,7 @@ int16 YawFilterA;
 i32u  YawRateF;
 
 int16 RollTrim, PitchTrim, YawTrim;
-int16 HoldYaw;
+int16 HoldYaw, YawSlewLimit;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
 int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
@@ -301,16 +301,24 @@ void DoOrientationTransform(void)
 	static i24u Temp;
 	static int24 OSO, OCO;
 
-	OSO = OSin[Orientation];
-	OCO = OCos[Orientation];
+	if ( F.Ch5Active & F.UsingPolarCoordinates & F.NavigationActive )
+	{
+		OSO = OSin[PolarOrientation];
+		OCO = OCos[PolarOrientation];
+	}
+	else
+	{
+		OSO = OSin[Orientation];
+		OCO = OCos[Orientation];
+	}
 
 	// -PS+RC
 	Temp.i24 = -DesiredPitch * OSO + DesiredRoll * OCO;
-	ControlRoll = Temp.b2_1;
+	ControlRoll = Temp.i2_1;
 		
 	// PC+RS
 	Temp.i24 = DesiredPitch * OCO + DesiredRoll * OSO;
-	ControlPitch = Temp.b2_1;
+	ControlPitch = Temp.i2_1;
 
 } // DoOrientationTransform
 
@@ -363,9 +371,9 @@ void DoControl(void)
 		YE = YawRate;
 	#else // ~13uS @ 40MHz
 		Temp.b0 = 0;
-		Temp.b2_1 = YawRate;
-   		YawRateF.i32 += ((int32)Temp.i24 - YawRateF.b3_1) * YawFilterA;
-		YE = YawRate = YawRateF.w1;
+		Temp.i2_1 = YawRate;
+   		YawRateF.i32 += ((int32)Temp.i24 - YawRateF.i3_1) * YawFilterA;
+		YE = YawRate = YawRateF.iw1;
 	#endif
 	
 	YE += DesiredYaw;
@@ -373,10 +381,7 @@ void DoControl(void)
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
-	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);	// effective slew limit
-	#ifdef TRICOPTER
-		Yl *= 2;
-	#endif // TRICOPTER
+	Yl = Limit(Yl, -YawSlewLimit, YawSlewLimit);
 
 	REp = RE;
 	PEp = PE;
@@ -403,7 +408,6 @@ void LightsAndSirens(void)
 	do
 	{
 		ProcessCommand();
-
 		if( F.Signal )
 		{
 			LEDGreen_ON;
@@ -431,9 +435,9 @@ void LightsAndSirens(void)
 					else
 						if ( Armed )
 							LEDRed_TOG;
-						
+							
 					Timeout += 500;
-				}
+				}	
 			}
 		}
 		else
@@ -443,7 +447,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.Navigate || F.ReturnHome || F.GyroFailure ||
+	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure ||
 		( InitialThrottle >= RC_THRES_START ) || !F.ParametersValid  );
 				
 	FirstPass = false;

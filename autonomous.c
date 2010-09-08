@@ -25,6 +25,7 @@
 
 
 void FailsafeLevelFlight(void);
+void DoPolarOrientation(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int16);
 void DoFailsafeLanding(void);
@@ -84,7 +85,8 @@ int32 	WPLatitude, WPLongitude;
 int24 	WPLoiter;
 int16	WayHeading;
 
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude, CompassOffset;
+int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude;
+int16	CompassOffset, OrientationCompassOffset;
 int24 	NavRTHTimeoutmS;
 
 int8 	NavState;
@@ -132,6 +134,30 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
+void DoPolarOrientation(void)
+{
+	static int32 EastDiff, NorthDiff;
+	static int16 DesiredRelativeHeading;
+	static int16 P;
+	
+	EastDiff = SRS32( (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
+	NorthDiff = OriginLatitude - GPSLatitude;
+
+	DesiredRelativeHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff) - MILLIPI - Heading );
+
+	P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
+
+	while ( P > 24 ) P -=24;
+	while ( P < 0 ) P +=24;
+
+	PolarOrientation = P;
+
+	NavRCorr = NavPCorr = NavYCorr = 0;
+	
+	F.NavComputed = true;
+
+} // DoPolarOrientation
+
 void Navigate(int32 NavLatitude, int32 NavLongitude )
 {	// F.GPSValid must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
@@ -150,8 +176,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	DesiredLatitude = NavLatitude;
 	DesiredLongitude = NavLongitude;
 	
-	EastDiff = DesiredLongitude - GPSLongitude;
-	EastDiff = SRS32((int32)EastDiff * GPSLongitudeCorrection, 8);
+	EastDiff = SRS32((DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
 	NorthDiff = DesiredLatitude - GPSLatitude;
 
 	Radius = Max(Abs(EastDiff), Abs(NorthDiff));
@@ -284,131 +309,132 @@ void DoNavigation(void)
 
 	#ifndef TESTING // not used for testing - make space!
 
-	if ( !F.NavComputed ) 
-	{
-		switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
-		case Touchdown:
-			Navigate(OriginLatitude, OriginLongitude);
-			DoFailsafeLanding();
-			break;
-		case Descending:
-			Navigate( OriginLatitude, OriginLongitude );
-			if ( F.ReturnHome || F.Navigate )
-			#ifdef NAV_WING
-			{
-				// needs more thought - runway direction?
+	if ( !F.NavComputed )
+		if ( F.Ch5Active & F.UsingPolarCoordinates )
+			DoPolarOrientation();
+		else 
+			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
+			case Touchdown:
+				Navigate(OriginLatitude, OriginLongitude);
 				DoFailsafeLanding();
-				State = Shutdown;
-				StopMotors();
-			}
-			#else
-				if ( Altitude < LAND_DM )
+				break;
+			case Descending:
+				Navigate( OriginLatitude, OriginLongitude );
+				if ( F.ReturnHome || F.Navigate )
+				#ifdef NAV_WING
 				{
-					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-					NavState = Touchdown;
-				}
-				else
+					// needs more thought - runway direction?
 					DoFailsafeLanding();
-			#endif // NAV_WING
-			else
-				AcquireHoldPosition();
-			break;
-		case AtHome:
-			Navigate(OriginLatitude, OriginLongitude);
-			SetDesiredAltitude((int16)P[NavRTHAlt]);
-			if ( F.ReturnHome || F.Navigate )
-				if ( F.WayPointAchieved ) // check still @ Home
-				{
-					if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
-						NavState = Descending;
+					State = Shutdown;
+					StopMotors();
 				}
-				else
-					NavState = ReturningHome;
-			else
-				AcquireHoldPosition();
-			break;
-		case ReturningHome:		
-			Navigate(OriginLatitude, OriginLongitude);
-			SetDesiredAltitude((int16)P[NavRTHAlt]);
-			if ( F.ReturnHome || F.Navigate )
-			{
-				if ( F.WayPointAchieved )
-				{
-					mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
-					NavState = AtHome;
-				}	
-			}
-			else
-				AcquireHoldPosition();					
-			break;
-		case Loitering:
-			Navigate(WPLatitude, WPLongitude);
-			SetDesiredAltitude(WPAltitude);
-			if ( F.Navigate )
-			{
-				if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
-					if ( CurrWP == NoOfWayPoints )
+				#else
+					if ( Altitude < LAND_DM )
 					{
-						CurrWP = 1;
-						NavState = ReturningHome;	
+						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+						NavState = Touchdown;
 					}
 					else
-					{
-						GetWayPointEE(++CurrWP); 
-						NavState = Navigating;
-					}
-			}
-			else
-				AcquireHoldPosition();
-			break;
-		case Navigating:
-			Navigate(WPLatitude, WPLongitude);
-			SetDesiredAltitude(WPAltitude);		
-			if ( F.Navigate )
-			{
-				if ( F.WayPointAchieved )
-				{
-					mS[NavStateTimeout] = mSClock() + WPLoiter;
-					NavState = Loitering;
-				}		
-			}
-			else
-				AcquireHoldPosition();					
-			break;
-		case HoldingStation:
-			if ( F.AttitudeHold )
-			{		
-				if ( F.AcquireNewPosition && F.LockHoldPosition )
-				{
-					F.AllowTurnToWP = SaveAllowTurnToWP;
+						DoFailsafeLanding();
+				#endif // NAV_WING
+				else
 					AcquireHoldPosition();
-					#ifdef NAV_ACQUIRE_BEEPER
-					if ( !F.BeeperInUse )
+				break;
+			case AtHome:
+				Navigate(OriginLatitude, OriginLongitude);
+				SetDesiredAltitude((int16)P[NavRTHAlt]);
+				if ( F.ReturnHome || F.Navigate )
+					if ( F.WayPointAchieved ) // check still @ Home
 					{
-						mS[BeeperTimeout] = mSClock() + 500L;
-						Beeper_ON;				
-					} 
-					#endif // NAV_ACQUIRE_BEEPER
-				}	
-			}
-			else
-				F.AcquireNewPosition = true;
-				
-			Navigate(HoldLatitude, HoldLongitude);
-	
-			if ( F.NavValid && F.NearLevel )  // Origin must be valid for ANY navigation!
-				if ( F.Navigate )
+						if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
+							NavState = Descending;
+					}
+					else
+						NavState = ReturningHome;
+				else
+					AcquireHoldPosition();
+				break;
+			case ReturningHome:		
+				Navigate(OriginLatitude, OriginLongitude);
+				SetDesiredAltitude((int16)P[NavRTHAlt]);
+				if ( F.ReturnHome || F.Navigate )
 				{
-					GetWayPointEE(CurrWP); // resume from previous WP
-					SetDesiredAltitude(WPAltitude);
-					NavState = Navigating;
+					if ( F.WayPointAchieved )
+					{
+						mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
+						NavState = AtHome;
+					}	
 				}
 				else
-					if ( F.ReturnHome )
-						NavState = ReturningHome;														
-			break;
-		} // switch NavState
-	}
+					AcquireHoldPosition();					
+				break;
+			case Loitering:
+				Navigate(WPLatitude, WPLongitude);
+				SetDesiredAltitude(WPAltitude);
+				if ( F.Navigate )
+				{
+					if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
+						if ( CurrWP == NoOfWayPoints )
+						{
+							CurrWP = 1;
+							NavState = ReturningHome;	
+						}
+						else
+						{
+							GetWayPointEE(++CurrWP); 
+							NavState = Navigating;
+						}
+				}
+				else
+					AcquireHoldPosition();
+				break;
+			case Navigating:
+				Navigate(WPLatitude, WPLongitude);
+				SetDesiredAltitude(WPAltitude);		
+				if ( F.Navigate )
+				{
+					if ( F.WayPointAchieved )
+					{
+						mS[NavStateTimeout] = mSClock() + WPLoiter;
+						NavState = Loitering;
+					}		
+				}
+				else
+					AcquireHoldPosition();					
+				break;
+			case HoldingStation:
+				if ( F.AttitudeHold )
+				{		
+					if ( F.AcquireNewPosition && !( F.Ch5Active & F.UsingPositionHoldLock ) )
+					{
+						F.AllowTurnToWP = SaveAllowTurnToWP;
+						AcquireHoldPosition();
+						#ifdef NAV_ACQUIRE_BEEPER
+						if ( !F.BeeperInUse )
+						{
+							mS[BeeperTimeout] = mSClock() + 500L;
+							Beeper_ON;				
+						} 
+						#endif // NAV_ACQUIRE_BEEPER
+					}	
+				}
+				else
+					F.AcquireNewPosition = true;
+				
+				Navigate(HoldLatitude, HoldLongitude);
+		
+				if ( F.NavValid && F.NearLevel )  // Origin must be valid for ANY navigation!
+					if ( F.Navigate )
+					{
+						GetWayPointEE(CurrWP); // resume from previous WP
+						SetDesiredAltitude(WPAltitude);
+						NavState = Navigating;
+					}
+					else
+						if ( F.ReturnHome )
+							NavState = ReturningHome;														
+				break;
+			} // switch NavState
 
 	DesiredRoll += NavRCorr;
 	DesiredPitch += NavPCorr;

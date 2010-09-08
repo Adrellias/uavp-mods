@@ -153,7 +153,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 		#else // CLOCK_40MHZ	
 			//RC[c] = ( (int32)PPMQSum[i] * RC_MAXIMUM + 2500L )/5000L; // scale to 4uS res. for now	
 			Temp2.i32 = (int32)PPMQSum[i] * (RC_MAXIMUM * 13L) + 32768L; 
-			RC[c] = (uint8)Temp2.w1;
+			RC[c] = (uint8)Temp2.iw1;
 		#endif // CLOCK_16MHZ		
 	}
 
@@ -165,7 +165,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 void UpdateControls(void)
 {
 	static int16 HoldRoll, HoldPitch, RollPitchScale;
-	static boolean NewLockHoldPosition;
+	static boolean NewCh5Active;
 
 	F.RCNewValues = false;
 
@@ -193,9 +193,9 @@ void UpdateControls(void)
 	F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
 		
 	#ifdef ATTITUDE_NO_LIMITS
-	RollPitchScale = 128L;
+		RollPitchScale = 128L;
 	#else
-	RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
+		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
 	#endif // ATTITUDE_NO_LIMITS
 		
 	DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
@@ -204,30 +204,26 @@ void UpdateControls(void)
 	DesiredYaw = RC[YawC] - RC_NEUTRAL;
 		
 	F.ReturnHome = F.Navigate = false;
-	#ifdef USE_POSITION_LOCK
-	if ( F.UsingPositionHoldLock )
+
+	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
+	if ( F.UsingPolarCoordinates )
 	{
-		NewLockHoldPosition = RC[RTHC] > RC_NEUTRAL;
 
-		if ( NewLockHoldPosition & !F.LockHoldPosition )
-			F.AllowTurnToWP = true;
-		else
-			F.AllowTurnToWP = SaveAllowTurnToWP;
-
-		F.LockHoldPosition = NewLockHoldPosition;			
-	}
-
+	}	
 	else
-	#endif // USE_POSITION_LOCK
-		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
-			#ifdef DEBUG_FORCE_NAV
-				F.Navigate = true;
-			#else
-				F.ReturnHome = true;
-			#endif // DEBUG_FORCE_NAV
+		if ( F.UsingPositionHoldLock )
+			if ( NewCh5Active & !F.Ch5Active )
+				F.AllowTurnToWP = true;
+			else
+				F.AllowTurnToWP = SaveAllowTurnToWP;
 		else
-			if ( RC[RTHC] > (RC_NEUTRAL/2) )
-				F.Navigate = true;		
+			if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+				F.ReturnHome = true;
+			else
+				if ( RC[RTHC] > (RC_NEUTRAL/2) )
+					F.Navigate = true;
+	
+	F.Ch5Active = NewCh5Active;	
 		
 	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 		DesiredAltitude = Altitude;

@@ -33,12 +33,28 @@ int32 int32sqrt(int32);
 
 int16 SRS16(int16 x, uint8 s)
 {
-	return((x<0) ? -((-x)>>s) : (x>>s));
+	static i16u Temp;
+
+	if ( s == (uint8)8 )
+	{
+		Temp.i16 = x;
+		return( (int16) Temp.i1 );
+	}
+	else
+		return((x<0) ? -((-x)>>s) : (x>>s));
 } // SRS16
 
 int32 SRS32(int32 x, uint8 s)
 {
-	return((x<0) ? -((-x)>>s) : (x>>s));
+	static i32u Temp;
+
+	if ( s == (uint8)8 )
+	{
+		Temp.i32 = x;
+		return( (int32)Temp.i3_1 );
+	}
+	else
+		return((x<0) ? -((-x)>>s) : (x>>s));
 } // SRS32
 
 int16 Make2Pi(int16 A)

@@ -64,7 +64,7 @@ int8 P[MAX_PARAMETERS];
 #pragma udata orient
 int16 OSin[48], OCos[48];
 #pragma udata
-uint8 Orientation;
+uint8 Orientation , PolarOrientation;
 uint8 UAVXAirframe;
 
 void ReadParametersEE(void)
@@ -99,12 +99,8 @@ void ReadParametersEE(void)
 			b >>=1;
 		}
 
-		#ifdef RX6CH
-			NavSensitivity = ((int16)P[PercentNavSens6Ch] * RC_MAXIMUM)/100L;
-			F.UsingPositionHoldLock = false;
-		#else
-			F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
-		#endif // RX6CH
+		F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
+		F.UsingPolarCoordinates = ( (P[ConfigBits] & UsePolarMask ) != 0);
 
 		for ( i = 0; i < CONTROLS; i++) // make reverse map
 			RMap[Map[P[TxRxType]][i]] = i;
@@ -116,6 +112,12 @@ void ReadParametersEE(void)
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
+
+		#ifdef TRICOPTER
+			YawSlewLimit = (int16)P[YawLimit] * 4L;
+		#else
+			YawSlewLimit = (int16)P[YawLimit];
+		#endif // TRICOPTER
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
@@ -129,24 +131,13 @@ void ReadParametersEE(void)
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
 
 		#ifdef MULTICOPTER
-			#ifdef USE_ORIENT
-				Orientation = P[Orient];
-				if (Orientation == 0xff ) // uninitialised
-					Orientation = 0;			
-			#else // USE_ORIENT
-				F.UsingAltOrientation = ( (P[ConfigBits] & FlyAltOrientationMask) != 0);
+			Orientation = P[Orient];
+			if (Orientation == 0xff ) // uninitialised
 				Orientation = 0;
-				#if ( defined QUADROCOPTER | defined TRICOPTER )
-					#ifdef TRICOPTER
-						if ( !F.UsingAltOrientation ) // K1 forward
-							Orientation = 24;
-					#else
-						if ( F.UsingAltOrientation )
-							Orientation = 6;
-					#endif // TRICOPTER
-				#endif // QUADROCOPTER | TRICOPTER
-			#endif // USE_ORIENT
-			CompassOffset -= (MILLIPI * (int16)Orientation) / 24L;
+
+			OrientationCompassOffset = (MILLIPI * (int16)Orientation) / 24L;		
+			
+			CompassOffset -= OrientationCompassOffset;
 		#else
 			Orientation = 0;
 		#endif // MULTICOPTER

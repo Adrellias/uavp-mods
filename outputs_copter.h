@@ -36,14 +36,8 @@ void OutSignals(void)
 
 	#if !( defined SIMULATE | defined TESTING )
 
-	for ( m = 0; m < 6; m++ )
-		PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
-
 	if ( !F.MotorsArmed )
 		StopMotors();
-
-	PWM4 = PWM[CamRollC];
-	PWM5 = PWM[CamPitchC];
 
 	// Save TMR0 and reset
 	DisableInterrupts;
@@ -53,6 +47,17 @@ void OutSignals(void)
 	FastWriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
 	EnableInterrupts;
+
+	PWM0 = Limit(PWM[FrontC], ESCMin, ESCMax);
+	PWM1 = Limit(PWM[LeftC], ESCMin, ESCMax);
+	PWM2 = Limit(PWM[RightC], ESCMin, ESCMax);
+	#ifdef TRICOPTER
+		PWM3 = Limit(PWM[BackC], 1, OUT_MAXIMUM);
+	#else
+		PWM3 = Limit(PWM[BackC], ESCMin, ESCMax);
+	#endif
+	PWM4 = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
+	PWM5 = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 
 	if ( P[ESCType] == ESCPPM )
 	{
@@ -71,26 +76,7 @@ void OutSignals(void)
 		#endif // TRICOPTER
 		MOVWF	SHADOWB,1
 		_endasm
-
-		#ifdef MULTICOPTER	
-			PWM0 = PWM[FrontC];
-			PWM1 = PWM[LeftC];
-			PWM2 = PWM[RightC];
-			PWM3 = PWM[BackC];
-		#else
-			#ifdef ELEVON
-				PWM0 = PWM[ThrottleC];
-				PWM1 = PWM[RightElevonC];
-				PWM2 = PWM[LeftElevonC];
-				PWM3 = PWM[RudderC];
-			#else
-				PWM0 = PWM[ThrottleC];
-				PWM1 = PWM[AileronC];
-				PWM2 = PWM[ElevatorC];
-				PWM3 = PWM[RudderC];
-			#endif
-		#endif // MULTICOPTER
-
+	
 		SyncToTimer0AndDisableInterrupts();
 
 		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse

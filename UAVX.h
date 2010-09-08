@@ -8,7 +8,7 @@
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20
 #define	ADC_YAW_FREQ			20
-#define COMPASS_FREQ			2		// 0.1Hz
+#define COMPASS_FREQ			0.5		// 0.1Hz
 
 // =================================================================================================
 // =                                  UAVX Quadrocopter Controller                                 =
@@ -37,8 +37,8 @@
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
-	#define QUADROCOPTER
-	//#define TRICOPTER
+	//#define QUADROCOPTER
+	#define TRICOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -285,8 +285,8 @@ typedef union {
 		uint8 b1;
 	};
 	struct {
-		uint8 i0;
-		uint8 i1;
+		int8 pad;
+		int8 i1;
 	};
 } i16u;
 
@@ -300,7 +300,7 @@ typedef union {
 	};
 	struct {
 		uint8 pad;
-		int16 b2_1;
+		int16 i2_1;
 	};
 } i24u;
 
@@ -308,18 +308,23 @@ typedef union {
 	int32 i32;
 	uint32 u32;
 	struct {
-		uint16 w0;
-		uint16 w1;
-	};
-	struct {
 		uint8 b0;
 		uint8 b1;
 		uint8 b2;
 		uint8 b3;
 	};
 	struct {
+		uint16 w0;
+		uint16 w1;
+	};
+	struct {
+		int16 pad;
+		int16 iw1;
+	};
+	
+	struct {
 		uint8 pad;
-		int24 b3_1;
+		int24 i3_1;
 	};
 } i32u;
 
@@ -502,12 +507,12 @@ typedef union {
 
 		AllowNavAltitudeHold:1,	// stick programmed
 		UsingPositionHoldLock:1,
-		LockHoldPosition:1,
+		Ch5Active:1,
 		Simulation:1,
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		NavigationActive:1,
-		u2:1,
+		UsingPolarCoordinates:1,
 
 		Signal:1,
 		RCFrameOK:1, 
@@ -587,6 +592,7 @@ extern uint8 ADCChannel;
 // autonomous.c
 
 extern void FailsafeHoldPosition(void);
+extern void DoPolarOrientation(void);
 extern void Navigate(int32, int32);
 extern void SetDesiredAltitude(int16);
 extern void DoFailsafeLanding(void);
@@ -619,7 +625,7 @@ extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
-extern int16 CompassOffset;
+extern int16 CompassOffset, OrientationCompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
@@ -685,6 +691,7 @@ extern void CalibrateCompass(void);
 extern void InitHeading(void);
 extern void InitCompass(void);
 
+extern i16u Compass;
 extern int16 CompassFilterA;
 extern i32u CompassValF;
 
@@ -711,7 +718,7 @@ extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
 extern int16 Rl, Pl, Yl;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
-extern int16 HoldYaw;
+extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
 extern i32u  YawRateF;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
@@ -1007,6 +1014,7 @@ extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void InitI2CESCs(void);
 extern void StopMotors(void);
+extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
@@ -1146,7 +1154,7 @@ extern const rom uint8 ESCLimits [];
 
 
 extern int16 OSin[], OCos[];
-extern uint8 Orientation;
+extern uint8 Orientation, PolarOrientation;
 
 extern uint8 ParamSet;
 extern boolean ParametersChanged, SaveAllowTurnToWP;

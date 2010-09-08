@@ -33,7 +33,7 @@ int16 ADC(uint8 ADCChannel)
 	static int16 v;
 
 	DisableInterrupts; // make atomic
-		v = ADCVal[ADCChannel].v.w1; // rescale by 256
+		v = ADCVal[ADCChannel].v.iw1; // rescale by 256
 	EnableInterrupts;
 
 	return ( v );

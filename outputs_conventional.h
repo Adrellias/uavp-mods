@@ -37,15 +37,12 @@ void OutSignals(void)
 	#if !( defined SIMULATE | defined TESTING )
 
 	if ( ServoToggle == 0 )
-	{	
-		for ( m = 0; m < 6; m++ )
+	{		
+		for ( m = 0; m < 8; m++ )
 			PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
 		
 		if ( !F.MotorsArmed )
-			StopMotors();
-		
-		PWM4 = PWM[CamRollC];
-		PWM5 = PWM[CamPitchC];
+			StopMotors();		
 		
 		// Save TMR0 and reset
 		DisableInterrupts;
@@ -75,6 +72,9 @@ void OutSignals(void)
 			PWM2 = PWM[ElevatorC];
 			PWM3 = PWM[RudderC];
 		#endif
+
+		PWM4 = PWM[CamRollC];
+		PWM5 = PWM[CamPitchC];
 		
 		SyncToTimer0AndDisableInterrupts();
 		

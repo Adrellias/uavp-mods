@@ -27,6 +27,7 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 void StopMotors(void);
+void InitMotors(void);
 
 boolean OutToggle;
 int16 PWM[6];
@@ -61,34 +62,6 @@ void DoMulticopterMix(int16 CurrThrottle)
 
 			NOT YET!
 
-			#define NEG_SHIFT 2 
-			#define POS_SHIFT 1
-
-			RlOn2 = SRS16(Rl, 1);
-			PlOn2 = SRS16(Pl, 1);
-  
-			PWM[FrontC]  +=  ( RlOn2 + PlOn2 ); 
-			PWM[LeftC]  -= Rl; 
-			PWM[RightC] += Rl; PWM[BackC] -= ( RlOn2 + PlOn2 );
-  
-			if ( Yl < 0) 
-			{
-				YlNeg = SRS16(Yl, NEG_SHIFT);
-				YlNegOn2 = SRS16(YlNeg, 1);
-				PWM[FrontC] += YlNeg; 
-				PWM[LeftC]  -= YlNegOn2; 
-				PWM[RightC] -= YlNegOn2; 
-				PWM[BackC]  += YlNeg;
-			 } 
-			else 
-			{ 
-				YlPos = SRS16(Yl, POS_SHIFT);
-				YlPosOn2 = SRS16(YlNeg, 1);
-				PWM[FrontC] += YlPos;
-			 	PWM[LeftC]  -= YlPosOn2;
-			 	PWM[RightC] -= YlPosOn2; 
-				PWM[BackC]  += YlPos; 
-			}
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
@@ -108,7 +81,7 @@ void CheckDemand(int16 CurrThrottle)
 	MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
 	MaxMotor = Max(MaxMotor, PWM[RightC]);
 	#ifndef TRICOPTER
-	MaxMotor = Max(MaxMotor, PWM[BackC]);
+		MaxMotor = Max(MaxMotor, PWM[BackC]);
 	#endif // TRICOPTER
 
 	DemandSwing = MaxMotor - CurrThrottle;
@@ -122,8 +95,10 @@ void CheckDemand(int16 CurrThrottle)
 		{
 			MotorDemandRescale = true;
 			Rl = (Rl * Scale)/256;  // could get rid of the divides
-			Pl = (Pl * Scale)/256; 
-			Yl = (Yl * Scale)/256; 
+			Pl = (Pl * Scale)/256;
+			#ifndef TRICOPTER 
+				Yl = (Yl * Scale)/256;
+			#endif // TRICOPTER 
 		}
 		else
 			MotorDemandRescale = false;	
@@ -161,7 +136,14 @@ void MixAndLimitMotors(void)
 				DoMulticopterMix(CurrThrottle);
 		}
 		else
-			PWM[FrontC] = PWM[BackC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+		{
+			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+			#ifdef TRICOPTER
+				PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+			#else
+				PWM[BackC] = CurrThrottle;
+			#endif // !TRICOPTER
+		}
 	#else
 		CurrThrottle += AltComp; // simple - faster to climb with no elevator yet
 		
@@ -177,21 +159,21 @@ void MixAndLimitMotors(void)
 			PWM[LeftElevonC] = PWMSense[LeftElevonC] * (TempElevator -  Rl);		
 		#endif
 	#endif
+
 } // MixAndLimitMotors
 
 void MixAndLimitCam(void)
 {
-	static int16 Cr, Cp;
+	static i24u Temp;
 
 	// use only roll/pitch angle estimates
-	Cr = SRS32((int24)RollSum * P[CamRollKp], 8) + (int16)P[CamRollTrim];
-	Cr = PWMSense[CamRollC] * Cr + OUT_NEUTRAL;
+	Temp.i24 = (int24)RollSum * P[CamRollKp];
+	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
+	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
 
-	Cp = SRS32((int24)PitchSum * P[CamPitchKp], 8) + DesiredCamPitchTrim;
-	Cp = PWMSense[CamPitchC] * Cp + OUT_NEUTRAL; 			
-
-	PWM[CamRollC] = Limit(Cr, 1, OUT_MAXIMUM);
-	PWM[CamPitchC] = Limit(Cp, 1, OUT_MAXIMUM);
+	Temp.i24 = (int24)PitchSum * P[CamPitchKp];
+	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
+	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 			
 
 } // MixAndLimitCam
 
@@ -245,21 +227,29 @@ void InitI2CESCs(void)
 void StopMotors(void)
 {
 	#ifdef MULTICOPTER
-	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
-		#ifdef TRICOPTER
-			PWM[BackC] = OUT_NEUTRAL;
-		#else
+		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+		#ifndef TRICOPTER
 			PWM[BackC] = ESCMin;
-		#endif	
+		#endif // !TRICOPTER	
 	#else
 		PWM[ThrottleC] = ESCMin;
-		PWM[1] = PWM[2] = PWM[3] = OUT_NEUTRAL;
 	#endif // MULTICOPTER
-
-	PWM[CamRollC] = PWM[CamPitchC] = OUT_NEUTRAL;
 
 	F.MotorsArmed = false;
 } // StopMotors
+
+void InitMotors(void)
+{
+	StopMotors();
+	#ifdef TRICOPTER
+		PWM[BackC] = OUT_NEUTRAL;
+	#endif // !TRICOPTER
+
+	PWM[CamRollC] = OUT_NEUTRAL;
+	PWM[CamPitchC] = OUT_NEUTRAL;
+
+} // InitMotors
+
 
 
 

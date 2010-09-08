@@ -52,16 +52,16 @@ void GetHeading(void)
 		{
 			Heading = Compass.i16;
 			CompassValF.w0 = 0;
-			CompassValF.w1 = Compass.i16;
+			CompassValF.iw1 = Compass.i16;
 		}
 		else // ~13uS @ 40MHz
 		{
 			CompassVal.b0 = 0;
-			CompassVal.b2_1 = Compass.i16;
-			CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.b3_1) * CompassFilterA;
+			CompassVal.i2_1 = Compass.i16;
+			CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.i3_1) * CompassFilterA;
 		}
 
-		Heading = CompassValF.w1; 
+		Heading = CompassValF.iw1; 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
 	}
 	else

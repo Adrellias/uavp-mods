@@ -50,7 +50,7 @@ void main(void)
 	InitRC();
 	InitTimersAndInterrupts();
 
-	StopMotors();
+	InitMotors();
 	INTCONbits.PEIE = true;	
 	INTCONbits.TMR0IE = true; 
 	EnableInterrupts;
