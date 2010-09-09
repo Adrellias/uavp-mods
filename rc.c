@@ -43,8 +43,8 @@ const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 0,1,2,3,4,5,6 },	// Graupner MX16S
 	{ 4,0,2,3,1,5,6 },	// Spektrum DX6i/AR6200
 	{ 2,0,1,3,4,5,6 },	// Futaba Th 3/R617FS
-
-	{ 2,0,1,3,4,5,6 },	// Custom
+	{ 4,0,2,3,5,1,6 },	// Spektrum DX7a/AR7000
+	{ 2,0,1,3,4,5,6 }	// Custom
 //{ 4,0,2,1,3,5,6 }	// Custom
 	};
 
@@ -66,6 +66,7 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 		true,	// Graupner MX16S
 		true,	// Graupner DX6i/AR6200
 		true,	// Futaba Thr 3/R617FS
+		true, 	// Spektrum DX7a/AR7000
 		true	// custom Tx/Rx combination
 	};
 
