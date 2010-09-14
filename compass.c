@@ -94,6 +94,8 @@ static uint8 CP[9];
 
 void GetCompassParameters(void)
 {
+	#ifndef CLOCK_40MHZ
+
 	uint8 r;
 
 	I2CStart();
@@ -133,6 +135,8 @@ void GetCompassParameters(void)
 CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
+
+	#endif // CLOCK_40MHZ
 } // GetCompassParameters
 
 void DoCompassTest(void)
@@ -157,6 +161,8 @@ void DoCompassTest(void)
 	I2CStop();
 
 	Delay1mS(7);
+
+	#ifndef CLOCK_40MHZ
 
 	GetCompassParameters();
 
@@ -204,7 +210,9 @@ void DoCompassTest(void)
 		case 2: TxString(" Continuous"); break;
 		case 3: TxString(" Not-allowed"); break;
 		}
-	TxNextLine(); 
+	TxNextLine();
+
+	#endif // CLOCK_40MHZ
 
 	InitCompass();
 	if ( !F.CompassValid ) goto CTerror;

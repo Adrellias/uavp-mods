@@ -119,44 +119,20 @@ void ShowSetup(boolean h)
 		default: TxString("UNKNOWN\r\n");
 	}
 
-	TxString("Accelerometers: ");
-	if( F.AccelerationsValid )
-	#ifdef USE_FLAT_ACC
-		TxString("ONLINE (horiz.)\r\n");
-	#else
-		TxString("ONLINE\r\n");
-	#endif // USE_FLAT_ACC
-	else
-		TxString("not available\r\n");
-
-	TxString("Compass: ");
 	if( F.CompassValid )
 	{
-		TxString("ONLINE (");
-		TxVal32((int16)P[CompassOffsetQtr]*90,0,0);
-		TxString("deg. offset)\r\n");
+		TxString("Compass Offset: ");
+		TxVal32((int16)P[CompassOffsetQtr] * 90,0,0);
+		TxString("deg.\r\n");
 	}
-	else
-		TxString("not available\r\n");
 
 	TxString("Baro: ");
-	if ( F.BaroAltitudeValid )
-		switch ( BaroType ) {
-		case BaroMPX4115: TxString("MPX4115 ONLINE\r\n"); break;
-		case BaroSMD500: TxString("SMD500 ONLINE\r\n"); break;
-		case BaroBMP085: TxString("BMP085 ONLINE\r\n"); break;
+	switch ( BaroType ) {
+	case BaroMPX4115: TxString("MPX4115\r\n"); break;
+	case BaroSMD500: TxString("SMD500\r\n"); break;
+	case BaroBMP085: TxString("BMP085\r\n"); break;
+	default: TxString("UNKNOWN\r\n");
 	}
-	else
-		TxString("not available\r\n");
-
-	TxString("Rangefinder: ");
-	if ( F.RangefinderAltitudeValid )
-		if ( F.RFInInches )
-			TxString("ONLINE (inches)\r\n");
-		else
-			TxString("ONLINE\r\n");
-	else
-		TxString("not available\r\n");
 
 	#ifdef MULTICOPTER
 		TxString("Forward Flight: ");
@@ -290,24 +266,39 @@ void ShowSetup(boolean h)
 		TxString("\tOne or more flight parameters are INVALID!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
-		TxString("\tBarometer failure?\r\n");
+		TxString("\tBarometer: OFFLINE\r\n");
 	if ( BaroRetries >= BARO_INIT_RETRIES )
-		TxString("\tBaro initialisation failed.\r\n");
+		TxString("\tBaro Init: FAILED\r\n");
+
+	if ( !F.RangefinderAltitudeValid )
+		if ( F.RFInInches )
+			TxString("\tRangefinder: OFFLINE (inches)\r\n");
+		else
+			TxString("\tRangefinder: OFFLINE\r\n");
+
 	if ( F.GyroFailure )
-		TxString("\tGyro failure?\r\n");
-	if( !F.AccelerationsValid )
-		TxString("\tAccelerometer failure?\r\n");
-	if( !F.CompassValid )
-		TxString("\tCompass failure?\r\n");
+		TxString("\tGyro: FAILURE\r\n");
+
+	if ( !F.AccelerationsValid )
+	#ifdef USE_FLAT_ACC
+		TxString("Accelerometers: OFFLINE (horiz.)\r\n");
+	#else
+		TxString("Accelerometers: OFFLINE\r\n");
+	#endif // USE_FLAT_ACC
+
+	if ( !F.CompassValid )
+		TxString("\tCompass: OFFLINE\r\n");
+
 	if ( !F.Signal )
 		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
 	if ( Armed && FirstPass ) 
-		TxString("\tUAVX is armed - disarm!\r\n");
+		TxString("\tUAVX is armed - DISARM!\r\n");
+
 	if ( F.Navigate || F.ReturnHome )
-		TxString("\tNavigate/RTH is selected - deselect!\r\n");
+		TxString("\tNavigate/RTH is selected - DESELECT!\r\n");
 
 	if ( InitialThrottle >= RC_THRES_START )
-		TxString("\tThrottle may be open - close throttle!\r\n");
+		TxString("\tThrottle may be open - CLOSE THROTTLE!\r\n");
 	
 	ShowPrompt();
 } // ShowSetup

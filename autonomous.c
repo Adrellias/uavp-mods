@@ -22,8 +22,6 @@
 
 #include "uavx.h"
 
-
-
 void FailsafeLevelFlight(void);
 void DoPolarOrientation(void);
 void Navigate(int32, int32);
