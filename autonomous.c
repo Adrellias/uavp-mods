@@ -1,9 +1,9 @@
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -11,12 +11,12 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
-//    If not, see http://www.gnu.org/licenses/.
+//    If not, see http://www.gnu.org/licenses/
 
 // Autonomous flight routines
 
@@ -136,19 +136,34 @@ void AcquireHoldPosition(void)
 
 void DoPolarOrientation(void)
 {
-	static int32 EastDiff, NorthDiff;
+	static int32 EastDiff, NorthDiff, Radius;
 	static int16 DesiredRelativeHeading;
 	static int16 P;
+
+	F.UsingPolar = false;
 	
-	EastDiff = SRS32( (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
-	NorthDiff = OriginLatitude - GPSLatitude;
-
-	DesiredRelativeHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff) - MILLIPI - Heading );
-
-	P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
-
-	while ( P > 24 ) P -=24;
-	while ( P < 0 ) P +=24;
+	if ( F.NavValid && F.UsingPolarCoordinates && ( NavState == HoldingStation ) )
+	{
+		EastDiff = SRS32( (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
+		NorthDiff = OriginLatitude - GPSLatitude;
+	
+		Radius = Max(Abs(EastDiff), Abs(NorthDiff));
+		if ( Radius > NavClosingRadius )
+		{ 
+			F.UsingPolar = true;
+			DesiredRelativeHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff) - MILLIPI - Heading );
+		
+			P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
+		
+			while ( P > 24 ) P -=24;
+			while ( P < 0 ) P +=24;
+	
+		}
+		else
+			P = 0; 
+	}
+	else
+		P = 0;
 
 	PolarOrientation = P;
 	
@@ -168,6 +183,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static int24 Temp;
 	static int32 EastDiff, NorthDiff;
 	static int16 RelHeading;
+
+	DoPolarOrientation();
 
 	DesiredLatitude = NavLatitude;
 	DesiredLongitude = NavLongitude;
@@ -306,149 +323,131 @@ void DoNavigation(void)
 	#ifndef TESTING // not used for testing - make space!
 
 	if ( !F.NavComputed )
-		if ( F.UsingPolarCoordinates )
-		{
-			if ( F.UsingPolar )
-				DoPolarOrientation();
-
-			NavRCorr = NavPCorr = NavYCorr = 0;
-			F.NavComputed = true;
-		}
-		else 
-			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
-			case Touchdown:
-				Navigate(OriginLatitude, OriginLongitude);
+		switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
+		case Touchdown:
+			Navigate(OriginLatitude, OriginLongitude);
+			DoFailsafeLanding();
+			break;
+		case Descending:
+			Navigate( OriginLatitude, OriginLongitude );
+			if ( F.ReturnHome || F.Navigate )
+			#ifdef NAV_WING
+			{
+				// needs more thought - runway direction?
 				DoFailsafeLanding();
-				break;
-			case Descending:
-				Navigate( OriginLatitude, OriginLongitude );
-				if ( F.ReturnHome || F.Navigate )
-				#ifdef NAV_WING
+				State = Shutdown;
+				StopMotors();
+			}
+			#else
+				if ( Altitude < LAND_DM )
 				{
-					// needs more thought - runway direction?
+					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+					NavState = Touchdown;
+				}
+				else
 					DoFailsafeLanding();
-					State = Shutdown;
-					StopMotors();
+			#endif // NAV_WING
+			else
+				AcquireHoldPosition();
+			break;
+		case AtHome:
+			Navigate(OriginLatitude, OriginLongitude);
+			SetDesiredAltitude((int16)P[NavRTHAlt]);
+			if ( F.ReturnHome || F.Navigate )
+				if ( F.WayPointAchieved ) // check still @ Home
+				{
+					if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
+						NavState = Descending;
 				}
-				#else
-					if ( Altitude < LAND_DM )
+				else
+					NavState = ReturningHome;
+			else
+				AcquireHoldPosition();
+			break;
+		case ReturningHome:		
+			Navigate(OriginLatitude, OriginLongitude);
+			SetDesiredAltitude((int16)P[NavRTHAlt]);
+			if ( F.ReturnHome || F.Navigate )
+			{
+				if ( F.WayPointAchieved )
+				{
+					mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
+					NavState = AtHome;
+				}	
+			}
+			else
+				AcquireHoldPosition();					
+			break;
+		case Loitering:
+			Navigate(WPLatitude, WPLongitude);
+			SetDesiredAltitude(WPAltitude);
+			if ( F.Navigate )
+			{
+				if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
+					if ( CurrWP == NoOfWayPoints )
 					{
-						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-						NavState = Touchdown;
+						CurrWP = 1;
+						NavState = ReturningHome;	
 					}
 					else
-						DoFailsafeLanding();
-				#endif // NAV_WING
-				else
-					AcquireHoldPosition();
-				break;
-			case AtHome:
-				Navigate(OriginLatitude, OriginLongitude);
-				SetDesiredAltitude((int16)P[NavRTHAlt]);
-				if ( F.ReturnHome || F.Navigate )
-					if ( F.WayPointAchieved ) // check still @ Home
 					{
-						if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
-							NavState = Descending;
-					}
-					else
-						NavState = ReturningHome;
-				else
-					AcquireHoldPosition();
-				break;
-			case ReturningHome:		
-				Navigate(OriginLatitude, OriginLongitude);
-				SetDesiredAltitude((int16)P[NavRTHAlt]);
-				if ( F.ReturnHome || F.Navigate )
-				{
-					if ( F.WayPointAchieved )
-					{
-						mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
-						NavState = AtHome;
-					}	
-				}
-				else
-					AcquireHoldPosition();					
-				break;
-			case Loitering:
-				Navigate(WPLatitude, WPLongitude);
-				SetDesiredAltitude(WPAltitude);
-				if ( F.Navigate )
-				{
-					if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
-						if ( CurrWP == NoOfWayPoints )
-						{
-							CurrWP = 1;
-							NavState = ReturningHome;	
-						}
-						else
-						{
-							GetWayPointEE(++CurrWP); 
-							NavState = Navigating;
-						}
-				}
-				else
-					AcquireHoldPosition();
-				break;
-			case Navigating:
-				Navigate(WPLatitude, WPLongitude);
-				SetDesiredAltitude(WPAltitude);		
-				if ( F.Navigate )
-				{
-					if ( F.WayPointAchieved )
-					{
-						mS[NavStateTimeout] = mSClock() + WPLoiter;
-						NavState = Loitering;
-					}		
-				}
-				else
-					AcquireHoldPosition();					
-				break;
-			case HoldingStation:
-				if ( F.AttitudeHold )
-				{		
-					if ( F.AcquireNewPosition && !( F.Ch5Active & F.UsingPositionHoldLock ) )
-					{
-						F.AllowTurnToWP = SaveAllowTurnToWP;
-						AcquireHoldPosition();
-						#ifdef NAV_ACQUIRE_BEEPER
-						if ( !F.BeeperInUse )
-						{
-							mS[BeeperTimeout] = mSClock() + 500L;
-							Beeper_ON;				
-						} 
-						#endif // NAV_ACQUIRE_BEEPER
-					}	
-				}
-				else
-					F.AcquireNewPosition = true;
-				
-				Navigate(HoldLatitude, HoldLongitude);
-		
-				if ( F.NavValid && F.NearLevel )  // Origin must be valid for ANY navigation!
-					if ( F.Navigate )
-					{
-						GetWayPointEE(CurrWP); // resume from previous WP
-						SetDesiredAltitude(WPAltitude);
+						GetWayPointEE(++CurrWP); 
 						NavState = Navigating;
 					}
-					else
-						if ( F.ReturnHome )
-							NavState = ReturningHome;														
-				break;
-			} // switch NavState
-
-	DesiredRoll += NavRCorr;
-	DesiredPitch += NavPCorr;
-	DesiredYaw += NavYCorr;
-	
-	DesiredRoll = Limit(DesiredRoll, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
-	DesiredPitch = Limit(DesiredPitch, -MAX_ROLL_PITCH, MAX_ROLL_PITCH);
-
+			}
+			else
+				AcquireHoldPosition();
+			break;
+		case Navigating:
+			Navigate(WPLatitude, WPLongitude);
+			SetDesiredAltitude(WPAltitude);		
+			if ( F.Navigate )
+			{
+				if ( F.WayPointAchieved )
+				{
+					mS[NavStateTimeout] = mSClock() + WPLoiter;
+					NavState = Loitering;
+				}		
+			}
+			else
+				AcquireHoldPosition();					
+			break;
+		case HoldingStation:
+			if ( F.AttitudeHold )
+			{		
+				if ( F.AcquireNewPosition && !( F.Ch5Active & F.UsingPositionHoldLock ) )
+				{
+					F.AllowTurnToWP = SaveAllowTurnToWP;
+					AcquireHoldPosition();
+					#ifdef NAV_ACQUIRE_BEEPER
+					if ( !F.BeeperInUse )
+					{
+						mS[BeeperTimeout] = mSClock() + 500L;
+						Beeper_ON;				
+					} 
+					#endif // NAV_ACQUIRE_BEEPER
+				}	
+			}
+			else
+				F.AcquireNewPosition = true;
+				
+			Navigate(HoldLatitude, HoldLongitude);
+		
+			if ( F.NavValid && F.NearLevel )  // Origin must be valid for ANY navigation!
+				if ( F.Navigate )
+				{
+					GetWayPointEE(CurrWP); // resume from previous WP
+					SetDesiredAltitude(WPAltitude);
+					NavState = Navigating;
+				}
+				else
+					if ( F.ReturnHome )
+						NavState = ReturningHome;														
+			break;
+		} // switch NavState
 	#endif // !TESTING
 } // DoNavigation
 
-//#define USE_PPM_FAILSAFE
 #ifdef USE_PPM_FAILSAFE
 
 void CheckFailsafeAbort(void)
@@ -594,8 +593,6 @@ void UAVXNavCommand(void)
 
 	LEDBlue_OFF;
 } // UAVXNavCommand
-
-
 
 void GetWayPointEE(int8 wp)
 { 

@@ -1,9 +1,9 @@
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -11,9 +11,9 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
@@ -58,7 +58,7 @@ void TxString(const rom uint8 *pch)
 
 void TxChar(uint8 ch)
 {
-	uint8 NewTail;
+	static uint8 NewTail;
 
 	if ( F.TxToBuffer )
 	{

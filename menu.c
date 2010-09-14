@@ -1,9 +1,9 @@
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -11,9 +11,9 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
@@ -126,7 +126,8 @@ void ShowSetup(boolean h)
 	#else
 		TxString("ONLINE\r\n");
 	#endif // USE_FLAT_ACC
-	TxString("not available\r\n");
+	else
+		TxString("not available\r\n");
 
 	TxString("Compass: ");
 	if( F.CompassValid )
@@ -208,7 +209,6 @@ void ShowSetup(boolean h)
 	}	
 	TxNextLine();
 	
-
 	#ifdef RX6CH
 		TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
 	#endif // RX6CH
@@ -289,8 +289,16 @@ void ShowSetup(boolean h)
 	if ( !F.ParametersValid )
 		TxString("\tOne or more flight parameters are INVALID!\r\n");
 	
+	if ( !F.BaroAltitudeValid )
+		TxString("\tBarometer failure?\r\n");
+	if ( BaroRetries >= BARO_INIT_RETRIES )
+		TxString("\tBaro initialisation failed.\r\n");
 	if ( F.GyroFailure )
 		TxString("\tGyro failure?\r\n");
+	if( !F.AccelerationsValid )
+		TxString("\tAccelerometer failure?\r\n");
+	if( !F.CompassValid )
+		TxString("\tCompass failure?\r\n");
 	if ( !F.Signal )
 		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
 	if ( Armed && FirstPass ) 

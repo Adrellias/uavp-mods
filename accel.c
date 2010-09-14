@@ -1,9 +1,9 @@
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -11,9 +11,9 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
@@ -242,29 +242,35 @@ void GetNeutralAccelerations(void)
 	Delay100mSWithOutput(2);	// wait 1/10 sec until LISL is ready to talk
 	// already done in caller program
 	LR = FB = DU = 0;
-	for ( i = 16; i; i--)
+	if ( F.AccelerationsValid )
 	{
-		while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
-		ReadAccelerations();
+		for ( i = 16; i; i--)
+		{
+			while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
+			ReadAccelerations();
+	
+		#ifdef USE_FLAT_ACC
+			LR -= Ax.i16;
+			FB += Ay.i16;
+			DU += Az.i16;
+		#else
+			LR += Ax.i16;
+			DU += Ay.i16;
+			FB += Az.i16;
+		#endif // USE_FLAT_ACC
+		}	
+	
+		LR = SRS16(LR, 4);
+		FB = SRS16(FB, 4);
+		DU = SRS16(DU, 4);
+	
+		NeutralLR = Limit(LR, -99, 99);
+		NeutralFB = Limit(FB, -99, 99);
+		NeutralDU = Limit(DU - 1024, -99, 99); // -1g
+	}
+	else
+		NeutralLR = NeutralFB = NeutralDU = 0;
 
-	#ifdef USE_FLAT_ACC
-		LR -= Ax.i16;
-		FB += Ay.i16;
-		DU += Az.i16;
-	#else
-		LR += Ax.i16;
-		DU += Ay.i16;
-		FB += Az.i16;
-	#endif // USE_FLAT_ACC
-	}	
-
-	LR = SRS16(LR, 4);
-	FB = SRS16(FB, 4);
-	DU = SRS16(DU, 4);
-
-	NeutralLR = Limit(LR, -99, 99);
-	NeutralFB = Limit(FB, -99, 99);
-	NeutralDU = Limit(DU - 1024, -99, 99); // -1g
 } // GetNeutralAccelerations
 
 #ifdef TESTING

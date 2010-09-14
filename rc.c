@@ -1,9 +1,9 @@
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -11,13 +11,12 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
-
 #include "uavx.h"
 
 void DoRxPolarity(void);
@@ -172,16 +171,29 @@ void UpdateControls(void)
 
 	MapRC();								// remap channel order for specific Tx/Rx
 
-	if ( NavState == HoldingStation )
-	{ // Manual
-		DesiredThrottle = RC[ThrottleC];
-		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
-			DesiredThrottle = 0;
-	}
-	else // Autonomous
-		if ( F.AllowNavAltitudeHold )
-			DesiredThrottle = CruiseThrottle;
-			
+	DesiredThrottle = RC[ThrottleC];
+
+	//_________________________________________________________________________________________
+
+	// Navigation
+
+	F.ReturnHome = F.Navigate = F.UsingPolar = false;
+	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
+
+	if ( F.UsingPositionHoldLock )
+		if ( NewCh5Active & !F.Ch5Active )
+			F.AllowTurnToWP = true;
+		else
+			F.AllowTurnToWP = SaveAllowTurnToWP;
+	else
+		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+			F.ReturnHome = true;
+		else
+			if ( RC[RTHC] > (RC_NEUTRAL/2) )
+				F.Navigate = true;
+	
+	F.Ch5Active = NewCh5Active;
+
 	#ifdef RX6CH
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE
@@ -190,45 +202,39 @@ void UpdateControls(void)
 		NavSensitivity = RC[NavGainC];
 		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 	#endif // !RX6CH
+
+	//_________________________________________________________________________________________
+
+	// Altitude Hold
 	
 	F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
+
+	if ( NavState == HoldingStation )
+	{ // Manual
+		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
+			DesiredThrottle = 0;
+	}
+	else // Autonomous
+		if ( F.AllowNavAltitudeHold &&  F.AltHoldEnabled )
+			DesiredThrottle = CruiseThrottle;
+
+	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
+		DesiredAltitude = Altitude;	
+
+	//_________________________________________________________________________________________
+			
+	// Attitude
 		
 	#ifdef ATTITUDE_NO_LIMITS
-		RollPitchScale = 128L;
+		DesiredRoll = RC[RollC] - RC_NEUTRAL;
+		DesiredPitch = RC[PitchC] - RC_NEUTRAL;		
 	#else
 		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
+		DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
+		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
 	#endif // ATTITUDE_NO_LIMITS
-		
-	DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
-	DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
-		
 	DesiredYaw = RC[YawC] - RC_NEUTRAL;
-		
-	F.ReturnHome = F.Navigate = F.UsingPolar = false;
-	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
-	if ( F.UsingPolarCoordinates )
-	{
-		F.UsingPolar = F.Ch5Active & F.NavigationActive & F.NavValid;
-		F.Ch5Active = NewCh5Active;
-	}	
-	else
-		if ( F.UsingPositionHoldLock )
-			if ( NewCh5Active & !F.Ch5Active )
-				F.AllowTurnToWP = true;
-			else
-				F.AllowTurnToWP = SaveAllowTurnToWP;
-		else
-			if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
-				F.ReturnHome = true;
-			else
-				if ( RC[RTHC] > (RC_NEUTRAL/2) )
-					F.Navigate = true;
-	
-	F.Ch5Active = NewCh5Active;	
-		
-	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
-		DesiredAltitude = Altitude;
-		
+						
 	HoldRoll = DesiredRoll - RollTrim;
 	HoldRoll = Abs(HoldRoll);
 	HoldPitch = DesiredPitch - PitchTrim;

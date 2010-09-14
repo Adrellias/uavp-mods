@@ -1,21 +1,13 @@
 
 //#define JIM_MPX_INVERT
 
-#define USE_ORIENT					// requires UAVPSet 4.08!!!!
-#define USE_POSITION_LOCK			// requires UAVPSet 4.08!!!!
 
-#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
-#define	ADC_BATT_FREQ			5
-#define	ADC_ALT_FREQ			20
-#define	ADC_YAW_FREQ			20
-#define COMPASS_FREQ			0.5		// 0.1Hz
-
-// =================================================================================================
-// =                                  UAVX Quadrocopter Controller                                 =
-// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
-// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
-// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
-// =================================================================================================
+// ===============================================================================================
+// =                                UAVX Quadrocopter Controller                                 =
+// =                           Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                 Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                     http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// ===============================================================================================
 
 //    This is part of UAVX.
 
@@ -23,9 +15,9 @@
 //    General Public License as published by the Free Software Foundation, either version 3 of the 
 //    License, or (at your option) any later version.
 
-//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
-//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//    General Public License for more details.
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without
+//    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+//    See the GNU General Public License for more details.
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
@@ -44,7 +36,6 @@
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 	//#define I2C_HW
-	//#define DEBUG_FORCE_NAV //zzz
 #endif // !BATCHMODE
 
 #ifdef CLOCK_40MHZ
@@ -64,7 +55,15 @@
 
 //________________________________________________________________________________________________
 
-// Tests
+#define USE_PPM_FAILSAFE
+
+// Filters
+
+#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
+#define	ADC_BATT_FREQ			5
+#define	ADC_ALT_FREQ			20
+#define	ADC_YAW_FREQ			20
+#define COMPASS_FREQ			0.5		// x 0.1Hz
 
 // Airframe
 
@@ -641,6 +640,8 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 // baro.c
 
+#define BARO_INIT_RETRIES	10	// max number of initialisation retries
+
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
 
 extern void SetFreescaleMCP4725(int16);
@@ -670,6 +671,8 @@ extern int24 BaroRelAltitude, BaroRelAltitudeP;
 extern int16 BaroROC;
 extern i16u	BaroVal;
 extern int8 BaroType;
+extern int16 AltitudeUpdateRate;
+extern int8	BaroRetries;
 
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;
@@ -1020,8 +1023,8 @@ enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
 enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
-#define NoOfPWMOutputs 		4
-#define NoOfI2CESCOutputs 		4 // zzz Hexacopter etc.
+#define NoOfPWMOutputs 			4
+#define NoOfI2CESCOutputs 		4 
 
 extern int16 PWM[6];
 extern int16 PWMSense[6];
