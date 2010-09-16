@@ -111,6 +111,9 @@ void InitTimersAndInterrupts(void)
 	for (i = Clock; i<= CompassUpdate; i++)
 		mS[i] = 0;
 
+	INTCONbits.PEIE = true;	
+	INTCONbits.TMR0IE = true; 
+
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 

@@ -20,8 +20,8 @@
 
 #include "uavx.h"
 
-extern void InitPorts(void);
-extern void InitMisc(void);
+void InitPortsAndUSART(void);
+void InitMisc(void);
 void Delay1mS(int16);
 void Delay100mSWithOutput(int16);
 void DoBeep100mSWithOutput(uint8, uint8);
@@ -35,7 +35,7 @@ int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 int32 BatteryChargeADC, BatteryCurrent;
 
-void InitPorts(void)
+void InitPortsAndUSART(void)
 {
 	// general ports setup
 	TRISA = 0b00111111;				// all inputs
@@ -60,7 +60,10 @@ void InitPorts(void)
 	
 	INTCON2bits.NOT_RBPU = false;	// WEAK PULLUPS MUST BE ENABLED OTHERWISE I2C VERSIONS 
 									// WITHOUT ESCS INSTALLED WILL PREVENT ANY FURTHER BOOTLOADS
-} // InitPorts
+
+	OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
+				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
+} // InitPortsAndUSART
 
 void InitMisc(void)
 {

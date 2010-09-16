@@ -25,7 +25,7 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
@@ -1276,6 +1276,7 @@ extern i16u AmbientTemperature;
 // utils.c
 
 extern void InitPorts(void);
+extern void InitPortsAndUSART(void);
 extern void InitMisc(void);
 extern void Delay1mS(int16);
 extern void Delay100mSWithOutput(int16);

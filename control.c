@@ -146,7 +146,7 @@ void AltitudeHold()
 
 			UpdateAltitudeSource();
 
-			if ( F.NavigationActive && ( NavState != HoldingStation ) && F.AllowNavAltitudeHold ) 
+			if ( ( NavState != HoldingStation ) && F.AllowNavAltitudeHold ) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
 				DoAltitudeHold(Altitude, ROC);

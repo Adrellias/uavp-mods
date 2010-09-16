@@ -100,7 +100,7 @@ void FailsafeHoldPosition(void)
 
 void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
-	if ( F.AllowNavAltitudeHold )
+	if ( F.AllowNavAltitudeHold && F.AltHoldEnabled )
 	{
 		AltSum = 0;	
 		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
@@ -320,7 +320,9 @@ void DoNavigation(void)
 
 	#ifndef TESTING // not used for testing - make space!
 
-	if ( !F.NavComputed )
+	F.NavigationActive = F.GPSValid && F.CompassValid  && F.NewCommands && ( mSClock() > mS[NavActiveTime]);
+
+	if ( F.NavigationActive && !F.NavComputed )
 		switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 		case Touchdown:
 			Navigate(OriginLatitude, OriginLongitude);
@@ -471,7 +473,7 @@ void DoPPMFailsafe(void)
 	#ifndef TESTING // not used for testing - make space!
 
 	if ( State == InFlight )
-		switch ( FailState ) {
+		switch ( FailState ) { // FailStates { MonitoringRx, Aborting, Terminating, Terminated }
 		case Terminated: // Basic assumption is that aircraft is being flown over a safe area!
 			FailsafeHoldPosition();
 			DoFailsafeLanding();	

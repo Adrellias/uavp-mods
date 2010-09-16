@@ -237,7 +237,7 @@ void ShowSetup(boolean h)
 	TxChar('0' + ParamSet);	
 	TxNextLine();
 
-	TxString("\r\nNav: \r\n");
+	TxString("\r\nNav:\r\n");
 	if ( F.UsingGPSAlt )
 		TxString("\tGPS is alt. source\r\n");
 	else
@@ -281,9 +281,9 @@ void ShowSetup(boolean h)
 
 	if ( !F.AccelerationsValid )
 	#ifdef USE_FLAT_ACC
-		TxString("Accelerometers: OFFLINE (horiz.)\r\n");
+		TxString("\tAccelerometers: OFFLINE (horiz.)\r\n");
 	#else
-		TxString("Accelerometers: OFFLINE\r\n");
+		TxString("\tAccelerometers: OFFLINE\r\n");
 	#endif // USE_FLAT_ACC
 
 	if ( !F.CompassValid )

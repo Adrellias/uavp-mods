@@ -37,22 +37,14 @@ void main(void)
 
 	InitMisc();
 	ReadStatsEE();
-
-	InitPorts();
-
-	OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
-				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
-
+	InitPortsAndUSART();
 	InitADC();
 	InitI2C(MASTER, SLEW_ON);
-
 	InitParameters();		
 	InitRC();
 	InitTimersAndInterrupts();
-
 	InitMotors();
-	INTCONbits.PEIE = true;	
-	INTCONbits.TMR0IE = true; 
+
 	EnableInterrupts;
 
 	InitAccelerometers();
@@ -151,11 +143,7 @@ void main(void)
 					break;
 				case InFlight:
 					F.MotorsArmed = true;
-					F.NavigationActive = F.GPSValid && F.CompassValid  && F.NewCommands && F.AltHoldEnabled 
-						&& ( mSClock() > mS[NavActiveTime]);
-					if ( F.NavigationActive )
-						DoNavigation();
-					
+					DoNavigation();		
 					LEDChaser();
 
 					if ( DesiredThrottle < IdleThrottle )
