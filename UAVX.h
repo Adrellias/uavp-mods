@@ -118,7 +118,7 @@
 
 #define UAVX_TELEMETRY_INTERVAL_MS		250L	// mS. emit an interleaved telemetry packet
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
-#define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 250L	// mS. flags and flight control only
+#define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 100L	// mS. flight control only
 #define CUSTOM_TELEMETRY_INTERVAL_MS	250L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
@@ -537,8 +537,8 @@ typedef union {
 		TxToBuffer:1,
 		NewBaroValue:1,
 		BeeperInUse:1,
-		RFInInches:1;
-			
+		RFInInches:1,
+		FirstArmed:1;		
 		};
 } Flags;
 
@@ -864,7 +864,7 @@ extern void ReceivingGPSOnly(uint8);
 extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
-	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, 
+	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, StartTime, 
 	GPSTimeout, GPSROCUpdate, LEDChaserUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
@@ -1247,6 +1247,7 @@ extern void SendUAVX(void);
 extern void SendUAVXControl(void);
 extern void SendFlightPacket(void);
 extern void SendNavPacket(void);
+extern void SendControlPacket(void);
 extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
@@ -1258,7 +1259,7 @@ extern uint8 UAVXCurrPacketTag;
 enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
 	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
-	UAVXNavPacketTag, UAVXStatsPacketTag};
+	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag};
 
 enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, ArduStationTelemetry, CustomTelemetry };
 

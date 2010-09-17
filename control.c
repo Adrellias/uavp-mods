@@ -312,13 +312,16 @@ void DoOrientationTransform(void)
 		OCO = OCos[Orientation];
 	}
 
+	if ( !F.NavigationActive )
+		NavRCorr = NavPCorr = NavYCorr = 0;
+
 	// -PS+RC
 	Temp.i24 = -DesiredPitch * OSO + DesiredRoll * OCO;
-	ControlRoll = Temp.i2_1 + NavRCorr;
+	ControlRoll = Temp.i2_1 + NavRCorr - LRComp;
 		
 	// PC+RS
 	Temp.i24 = DesiredPitch * OCO + DesiredRoll * OSO;
-	ControlPitch = Temp.i2_1 + NavPCorr; 
+	ControlPitch = Temp.i2_1 + NavPCorr - FBComp; 
 
 } // DoOrientationTransform
 
@@ -352,7 +355,6 @@ void DoControl(void)
 	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
 	Rl -= ControlRoll + SRS16((ControlRoll - ControlRollP) * ATTITUDE_FF_DIFF, 4);
-	Rl -= LRComp;
 	ControlRollP = ControlRoll;
 
 	// Pitch
@@ -363,7 +365,6 @@ void DoControl(void)
 	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
 	Pl -= ControlPitch + SRS16((ControlPitch - ControlPitchP) * ATTITUDE_FF_DIFF, 4);
-	Pl -= FBComp;
 	ControlPitchP = ControlPitch;
 
 	// Yaw

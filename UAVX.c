@@ -71,6 +71,7 @@ void main(void)
 		LightsAndSirens();	// Check for Rx signal, disarmed on power up, throttle closed, gyros ONLINE
 
 		State = Starting;
+		F.FirstArmed = false;
 
 		while ( Armed )
 		{ // no command processing while the Quadrocopter is armed
@@ -87,6 +88,12 @@ void main(void)
 				case Starting:	// this state executed once only after arming
 
 					LEDYellow_OFF;
+
+					if ( !F.FirstArmed )
+					{
+						mS[StartTime] = mSClock();
+						F.FirstArmed = true;
+					}
 
 					InitControl();
 					CaptureTrims();

@@ -25,6 +25,7 @@ void SendUAVX(void);
 void SendUAVXControl(void);
 void SendFlightPacket(void);
 void SendNavPacket(void);
+void SendControlPacket(void);
 void SendStatsPacket(void);
 void SendArduStation(void);
 void SendCustom(void);
@@ -102,13 +103,43 @@ void SendFlightPacket(void)
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);
 
-	TxESCi24(mSClock());
-} // 
+	TxESCi24(mSClock() - mS[StartTime]);
+} // SendFlightPacket
+
+void SendControlPacket(void)
+{
+	static int8 b;
+
+	TxESCu8(UAVXControlPacketTag);
+	TxESCu8(33);
+ 			
+	TxESCi16(DesiredThrottle);
+	TxESCi16(DesiredRoll);
+	TxESCi16(DesiredPitch);
+	TxESCi16(DesiredYaw);
+
+	TxESCi16(RollRateADC - GyroMidRoll);
+	TxESCi16(PitchRateADC - GyroMidPitch);
+	TxESCi16(YawRateADC - GyroMidYaw);
+
+	TxESCi16(RollSum);
+	TxESCi16(PitchSum);
+	TxESCi16(YawSum);
+
+	TxESCi16(LRAcc);
+	TxESCi16(FBAcc);
+	TxESCi16(DUAcc);
+
+	for ( b = 0; b < 4; b++ ) // motor/servo channels
+	 	TxESCu8((uint8)PWM[b]);
+
+	TxESCi24(mSClock() - mS[StartTime]);
+} // SendControlPacket
 
 void SendNavPacket(void)
 {
 	TxESCu8(UAVXNavPacketTag);
-	TxESCu8(55);
+	TxESCu8(59);
 		
 	TxESCu8(NavState);
 	TxESCu8(FailState);
@@ -141,7 +172,12 @@ void SendNavPacket(void)
 	TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
 	
 	TxESCi16(AmbientTemperature.i16);			// 0.1C
-	TxESCi32(GPSMissionTime);	
+	TxESCi32(GPSMissionTime);
+
+	TxESCu8(NavSensitivity);
+	TxESCi8(NavRCorr);
+	TxESCi8(NavPCorr);
+	TxESCi8(NavYCorr);
 } // SendNavPacket
 
 void SendStatsPacket(void) 
@@ -246,7 +282,7 @@ void SendUAVXControl(void) // 0.516mS at 40MHz?
 	TxChar(SOH);	
 	TxCheckSum = 0;
 	
-	SendFlightPacket();
+	SendControlPacket();
 
 	TxESCu8(TxCheckSum);	
 	TxChar(EOT);
