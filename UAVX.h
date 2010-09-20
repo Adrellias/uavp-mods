@@ -59,10 +59,11 @@
 
 // Filters
 
-#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch
-#define	ADC_BATT_FREQ			5
-#define	ADC_ALT_FREQ			20
+#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch PID loops 125-200Hz	
 #define	ADC_YAW_FREQ			20
+#define	ADC_ALT_FREQ			5		// baro sampled at 20Hz
+#define	ADC_BATT_FREQ			5
+
 #define COMPASS_FREQ			0.5		// x 0.1Hz
 
 // Airframe
@@ -673,6 +674,8 @@ extern i16u	BaroVal;
 extern int8 BaroType;
 extern int16 AltitudeUpdateRate;
 extern int8	BaroRetries;
+extern i32u FiltBaroValF;
+extern int16 BaroFilterA;
 
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;

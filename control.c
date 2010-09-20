@@ -448,7 +448,7 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || !F.BaroAltitudeValid ||
+	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || // !F.BaroAltitudeValid ||
 		( InitialThrottle >= RC_THRES_START ) || !F.ParametersValid  );
 				
 	FirstPass = false;

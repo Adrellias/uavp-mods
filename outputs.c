@@ -90,7 +90,8 @@ void CheckDemand(int16 CurrThrottle)
 	{		
 		ScaleHigh = (( OUT_MAXIMUM - (int24)CurrThrottle) * 256 )/ DemandSwing;	 
 		ScaleLow = (( (int24)CurrThrottle - IdleThrottle) * 256 )/ DemandSwing;
-		Scale = Min(ScaleHigh, ScaleLow);
+		Scale = Min(ScaleHigh, ScaleLow); // just in case!
+		if ( Scale < 0 ) Scale = 1;
 		if ( Scale < 256 )
 		{
 			MotorDemandRescale = true;

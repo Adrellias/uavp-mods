@@ -36,30 +36,19 @@ i32u 	CompassValF;
 void GetHeading(void)
 {
 	static i24u CompassVal;
-	static i32u Temp;
+//	static i32u Temp;
 
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
 		I2CStart();
 		F.CompassMissRead = WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-		Compass.b1 = ReadI2CByte(I2C_ACK);
-		Compass.b0 = ReadI2CByte(I2C_NACK);
+		CompassVal.b2 = ReadI2CByte(I2C_ACK);
+		CompassVal.b1 = ReadI2CByte(I2C_NACK);
 		I2CStop();
 
-		Compass.i16 = Make2Pi((int16) ConvertDDegToMPi(Compass.i16) - CompassOffset);
-
-		if ( Abs( Compass.i16 - Heading ) >= TWOMILLIPI )
-		{
-			Heading = Compass.i16;
-			CompassValF.w0 = 0;
-			CompassValF.iw1 = Compass.i16;
-		}
-		else // ~13uS @ 40MHz
-		{
-			CompassVal.b0 = 0;
-			CompassVal.i2_1 = Compass.i16;
-			CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.i3_1) * CompassFilterA;
-		}
+		CompassVal.b0 = 0;
+		CompassVal.i2_1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal.i2_1) - CompassOffset);
+		CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.i3_1) * CompassFilterA;
 
 		Heading = CompassValF.iw1; 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
