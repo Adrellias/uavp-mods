@@ -97,7 +97,6 @@ void main(void)
 
 					InitControl();
 					CaptureTrims();
-					InitHeading();
 					InitGPS();
 					InitNavigation();
 
@@ -110,13 +109,15 @@ void main(void)
 					break;
 				case Landed:
 					if ( DesiredThrottle < IdleThrottle )
+					{
 						SetGPSOrigin();
+						GetHeading();
+					}
 					else
 					{
 						#ifdef SIMULATE
 						FakeBaroRelAltitude = 0;
-						#endif // SIMULATE
-						InitHeading();						
+						#endif // SIMULATE						
 						LEDPattern = 0;
 						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
 						Stats[RCGlitchesS] = RCGlitches; // start of flight

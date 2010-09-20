@@ -11,7 +11,7 @@
 #define	ADC_YAW_FREQ			20
 #define	ADC_BATT_FREQ			5
 #define	ADC_ALT_FREQ			20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
-#define COMPASS_FREQ			0.5		// x 0.1Hz
+#define COMPASS_FREQ			5		// x 0.1Hz
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -694,6 +694,7 @@ extern int24 FakeBaroRelAltitude;
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
 
+extern int16 GetCompass(void);
 extern void GetHeading(void);
 extern void GetCompassParameters(void);
 extern void DoCompassTest(void);

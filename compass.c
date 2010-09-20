@@ -22,6 +22,7 @@
 
 #include "uavx.h"
 
+int16 GetCompass(void);
 void GetHeading(void);
 void GetCompassParameters(void);
 void DoCompassTest(void);
@@ -33,6 +34,19 @@ i16u Compass;
 int16 	CompassFilterA;
 i32u 	CompassValF;
 
+int16 GetCompass(void)
+{
+	static i16u CompassVal;
+
+	I2CStart();
+	F.CompassMissRead = WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
+	CompassVal.b1 = ReadI2CByte(I2C_ACK);
+	CompassVal.b0 = ReadI2CByte(I2C_NACK);
+	I2CStop();
+
+	return ( CompassVal.i16 );
+} // GetCompass
+
 void GetHeading(void)
 {
 	static i24u CompassVal;
@@ -40,13 +54,9 @@ void GetHeading(void)
 
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
-		I2CStart();
-		F.CompassMissRead = WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-		CompassVal.b2 = ReadI2CByte(I2C_ACK);
-		CompassVal.b1 = ReadI2CByte(I2C_NACK);
-		I2CStop();
-
+		CompassVal.i2_1 = GetCompass();
 		CompassVal.b0 = 0;
+
 		CompassVal.i2_1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal.i2_1) - CompassOffset);
 		CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.i3_1) * CompassFilterA;
 
@@ -314,7 +324,11 @@ CTerror:
 
 void InitHeading(void)
 {
-	GetHeading();
+	static int16 CompassVal;
+
+	CompassValF.i32 = 0;
+	CompassVal = GetCompass();
+	CompassValF.iw1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal) - CompassOffset);
 
 	#ifdef SIMULATE
 		FakeHeading = Heading = 0;
