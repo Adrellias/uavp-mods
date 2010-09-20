@@ -2,6 +2,17 @@
 //#define JIM_MPX_INVERT
 
 
+//changes outside this rate are deemed sensor/buss errors
+#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
+
+// Filters
+
+#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch PID loops 125-200Hz	
+#define	ADC_YAW_FREQ			20
+#define	ADC_BATT_FREQ			5
+#define	ADC_ALT_FREQ			20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
+#define COMPASS_FREQ			0.5		// x 0.1Hz
+
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -57,14 +68,7 @@
 
 #define USE_PPM_FAILSAFE
 
-// Filters
 
-#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch PID loops 125-200Hz	
-#define	ADC_YAW_FREQ			20
-#define	ADC_ALT_FREQ			5		// baro sampled at 20Hz
-#define	ADC_BATT_FREQ			5
-
-#define COMPASS_FREQ			0.5		// x 0.1Hz
 
 // Airframe
 

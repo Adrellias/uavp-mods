@@ -37,7 +37,6 @@ int16	BaroOffsetDAC;
 
 #define BARO_MIN_CLIMB			1500	// dM minimum available barometer climb from origin
 #define BARO_MIN_DESCENT		-500	// dM minimum available barometer descent from origin
-#define BARO_SANITY_CHECK_DMPS	100		// dm/S changes outside this rate are deemed sensor/buss errors
 
 #define BARO_BUFF_SIZE 4
 #pragma udata baroq
@@ -75,8 +74,6 @@ int16 FreescaleToDM(int24);
 void GetFreescaleBaroAltitude(void);
 boolean IsFreescaleBaroActive(void);
 void InitFreescaleBarometer(void);
-
-#define FS_SLEW_LIMIT	50		// dm/S
 
 #define FS_DAC_MAX	 	4095 	// 12 bits
 
@@ -286,7 +283,7 @@ void InitFreescaleBarometer(void)
 
 	AltitudeUpdateRate = 1000L/FS_ADC_TIME_MS;
 
-	BaroFilterA = ( (int24) FS_ADC_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) FS_ADC_TIME_MS );
+	BaroFilterA = ( (int24) FS_ADC_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) FS_ADC_TIME_MS );
 
 	BaroTemperature = 0;
 	Error = ((int16)P[BaroScale] * 2)/16;  // 0.2M
@@ -533,7 +530,7 @@ void InitBoschBarometer(void)
 
 	AltitudeUpdateRate = 1000L / BOSCH_PRESS_TEMP_TIME_MS;
 
-	BaroFilterA = ( (int24) BOSCH_PRESS_TEMP_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) BOSCH_PRESS_TEMP_TIME_MS ); 
+	BaroFilterA = ( (int24) BOSCH_PRESS_TEMP_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) BOSCH_PRESS_TEMP_TIME_MS ); 
 
 	F.NewBaroValue = false;
 	CompBaroPressure = 0;
@@ -688,9 +685,8 @@ void InitBarometer(void)
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
 	BaroType = BaroUnknown;
 
-	MaxAltChange = BARO_SANITY_CHECK_DMPS / AltitudeUpdateRate;
-
 	AltComp = AltDiffSum = AltDSum = 0;
+	MaxAltChange = BARO_SANITY_CHECK_DMPS / AltitudeUpdateRate;
 
 	F.BaroAltitudeValid= true; // optimistic
 
