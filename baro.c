@@ -165,7 +165,7 @@ void SetFreescaleOffset(void)
 	while( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) ) && (BaroOffsetDAC > 2) )
 	{
 		BaroOffsetDAC -= 2;
-		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(2);
+		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(10);
 		ReadFreescaleBaro();
 	}
 

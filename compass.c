@@ -30,7 +30,7 @@ void CalibrateCompass(void);
 void InitHeading(void);
 void InitCompass(void);
 
-i16u Compass;
+i24u 	Compass;
 int16 	CompassFilterA;
 i32u 	CompassValF;
 
@@ -49,16 +49,13 @@ int16 GetCompass(void)
 
 void GetHeading(void)
 {
-	static i24u CompassVal;
-//	static i32u Temp;
-
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
-		CompassVal.i2_1 = GetCompass();
-		CompassVal.b0 = 0;
+		Compass.i2_1 = GetCompass();
+		Compass.b0 = 0;
 
-		CompassVal.i2_1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal.i2_1) - CompassOffset);
-		CompassValF.i32 += ((int32)CompassVal.i24 - CompassValF.i3_1) * CompassFilterA;
+		Compass.i2_1 = Make2Pi((int16) ConvertDDegToMPi(Compass.i2_1) - CompassOffset);
+		CompassValF.i32 += ((int32)Compass.i24 - CompassValF.i3_1) * CompassFilterA;
 
 		Heading = CompassValF.iw1; 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
@@ -221,8 +218,8 @@ void DoCompassTest(void)
 	GetHeading();
 	if ( F.CompassMissRead ) goto CTerror;
 
-	TxVal32((int32)Compass.u16, 1, 0);
-	TxString(" deg \tCorrected ");
+	TxVal32(((int32)Compass.i2_1 * 180L)/CENTIPI, 1, 0);
+	TxString(" deg Corrected to ");
 	TxVal32(((int32)Heading * 180L)/CENTIPI, 1, 0);
 	TxString(" deg\r\n");
 	

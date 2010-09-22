@@ -161,7 +161,7 @@
 
 #define LAND_DM						30L		// Decimetres deemed to have landed when below this height
 
-#define ALT_MAX_THR_COMP			32L		// Stick units
+#define ALT_MAX_THR_COMP			40L		// Stick units was 32
 
 #define ALT_INT_WINDUP_LIMIT		16L
 
@@ -702,7 +702,7 @@ extern void CalibrateCompass(void);
 extern void InitHeading(void);
 extern void InitCompass(void);
 
-extern i16u Compass;
+extern i24u Compass;
 extern int16 CompassFilterA;
 extern i32u CompassValF;
 

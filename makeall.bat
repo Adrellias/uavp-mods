@@ -26,7 +26,7 @@ set PROC=18F2620
 set DBG=NO_DEBUG
 set RX=RX7CH RX6CH
 set CFG=QUADROCOPTER TRICOPTER HEXACOPTER HELICOPTER AILERON ELEVON
-set EXP=NO_EXP
+set EXP=NO_EXP EXPERIMENTAL
 set BRD=UAVPBLACK
 
 rem Personal choice
@@ -58,3 +58,10 @@ set CFG=QUADROCOPTER
 set BRD=UAVPBLACK
 
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
+
+rm *.zip
+"C:\Program Files\7-Zip\7z" a -tzip UAVX_40MHz.zip *-40-*.hex 
+"C:\Program Files\7-Zip\7z" a -tzip UAVX_16MHz.zip *-16-*.hex
+"C:\Program Files\7-Zip\7z" a -tzip UAVX_EXP.zip *-EXP-*.hex
+
+del *.HEX
