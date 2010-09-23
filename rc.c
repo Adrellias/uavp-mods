@@ -119,7 +119,7 @@ void InitRC(void)
 	}
 	PPMQ.Head = 0;
 
-	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;
 	RollRate = PitchRate = YawRate = 0;
 	ControlRollP = ControlPitchP = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
@@ -171,7 +171,7 @@ void UpdateControls(void)
 
 	MapRC();								// remap channel order for specific Tx/Rx
 
-	DesiredThrottle = RC[ThrottleC];
+	StickThrottle = RC[ThrottleC];
 
 	//_________________________________________________________________________________________
 
@@ -211,12 +211,12 @@ void UpdateControls(void)
 
 	if ( NavState == HoldingStation )
 	{ // Manual
-		if ( DesiredThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
-			DesiredThrottle = 0;
+//zzz		if ( StickThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
+//zzz			StickThrottle = 0;
 	}
 	else // Autonomous
 		if ( F.AllowNavAltitudeHold &&  F.AltHoldEnabled )
-			DesiredThrottle = CruiseThrottle;
+			StickThrottle = CruiseThrottle;
 
 	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
 		DesiredAltitude = Altitude;	

@@ -60,8 +60,8 @@ set BRD=UAVPBLACK
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
 
 rm *.zip
-"C:\Program Files\7-Zip\7z" a -tzip UAVX_40MHz.zip *-40-*.hex 
-"C:\Program Files\7-Zip\7z" a -tzip UAVX_16MHz.zip *-16-*.hex
-"C:\Program Files\7-Zip\7z" a -tzip UAVX_EXP.zip *-EXP-*.hex
+"C:\Program Files\7-Zip\7z" a -tzip UAVX-V1.$WCREV$gke-40MHz.zip *-40-*.hex 
+"C:\Program Files\7-Zip\7z" a -tzip UAVX-V1.$WCREV$gke-16MHz.zip *-16-*.hex
+"C:\Program Files\7-Zip\7z" a -tzip UAVX-V1.$WCREV$gke-EXP.zip *-EXP-*.hex
 
 del *.HEX

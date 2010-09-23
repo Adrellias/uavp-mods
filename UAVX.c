@@ -108,8 +108,9 @@ void main(void)
 					State = Landed;
 					break;
 				case Landed:
-					if ( DesiredThrottle < IdleThrottle )
+					if ( StickThrottle < IdleThrottle )
 					{
+						DesiredThrottle = 0;
 						SetGPSOrigin();
 						GetHeading();
 					}
@@ -130,7 +131,7 @@ void main(void)
 						
 					break;
 				case Landing:
-					if ( DesiredThrottle > IdleThrottle )
+					if ( StickThrottle > IdleThrottle )
 						State = InFlight;
 					else
 						if ( mSClock() < mS[ThrottleIdleTimeout] )
@@ -154,7 +155,9 @@ void main(void)
 					DoNavigation();		
 					LEDChaser();
 
-					if ( DesiredThrottle < IdleThrottle )
+					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
+
+					if ( StickThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mSClock() + THROTTLE_LOW_DELAY_MS;
 						LEDShadow = SaveLEDs;

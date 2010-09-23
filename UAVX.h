@@ -50,7 +50,7 @@
 #endif // !BATCHMODE
 
 #ifdef CLOCK_40MHZ
-	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
+//	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
 #endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
@@ -733,7 +733,7 @@ extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
 extern i32u  YawRateF;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
-extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle;
+extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 extern int16 CurrMaxRollPitch;
