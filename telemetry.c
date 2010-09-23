@@ -114,7 +114,7 @@ void SendControlPacket(void)
 	TxESCu8(33);
  			
 	TxESCi16(DesiredThrottle);
-	TxESCi16(StickThrottle);//zzzDesiredRoll);
+	TxESCi16(DesiredRoll);
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
 
