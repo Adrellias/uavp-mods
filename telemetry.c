@@ -38,21 +38,22 @@ void CheckTelemetry(void)
 	#ifndef TESTING // not used for testing - make space!
 	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
-		case UAVXTelemetry: 
-			SendUAVX(); 
-			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS;
+		case UAVXTelemetry:
+			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS; 
+			SendUAVX(); 	
 			break;
-		case UAVXControlTelemetry: 
-			SendUAVXControl(); 
-			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TELEMETRY_INTERVAL_MS;
+		case UAVXControlTelemetry:
+			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TELEMETRY_INTERVAL_MS; 
+			SendUAVXControl(); 	
 			break;
-		case ArduStationTelemetry: 
+		case ArduStationTelemetry:
+			mS[TelemetryUpdate] = mSClock() + ARDU_TELEMETRY_INTERVAL_MS; 
 			SendArduStation(); 
-			mS[TelemetryUpdate] = mSClock() + ARDU_TELEMETRY_INTERVAL_MS;
+			
 			break;
 		case CustomTelemetry: 
-			SendCustom(); 
 			mS[TelemetryUpdate] = mSClock() + CUSTOM_TELEMETRY_INTERVAL_MS;
+			SendCustom(); 
 			break;
 		case GPSTelemetry: break;
 		} 

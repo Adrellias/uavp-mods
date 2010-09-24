@@ -215,12 +215,13 @@ void DoCompassTest(void)
 
 	Delay1mS(COMPASS_TIME_MS);
 
-	GetHeading();
+	Temp = GetCompass();
 	if ( F.CompassMissRead ) goto CTerror;
 
-	TxVal32(((int32)Compass.i2_1 * 180L)/CENTIPI, 1, 0);
+	TxVal32(((int32)Temp * 180L)/CENTIPI, 1, 0);
 	TxString(" deg Corrected to ");
-	TxVal32(((int32)Heading * 180L)/CENTIPI, 1, 0);
+	Temp = Make2Pi((int16) ConvertDDegToMPi(Temp) - CompassOffset);
+	TxVal32(((int32)Temp * 180L)/CENTIPI, 1, 0);
 	TxString(" deg\r\n");
 	
 	return;

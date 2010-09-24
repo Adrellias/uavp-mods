@@ -121,7 +121,7 @@
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
 
-#define UAVX_TELEMETRY_INTERVAL_MS		250L	// mS. emit an interleaved telemetry packet
+#define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
 #define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 100L	// mS. flight control only
 #define CUSTOM_TELEMETRY_INTERVAL_MS	250L	// mS.
