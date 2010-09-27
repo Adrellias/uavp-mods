@@ -329,7 +329,7 @@ void InitParameters(void)
 		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
 	#endif // USE_ADC_FILTERS
 
-	ALL_LEDS_OFF;
+	ALL_LEDS_OFF;  
 } // InitParameters
 
 

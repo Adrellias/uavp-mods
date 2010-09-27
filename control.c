@@ -338,8 +338,10 @@ void DoControl(void)
 
 	#ifdef SIMULATE
 
-	FakeDesiredPitch = DesiredPitch;
-	FakeDesiredRoll = DesiredRoll;
+	DoOrientationTransform();
+
+	FakeDesiredPitch = ControlPitch;
+	FakeDesiredRoll = ControlRoll;
 	FakeDesiredYaw = DesiredYaw;
 	RollSum = SlewLimit(RollSum, -FakeDesiredRoll * 16, 4);
 	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch * 16, 4);

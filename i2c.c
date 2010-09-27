@@ -31,10 +31,11 @@
 
 #ifdef CLOCK_16MHZ
 	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()
-	#define I2C_DELAY2		
+	#define	I2C_DELAY_2US		Delay10TCY()
+	#define I2C_DELAY2			Delay1TCY()		
 #else // CLOCK_40MHZ
-	#define	I2C_DELAY_5US		Delay10TCYx(5) 
-	
+	#define	I2C_DELAY_5US		Delay10TCYx(5)
+	#define	I2C_DELAY_2US		Delay10TCYx(2)	
 	// ~102KHz (Compass limit!)
 	#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
 	// ~210KHz
@@ -162,6 +163,7 @@ uint8 ReadI2CByte(uint8 r)
 			d <<= 1;
 			if( I2C_SDA_SW ) d |= 1;
 			I2C_CLK_LOW;
+			I2C_DELAY_2US;
  		}
 		else
 		{

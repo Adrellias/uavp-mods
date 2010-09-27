@@ -47,6 +47,8 @@ void main(void)
 
 	EnableInterrupts;
 
+	LEDYellow_ON;
+
 	InitAccelerometers();
 	InitGyros();
 	InitCompass();

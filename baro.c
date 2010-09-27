@@ -153,13 +153,13 @@ void SetFreescaleOffset(void)
 	{
 		BaroOffsetDAC -= 20;					// approach at 20 steps out of 4095
 		SetFreescaleMCP4725(BaroOffsetDAC); 
-		Delay1mS(2);
+		Delay1mS(20);
 		ReadFreescaleBaro();
 	}
 	
-	BaroOffsetDAC += 100;						// move back up to come at it a little slower
+	BaroOffsetDAC += 200;						// move back up to come at it a little slower
 	SetFreescaleMCP4725(BaroOffsetDAC);
-	Delay1mS(2);
+	Delay1mS(100);
 	ReadFreescaleBaro();
 
 	while( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) ) && (BaroOffsetDAC > 2) )
@@ -169,7 +169,7 @@ void SetFreescaleOffset(void)
 		ReadFreescaleBaro();
 	}
 
-	Delay1mS(100); // wait for caps to settle
+	Delay1mS(200); // wait for caps to settle
 	F.BaroAltitudeValid = BaroOffsetDAC > 0;
 	
 } // SetFreescaleOffset

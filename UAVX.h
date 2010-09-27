@@ -50,7 +50,7 @@
 #endif // !BATCHMODE
 
 #ifdef CLOCK_40MHZ
-//	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
+	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
 #endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
@@ -67,8 +67,6 @@
 //________________________________________________________________________________________________
 
 #define USE_PPM_FAILSAFE
-
-
 
 // Airframe
 
