@@ -121,7 +121,6 @@ void GetCompassParameters(void)
 		if( WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
 		CP[r] = ReadI2CByte(I2C_NACK);
 		I2CStop();
-
 	}
 
 	Delay1mS(7);

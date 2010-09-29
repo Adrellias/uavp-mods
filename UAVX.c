@@ -49,6 +49,7 @@ void main(void)
 
 	LEDYellow_ON;
 
+	Delay100mSWithOutput(10);	// let all the sensors settle
 	InitAccelerometers();
 	InitGyros();
 	InitCompass();

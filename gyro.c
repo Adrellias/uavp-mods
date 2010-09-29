@@ -22,6 +22,7 @@
 
 #include "uavx.h"
 
+void ShowGyroType(uint8);
 void CompensateRollPitchGyros(void);
 void GetGyroValues(void);
 void CalculateGyroRates(void);
@@ -45,6 +46,17 @@ int16	RollRateADC, PitchRateADC, YawRateADC;
 #endif // GYRO_ITG3200
 
 #define AccFilter NoFilter
+
+void ShowGyroType(uint8 T)
+{
+	switch ( P[T] ) {
+		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
+		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
+		case IDG300:TxString("IDG300\r\n"); break;
+		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
+		case CustomGyro:TxString("Custom\r\n"); break;
+	}
+} // ShowGyroType
 
 void CompensateRollPitchGyros(void)
 {

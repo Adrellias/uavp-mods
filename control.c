@@ -451,7 +451,7 @@ void LightsAndSirens(void)
 		ReadParametersEE();	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
-		( InitialThrottle >= RC_THRES_START ) || !F.ParametersValid  );
+		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
 				
 	FirstPass = false;
 

@@ -36,7 +36,7 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
@@ -50,7 +50,7 @@
 #endif // !BATCHMODE
 
 #ifdef CLOCK_40MHZ
-	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
+//	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
 #endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
@@ -665,6 +665,7 @@ extern void InitBoschBarometer(void);
 extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
 
+extern void ShowBaroType(void);
 extern void BaroTest(void);
 
 extern int32 OriginBaroPressure, CompBaroPressure;
@@ -804,6 +805,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 
 // gyro.c
 
+extern void ShowGyroType(uint8);
 extern void CompensateRollPitchGyros(void);
 extern void GetGyroValues(void);
 extern void CalculateGyroRates(void);

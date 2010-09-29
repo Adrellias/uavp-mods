@@ -63,6 +63,25 @@ void CheckTelemetry(void)
 #define NAV_STATS_INTERLEAVE	10
 static int8 StatsNavAlternate = 0; 
 
+void ShowAttitude(void)
+{
+	TxESCi16(DesiredRoll);
+	TxESCi16(DesiredPitch);
+	TxESCi16(DesiredYaw);
+
+	TxESCi16(RollRateADC - GyroMidRoll);
+	TxESCi16(PitchRateADC - GyroMidPitch);
+	TxESCi16(YawRateADC - GyroMidYaw);
+
+	TxESCi16(RollSum);
+	TxESCi16(PitchSum);
+	TxESCi16(YawSum);
+
+	TxESCi16(LRAcc);
+	TxESCi16(FBAcc);
+	TxESCi16(DUAcc);
+} // ShowAttitude
+
 void SendFlightPacket(void)
 {
 	static int8 b;
@@ -81,21 +100,8 @@ void SendFlightPacket(void)
 	TxESCi16(RCGlitches);			
 	TxESCi16(DesiredThrottle);
 
-	TxESCi16(DesiredRoll);
-	TxESCi16(DesiredPitch);
-	TxESCi16(DesiredYaw);
+	ShowAttitude();
 
-	TxESCi16(RollRateADC - GyroMidRoll);
-	TxESCi16(PitchRateADC - GyroMidPitch);
-	TxESCi16(YawRateADC - GyroMidYaw);
-
-	TxESCi16(RollSum);
-	TxESCi16(PitchSum);
-	TxESCi16(YawSum);
-
-	TxESCi16(LRAcc);
-	TxESCi16(FBAcc);
-	TxESCi16(DUAcc);
 	TxESCi8((int8)LRComp);
 	TxESCi8((int8)FBComp);
 	TxESCi8((int8)DUComp);
@@ -114,22 +120,7 @@ void SendControlPacket(void)
 	TxESCu8(UAVXControlPacketTag);
 	TxESCu8(33);
  			
-	TxESCi16(DesiredThrottle);
-	TxESCi16(DesiredRoll);
-	TxESCi16(DesiredPitch);
-	TxESCi16(DesiredYaw);
-
-	TxESCi16(RollRateADC - GyroMidRoll);
-	TxESCi16(PitchRateADC - GyroMidPitch);
-	TxESCi16(YawRateADC - GyroMidYaw);
-
-	TxESCi16(RollSum);
-	TxESCi16(PitchSum);
-	TxESCi16(YawSum);
-
-	TxESCi16(LRAcc);
-	TxESCi16(FBAcc);
-	TxESCi16(DUAcc);
+	ShowAttitude();
 
 	for ( b = 0; b < 4; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);

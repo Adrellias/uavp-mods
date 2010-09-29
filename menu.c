@@ -127,12 +127,7 @@ void ShowSetup(boolean h)
 	}
 
 	TxString("Baro: ");
-	switch ( BaroType ) {
-	case BaroMPX4115: TxString("MPX4115\r\n"); break;
-	case BaroSMD500: TxString("SMD500\r\n"); break;
-	case BaroBMP085: TxString("BMP085\r\n"); break;
-	default: TxString("UNKNOWN\r\n");
-	}
+	ShowBaroType();
 
 	#ifdef MULTICOPTER
 		TxString("Forward Flight: ");
@@ -148,22 +143,9 @@ void ShowSetup(boolean h)
 		else
 			TxString("ONLINE\r\n");
 	#else 
-		switch ( P[GyroRollPitchType] ) {
-		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
-		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
-		case IDG300:TxString("IDG300\r\n"); break;
-		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
-		case CustomGyro:TxString("Custom\r\n"); break;
-		}
-		
+		ShowGyroType(GyroRollPitchType);		
 		TxString("Yaw Gyro: ");
-		switch ( P[GyroYawType] ) {
-		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
-		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
-		case IDG300:TxString("INVALID\r\n"); break;
-		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
-		case CustomGyro:TxString("Custom\r\n"); break;
-		}
+		ShowGyroType(GyroYawType);
 	#endif // GYRO_ITG3200
 
 	TxString("Motor ESCs: ");	

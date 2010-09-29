@@ -26,6 +26,7 @@
 void GetBaroAltitude(void);
 void InitBarometer(void);
 
+void ShowBaroType(void);
 void BaroTest(void);
 
 #define BaroFilter SoftFilter
@@ -155,6 +156,7 @@ void SetFreescaleOffset(void)
 		SetFreescaleMCP4725(BaroOffsetDAC); 
 		Delay1mS(20);
 		ReadFreescaleBaro();
+		LEDYellow_TOG;
 	}
 	
 	BaroOffsetDAC += 200;						// move back up to come at it a little slower
@@ -167,6 +169,7 @@ void SetFreescaleOffset(void)
 		BaroOffsetDAC -= 2;
 		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(10);
 		ReadFreescaleBaro();
+		LEDYellow_TOG;
 	}
 
 	Delay1mS(200); // wait for caps to settle
@@ -494,6 +497,11 @@ void GetBoschBaroAltitude(void)
 
 				F.NewBaroValue = F.BaroAltitudeValid;			
 			}
+			else
+			{
+				AcquiringPressure = true;
+				Stats[BaroFailS]++;
+			}	
 
 		StartBoschBaroADC(AcquiringPressure);
 	}			
@@ -581,18 +589,23 @@ void InitBoschBarometer(void)
 
 // -----------------------------------------------------------
 
+void ShowBaroType(void)
+{
+	switch ( BaroType ) {
+		case BaroMPX4115: TxString("MPX4115\r\n"); break;
+		case BaroSMD500: TxString("SMD500\r\n"); break;
+		case BaroBMP085: TxString("BMP085\r\n"); break;
+		case BaroUnknown: TxString("None\r\n"); break;
+		default: break;
+	}
+} // ShowBaroType
+
 #ifdef TESTING
 void BaroTest(void)
 {
 	TxString("\r\nAltitude test\r\n");
 
-	switch ( BaroType ) {
-		case BaroMPX4115: TxString("Type:\tMPX4115\r\n"); break;
-		case BaroSMD500: TxString("Type:\tSMD500\r\n"); break;
-		case BaroBMP085: TxString("Type:\tBMP085\r\n"); break;
-		case BaroUnknown: TxString("Type:\tNone\r\n"); break;
-		default: break;
-	}
+	TxString("Type:\t"); ShowBaroType();
 	
 	TxString("Init Retries:\t");
 	TxVal32((int32)BaroRetries - 2, 0, ' '); // alway minimum of 2
@@ -600,7 +613,6 @@ void BaroTest(void)
 		TxString(" FAILED Init.\r\n");
 	else
 		TxNextLine();
-
 
 	if ( BaroType == BaroMPX4115 )
 	{
@@ -623,6 +635,10 @@ void BaroTest(void)
 	TxString("Alt.:     \t");	
 	TxVal32((int32)BaroRelAltitude, 1, ' ');
 	TxString("M\r\n");
+
+	TxString("Fails:    \t");
+	TxVal32((int32)Stats[BaroFailS], 0, 0);
+	TxNextLine();
 
 	TxString("\r\nR.Finder: \t");
 	if ( F.RangefinderAltitudeValid )
@@ -647,21 +663,22 @@ BAerror:
 
 void GetBaroAltitude(void)
 {
-	static int24 Temp;
+	static int24 Temp, AltChange;
 
 	if ( BaroType == BaroMPX4115 )
 		GetFreescaleBaroAltitude();
 	else
 		GetBoschBaroAltitude();
 
-	if ( Abs(BaroRelAltitudeP - BaroRelAltitude) > MaxAltChange ) // should not be possible!
+	AltChange = BaroRelAltitude - BaroRelAltitudeP;
+
+	if ( Abs(AltChange) > BARO_SANITY_CHECK_DMPS )
 	{
-		BaroRelAltitude = BaroRelAltitudeP;
-		Stats[BaroFailS]++; 
-		F.BaroFailure = true;	
+		BaroRelAltitude = BaroRelAltitudeP;	// use previous value
+		Stats[BaroFailS]++;
 	}
 
-	Temp = ( BaroRelAltitude - BaroRelAltitudeP ) * AltitudeUpdateRate;
+	Temp = AltChange * AltitudeUpdateRate;
 	BaroROC = BaroROCFilter(BaroROC, Temp);					
 	BaroRelAltitudeP = BaroRelAltitude;
 	BaroRelAltitudeP = BaroRelAltitude;
