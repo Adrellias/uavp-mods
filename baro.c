@@ -57,7 +57,6 @@ int16	AltitudeUpdateRate;
 int8	BaroRetries;
 i32u	FiltBaroValF;
 int16	BaroFilterA;
-int16	MaxAltChange;
 
 #ifdef SIMULATE
 int24	FakeBaroRelAltitude;
@@ -636,9 +635,11 @@ void BaroTest(void)
 	TxVal32((int32)BaroRelAltitude, 1, ' ');
 	TxString("M\r\n");
 
+	/*
 	TxString("Fails:    \t");
 	TxVal32((int32)Stats[BaroFailS], 0, 0);
 	TxNextLine();
+	*/
 
 	TxString("\r\nR.Finder: \t");
 	if ( F.RangefinderAltitudeValid )
@@ -703,7 +704,6 @@ void InitBarometer(void)
 	BaroType = BaroUnknown;
 
 	AltComp = AltDiffSum = AltDSum = 0;
-	MaxAltChange = BARO_SANITY_CHECK_DMPS / AltitudeUpdateRate;
 
 	F.BaroAltitudeValid= true; // optimistic
 

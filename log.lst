@@ -1,10 +1,10 @@
 Starting makeall uavp 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -35,30 +35,30 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -75,140 +75,135 @@ C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:131:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:135:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:147:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:151:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:159:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:161:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:162:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:164:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:174:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:179:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:199:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:200:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:203:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:204:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:208:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:209:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:229:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:231:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:211:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:215:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:222:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:226:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:240:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:251:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:253:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:258:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:260:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:266:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:269:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:271:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:257:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:262:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:268:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:272:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:275:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:277:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:290:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:298:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:318:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:319:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:357:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:380:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:383:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:283:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:300:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:315:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:322:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:330:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:339:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:362:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:365:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:368:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:386:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:404:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:405:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:406:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:407:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:408:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:409:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:410:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:387:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:388:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:389:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:390:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:391:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
+C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:597:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:598:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
+C:\Flight\Code\UAVX-GKE\gyro.c:53:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -219,10 +214,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -253,30 +248,30 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -294,351 +289,137 @@ C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:131:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:135:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:145:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:147:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:149:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:174:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:199:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:200:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:203:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:204:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:208:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:209:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:229:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:231:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:240:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:251:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:253:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:258:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:260:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:266:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:269:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:271:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:275:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:277:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:290:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:298:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:318:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:319:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:357:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:380:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:383:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:386:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:404:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:405:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:406:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:407:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:408:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:409:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:410:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:106:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:131:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:151:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:159:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:161:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:162:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:164:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:174:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:179:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:199:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:200:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:203:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:204:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:208:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:209:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:229:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:231:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:211:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:215:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:222:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:226:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:240:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:251:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:253:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:258:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:260:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:266:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:269:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:271:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:257:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:262:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:268:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:272:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:275:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:277:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:290:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:298:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:318:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:319:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:357:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:380:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:383:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:283:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:300:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:315:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:322:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:330:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:339:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:362:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:365:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:368:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:386:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:404:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:405:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:406:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:407:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:408:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:409:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:410:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:387:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:388:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:389:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:390:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:391:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
+C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:597:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:598:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
+C:\Flight\Code\UAVX-GKE\gyro.c:53:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -649,10 +430,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -683,464 +464,10 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:102:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:106:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:131:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:145:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:147:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:149:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:174:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:199:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:200:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:203:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:204:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:208:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:209:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:229:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:231:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:240:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:251:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:253:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:258:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:260:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:266:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:269:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:271:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:275:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:277:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:290:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:298:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:318:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:319:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:357:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:380:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:383:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:386:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:404:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:405:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:406:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:407:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:408:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:409:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:410:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:108:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:131:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:159:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:161:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:162:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:164:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:174:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:199:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:200:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:203:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:204:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:208:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:209:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:229:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:231:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:240:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:251:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:253:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:258:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:260:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:266:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:269:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:271:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:275:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:277:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:290:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:298:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:318:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:319:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:357:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:380:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:383:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:386:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:404:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:405:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:406:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:407:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:408:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:409:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:410:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\telemetry.c:333:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:334:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:335:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:336:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:337:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:338:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:339:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:340:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:341:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:342:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:343:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:344:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:345:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:351:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:352:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:353:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:354:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:355:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\telemetry.c:358:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Error - section 'D10TCYXCODE' can not fit the section. Section 'D10TCYXCODE' length=0x00000016
-Errors    : 1
-
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-C:\Flight\Code\UAVX-GKE\params.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:197:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  22
+Days remaining until evaluation becomes feature limited:  21

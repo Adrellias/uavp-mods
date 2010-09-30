@@ -385,6 +385,10 @@ void DoControl(void)
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 	Yl = Limit(Yl, -YawSlewLimit, YawSlewLimit);
+	#ifdef TRICOPTER
+	Yl = SlewLimit(Ylp, Yl, 1);
+	Ylp = Yl;
+	#endif // TRICOPTER
 
 	REp = RE;
 	PEp = PE;
@@ -473,6 +477,7 @@ void InitControl(void)
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
 	ControlRollP = ControlPitchP = 0;
+	Ylp = 0;
 	AltComp = 0;
 	DUComp = DUVel = LRVel = LRComp = FBVel = FBComp = YawRateF.i32 = 0;	
 	AltSum = 0;

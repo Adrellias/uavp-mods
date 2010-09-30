@@ -211,8 +211,8 @@ void UpdateControls(void)
 
 	if ( NavState == HoldingStation )
 	{ // Manual
-//zzz		if ( StickThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
-//zzz			StickThrottle = 0;
+		if ( StickThrottle < RC_THRES_STOP )	// to deal with usual non-zero EPA
+			StickThrottle = 0;
 	}
 	else // Autonomous
 		if ( F.AllowNavAltitudeHold &&  F.AltHoldEnabled )

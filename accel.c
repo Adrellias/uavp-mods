@@ -36,7 +36,7 @@ void InitAccelerometers(void);
 #pragma udata accs
 i16u	Ax, Ay, Az;
 int8	LRIntCorr, FBIntCorr;
-int16	Rl, Pl, Yl;						// PID output values
+int16	Rl, Pl, Yl, Ylp;						// PID output values
 int8	NeutralLR, NeutralFB, NeutralDU;
 int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
 #pragma udata
@@ -319,8 +319,6 @@ void AccelerometerTest(void)
 void InitAccelerometers(void)
 {
 	int8 i;
-
-	Delay100mSWithOutput(5);	// wait 0.5 sec until LISL is ready to talk
 
 	NeutralLR = NeutralFB = NeutralDU = Ax.i16 = Ay.i16 = Az.i16 = 0;
 
