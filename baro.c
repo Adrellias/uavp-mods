@@ -124,7 +124,8 @@ void SetFreescaleOffset(void)
 		{
 			BaroOffsetDAC += Hop;
 			Hop >>= 2 + 1; // avoid zero hop
-			SetFreescaleMCP4725(BaroOffsetDAC);			Delay1mS(2);
+			SetFreescaleMCP4725(BaroOffsetDAC);
+			Delay1mS(2);
 			ReadFreescaleBaro();
 			if ( BaroVal.u16 > (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) )
 				BaroOffsetDAC -= Hop;
@@ -166,7 +167,8 @@ void SetFreescaleOffset(void)
 	while( (BaroVal.u16 < (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) ) && (BaroOffsetDAC > 2) )
 	{
 		BaroOffsetDAC -= 2;
-		SetFreescaleMCP4725(BaroOffsetDAC);		Delay1mS(10);
+		SetFreescaleMCP4725(BaroOffsetDAC);
+		Delay1mS(10);
 		ReadFreescaleBaro();
 		LEDYellow_TOG;
 	}
@@ -221,7 +223,7 @@ FSError:
 
 int16 FreescaleToDM(int24 p)
 { // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-	return(-(p * (int24)16 )/(int24)P[BaroScale]);
+	return(-(p * (int24)8 )/(int24)P[BaroScale]);
 }  // FreescaleToDM
 
 void GetFreescaleBaroAltitude(void)
