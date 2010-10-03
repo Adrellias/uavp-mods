@@ -112,12 +112,7 @@ void ReadParametersEE(void)
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
-
-		#ifdef TRICOPTER
-			YawSlewLimit = (int16)P[YawLimit] * 4L;
-		#else
-			YawSlewLimit = (int16)P[YawLimit];
-		#endif // TRICOPTER
+		YawSlewLimit = (int16)P[YawLimit];
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);

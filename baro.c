@@ -706,7 +706,6 @@ void InitBarometer(void)
 	BaroType = BaroUnknown;
 
 	AltComp = AltDiffSum = AltDSum = 0;
-
 	F.BaroAltitudeValid= true; // optimistic
 
 	if ( IsFreescaleBaroActive() )	

@@ -239,7 +239,6 @@ void GetNeutralAccelerations(void)
 	static uint8 i;
 	static int16 LR, FB, DU;
 
-	Delay100mSWithOutput(2);	// wait 1/10 sec until LISL is ready to talk
 	// already done in caller program
 	LR = FB = DU = 0;
 	if ( F.AccelerationsValid )

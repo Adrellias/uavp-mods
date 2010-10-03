@@ -48,8 +48,8 @@ void main(void)
 	EnableInterrupts;
 
 	LEDYellow_ON;
-
 	Delay100mSWithOutput(5);	// let all the sensors startup
+
 	InitAccelerometers();
 	InitGyros();
 	InitCompass();

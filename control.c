@@ -405,13 +405,13 @@ static int8 RCStart = RC_INIT_FRAMES;
 
 void LightsAndSirens(void)
 {
-	static int24 Timeout;
+	static int24 Ch5Timeout, AccTimeout;
 
 	LEDYellow_TOG;
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF;
-	Timeout = mSClock() + 500L; 					// mS.
+	Ch5Timeout = AccTimeout = mSClock()+ 500; 					// mS.
 	do
 	{
 		ProcessCommand();
@@ -432,7 +432,7 @@ void LightsAndSirens(void)
 				InitialThrottle = StickThrottle;
 				StickThrottle = 0; 
 				OutSignals();
-				if( mSClock() > Timeout )
+				if( mSClock() > Ch5Timeout )
 				{
 					if ( F.Navigate || F.ReturnHome || !F.ParametersValid )
 					{
@@ -443,7 +443,7 @@ void LightsAndSirens(void)
 						if ( Armed )
 							LEDRed_TOG;
 							
-					Timeout += 500;
+					Ch5Timeout += 500;
 				}	
 			}
 		}
@@ -452,9 +452,19 @@ void LightsAndSirens(void)
 			LEDRed_ON;
 			LEDGreen_OFF;
 		}	
-		ReadParametersEE();	
+		ReadParametersEE();
+		
+		if ( !F.AccelerationsValid && ( mSClock() > AccTimeout ) )
+		{
+			InitAccelerometers();
+			LEDYellow_TOG;
+			AccTimeout += 400;
+		}	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
+#ifndef GKE
+(!F.AccelerationsValid) ||
+#endif // !GKE
 		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
 				
 	FirstPass = false;
@@ -462,6 +472,7 @@ void LightsAndSirens(void)
 	Beeper_OFF;
 	LEDRed_OFF;
 	LEDGreen_ON;
+	LEDYellow_ON;
 
 	mS[LastBattery] = mSClock();
 	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
