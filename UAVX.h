@@ -10,6 +10,7 @@
 #define	ADC_ATT_FREQ			100		// Hz Roll and Pitch PID loops 125-200Hz	
 #define	ADC_YAW_FREQ			20
 #define	ADC_BATT_FREQ			5
+#define	MOTOR_YAW_FREQ			2		// mainly for tricopter Yaw servo
 #define	ADC_ALT_FREQ			20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
 #define COMPASS_FREQ			5		// x 0.1Hz
 
@@ -51,7 +52,7 @@
 #endif // !BATCHMODE
 
 #ifdef CLOCK_40MHZ
-//	#define USE_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
+//	#define USE_IRQ_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
 #endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
@@ -628,7 +629,7 @@ extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
-extern int16 CompassOffset, OrientationCompassOffset;
+extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
@@ -730,8 +731,8 @@ extern int16 Rl, Pl, Yl, Ylp;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw, YawSlewLimit;
-extern int16 YawFilterA;
-extern i32u  YawRateF;
+extern int16 YawFilterA, YlFilterA;
+extern i32u  YawRateF, YlF;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;

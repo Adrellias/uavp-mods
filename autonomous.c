@@ -84,7 +84,7 @@ int24 	WPLoiter;
 int16	WayHeading;
 
 int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude;
-int16	CompassOffset, OrientationCompassOffset;
+int16	CompassOffset;
 int24 	NavRTHTimeoutmS;
 
 int8 	NavState;

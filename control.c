@@ -40,11 +40,11 @@ int16 RE, PE, YE, HE;					// gyro rate error
 int16 REp, PEp, YEp, HEp;				// previous error for derivative
 int16 RollSum, PitchSum, YawSum;		// integral 	
 
-int16 YawFilterA;
-i32u  YawRateF;
+int16 YawFilterA, YlFilterA;
+i32u  YawRateF, YlF;
 
 int16 RollTrim, PitchTrim, YawTrim;
-int16 HoldYaw, YawSlewLimit;
+int16 HoldYaw;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
 int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
@@ -274,7 +274,7 @@ void LimitYawSum(void)
 		// + CCW
 		Temp = DesiredYaw - YawTrim;
 		Temp = Abs(Temp);
-		HoldYaw = HardFilter(HoldYaw, Temp);
+		HoldYaw = SlewLimit(HoldYaw, Temp, 2);
 		if ( HoldYaw > COMPASS_MIDDLE ) // acquire new heading
 		{
 			DesiredHeading = Heading;
@@ -284,7 +284,8 @@ void LimitYawSum(void)
 		{
 			HE = MakePi(DesiredHeading - Heading);
 			HE = Limit(HE, -SIXTHMILLIPI, SIXTHMILLIPI); // 30 deg limit
-			HE = SRS32( (int32)(HEp * 3 + HE) * (int32)P[CompassKp], 12);  
+			HE = SRS32( (int32)HE * (int32)P[CompassKp], 12); 
+			HEp = HE; 
 			YE -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
 		}
 	}
@@ -327,9 +328,6 @@ void DoOrientationTransform(void)
 
 void DoControl(void)
 {
-	static int32 YawTemp;
-	static i24u Temp;
-
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
     InertialDamping();
@@ -370,30 +368,23 @@ void DoControl(void)
 	ControlPitchP = ControlPitch;
 
 	// Yaw
-	#ifdef USE_ADC_FILTER
-		YE = YawRate;
-	#else // ~13uS @ 40MHz
-		Temp.b0 = 0;
-		Temp.i2_1 = YawRate;
-   		YawRateF.i32 += ((int32)Temp.i24 - YawRateF.i3_1) * YawFilterA;
-		YE = YawRate = YawRateF.iw1;
-	#endif
 	
-	YE += DesiredYaw + NavYCorr;
+	YE = YawRate + DesiredYaw + NavYCorr;
 	LimitYawSum();
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
-	Yl = Limit(Yl, -YawSlewLimit, YawSlewLimit);
-	#ifdef TRICOPTER
-	Yl = SlewLimit(Ylp, Yl, 1);
-	Ylp = Yl;
-	#endif // TRICOPTER
 
+	Temp.b0 = 0;
+	Temp.i2_1 = Yl;
+	YlF.i32 += ((int32)Temp.i24 - YlF.i3_1) * YlFilterA;
+	Yl = YlF.iw1;
+
+	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);
+		
 	REp = RE;
 	PEp = PE;
 	YEp = YE;
-	HEp = HE;
 
 	#endif // SIMULATE		
 
@@ -462,9 +453,9 @@ void LightsAndSirens(void)
 		}	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
-#ifndef GKE
-(!F.AccelerationsValid) ||
-#endif // !GKE
+	#ifndef GKE
+	(!F.AccelerationsValid) ||
+	#endif // !GKE
 		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
 				
 	FirstPass = false;

@@ -39,6 +39,8 @@ void GetGyroValues(void)
 
 void CalculateGyroRates(void)
 {
+	static i24u Temp;
+
 	RollRate = RollRateADC - GyroMidRoll;
 	PitchRate = PitchRateADC - GyroMidPitch;
 
@@ -75,6 +77,13 @@ void CalculateGyroRates(void)
 		YawRate = SRS16(YawRate, 2);
 		break;
 	} // GyroYawType
+
+	#ifndef USE_IRQ_ADC_FILTERS
+		Temp.b0 = 0;
+		Temp.i2_1 = YawRate;
+	   	YawRateF.i32 += ((int32)Temp.i24 - YawRateF.i3_1) * YawFilterA;
+		YawRate = YawRateF.iw1;
+	#endif // !USE_IRQ_ADC_FILTERS
 
 } // GetGyroValues
 

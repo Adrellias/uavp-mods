@@ -112,7 +112,6 @@ void ReadParametersEE(void)
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
-		YawSlewLimit = (int16)P[YawLimit];
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
@@ -148,9 +147,10 @@ void ReadParametersEE(void)
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 
-		#ifndef USE_ADC_FILTERS
+		#ifndef USE_IRQ_ADC_FILTERS
 			YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
-		#endif // USE_ADC_FILTERS
+		#endif // !USE_IRQ_ADC_FILTERS
+		YlFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) MOTOR_YAW_FREQ ) + (int24) P[TimeSlots] );	
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
@@ -320,9 +320,10 @@ void InitParameters(void)
 	ReadParametersEE();
 	ParametersChanged = true;
 
-	#ifndef USE_ADC_FILTERS
+	#ifndef USE_IRQ_ADC_FILTERS
 		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
-	#endif // USE_ADC_FILTERS
+	#endif // !USE_IRQ_ADC_FILTERS
+	YlFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) MOTOR_YAW_FREQ ) + (int24) P[TimeSlots] );
 
 	ALL_LEDS_OFF;  
 } // InitParameters
