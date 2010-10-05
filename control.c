@@ -328,6 +328,8 @@ void DoOrientationTransform(void)
 
 void DoControl(void)
 {
+	static i24u Temp;
+
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
     InertialDamping();

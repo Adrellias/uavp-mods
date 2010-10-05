@@ -1,9 +1,1 @@
 Starting makeall uavp 
-failed - UAVX-V1.1192gke-18F2620-16-QUAD.hex 
-failed - UAVX-V1.1192gke-18F2620-16-TRI.hex 
-failed - UAVX-V1.1192gke-18F2620-16-6CH-QUAD.hex 
-failed - UAVX-V1.1192gke-18F2620-16-6CH-TRI.hex 
-failed - UAVX-V1.1192gke-18F2620-16-TEST.hex 
-failed - UAVX-V1.1192gke-18F2620-16-6CH-TEST.hex 
-compiled - UAVX-V1.1192gke--16-QUAD-SIMULATOR.hex 
-compiled - UAVX-V1.1192gke--16-6CH-QUAD-SIMULATOR.hex 
