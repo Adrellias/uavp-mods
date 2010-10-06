@@ -30,6 +30,8 @@ void CheckAlarms(void);
 int32 SlewLimit(int32, int32, int32);
 int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
+void LPFilter16(int16*, i32u*, int16);
+void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
@@ -251,4 +253,25 @@ int32 SlewLimit(int32 Old, int32 New, int32 Slew)
   return(( New < Low ) ? Low : (( New > High ) ? High : New));
 } // SlewLimit
 
+void LPFilter16(int16* i, i32u* iF, int16 FilterA)
+{
+	static i24u Temp;
+
+	Temp.b0 = 0;
+	Temp.i2_1 = *i;
+	iF->i32 += ((int32)Temp.i24 - iF->i3_1) * FilterA;
+	*i = iF->iw1;
+
+} // LPFilter16
+
+void LPFilter24(int24* i, i32u* iF, int16 FilterA)
+{
+	static i32u Temp;
+
+	Temp.b0 = 0;
+	Temp.i3_1 = *i;
+	iF->i32 += ((int32)Temp.i32 - iF->i3_1) * FilterA;
+	*i = iF->iw1;
+
+} // LPFilter24
 

@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void TxString(const rom uint8 *);
+void TxString(const rom uint8*);
 void TxChar(uint8);
 void TxValU(uint8);
 void TxValS(int8);

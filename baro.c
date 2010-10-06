@@ -29,7 +29,6 @@ void InitBarometer(void);
 void ShowBaroType(void);
 void BaroTest(void);
 
-#define BaroFilter SoftFilter
 #define BaroROCFilter HardFilter
 
 uint16	BaroPressure, BaroTemperature;
@@ -55,7 +54,7 @@ int8	BaroType;
 int16 	BaroClimbAvailable, BaroDescentAvailable;
 int16	AltitudeUpdateRate;
 int8	BaroRetries;
-i32u	FiltBaroValF;
+i32u	BaroValF;
 int16	BaroFilterA;
 
 #ifdef SIMULATE
@@ -228,16 +227,16 @@ int16 FreescaleToDM(int24 p)
 
 void GetFreescaleBaroAltitude(void)
 {
-	static i24u FiltBaroVal;
+	static int16 BaroPressure;
 
 	if ( mSClock() >= mS[BaroUpdate] )
 	{
 		ReadFreescaleBaro();
 		if ( F.BaroAltitudeValid )
 		{
-			FiltBaroVal.i2_1 = (int24)BaroVal.u16; // sum of 4 entries;
-			FiltBaroValF.i32 += ((int32)FiltBaroVal.i24 - FiltBaroValF.i3_1) * BaroFilterA;
-			BaroPressure = FiltBaroValF.iw1;
+			BaroPressure = (int16)BaroVal.u16; // sum of 4 samples
+
+			LPFilter16(&BaroPressure, &BaroValF, BaroFilterA); 
 		
 			BaroRelAltitude = FreescaleToDM(BaroPressure - OriginBaroPressure);
 
@@ -309,8 +308,8 @@ void InitFreescaleBarometer(void)
 	F.BaroAltitudeValid = BaroRetries < BARO_INIT_RETRIES;
 
 	OriginBaroPressure = BaroPressure;
-	FiltBaroValF.i32 = 0;
-	FiltBaroValF.iw1 = OriginBaroPressure;
+	BaroValF.i32 = 0;
+	BaroValF.iw1 = OriginBaroPressure;
 
 	BaroRelAltitudeP = BaroRelAltitude = 0;
 	
@@ -448,7 +447,6 @@ int24 CompensatedBoschPressure(uint16 BaroPress, uint16 BaroTemp)
 void GetBoschBaroAltitude(void)
 {
 	static int24 Temp;
-	static i32u FiltBaroVal;
 
 	if ( mSClock() >= mS[BaroUpdate] )
 	{
@@ -473,10 +471,9 @@ void GetBoschBaroAltitude(void)
 				// Pressure queue has 4 entries corresponding to an average delay at 20Hz of 0.1Sec
 				// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
 
-				FiltBaroVal.b0 = 0;
-				FiltBaroVal.i3_1 = (int24)CompBaroPressure; // sum of 4 entries;
-				FiltBaroValF.i32 += ((int32)FiltBaroVal.i32 - FiltBaroValF.i3_1) * BaroFilterA;
-				Temp = FiltBaroValF.iw1;
+				Temp = (int24)CompBaroPressure;
+
+				LPFilter24(&Temp, &BaroValF, BaroFilterA);
 
 				BaroRelAltitude = -SRS32(Temp * (int16)P[BaroScale], 7);
 
@@ -577,7 +574,7 @@ void InitBoschBarometer(void)
 	
 	OriginBaroPressure = SRS32(CompBaroPressure, 2);
 
-	FiltBaroValF.i32 = 0;
+	BaroValF.i32 = 0;
 
 	F.BaroAltitudeValid = BaroRetries < BARO_INIT_RETRIES;		
 	BaroRelAltitudeP = BaroRelAltitude = 0;
@@ -636,12 +633,6 @@ void BaroTest(void)
 	TxString("Alt.:     \t");	
 	TxVal32((int32)BaroRelAltitude, 1, ' ');
 	TxString("M\r\n");
-
-	/*
-	TxString("Fails:    \t");
-	TxVal32((int32)Stats[BaroFailS], 0, 0);
-	TxNextLine();
-	*/
 
 	TxString("\r\nR.Finder: \t");
 	if ( F.RangefinderAltitudeValid )

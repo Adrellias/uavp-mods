@@ -31,8 +31,8 @@ void InitHeading(void);
 void InitCompass(void);
 
 i24u 	Compass;
-int16 	CompassFilterA;
-i32u 	CompassValF;
+int16 	HeadingFilterA;
+i32u 	HeadingValF;
 
 int16 GetCompass(void)
 {
@@ -51,13 +51,11 @@ void GetHeading(void)
 {
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
-		Compass.i2_1 = GetCompass();
-		Compass.b0 = 0;
+		Heading = GetCompass();
+		Heading = Make2Pi((int16) ConvertDDegToMPi(Heading) - CompassOffset);
 
-		Compass.i2_1 = Make2Pi((int16) ConvertDDegToMPi(Compass.i2_1) - CompassOffset);
-		CompassValF.i32 += ((int32)Compass.i24 - CompassValF.i3_1) * CompassFilterA;
+		LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
 
-		Heading = CompassValF.iw1; 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
 	}
 	else
@@ -273,8 +271,8 @@ CCerror:
 void InitCompass(void)
 {
 
-	CompassFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
-	CompassValF.i32 = 0;
+	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
+	HeadingValF.i32 = 0;
 
 	// 20Hz continuous read with periodic reset.
 	#ifdef SUPPRESS_COMPASS_SR
@@ -323,15 +321,15 @@ void InitHeading(void)
 {
 	static int16 CompassVal;
 
-	CompassValF.i32 = 0;
+	HeadingValF.i32 = 0;
 	CompassVal = GetCompass();
-	CompassValF.iw1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal) - CompassOffset);
+	HeadingValF.iw1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal) - CompassOffset);
 
 	#ifdef SIMULATE
 		FakeHeading = Heading = 0;
 	#endif // SIMULATE
 	DesiredHeading = Heading;
-	HEp = 0;
+
 } // InitHeading
 
 

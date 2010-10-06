@@ -37,11 +37,11 @@ void InitControl(void);
 int16 RC[CONTROLS];
 
 int16 RE, PE, YE, HE;					// gyro rate error	
-int16 REp, PEp, YEp, HEp;				// previous error for derivative
-int16 RollSum, PitchSum, YawSum;		// integral 	
+int16 REp, PEp, YEp;				// previous error for derivative
+int16 RollSum, PitchSum, YawSum;		// integral
+int16 Rl, Pl, Yl, Ylp;						// PID output values 	
 
-int16 YawFilterA, YlFilterA;
-i32u  YawRateF, YlF;
+int16 YawFilterA;
 
 int16 RollTrim, PitchTrim, YawTrim;
 int16 HoldYaw;
@@ -278,14 +278,13 @@ void LimitYawSum(void)
 		if ( HoldYaw > COMPASS_MIDDLE ) // acquire new heading
 		{
 			DesiredHeading = Heading;
-			HE = HEp = 0; 
+			HE = 0; 
 		}
 		else
 		{
 			HE = MakePi(DesiredHeading - Heading);
 			HE = Limit(HE, -SIXTHMILLIPI, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32( (int32)HE * (int32)P[CompassKp], 12); 
-			HEp = HE; 
 			YE -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
 		}
 	}
@@ -371,16 +370,18 @@ void DoControl(void)
 
 	// Yaw
 	
-	YE = YawRate + DesiredYaw + NavYCorr;
+	YE = YawRate;
 	LimitYawSum();
+
+	YE += DesiredYaw + NavYCorr;
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 
-	Temp.b0 = 0;
-	Temp.i2_1 = Yl;
-	YlF.i32 += ((int32)Temp.i24 - YlF.i3_1) * YlFilterA;
-	Yl = YlF.iw1;
+	#ifdef TRICOPTER
+		Yl = SlewLimit(Ylp, Yl, 1);
+		Ylp = Yl;
+	#endif // TRICOPTER
 
 	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);
 		

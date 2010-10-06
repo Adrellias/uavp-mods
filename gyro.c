@@ -34,6 +34,7 @@ void InitGyros(void);
 int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
 int16	RollRate, PitchRate, YawRate;
 int16	RollRateADC, PitchRateADC, YawRateADC;
+i32u 	YawRateF;
 
 #ifdef GYRO_ITG3200
 	#include "gyro_itg3200.h"

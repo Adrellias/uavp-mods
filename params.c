@@ -122,7 +122,7 @@ void ReadParametersEE(void)
 
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
 
-		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L);
+		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L + (int16)P[NavMagVar])*MILLIPI)/180L);
 		InitHeading();
 
 		#ifdef MULTICOPTER
@@ -150,7 +150,6 @@ void ReadParametersEE(void)
 		#ifndef USE_IRQ_ADC_FILTERS
 			YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
 		#endif // !USE_IRQ_ADC_FILTERS
-		YlFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) MOTOR_YAW_FREQ ) + (int24) P[TimeSlots] );	
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
@@ -323,7 +322,6 @@ void InitParameters(void)
 	#ifndef USE_IRQ_ADC_FILTERS
 		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
 	#endif // !USE_IRQ_ADC_FILTERS
-	YlFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) MOTOR_YAW_FREQ ) + (int24) P[TimeSlots] );
 
 	ALL_LEDS_OFF;  
 } // InitParameters

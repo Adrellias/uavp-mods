@@ -1,18 +1,8 @@
 
 //#define JIM_MPX_INVERT
 
-
 //changes outside this rate are deemed sensor/buss errors
 #define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
-
-// Filters
-
-#define	ADC_ATT_FREQ			100		// Hz Roll and Pitch PID loops 125-200Hz	
-#define	ADC_YAW_FREQ			20
-#define	ADC_BATT_FREQ			5
-#define	MOTOR_YAW_FREQ			2		// mainly for tricopter Yaw servo
-#define	ADC_ALT_FREQ			20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
-#define COMPASS_FREQ			5		// x 0.1Hz
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -105,6 +95,19 @@
 #ifdef AILERON
 	#define AF_TYPE AilAF
 #endif
+
+// Filters
+
+#define	ADC_ATT_FREQ				100		// Hz Roll and Pitch PID loops 125-200Hz	
+#define	ADC_BATT_FREQ				5
+#define	ADC_ALT_FREQ				20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
+
+#ifdef TRICOPTER
+	#define	ADC_YAW_FREQ			5
+#else
+	#define	ADC_YAW_FREQ			20
+#endif // TRICOPTER
+#define COMPASS_FREQ				5		// x 0.1Hz
 
 #define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
 
@@ -679,7 +682,7 @@ extern i16u	BaroVal;
 extern int8 BaroType;
 extern int16 AltitudeUpdateRate;
 extern int8	BaroRetries;
-extern i32u FiltBaroValF;
+extern i32u BaroValF;
 extern int16 BaroFilterA;
 
 #ifdef SIMULATE
@@ -704,8 +707,8 @@ extern void InitHeading(void);
 extern void InitCompass(void);
 
 extern i24u Compass;
-extern int16 CompassFilterA;
-extern i32u CompassValF;
+extern int16 HeadingFilterA;
+extern i32u HeadingValF;
 
 //______________________________________________________________________________________________
 
@@ -726,13 +729,12 @@ extern void LightsAndSirens(void);
 extern void InitControl(void);
 
 extern int16 RE, PE, YE, HE;					// gyro rate error	
-extern int16 REp, PEp, YEp, HEp;				// previous error for derivative
+extern int16 REp, PEp, YEp;				// previous error for derivative
 extern int16 Rl, Pl, Yl, Ylp;							// PID output values
 extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
 extern int16 RollTrim, PitchTrim, YawTrim;
 extern int16 HoldYaw, YawSlewLimit;
-extern int16 YawFilterA, YlFilterA;
-extern i32u  YawRateF, YlF;
+extern int16 YawFilterA;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
@@ -824,6 +826,7 @@ extern void InitITG3200(void);
 
 extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw;
 extern int16 RollRate, PitchRate, YawRate;
+extern i32u YawRateF;
 extern int16 RollRateADC, PitchRateADC, YawRateADC;
 
 //______________________________________________________________________________________________
@@ -1207,7 +1210,7 @@ extern int16x8x4Q PPMQ;
 
 // serial.c
 
-extern void TxString(const rom uint8 *);
+extern void TxString(const rom uint8*);
 extern void TxChar(uint8);
 extern void TxValU(uint8);
 extern void TxValS(int8);
@@ -1296,6 +1299,8 @@ extern void DoStartingBeepsWithOutput(uint8);
 extern int32 SlewLimit(int32, int32, int32);
 extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
+extern void LPFilter16(int16*, i32u*, int16);
+extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 extern void CheckAlarms(void);
 
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;

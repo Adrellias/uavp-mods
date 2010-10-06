@@ -79,10 +79,7 @@ void CalculateGyroRates(void)
 	} // GyroYawType
 
 	#ifndef USE_IRQ_ADC_FILTERS
-		Temp.b0 = 0;
-		Temp.i2_1 = YawRate;
-	   	YawRateF.i32 += ((int32)Temp.i24 - YawRateF.i3_1) * YawFilterA;
-		YawRate = YawRateF.iw1;
+		LPFilter16(&YawRate, &YawRateF, YawFilterA);
 	#endif // !USE_IRQ_ADC_FILTERS
 
 } // GetGyroValues
@@ -123,7 +120,7 @@ void ErectGyros(void)
 void InitGyros(void)
 {
 	// nothing to be done for analog gyros - could check nominal midpoints?
-
+	YawRateF.i32 = 0;
 	F.GyroFailure = false;
 } // InitGyros
 
