@@ -227,16 +227,16 @@ int16 FreescaleToDM(int24 p)
 
 void GetFreescaleBaroAltitude(void)
 {
-	static int16 BaroPressure;
+	static int24 BaroPressure;
 
 	if ( mSClock() >= mS[BaroUpdate] )
 	{
 		ReadFreescaleBaro();
 		if ( F.BaroAltitudeValid )
 		{
-			BaroPressure = (int16)BaroVal.u16; // sum of 4 samples
+			BaroPressure = (int24)BaroVal.u16; // sum of 4 samples
 
-			LPFilter16(&BaroPressure, &BaroValF, BaroFilterA); 
+			LPFilter24(&BaroPressure, &BaroValF, BaroFilterA); 
 		
 			BaroRelAltitude = FreescaleToDM(BaroPressure - OriginBaroPressure);
 
