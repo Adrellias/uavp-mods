@@ -340,12 +340,15 @@ void DoControl(void)
 	DoOrientationTransform();
 
 	FakeDesiredPitch = ControlPitch;
-	FakeDesiredRoll = ControlRoll;
-	FakeDesiredYaw = DesiredYaw;
+	FakeDesiredRoll =  ControlRoll;
+	FakeDesiredYaw =  DesiredYaw;
 	RollSum = SlewLimit(RollSum, -FakeDesiredRoll * 16, 4);
 	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch * 16, 4);
-	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4); 
-
+	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4);
+	Rl = -ControlRoll;
+	Pl = -ControlPitch;
+	Yl = DesiredYaw;
+	 
     #else
 
 	// Roll

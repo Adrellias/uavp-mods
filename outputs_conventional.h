@@ -62,6 +62,18 @@ void OutSignals(void)
 		_endasm
 		
 		#ifdef ELEVON
+			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
+			PWM[RightElevonC] = Limit(PWM[RightElevonC], 1, OUT_MAXIMUM);
+			PWM[LeftElevonC] = Limit(PWM[LeftElevonC], 1, OUT_MAXIMUM);
+			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
+		#else
+			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
+			PWM[AileronC] = Limit(PWM[AileronC], 1, OUT_MAXIMUM);
+			PWM[ElevatorC] = Limit(PWM[ElevatorC], 1, OUT_MAXIMUM);
+			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
+		#endif
+
+		#ifdef ELEVON
 			PWM0 = PWM[ThrottleC];
 			PWM1 = PWM[RightElevonC];
 			PWM2 = PWM[LeftElevonC];
@@ -194,6 +206,23 @@ void OutSignals(void)
 
 	if ( ++ServoToggle >= ServoInterval )
 		ServoToggle = 0;
+
+	#else
+
+		#ifdef ELEVON
+			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
+			PWM[RightElevonC] = Limit(PWM[RightElevonC], 1, OUT_MAXIMUM);
+			PWM[LeftElevonC] = Limit(PWM[LeftElevonC], 1, OUT_MAXIMUM);
+			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
+		#else
+			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
+			PWM[AileronC] = Limit(PWM[AileronC], 1, OUT_MAXIMUM);
+			PWM[ElevatorC] = Limit(PWM[ElevatorC], 1, OUT_MAXIMUM);
+			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
+		#endif
+
+		PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
+		PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 		
 	#endif // !(SIMULATE | TESTING)
 	

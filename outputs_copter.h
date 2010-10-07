@@ -321,6 +321,19 @@ OS002:
 		ServoToggle = 0;
 
 	EnableInterrupts;
+
+	#else
+
+		PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
+		PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
+		PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
+		#ifdef TRICOPTER
+			PWM[BackC] = Limit(PWM[BackC], 1, OUT_MAXIMUM);
+		#else
+			PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
+		#endif
+		PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
+		PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 	
 	#endif // !(SIMULATE | TESTING)
 

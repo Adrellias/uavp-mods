@@ -128,7 +128,7 @@ void CompensateRollPitchGyros(void)
 		FBIntCorr = Limit(FBIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
 	}	
 	else
-		LRIntCorr = FBIntCorr = DUAcc = 0;
+		LRIntCorr = FBIntCorr = LRAcc = FBAcc = DUAcc = 0;
 
 } // CompensateRollPitchGyros
 
