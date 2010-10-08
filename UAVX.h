@@ -30,7 +30,7 @@
 	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
-	#define SIMULATE
+	//#define SIMULATE
 	//#define HEXACOPTER
 	#define QUADROCOPTER
 	//#define TRICOPTER

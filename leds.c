@@ -35,7 +35,7 @@ const uint8 LEDChase[7] = {
 		RedM,
 		GreenM,
 		BlueM
-		};
+	};
 
 #ifdef UAVX_HW
 

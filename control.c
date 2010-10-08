@@ -247,6 +247,7 @@ void InertialDamping(void)
 
 void LimitRollSum(void)
 {
+	// Caution: RollSum is positive left which is the opposite sense to the roll angle
 	RollSum += RollRate;
 	RollSum = Limit(RollSum, -RollIntLimit256, RollIntLimit256);
 	#ifdef ATTITUDE_ENABLE_DECAY
@@ -257,6 +258,7 @@ void LimitRollSum(void)
 
 void LimitPitchSum(void)
 {
+	// Caution: PitchSum is positive down which is the opposite sense to the pitch angle
 	PitchSum += PitchRate;
 	PitchSum = Limit(PitchSum, -PitchIntLimit256, PitchIntLimit256);
 	#ifdef ATTITUDE_ENABLE_DECAY
@@ -333,23 +335,21 @@ void DoControl(void)
 	CompensateRollPitchGyros();	
     InertialDamping();
 
-	DoOrientationTransform();
-
 	#ifdef SIMULATE
 
-	DoOrientationTransform();
-
-	FakeDesiredPitch = ControlPitch;
-	FakeDesiredRoll =  ControlRoll;
-	FakeDesiredYaw =  DesiredYaw;
+	FakeDesiredRoll = DesiredRoll + NavRCorr;
+	FakeDesiredPitch = DesiredPitch + NavPCorr;
+	FakeDesiredYaw =  DesiredYaw + NavYCorr;
 	RollSum = SlewLimit(RollSum, -FakeDesiredRoll * 16, 4);
 	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch * 16, 4);
 	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4);
-	Rl = -ControlRoll;
-	Pl = -ControlPitch;
+	Rl = -FakeDesiredRoll;
+	Pl = -FakeDesiredPitch;
 	Yl = DesiredYaw;
 	 
     #else
+
+	DoOrientationTransform();
 
 	// Roll
 				
