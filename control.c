@@ -275,9 +275,7 @@ void LimitYawSum(void)
 	{
 		// + CCW
 		Temp = DesiredYaw - YawTrim;
-		Temp = Abs(Temp);
-		HoldYaw = SlewLimit(HoldYaw, Temp, 2);
-		if ( HoldYaw > COMPASS_MIDDLE ) // acquire new heading
+		if ( Abs(Temp) > COMPASS_MIDDLE ) // acquire new heading
 		{
 			DesiredHeading = Heading;
 			HE = 0; 

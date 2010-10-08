@@ -103,7 +103,7 @@
 #define	ADC_ALT_FREQ				20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
 
 #ifdef TRICOPTER
-	#define	ADC_YAW_FREQ			5
+	#define	ADC_YAW_FREQ			3
 #else
 	#define	ADC_YAW_FREQ			20
 #endif // TRICOPTER
