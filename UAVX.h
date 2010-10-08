@@ -103,11 +103,11 @@
 #define	ADC_ALT_FREQ				20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
 
 #ifdef TRICOPTER
-	#define	ADC_YAW_FREQ			3
+	#define	ADC_YAW_FREQ			3		// Hz
 #else
-	#define	ADC_YAW_FREQ			20
+	#define	ADC_YAW_FREQ			10		// Hz
 #endif // TRICOPTER
-#define COMPASS_FREQ				5		// x 0.1Hz
+#define COMPASS_FREQ				10		// Hz must be less than 10Hz
 
 #define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
 

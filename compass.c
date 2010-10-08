@@ -271,7 +271,7 @@ CCerror:
 void InitCompass(void)
 {
 
-	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
+	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
 	HeadingValF.i32 = 0;
 
 	// 20Hz continuous read with periodic reset.
