@@ -419,11 +419,10 @@ void LightsAndSirens(void)
 				if ( --RCStart == 0 ) // wait until RC filters etc. have settled
 				{
 					UpdateParamSetChoice();
+					MixAndLimitCam();
 					RCStart = 1;
 				}
-
 				GetBaroAltitude();
-				MixAndLimitCam();
 				InitialThrottle = StickThrottle;
 				StickThrottle = 0; 
 				OutSignals();
