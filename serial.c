@@ -1,439 +1,319 @@
-// ==============================================
-// =      U.A.V.P Brushless UFO Controller      =
-// =           Professional Version             =
-// = Copyright (c) 2007 Ing. Wolfgang Mahringer =
-// ==============================================
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License along
-//  with this program; if not, write to the Free Software Foundation, Inc.,
-//  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-//
-// ==============================================
-// =  please visit http://www.uavp.org          =
-// =               http://www.mahringer.co.at   =
-// ==============================================
+// =================================================================================================
+// =                                  UAVX Quadrocopter Controller                                 =
+// =                             Copyright (c) 2008 by Prof. Greg Egan                             =
+// =                   Original V3.15 Copyright (c) 2007 Ing. Wolfgang Mahringer                   =
+// =                       http://code.google.com/p/uavp-mods/ http://uavp.ch                      =
+// =================================================================================================
 
-// Serial support (RS232 option)
+//    This is part of UAVX.
 
-// this is required on CC5X V3.3
-typedef char CHAR;
+//    UAVX is free software: you can redistribute it and/or modify it under the terms of the GNU 
+//    General Public License as published by the Free Software Foundation, either version 3 of the 
+//    License, or (at your option) any later version.
 
-#pragma codepage=3
-#pragma sharedAllocation
+//    UAVX is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even 
+//    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//    General Public License for more details.
 
-#include "c-ufo.h"
-#include "bits.h"
+//    You should have received a copy of the GNU General Public License along with this program.  
+//    If not, see http://www.gnu.org/licenses/
 
-// Math Library
-#include "mymath16.h"
+// USART routines
 
-// data strings
+#include "uavx.h"
 
-const char page2 SerHello[] = "\r\nU.A.V.P. V" Version " (c) 2007"
-							  " Ing. Wolfgang Mahringer\r\n"
-							  "This is FREE SOFTWARE, see GPL license!\r\n";
+void TxString(const rom uint8 *);
+void TxChar(uint8);
+void TxValU(uint8);
+void TxValS(int8);
+void TxNextLine(void);
+void TxNibble(uint8);
+void TxValH(uint8);
+void TxValH16(uint16);
+uint8 RxChar(void);
+uint8 PollRxChar(void);
+uint8 RxChar(void);
+uint8 RxNumU(void);
+int8 RxNumS(void);
+void TxVal32(int32, int8, uint8);
+void TxChar(uint8);
+void TxESCu8(uint8);
+void Sendi16(int16);
+void TxESCi8(int8);
+void TxESCi16(int16);
+void TxESCi24(int24);
+void TxESCi32(int32);
+void SendPacket(uint8, uint8, uint8 *, boolean);
 
-const char page2 SerSetup[] = "\r\nProfi-Ufo V" Version " ready.\r\n"
-							  "Gyro: "
-#ifdef OPT_ADXRS300
-							  "3x ADXRS300\r\n"
-#endif
-#ifdef OPT_ADXRS150
-							  "3x ADXRS150\r\n"
-#endif
-#ifdef OPT_IDG
-							  "1x ADXRS300, 1x IDG300\r\n"
-#endif
-							  "Linear sensors ";
-const char page2 SerLSavail[]="ONLINE\r\n";
-const char page2 SerLSnone[]= "not available\r\n";
-const char page2 SerBaro[]=   "Baro sensor ";
-const char page2 SerChannel[]="Channel mode: Throttle Ch";
-const char page2 SerFM_Fut[]= "3";
-const char page2 SerFM_Grp[]= "1";
+#pragma udata txbuffer
+uint8 TxCheckSum;
+uint8Q TxQ;
+#pragma udata
 
-#ifdef BOARD_3_1
-const char page2 SerCompass[]="Compass sensor ";
-#endif
-
-const char page2 SerHelp[]  = "\r\nCommands:\r\n"
-					 		  "L...List param\r\n"
-							  "M...Modify param\r\n"
-							  "S...Show setup\r\n"
-							  "N...Neutral values\r\n"
-							  "R...Show receiver channels\r\n"
-							  "B...start Boot-Loader\r\n";
-const char page2 SerReg1[]  = "\r\nRegister ";
-const char page2 SerReg2[]  = " = ";
-const char page2 SerPrompt[]= "\r\n>";
-// THE FOLLOWING LINE NOT TO BE CHANGED, it is important for UAVPset
-const char page2 SerList[]  = "\r\nParameter list for set #";
-const char page2 SerSelSet[]= "\r\nSelected parameter set: ";
-
-const char page2 SerNeutralR[]="\r\nNeutral Roll:";
-const char page2 SerNeutralN[]=" Nick:";
-const char page2 SerNeutralY[]=" Yaw:";
-
-const char page2 SerRecvCh[]=  "\r\nT:";
-
-// transmit a fix text from a table
-void SendComText(const char *pch)
+void TxString(const rom uint8 *pch)
 {
 	while( *pch != '\0' )
+		TxChar(*pch++);
+} // TxString
+
+void TxChar(uint8 ch)
+{
+	uint8 NewTail;
+
+	if ( F.TxToBuffer )
 	{
-		SendComChar(*pch);
-		pch++;
-	}
-}
-
-void ShowPrompt(void)
-{
-	SendComText(SerPrompt);
-}
-
-// send a character to the serial port
-void SendComChar(char W)
-{
-	while( TXIF == 0 ) ;	// wait for transmit ready
-	TXREG = W;		// put new char
-	// register W must be retained on exit!!!!
-}
-
-static uns8 nival;
-static char ch;
-
-// converts an unsigned byte to decimal and send it
-void SendComValU(uns8 W)
-{
-	nival = W;
-
-	W = nival / 100;
-	SendComChar(W+'0');
-	nival %= 100;		// Einsparpotential: Modulo als Mathlib
-
-	W = nival / 10;
-	SendComChar(W+'0');
-	nival %= 10;
-
-	SendComChar(nival+'0');
-}
-
-// converts a nibble to HEX and sends it
-void SendComNibble(uns8 W)
-{
-	nival = W + '0';
-	if( nival > '9' )
-		nival += 7;		// A to F
-	SendComChar(nival);
-}
-
-// converts an unsigned byte to HEX and sends it
-void SendComValH(uns8 W)
-{
-	uns8 nival2;
-
-	nival2 = W;
-	SendComNibble(nival2 >> 4);
-	SendComNibble(nival2 & 0x0F);
-}
-
-// converts a signed byte to decimal and send it
-// because of dumb compiler nival must be declared as unsigned :-(
-void SendComValS(uns8 W)
-{
-	nival = W;
-	if( (int)nival < 0 )
-	{
-		SendComChar('-');	// send sign
-		nival = -(int)nival;
+		TxCheckSum ^= ch;
+		NewTail=(TxQ.Tail+1) & TX_BUFF_MASK;
+	  	TxQ.B[NewTail]=ch;
+		TxQ.Tail = NewTail;
 	}
 	else
-		SendComChar('+');	// send sign
-
-	SendComValU(nival);
-}
-
-// if a character is in the buffer
-// return it. Else return the NUL character
-char RecvComChar(void)
-{
-	
-	if( RCIF )	// a character is waiting in the buffer
 	{
-		if( OERR || FERR )	// overrun or framing error?
+		while( !PIR1bits.TXIF ) ;	// wait for transmit ready
+		TXREG = ch;		// put new char
+	}
+} // TxChar
+
+void TxValU(uint8 v)
+{	
+	// UAVPSet requires 3 digits exactly ( 000 to 999 )
+	TxChar((v / 100) + '0');
+	v %= 100;	
+
+	TxChar((v / 10) + '0');
+	v %= 10;
+
+	TxChar(v + '0');
+} // TxValU
+
+void TxValS(int8 v)
+{
+	// UAVPSet requires sign and 3 digits exactly (-999 to 999)
+	if( v < 0 )
+	{
+		TxChar('-');	// send sign
+		v = -v;
+	}
+	else
+		TxChar('+');	// send sign
+
+	TxValU(v);
+} // TxValS
+
+void TxNextLine(void)
+{
+	TxChar(CR);
+	TxChar(LF);
+} // TxNextLine
+
+void TxNibble(uint8 v)
+{
+	if ( v > (uint8)9)
+		TxChar('A' + v - 10);
+	else
+		TxChar('0' + v);
+} // TxNibble
+
+void TxValH(uint8 v)
+{
+	TxNibble(v >> 4);
+	TxNibble(v & 0x0f);
+} // TxValH
+
+void TxValH16(uint16 v)
+{
+	TxValH(v >> 8);
+	TxValH(v);
+} // TxValH16
+
+uint8 PollRxChar(void)
+{
+	uint8	ch;	
+
+	if( PIR1bits.RCIF )	// a character is waiting in the buffer
+	{
+		if( RCSTAbits.OERR || RCSTAbits.FERR )	// overrun or framing error?
 		{
-			CREN = 0;	// diable, then re-enable port to
-			CREN = 1;	// reset OERR and FERR bit
-			W = RCREG;	// dummy read
+			RCSTAbits.CREN = false;	// disable, then re-enable port to
+			RCSTAbits.CREN = true;	// reset OERR and FERR bit
+			ch = RCREG;	// dummy read
 		}
 		else
 		{
-			W = RCREG;	// get the character
-			SendComChar(W);	// echo it
-			return(W);		// and return it
+			ch = RCREG;	// get the character
+			TxChar(ch);	// echo it for UAVPSet
+			return(ch);		// and return it
 		}
 	}
-	return( '\0' );	// nothing in buffer
-}
+	return( NUL );	// nothing in buffer
 
+} // PollRxChar
 
-// enter an unsigned number 00 to 99
-uns8 RecvComNumU(void)
+uint8 RxChar(void)
 {
+	uint8	ch;	
 
-	nival = 0;
-	do
+	while ( !PIR1bits.RCIF );
+
+	if( RCSTAbits.OERR || RCSTAbits.FERR )	// overrun or framing error?
 	{
-		ch = RecvComChar();
+		RCSTAbits.CREN = false;	// disable, then re-enable port to
+		RCSTAbits.CREN = true;	// reset OERR and FERR bit
+		ch = RCREG;	// dummy read
 	}
-	while( (ch < '0') || (ch > '9') );
-	nival = ch - '0';
-	nival *= 10;
-	do
-	{
-		ch = RecvComChar();
-	}
-	while( (ch < '0') || (ch > '9') );
-	nival += ch - '0';
-	return(nival);
-}
+	else
+		ch = RCREG;	// get the character
+	
+	return(ch);
+} // RxChar
 
 
-// enter a signed number -99 to 99 (always 2 digits)!
-int RecvComNumS(void)
+uint8 RxNumU(void)
 {
-	nival = 0;
+	// UAVPSet sends 2 digits
+	uint8 ch;
+	uint8 n;
 
-	_NegIn = 0;
+	n = 0;
 	do
-	{
-		ch = RecvComChar();
-	}
+		ch = PollRxChar();
+	while( (ch < '0') || (ch > '9') );
+	n = (ch - '0') * 10;
+	do
+		ch = PollRxChar();
+	while( (ch < '0') || (ch > '9') );
+	n += ch - '0';
+	return(n);
+} // RxNumU
+
+
+int8 RxNumS(void)
+{
+	// UAVPSet sends sign and 2 digits
+	uint8 ch;
+	int8 n;
+	boolean Neg;
+	n = 0;
+
+	Neg = false;
+	do
+		ch = PollRxChar();
 	while( ((ch < '0') || (ch > '9')) &&
            (ch != '-') );
 	if( ch == '-' )
 	{
-		_NegIn = 1;
+		Neg = true;
 		do
-		{
-			ch = RecvComChar();
-		}
+			ch = PollRxChar();
 		while( (ch < '0') || (ch > '9') );
 	}
-	nival = ch - '0';
-	nival *= 10;
+	n = (ch - '0') * 10;
+
+	do
+		ch = PollRxChar();
+	while( (ch < '0') || (ch > '9') );
+	n += ch - '0';
+	if( Neg )
+		n = -n;
+	return(n);
+} // RxNumS
+
+void TxVal32(int32 V, int8 dp, uint8 Separator)
+{
+	uint8 S[16];
+	int8 c, Rem, zeros, i;
+	int32 NewV;
+	 
+	if (V<0)
+	{
+		TxChar('-');
+	    V=-V;
+	}
+//	else
+//		TxChar(' ');
+	
+	c=0;
+	do
+	{
+	    NewV=V/10;
+	    Rem=V-(NewV*10);
+	    S[c++]=Rem + '0';
+	    V=NewV;
+	}
+	while (V>0);
+	  
+	if ((c < ( dp + 1 ) ) && (dp > 0 ))
+	{
+	    TxChar('0');
+	    TxChar('.');
+	} 
+
+	zeros = (int8)dp-c-1;
+	if ( zeros >= 0 ) 
+		for (i = zeros; i>=0; i--)
+			TxChar('0');
 
 	do
 	{
-		ch = RecvComChar();
+	    c--;
+	    TxChar(S[c]);
+	    if ((c==dp)&&(c>0)) 
+	      TxChar('.');
 	}
-	while( (ch < '0') || (ch > '9') );
-	nival += ch - '0';
-	if( _NegIn )
-		nival = -nival;
-	return(nival);
-}
+	while ( c > 0 );
 
-// send the current configuration setup to serial port
-void ShowSetup(uns8 W)
+	if ( Separator != NUL )
+		TxChar(Separator);
+} // TxVal32
+
+void TxESCu8(uint8 ch)
 {
-	if( W )
-	{
-		SendComText(SerHello);
-		IK5 = _Minimum;	
-	}
+  if ((ch==SOH)||(ch==EOT)||(ch==ESC))
+	TxChar(ESC);
+  TxChar(ch);
+} // TxESCu8
 
-	SendComText(SerSetup);	// send hello message
-	if( _UseLISL )
-		SendComText(SerLSavail);
-	else
-		SendComText(SerLSnone);
-
-#ifdef BOARD_3_1
-	SendComText(SerCompass);
-	if( _UseCompass )
-		SendComText(SerLSavail);
-	else
-		SendComText(SerLSnone);
-
-	SendComText(SerBaro);
-	if( _UseBaro )
-		SendComText(SerLSavail);
-	else
-		SendComText(SerLSnone);
-#endif
-
-	ReadEEdata();
-	SendComText(SerChannel);
-	if( FutabaMode )
-		SendComText(SerFM_Fut);
-	else
-		SendComText(SerFM_Grp);
-
-	SendComText(SerSelSet);
-	if( IK5 > _Neutral )
-		SendComChar('2');
-	else
-		SendComChar('1');
-	
-	ShowPrompt();
-}
-
-void ProgRegister(void)
+void TxESCi8(int8 b)
 {
-	EEPGD = 0;
-	WREN = 1;		// enable eeprom writes
-	GIE = 0;
-	EECON2 = 0x55;	// fix prog sequence (see 16F628A datasheet)
-	EECON2 = 0xAA;
-	WR = 1;			// start write cycle
-	GIE = 1;
-	while( WR == 1 );	// wait to complete
-	WREN = 0;	// disable EEPROM write
-}
+  if (((uint8)b==SOH)||((uint8)b==EOT)||((uint8)b==ESC))
+	TxChar(ESC);
+  TxChar(b);
+} // TxESCu8
 
-long nila1@nilarg1;
-
-// if a command is waiting, read and process it.
-// Do NOT call this routine while in flight!
-void ProcessComCommand(void)
+void Sendi16(int16 v)
 {
-    int size1 *p;
-	uns8 nireg;
-	
-	nireg = RecvComChar();
-	if( nireg.6 )	// 0x40..0x7F, a character
-		nireg.5=0;
-	switch( nireg )
-	{
-		case '\0' : break;
-		case 'L'  :	// List parameters
-			SendComText(SerList);	// must send it (UAVPset!)
-			if( IK5 > _Neutral )
-				SendComChar('2');
-			else
-				SendComChar('1');
-			ReadEEdata();
-			nireg = 1;
-			for(p = &FirstProgReg; p <= &LastProgReg; p++)
-			{
-				SendComText(SerReg1);
-				SendComValU(nireg);
-				SendComText(SerReg2);
-				SendComValS(*p);
-				nireg++;
-			}
-			ShowPrompt();
-			break;
-		case 'M'  : // modify parameters
-			LedBlue_ON;
-			SendComText(SerReg1);
-			nireg = RecvComNumU();
-			nireg--;
-			SendComText(SerReg2);	// = 
-			nival = RecvComNumS();
-			EEDATA = nival;
-			if( IK5 > _Neutral )
-				nireg += _EESet2;
-			EEADR = nireg;
-// prog values into data flash
-			ProgRegister();
+	i16u Temp;
 
-// if config register on set #1 is progged,
-// write through the transmitter config bits to set #2
-			if( nireg == 15 /* = &ConfigParam - &FirstProgReg */ )
-			{
-				nival &= 0x12;	// read the programmed value
-					// mask only bits _FutabaMode and _NegativePPM
-				EEADR += _EESet2;	// goto set #2
-// da gehts no
-				RD = 1;
-// da niimer
-				EEDATA &= 0xED;
-				EEDATA |= nival;
+	Temp.i16 = v;
+	TxChar(Temp.b0);
+	TxChar(Temp.b1);
+} // Sendi16
 
-				ProgRegister();	// write to set#2 config reg
-			}
-			LedBlue_OFF;
-			ShowPrompt();
-			break;
-		case 'S' :	// show status
-			ShowSetup(0);
-			break;
-		case 'N' :	// neutral values
-			SendComText(SerNeutralR);
-			SendComValS(NeutralLR);
+void TxESCi16(int16 v)
+{
+	i16u Temp;
 
-			SendComText(SerNeutralN);
-			SendComValS(NeutralFB);
+	Temp.i16 = v;
+	TxESCu8(Temp.b0);
+	TxESCu8(Temp.b1);
+} // Sendi16
 
-			SendComText(SerNeutralY);
-			Tp -= 1024;		// subtract 1g (vertical sensor)
-			SendComValS(NeutralUD);
-			ShowPrompt();
-			break;
-		case 'R':	// receiver values
-			SendComText(SerRecvCh);
-			SendComValU(IGas);
-			SendComChar(',');
-			SendComChar('R');
-			SendComChar(':');
-			SendComValS(IRoll);
-			SendComChar(',');
-			SendComChar('N');
-			SendComChar(':');
-			SendComValS(INick);
-			SendComChar(',');
-			SendComChar('Y');
-			SendComChar(':');
-			SendComValS(ITurn);
-			SendComChar(',');
-			SendComChar('5');
-			SendComChar(':');
-			SendComValU(IK5);
-			SendComChar(',');
-			SendComChar('6');
-			SendComChar(':');
-			SendComValU(IK6);
-			SendComChar(',');
-			SendComChar('7');
-			SendComChar(':');
-			SendComValU(IK7);
-			ShowPrompt();
-			break;
+void TxESCi24(int24 v)
+{
+	i24u Temp;
 
-		case 'B':	// call bootloader
-#asm
-			movlw	0x1f
-			movwf	PCLATH
-			dw	0x2F00
-#endasm
-//			BootStart();	// never comes back!
-		
-#ifndef TESTOUT	
-		case 'T':
-			RE = 10;
-			NE = 20;
-			Rw = 30;
-			Nw = 40;
-			MatrixCompensate();
-			ShowPrompt();
-			break;
-#endif
+	Temp.i24 = v;
+	TxESCu8(Temp.b0);
+	TxESCu8(Temp.b1);
+	TxESCu8(Temp.b2);
+} // Sendi16
 
-		case '?'  : // help
-			SendComText(SerHelp);
-			ShowPrompt();
-	}
-}
+void TxESCi32(int32 v)
+{
+	i32u Temp;
+
+	Temp.i32 = v;
+	TxESCi16(Temp.w0);
+	TxESCi16(Temp.w1);
+} // TxESCi32
 
