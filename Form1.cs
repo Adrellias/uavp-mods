@@ -26,6 +26,8 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.IO;
+
 
 namespace UAVXGS
 {
@@ -305,6 +307,19 @@ namespace UAVXGS
             this.Text = this.Text + " v" + vrs.Major + "." + vrs.Minor + "." + vrs.Build;
 
             ReplayDelay = 20 - Convert.ToInt16(ReplayNumericUpDown.Text);
+
+            string AppLogDir = UAVXGS.Properties.Settings.Default.LogFileDirectory;
+            if (!(Directory.Exists(AppLogDir))) {
+              string sProgFilesLogDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+              sProgFilesLogDir += "\\" + "UAVXGS " + vrs.Major + "." + vrs.Minor;
+              if (!(Directory.Exists(sProgFilesLogDir))) {
+                Directory.CreateDirectory(sProgFilesLogDir);
+              }
+              UAVXGS.Properties.Settings.Default.LogFileDirectory = sProgFilesLogDir;
+            } 
+
+
+
         }
 
         public static class ComPorts
