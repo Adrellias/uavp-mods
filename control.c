@@ -380,11 +380,12 @@ void DoControl(void)
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);
 
 	#ifdef TRICOPTER
-		Yl = SlewLimit(Ylp, Yl, 1);
+		Yl = SlewLimit(Ylp, Yl, 2);
 		Ylp = Yl;
+		Yl = Limit(Yl, -(int16)P[YawLimit]*4, (int16)P[YawLimit]*4);
+	#else
+		Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);
 	#endif // TRICOPTER
-
-	Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);
 		
 	REp = RE;
 	PEp = PE;

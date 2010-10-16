@@ -21,7 +21,7 @@ rem EXPERIMENTAL - USE WITH GREAT CAUTION - EXPERIMENTAL CONTROLS SEVERAL OTHER
 rem DEFINES CONTAINED IN THE BLOCK TOWARDS THE TOP OF UAVX.H
 
 rem Add/Delete required combinations to these sets
-rem set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
+set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
 set RX=RX7CH RX6CH
@@ -30,7 +30,7 @@ rem set EXP=NO_EXP EXPERIMENTAL
 set BRD=UAVPBLACK
 
 rem Personal choice
-set CLOCK=CLOCK_16MHZ
+rem set CLOCK=CLOCK_16MHZ
 rem set PROC=18F2620
 rem set DBG=NO_DEBUG
 rem set RX=RX7CH
@@ -60,7 +60,7 @@ set BRD=UAVPBLACK
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
 
 rm *.zip
-rem "C:\Program Files\7-Zip\7z" a -tzip UAVX-gke-40MHz.zip *-40-*.hex 
+"C:\Program Files\7-Zip\7z" a -tzip UAVX-gke-40MHz.zip *-40-*.hex 
 "C:\Program Files\7-Zip\7z" a -tzip UAVX-gke-16MHz.zip *-16-*.hex
 rem "C:\Program Files\7-Zip\7z" a -tzip UAVX-gke-EXP.zip *-EXP-*.hex
 
