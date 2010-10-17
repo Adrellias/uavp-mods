@@ -371,11 +371,11 @@ void ParseGPSSentence(void)
 
 void UpdateGPS(void)
 {
-	if ( F.GPSSentenceReceived )
+	if ( F.PacketReceived )
 	{
 		LEDBlue_ON;
 		LEDRed_OFF;
-		F.GPSSentenceReceived = false;  
+		F.PacketReceived = false;  
 		ParseGPSSentence(); // 3mS 18f2620 @ 40MHz
 		if ( F.GPSValid )
 		{
@@ -423,7 +423,7 @@ void InitGPS(void)
 
 	SumGPSRelAltitude = SumBaroRelAltitude = 0;
 
-	F.NavValid = F.GPSValid = F.GPSSentenceReceived = false;
-  	GPSRxState = WaitGPSSentinel; 
+	F.NavValid = F.GPSValid = F.PacketReceived = false;
+  	RxState = WaitSentinel; 
 
 } // InitGPS

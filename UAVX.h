@@ -532,7 +532,7 @@ typedef union {
 
 		UsingPolarCoordinates:1,
 		ReceivingGPS:1,
-		GPSSentenceReceived:1,
+		PacketReceived:1,
 		NavComputed:1,
 		AltitudeValid:1,		
 		UsingSerialPPM:1,
@@ -881,7 +881,7 @@ enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, T
 	GPSTimeout, GPSROCUpdate, LEDChaserUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
-enum WaitGPSStates { WaitGPSSentinel, WaitNMEATag, WaitGPSBody, WaitGPSCheckSum};
+enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
 
 extern int24 mS[];
 extern int16 RC[];
@@ -892,7 +892,7 @@ extern near int24 PrevEdge, CurrEdge;
 extern near uint8 Intersection, PrevPattern, CurrPattern;
 extern near i16u Width, Timer0;
 extern near int24 PauseTime; // for tests
-extern near uint8 GPSRxState;
+extern near uint8 RxState;
 extern near uint8 ll, tt, gps_ch;
 extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 extern near boolean WaitingForSync;

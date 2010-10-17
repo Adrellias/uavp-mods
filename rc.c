@@ -88,7 +88,7 @@ int16 PPMQSum[CONTROLS];
 void DoRxPolarity(void)
 {
 	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
-		CCP1CONbits.CCP1M0 = PPMPosPolarity[TxRxType];
+		CCP1CONbits.CCP1M0 = PPMPosPolarity[P[TxRxType]];
 	else
 		CCP1CONbits.CCP1M0 = 1;	
 }  // DoRxPolarity

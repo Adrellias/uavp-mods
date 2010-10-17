@@ -80,7 +80,7 @@ void ShowPrompt(void)
 void ShowRxSetup(void)
 {
 	if ( F.UsingSerialPPM )
-		if ( PPMPosPolarity[TxRxType] )
+		if ( PPMPosPolarity[P[TxRxType]] )
 			TxString("Serial PPM frame (Positive Polarity)");
 		else
 			TxString("Serial PPM frame (Negative Polarity)");

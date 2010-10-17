@@ -47,8 +47,8 @@ near i16u 	Width, Timer0;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
 near int24 	PauseTime;
-near uint8 	GPSRxState;
-near uint8 	ll, tt, gps_ch;
+near uint8 	RxState;
+near uint8 	ll, tt, RxCh;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near int8	State, FailState;
 near boolean WaitingForSync;
@@ -105,6 +105,8 @@ void InitTimersAndInterrupts(void)
 
 	OpenTimer1(T1_16BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
 	OpenCapture1(CAPTURE_INT_ON & C1_EVERY_FALL_EDGE); 	// capture mode every falling edge
+
+	DoRxPolarity();
 
 	TxQ.Head = TxQ.Tail = RxCheckSum = 0;
 
@@ -205,75 +207,75 @@ void high_isr_handler(void)
 	{
 		if ( RCSTAbits.OERR | RCSTAbits.FERR )
 		{
-			gps_ch = RCREG; // flush
+			RxCh = RCREG; // flush
 			RCSTAbits.CREN = false;
 			RCSTAbits.CREN = true;
 		}
 		else
 		{ // PollGPS in-lined to avoid EXPENSIVE context save and restore within irq
-			gps_ch = RCREG;
-			switch ( GPSRxState ) {
-			case WaitGPSCheckSum:
+			RxCh = RCREG;
+			switch ( RxState ) {
+			case WaitCheckSum:
 				if (GPSCheckSumChar < (uint8)2)
 				{
 					GPSTxCheckSum *= 16;
-					if ( gps_ch >= 'A' )
-						GPSTxCheckSum += ( gps_ch - ('A' - 10) );
+					if ( RxCh >= 'A' )
+						GPSTxCheckSum += ( RxCh - ('A' - 10) );
 					else
-						GPSTxCheckSum += ( gps_ch - '0' );
+						GPSTxCheckSum += ( RxCh - '0' );
 		
 					GPSCheckSumChar++;
 				}
 				else
 				{
 					NMEA.length = ll;	
-					F.GPSSentenceReceived = GPSTxCheckSum == RxCheckSum;
-					GPSRxState = WaitGPSSentinel;
+					F.PacketReceived = GPSTxCheckSum == RxCheckSum;
+					RxState = WaitSentinel;
 				}
 				break;
-			case WaitGPSBody: 
-				if ( gps_ch == '*' )      
+			case WaitBody: 
+				if ( RxCh == '*' )      
 				{
 					GPSCheckSumChar = GPSTxCheckSum = 0;
-					GPSRxState = WaitGPSCheckSum;
+					RxState = WaitCheckSum;
 				}
 				else         
-					if ( gps_ch == '$' ) // abort partial Sentence 
+					if ( RxCh == '$' ) // abort partial Sentence 
 					{
 						ll = tt = RxCheckSum = 0;
-						GPSRxState = WaitNMEATag;
+						RxState = WaitTag;
 					}
 					else
 					{
-						RxCheckSum ^= gps_ch;
-						NMEA.s[ll++] = gps_ch; 
+						RxCheckSum ^= RxCh;
+						NMEA.s[ll++] = RxCh; 
 						if ( ll > (uint8)( GPSRXBUFFLENGTH-1 ) )
-							GPSRxState = WaitGPSSentinel;
+							RxState = WaitSentinel;
 					}
 							
 				break;
-			case WaitNMEATag:
-				RxCheckSum ^= gps_ch;
-				if ( gps_ch == NMEATag[tt] ) 
+			case WaitTag:
+				RxCheckSum ^= RxCh;
+				if ( RxCh == NMEATag[tt] ) 
 					if ( tt == (uint8)MAXTAGINDEX )
-						GPSRxState = WaitGPSBody;
+						RxState = WaitBody;
 			        else
 						tt++;
 				else
-			        GPSRxState = WaitGPSSentinel;
+			        RxState = WaitSentinel;
 				break;
-			case WaitGPSSentinel: // highest priority skipping unused sentence types
-				if ( gps_ch == '$' )
+			case WaitSentinel: // highest priority skipping unused sentence types
+				if ( RxCh == '$' )
 				{
 					ll = tt = RxCheckSum = 0;
-					GPSRxState = WaitNMEATag;
+					RxState = WaitTag;
 				}
 				break;	
 		    } 
 		}
 		#ifndef TESTING // not used for testing - make space!
 		if ( Armed && ( P[TelemetryType] == GPSTelemetry) ) // piggyback GPS telemetry on GPS Rx
-			TXREG = gps_ch;
+			TXREG = RxCh;
 		#endif // TESTING
 	
 		PIR1bits.RCIF = false;
