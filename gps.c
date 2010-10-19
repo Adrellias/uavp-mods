@@ -47,10 +47,7 @@ void UpdateGPS(void);
 const rom uint8 NMEATag[6] = {"GPGGA"};
 
 #pragma udata gpsbuff
-struct {
-	uint8 s[GPSRXBUFFLENGTH];
-	uint8 length;
-	} NMEA;
+NMEAStruct NMEA;
 #pragma udata
 
 #pragma udata gpsvars

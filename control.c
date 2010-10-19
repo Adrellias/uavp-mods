@@ -454,7 +454,7 @@ void LightsAndSirens(void)
 			InitAccelerometers();
 			LEDYellow_TOG;
 			AccTimeout += 400;
-		}	
+		}
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
 	#ifndef GKE
