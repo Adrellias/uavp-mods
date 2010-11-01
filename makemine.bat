@@ -24,15 +24,15 @@ rem Add/Delete required combinations to these sets
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
-set RX=RX7CH RX6CH
-set CFG=QUADROCOPTER TRICOPTER HEXACOPTER HELICOPTER AILERON ELEVON
+rem set RX=RX7CH RX6CH
+rem set CFG=QUADROCOPTER TRICOPTER HEXACOPTER HELICOPTER AILERON ELEVON
 set EXP=NO_EXP
 
 rem Personal choice
-set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
+set CLOCK=CLOCK_16MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
-set RX=RX7CH RX6CH
+set RX=RX7CH
 set CFG=QUADROCOPTER	
 set EXP=NO_EXP EXPERIMENTAL
 set BRD=UAVPBLACK
@@ -51,8 +51,8 @@ echo Starting makeall uavp > log.lst
 for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in (%RX%) do for %%c in (%CFG%) do for %%e in (%EXP%) do for %%b in (%BRD%) do call makeallhelper.bat %%x %%p %%d %%r %%c %%e %%b 
 
 set PROC=18F2620
-set DBG=TESTING SIMULATE 
-set RX=RX7CH RX6CH
+set DBG=TESTING 
+set RX=RX7CH
 set CFG=QUADROCOPTER
 set BRD=UAVPBLACK
 
