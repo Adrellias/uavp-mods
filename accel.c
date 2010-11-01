@@ -34,7 +34,6 @@ void AccelerometerTest(void);
 void InitAccelerometers(void);
 
 #pragma udata accs
-uint8 	AccWhoAmI;
 i16u	Ax, Ay, Az;
 int8	LRIntCorr, FBIntCorr;
 int8	NeutralLR, NeutralFB, NeutralDU;
@@ -133,7 +132,7 @@ uint8 ReadLISL(uint8 c)
 {
 	static uint8 d;
 
-	// SPI_SDA = 1;	// very important!! really!! LIS3L likes it
+	//SPI_SDA = 1;	// very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
 	d=ReadLISLNext();
@@ -184,12 +183,14 @@ void WriteLISL(uint8 d, uint8 c)
 
 void IsLISLActive(void)
 {
+	static int8 r;
+
 	F.AccelerationsValid = false;
 	SPI_CS = DSEL_LISL;
 	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
 
-	AccWhoAmI = ReadLISL(LISL_WHOAMI + LISL_READ);
-	if( AccWhoAmI == (uint8)0x3A )	// a LIS03L sensor is there!
+	r = ReadLISL(LISL_WHOAMI + LISL_READ);
+	if( r == 0x3A )	// a LIS03L sensor is there!
 	{
 		WriteLISL(0b11000111, LISL_CTRLREG_1); // on always, 40Hz sampling rate,  10Hz LP cutoff, enable all axes
 		WriteLISL(0b00000000, LISL_CTRLREG_3);
@@ -278,11 +279,6 @@ void AccelerometerTest(void)
 	TxString("Read once - no averaging\r\n");
 
 	InitAccelerometers();
-
-	TxString("Acc ID: 0x");
-	TxValH( AccWhoAmI);
-	TxString(" (0x3A)\r\n");
-
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();

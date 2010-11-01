@@ -638,7 +638,7 @@ void InitNavigation(void)
 
 	HoldLatitude = HoldLongitude = WayHeading = 0;
 	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
-	EastDiffP = NorthDiffP = 0;
+	EastDiffP, NorthDiffP = 0;
 
 	NavState = HoldingStation;
 	AttitudeHoldResetCount = 0;

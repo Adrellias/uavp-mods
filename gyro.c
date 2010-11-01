@@ -109,7 +109,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral
 		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntCorr = Limit(LRIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
+		LRIntCorr = Limit(LRIntCorr, -1, 1); 
 	
 		// Pitch
 
@@ -125,7 +125,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral	
 		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntCorr = Limit(FBIntCorr, -(int16)P[CompSteps], (int16)P[CompSteps]); 
+		FBIntCorr = Limit(FBIntCorr, -1, 1); 
 	}	
 	else
 		LRIntCorr = FBIntCorr = LRAcc = FBAcc = DUAcc = 0;

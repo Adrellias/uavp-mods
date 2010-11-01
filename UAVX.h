@@ -25,10 +25,10 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	//#define GKE
+	#define GKE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
 	//#define HEXACOPTER
@@ -778,12 +778,10 @@ extern void InitGPS(void);
 
 #define MAXTAGINDEX 		4
 #define GPSRXBUFFLENGTH 	80
-typedef struct {
+extern struct {
 		uint8 	s[GPSRXBUFFLENGTH];
 		uint8 	length;
-	} NMEAStruct;
-
-extern NMEAStruct NMEA;
+	} NMEA;
 
 extern const rom uint8 NMEATag[];
 
