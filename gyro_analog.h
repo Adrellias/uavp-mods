@@ -47,7 +47,8 @@ void CalculateGyroRates(void)
 	switch ( P[GyroRollPitchType] ) {
 	case CustomGyro: break;
 	case IDG300:// 500 Deg/Sec 
-		RollRate = -RollRate; // adjust for reversed roll gyro sense
+		RollRate = -RollRate * 2; // adjust for reversed roll gyro sense
+		PitchRate *= 2;
 		break;
  	case Gyro300D3V:// LY530ALH 300deg/S 3.3V
 		break;
@@ -69,12 +70,13 @@ void CalculateGyroRates(void)
 		// dual not used for Yaw 
 		break;
  	case Gyro300D3V:
-		break;
-	case Gyro300D5V:
 		YawRate = SRS16(YawRate, 1);
 		break;
-	case Gyro150D5V:
+	case Gyro300D5V:
 		YawRate = SRS16(YawRate, 2);
+		break;
+	case Gyro150D5V:
+		YawRate = SRS16(YawRate, 3);
 		break;
 	} // GyroYawType
 

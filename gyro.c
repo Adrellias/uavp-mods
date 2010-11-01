@@ -62,6 +62,8 @@ void ShowGyroType(uint8 T)
 void CompensateRollPitchGyros(void)
 {
 	#define GRAV_COMP 11L
+	#define GYRO_COMP_STEP 2
+
 	static int16 Temp;
 	static int24 Temp24;
 	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
@@ -109,7 +111,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral
 		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntCorr = Limit(LRIntCorr, -1, 1); 
+		LRIntCorr = Limit(LRIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	
 		// Pitch
 
@@ -125,7 +127,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral	
 		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntCorr = Limit(FBIntCorr, -1, 1); 
+		FBIntCorr = Limit(FBIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	}	
 	else
 		LRIntCorr = FBIntCorr = LRAcc = FBAcc = DUAcc = 0;

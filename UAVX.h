@@ -778,11 +778,12 @@ extern void InitGPS(void);
 
 #define MAXTAGINDEX 		4
 #define GPSRXBUFFLENGTH 	80
-extern struct {
+typedef struct {
 		uint8 	s[GPSRXBUFFLENGTH];
 		uint8 	length;
-	} NMEA;
+	} NMEAStruct;
 
+extern NMEAStruct NMEA;
 extern const rom uint8 NMEATag[];
 
 extern int32 GPSMissionTime, GPSStartTime;
