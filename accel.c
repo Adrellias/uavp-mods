@@ -325,7 +325,6 @@ void InitAccelerometers(void)
 	{
 		LEDYellow_ON;
 		GetNeutralAccelerations();
-		LEDYellow_OFF;
 	}
 	else
 		F.AccFailure = true;

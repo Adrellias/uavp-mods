@@ -878,7 +878,7 @@ extern void ReceivingGPSOnly(uint8);
 extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
-	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, StartTime, 
+	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, StartTime, AccTimeout, 
 	GPSTimeout, GPSROCUpdate, LEDChaserUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
@@ -1171,7 +1171,7 @@ extern const rom uint8 ESCLimits [];
 
 
 extern int16 OSin[], OCos[];
-extern uint8 Orientation, PolarOrientation;
+extern int8 Orientation, PolarOrientation;
 
 extern uint8 ParamSet;
 extern boolean ParametersChanged, SaveAllowTurnToWP;

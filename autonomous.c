@@ -94,7 +94,7 @@ int16 	AltSum;
 void FailsafeHoldPosition(void)
 {
 	DesiredRoll = DesiredPitch = DesiredYaw = 0;
-	if ( F.GPSValid && F.CompassValid ) 
+	if ( F.GPSValid && F.CompassValid && F.AccelerationsValid ) 
 		Navigate(HoldLatitude, HoldLongitude);
 } // FailsafeHoldPosition
 
@@ -320,7 +320,7 @@ void DoNavigation(void)
 
 	#ifndef TESTING // not used for testing - make space!
 
-	F.NavigationActive = F.GPSValid && F.CompassValid && ( mSClock() > mS[NavActiveTime]);
+	F.NavigationActive = F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
 
 	if ( F.NavigationActive )
 	{
@@ -516,7 +516,7 @@ void DoPPMFailsafe(void)
 			{
 				// use last "good" throttle
 				Stats[RCFailsafesS]++;
-				if ( F.GPSValid && F.CompassValid )
+				if ( F.GPSValid && F.CompassValid && F.AccelerationsValid )
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_GPS_MS;
 				else
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_NO_GPS_MS;

@@ -401,13 +401,13 @@ static int8 RCStart = RC_INIT_FRAMES;
 
 void LightsAndSirens(void)
 {
-	static int24 Ch5Timeout, AccTimeout;
+	static int24 Ch5Timeout;
 
 	LEDYellow_TOG;
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
 
 	Beeper_OFF;
-	Ch5Timeout = AccTimeout = mSClock()+ 500; 					// mS.
+	Ch5Timeout = mSClock() + 500; // mS.
 	do
 	{
 		ProcessCommand();
@@ -447,19 +447,9 @@ void LightsAndSirens(void)
 			LEDRed_ON;
 			LEDGreen_OFF;
 		}	
-		ReadParametersEE();
-		
-		if ( !F.AccelerationsValid && ( mSClock() > AccTimeout ) )
-		{
-			InitAccelerometers();
-			LEDYellow_TOG;
-			AccTimeout += 400;
-		}	
+		ReadParametersEE();	
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
-	#ifndef GKE
-	(!F.AccelerationsValid) ||
-	#endif // !GKE
 		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
 				
 	FirstPass = false;

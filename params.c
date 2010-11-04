@@ -64,7 +64,7 @@ int8 P[MAX_PARAMETERS];
 #pragma udata orient
 int16 OSin[48], OCos[48];
 #pragma udata
-uint8 Orientation , PolarOrientation;
+int8 Orientation , PolarOrientation;
 uint8 UAVXAirframe;
 
 void ReadParametersEE(void)
@@ -129,6 +129,9 @@ void ReadParametersEE(void)
 			Orientation = P[Orient];
 			if (Orientation == 0xff ) // uninitialised
 				Orientation = 0;
+			else
+				if (Orientation < 0 )
+					Orientation += 48;
 		#else
 			Orientation = 0;
 		#endif // MULTICOPTER
