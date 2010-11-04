@@ -134,6 +134,12 @@ void ShowSetup(boolean h)
 		TxVal32((int16)Orientation * 75L, 1, 0);
 		TxString("deg CW from K1 motor(s)\r\n");
 	#endif // MULTICOPTER
+
+	TxString("Accelerometers: ");
+	if ( F.AccelerationsValid )
+		TxString("ONLINE\r\n");
+	else
+		TxString("FAILED\r\n");
 	
 	TxString("Roll/Pitch Gyros: ");
 	#ifdef GYRO_ITG3200

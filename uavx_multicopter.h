@@ -23,12 +23,12 @@
 	-12, 			// RollKi,			02
 	50, 			// RollKd,			03
 	-1, 			// HorizDampKp,		04c 
-	3, 				// RollIntLimit,	05
+	5, 				// RollIntLimit,	05
 	-20, 			// PitchKp,			06
 	-12, 			// PitchKi,			07
 	50, 			// PitchKd,			08
 	8, 				// AltKp,			09
-	3, 				// PitchIntLimit,	10
+	5, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
 	-25, 			// YawKi,			12

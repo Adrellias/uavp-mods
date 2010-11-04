@@ -62,7 +62,7 @@ void ShowGyroType(uint8 T)
 void CompensateRollPitchGyros(void)
 {
 	#define GRAV_COMP 11L
-	#define GYRO_COMP_STEP 2
+	#define GYRO_COMP_STEP 3
 
 	static int16 Temp;
 	static int24 Temp24;

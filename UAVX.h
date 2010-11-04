@@ -155,7 +155,7 @@
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
 //#define DISABLE_DYNAMIC_MASS_COMP_ROLL
-//#define DISABLE_DYNAMIC_MASS_COMP_PITCH
+#define DISABLE_DYNAMIC_MASS_COMP_PITCH
 
 // Altitude Hold
 
