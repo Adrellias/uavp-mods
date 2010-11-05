@@ -168,11 +168,11 @@ void MixAndLimitCam(void)
 	static i24u Temp;
 
 	// use only roll/pitch angle estimates
-	Temp.i24 = (int24)RollSum * P[CamRollKp];
+	Temp.i24 = (int24)CameraRollSum * P[CamRollKp];
 	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
 	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
 
-	Temp.i24 = (int24)PitchSum * P[CamPitchKp];
+	Temp.i24 = (int24)CameraPitchSum * P[CamPitchKp];
 	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
 	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 			
 

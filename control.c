@@ -37,10 +37,11 @@ void InitControl(void);
 int16 RC[CONTROLS];
 
 int16 RE, PE, YE, HE;					// gyro rate error	
-int16 REp, PEp, YEp;				// previous error for derivative
+int16 REp, PEp, YEp;					// previous error for derivative
 int16 RollSum, PitchSum, YawSum;		// integral
-int16 Rl, Pl, Yl, Ylp;						// PID output values 	
-
+int16 CameraRollSum, CameraPitchSum;
+int16 Rl, Pl, Yl, Ylp;					// PID output values 	
+int24 OSO, OCO;
 int16 YawFilterA;
 
 int16 RollTrim, PitchTrim, YawTrim;
@@ -299,7 +300,6 @@ void LimitYawSum(void)
 void DoOrientationTransform(void)
 {
 	static i24u Temp;
-	static int24 OSO, OCO;
 
 	if ( F.UsingPolar )
 	{
@@ -344,6 +344,9 @@ void DoControl(void)
 	Rl = -FakeDesiredRoll;
 	Pl = -FakeDesiredPitch;
 	Yl = DesiredYaw;
+
+	CameraRollSum = RollSum;
+	CameraPitchSum = PitchSum;
 	 
     #else
 
@@ -391,7 +394,10 @@ void DoControl(void)
 	PEp = PE;
 	YEp = YE;
 
-	#endif // SIMULATE		
+	CameraRollSum = SRS32(PitchSum * OSO + RollSum * OCO, 8);
+	CameraPitchSum = SRS32(PitchSum * OCO - RollSum * OSO, 8);
+
+	#endif // SIMULATE	
 
 	F.NearLevel = Max(Abs(RollSum), Abs(PitchSum)) < NAV_RTH_LOCKOUT;
 
@@ -472,6 +478,7 @@ void InitControl(void)
 {
 	RollRate = PitchRate = 0;
 	RollTrim = PitchTrim = YawTrim = 0;
+	CameraRollSum = CameraPitchSum = 0;
 	ControlRollP = ControlPitchP = 0;
 	Ylp = 0;
 	AltComp = 0;
