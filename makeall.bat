@@ -35,7 +35,7 @@ rem set PROC=18F2620
 rem set DBG=NO_DEBUG
 rem set RX=RX7CH
 set CFG=QUADROCOPTER TRICOPTER	
-set EXP=NO_EXP EXPERIMENTAL
+set EXP=NO_EXP
 rem set BRD=UAVPBLACK
 
 rem Delete working files
