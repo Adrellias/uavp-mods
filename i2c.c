@@ -441,8 +441,11 @@ void ConfigureESCs(void)
 			TxString("Connect ONLY ");
 			switch( m )
 			{
-				#ifdef HEXACOPTER
-					not yet!
+				#ifdef VCOPTER
+					case 0 : TxString("VLeft"); break;
+					case 1 : TxString("VRight");  break;
+					case 2 : TxString("Right"); break;
+					case 3 : TxString("Left");  break;
 				#else
 					case 0 : TxString("Front"); break;
 					case 1 : TxString("Back");  break;

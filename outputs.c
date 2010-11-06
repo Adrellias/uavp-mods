@@ -51,17 +51,20 @@ void DoMulticopterMix(int16 CurrThrottle)
 
 	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
 	#ifdef TRICOPTER
-		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
-		Temp = SRS16(Pl * 56, 7);
+		Temp = SRS16(Pl * 56, 7); // compensate for 30deg angle of rear arms
 		PWM[FrontC] -= Pl ;				// front motor
 		PWM[LeftC] += (Temp - Rl);		// right rear
 		PWM[RightC] += (Temp + Rl); 	// left rear
+
 		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
 	#else
-	    #ifdef HEXACOPTER
+	    #ifdef VCOPTER
+			Temp = SRS16(Pl * 56, 7); // compensate for 30deg angle of rear arms
+			PWM[LeftC] += (Temp - Rl);		// right rear
+			PWM[RightC] += (Temp + Rl); 	// left rear
 
-			NOT YET!
-
+			PWM[FrontLeftC] -= Pl + PWMSense[FrontLeftC] * Yl; 
+			PWM[FrontRightC] -= Pl - PWMSense[FrontRightC] * Yl; 
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
@@ -178,7 +181,7 @@ void MixAndLimitCam(void)
 
 } // MixAndLimitCam
 
-#if ( defined TRICOPTER | defined MULTICOPTER )
+#if ( defined TRICOPTER | defined MULTICOPTER | defined VCOPTER )
 	#include "outputs_copter.h"
 #else
 	#include "outputs_conventional.h"

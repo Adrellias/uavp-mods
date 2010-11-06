@@ -83,11 +83,11 @@
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
 	-4,				// AltKd			56
-	#ifdef TRICOPTER
+	#if (defined  TRICOPTER) | (defined VCOPTER )
 	24,				// Orient			57
 	#else	
 	0,				// Orient			57
-	#endif // TRICOPTER				
+	#endif // TRICOPTER | VCOPTER				
 	
 	12,				// NavYawLimit		58
 	0,				// 58 - 64 unused currently	

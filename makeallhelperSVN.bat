@@ -41,7 +41,7 @@ if "%DBG%" == "SIMULATE"     		set D=-SIMULATOR
 if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
 if "%CFG%" == "TRICOPTER"           set C=-TRI
 if "%CFG%" == "HELICOPTER"			set C=-HELI
-if "%CFG%" == "HEXACOPTER"			set C=-HEX
+if "%CFG%" == "VCOPTER"			set C=-VEE
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
 

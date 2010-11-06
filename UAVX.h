@@ -31,9 +31,9 @@
 	//#define TESTING						
 	//#define RX6CH 					// 6ch Receivers
 	//#define SIMULATE
-	//#define HEXACOPTER
-	#define QUADROCOPTER
+	//#define QUADROCOPTER
 	//#define TRICOPTER
+	#define VCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -67,7 +67,7 @@
 	#define UAVX_HW
 #endif
 
-#if ( defined TRICOPTER | defined QUADROCOPTER | defined HEXACOPTER )
+#if ( defined TRICOPTER | defined QUADROCOPTER | defined VCOPTER )
 	#define MULTICOPTER
 #endif
 
@@ -83,8 +83,8 @@
 #ifdef TRICOPTER
 	#define AF_TYPE TriAF
 #endif
-#ifdef HEXACOPTER
-	#define AF_TYPE HexAF
+#ifdef VCOPTER
+	#define AF_TYPE VAF
 #endif
 #ifdef HELICOPTER
 	#define AF_TYPE HeliAF
@@ -1036,6 +1036,7 @@ extern void StopMotors(void);
 extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
+enum PWMTags5 {FrontLeftC=0, FrontRightC}; // VCopter
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
 enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
@@ -1070,7 +1071,7 @@ enum TxRxTypes {
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
-enum AFs { QuadAF, TriAF, HexAF, HeliAF, ElevAF, AilAF };
+enum AFs { QuadAF, TriAF, VAF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
 	RollKp, 			// 01
@@ -1344,7 +1345,7 @@ extern void BatteryTest(void);
 #error RC_MAXIMUM < RC_NEUTRAL !
 #endif
 
-#if (( defined TRICOPTER + defined QUADROCOPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
+#if (( defined TRICOPTER + defined QUADROCOPTER + defined VCOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
 #error None or more than one aircraft configuration defined !
 #endif
 
