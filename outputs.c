@@ -63,8 +63,8 @@ void DoMulticopterMix(int16 CurrThrottle)
 			PWM[LeftC] += (Temp - Rl);		// right rear
 			PWM[RightC] += (Temp + Rl); 	// left rear
 
-			PWM[FrontLeftC] -= Pl + PWMSense[FrontLeftC] * Yl; 
-			PWM[FrontRightC] -= Pl - PWMSense[FrontRightC] * Yl; 
+			PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+			PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl; 
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
