@@ -29,15 +29,17 @@ void WriteLISL(uint8, uint8);
 void IsLISLActive(void);
 
 void ReadAccelerations(void);
+void DoAccelerations(void);
 void GetNeutralAccelerations(void);
 void AccelerometerTest(void);
 void InitAccelerometers(void);
 
 #pragma udata accs
-i16u	Ax, Ay, Az;
-int8	LRIntCorr, FBIntCorr;
-int8	NeutralLR, NeutralFB, NeutralDU;
-int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+uint8 	AccWhoAmI;
+i16u Ax, Ay, Az;
+int8 IntCorr[2];
+int8 Neutral[3];
+int16 Vel[3], Acc[3], Comp[4];
 #pragma udata
 
 #ifdef UAVX_HW
@@ -132,7 +134,7 @@ uint8 ReadLISL(uint8 c)
 {
 	static uint8 d;
 
-	//SPI_SDA = 1;	// very important!! really!! LIS3L likes it
+	// SPI_SDA = 1;	// very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
 	d=ReadLISLNext();
@@ -183,14 +185,12 @@ void WriteLISL(uint8 d, uint8 c)
 
 void IsLISLActive(void)
 {
-	static int8 r;
-
 	F.AccelerationsValid = false;
 	SPI_CS = DSEL_LISL;
 	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
 
-	r = ReadLISL(LISL_WHOAMI + LISL_READ);
-	if( r == 0x3A )	// a LIS03L sensor is there!
+	AccWhoAmI = ReadLISL(LISL_WHOAMI + LISL_READ);
+	if( AccWhoAmI == (uint8)0x3A )	// a LIS03L sensor is there!
 	{
 		WriteLISL(0b11000111, LISL_CTRLREG_1); // on always, 40Hz sampling rate,  10Hz LP cutoff, enable all axes
 		WriteLISL(0b00000000, LISL_CTRLREG_3);
@@ -235,11 +235,15 @@ void GetNeutralAccelerations(void)
 	// this routine is called ONLY ONCE while booting
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
+
+	// Sensor vertical mount Ax right, Ay up, Az back
+	// AccX = -Az, AccY = Ax, AccZ = -Ay 
+
 	static uint8 i;
-	static int16 LR, FB, DU;
+	static int16 TempBF, TempLR, TempUD;
 
 	// already done in caller program
-	LR = FB = DU = 0;
+	 TempBF = TempLR = TempUD = 0;
 	if ( F.AccelerationsValid )
 	{
 		for ( i = 16; i; i--)
@@ -248,28 +252,58 @@ void GetNeutralAccelerations(void)
 			ReadAccelerations();
 	
 		#ifdef USE_FLAT_ACC
-			LR -= Ax.i16;
-			FB += Ay.i16;
-			DU += Az.i16;
+			TempFB -= Ay.i16;
+			TempLR += Ax.i16;
+			TempUD -= Az.i16;
 		#else
-			LR += Ax.i16;
-			DU += Ay.i16;
-			FB += Az.i16;
+			TempBF += Az.i16;
+			TempLR -= Ax.i16;
+			TempUD += Ay.i16;
 		#endif // USE_FLAT_ACC
 		}	
 	
-		LR = SRS16(LR, 4);
-		FB = SRS16(FB, 4);
-		DU = SRS16(DU, 4);
+		TempBF = SRS16(TempBF, 4);
+		TempLR = SRS16(TempLR, 4);
+		TempUD = SRS16(TempUD, 4);
 	
-		NeutralLR = Limit(LR, -99, 99);
-		NeutralFB = Limit(FB, -99, 99);
-		NeutralDU = Limit(DU - 1024, -99, 99); // -1g
+		Neutral[BF] = Limit(BF, -99, 99);
+		Neutral[LR] = Limit(LR, -99, 99);
+		Neutral[UD] = Limit(UD - GRAVITY, -99, 99); // 1g
 	}
 	else
-		NeutralLR = NeutralFB = NeutralDU = 0;
+		Neutral[LR] = Neutral[BF] = Neutral[UD] = 0;
 
 } // GetNeutralAccelerations
+
+void DoAccelerations(void)
+{
+	if( F.AccelerationsValid )
+	{
+		ReadAccelerations();
+
+		#ifdef USE_FLAT_ACC // chip up and twisted over
+			Acc[BF] = -Ay.i16;
+			Acc[LR] =  Ax.i16;	
+			Acc[UD] = -Az.i16;
+		#else
+			Acc[BF] =  Az.i16;	
+			Acc[LR] = -Ax.i16;
+			Acc[UD] =  Ay.i16;
+		#endif // USE_FLAT_ACC
+
+		// Neutral[ {LR, BF, UD} ] pass through UAVPSet 
+		// and come back as AccMiddle[LR] etc.
+
+		Acc[BF] -= (int16)P[MiddleBF];
+		Acc[LR] -= (int16)P[MiddleLR];
+		Acc[UD] -= (int16)P[MiddleUD];
+	}
+	else
+	{
+		Acc[LR] = Acc[BF] = 0;
+		Acc[UD] = GRAVITY;
+	}
+} // DoAccelerations
 
 #ifdef TESTING
 
@@ -279,6 +313,11 @@ void AccelerometerTest(void)
 	TxString("Read once - no averaging\r\n");
 
 	InitAccelerometers();
+
+	TxString("Acc ID: 0x");
+	TxValH( AccWhoAmI);
+	TxString(" (0x3A)\r\n");
+
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
@@ -291,20 +330,20 @@ void AccelerometerTest(void)
 			TxString(" fault?");
 		TxNextLine();
 
-		TxString("\tF->B: \t");	
-		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
+		TxString("\tB->F: \t");	
+		TxVal32(-((int32)Az.i16*1000L)/1024, 3, 'G');
 		TxString(" (");
-		TxVal32((int32)Az.i16, 0 , ')');
+		TxVal32(-(int32)Az.i16, 0 , ')');
 		if ( Abs((Az.i16)) > 128 )
 			TxString(" fault?");	
 		TxNextLine();
 
-		TxString("\tD->U:    \t");
+		TxString("\tU->D:    \t");
 	
-		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
+		TxVal32(-((int32)Ay.i16*1000L)/1024, 3, 'G');
 		TxString(" (");
-		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
-		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
+		TxVal32(-(int32)Ay.i16, 0 , ')');
+		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) ) // zzz
 			TxString(" fault?");	
 		TxNextLine();
 	}
@@ -316,18 +355,19 @@ void AccelerometerTest(void)
 
 void InitAccelerometers(void)
 {
-	int8 i;
-
-	NeutralLR = NeutralFB = NeutralDU = Ax.i16 = Ay.i16 = Az.i16 = 0;
+	Neutral[LR] = Neutral[BF] = Neutral[UD] = Ax.i16 = Ay.i16 = Az.i16 = 0;
 
 	IsLISLActive();
 	if( F.AccelerationsValid )
 	{
 		LEDYellow_ON;
 		GetNeutralAccelerations();
+		LEDYellow_OFF;
 	}
 	else
 		F.AccFailure = true;
 } // InitAccelerometers
 
 #endif // UAVX_HW
+
+

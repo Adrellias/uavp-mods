@@ -696,7 +696,7 @@ void InitBarometer(void)
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
 	BaroType = BaroUnknown;
 
-	AltComp = AltDiffSum = AltDSum = 0;
+	Comp[Alt] = AltDiffSum = AltDSum = 0;
 	F.BaroAltitudeValid= true; // optimistic
 
 	if ( IsFreescaleBaroActive() )	
@@ -704,7 +704,7 @@ void InitBarometer(void)
 	else
 		if ( IsBoschBaroActive() )
 			InitBoschBarometer();
-		else	
+		else
 		{
 			F.BaroAltitudeValid = F.HoldingAlt = false;
 			Stats[BaroFailS]++;

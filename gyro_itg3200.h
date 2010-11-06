@@ -75,9 +75,9 @@ void BlockReadITG3200(void)
 	GY.b0 = G[3]; GY.b1 = G[2];
 	GZ.b0 = G[5]; GZ.b1 = G[4];
 
-	RollRateADC = GX.i16;
-	PitchRateADC = -GY.i16;
-	YawRateADC = -GZ.i16;
+	Gyro[Roll]ADC = GX.i16;
+	Gyro[Pitch]ADC = -GY.i16;
+	Gyro[Yaw]ADC = -GZ.i16;
 
 	return;	
 
@@ -150,11 +150,11 @@ void CalculateGyroRates(void)
 	static int16 Temp;
 
 	// ITG-3200 Gyro
-	RollRate = SRS16( RollRateADC - GyroMidRoll, 4);	
-	PitchRate = SRS16( PitchRateADC - GyroMidPitch, 4);
+	Gyro[Roll] = SRS16( GyroADC[Roll] - GyroMid[Roll], 4);	
+	Gyro[Pitch] = SRS16( GyroADC[Pitch] - GyroMid[Pitch], 4);
 	
-	YawRate = YawRateADC - GyroMidYaw; 
-	YawRate = SRS16(YawRate, 4);	
+	Gyro[Yaw] = GyroADC[Yaw] - GyroMid[Yaw]; 
+	Gyro[Yaw] = SRS16(Gyro[Yaw], 4);	
 
 } // CalculateGyroRates
 
@@ -170,16 +170,17 @@ void ErectGyros(void)
 	{
 		BlockReadITG3200();
 	
-		RollAv += RollRateADC;
-		PitchAv += PitchRateADC;	
-		YawAv += YawRateADC;
+		RollAv += GyroADC[Roll];
+		PitchAv += GyroADC[Pitch];	
+		YawAv += GyroADC[Yaw];
 	}
 	
-	GyroMidRoll = SRS32(RollAv, 5);	
-	GyroMidPitch = SRS32(PitchAv, 5);
-	GyroMidYaw = SRS32(YawAv, 5);
+	GyroMid[Roll] = SRS32(RollAv, 5);	
+	GyroMid[Pitch] = SRS32(PitchAv, 5);
+	GyroMid[Yaw] = SRS32(YawAv, 5);
 	
-	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+	for ( i = 0 ; i < 3 ; i++)
+		Gyro[Roll] = Angle[Roll] = 0;
 
 	LEDRed_OFF;
 

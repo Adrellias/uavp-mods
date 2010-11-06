@@ -24,45 +24,53 @@ void GetGyroValues(void)
 { 
 	if ( P[GyroRollPitchType] == IDG300 ) // 500 Deg/Sec
 	{
-		RollRateADC = ADC(IDGADCRollChan);
-		PitchRateADC = ADC(IDGADCPitchChan);
+		GyroADC[Roll] = ADC(IDGADCRollChan);
+		GyroADC[Pitch] = ADC(IDGADCPitchChan);
 	}
 	else
 	{
-		RollRateADC = ADC(NonIDGADCRollChan);
-		PitchRateADC = ADC(NonIDGADCPitchChan);
+		GyroADC[Roll] = ADC(NonIDGADCRollChan);
+		GyroADC[Pitch] = ADC(NonIDGADCPitchChan);
 	}
 
-	YawRateADC = ADC(ADCYawChan);
+	GyroADC[Yaw] = ADC(ADCYawChan);
 
 } // GetGyroValues
 
 void CalculateGyroRates(void)
 {
-	static i24u Temp;
+	static uint8 i;
 
-	RollRate = RollRateADC - GyroMidRoll;
-	PitchRate = PitchRateADC - GyroMidPitch;
+	Gyro[Roll] =  GyroMid[Roll] - GyroADC[Roll]; // change sign
+	Gyro[Pitch] = GyroMid[Pitch] - GyroADC[Pitch]; // change sign
+	Gyro[Yaw] = GyroADC[Yaw] - GyroMid[Yaw];
+
+	#ifdef USE_DCM
+
+	if ( P[GyroRollPitchType] == IDG300 )
+		Gyro[Roll] = -Gyro[Roll];
+	
+	#else
 
 	switch ( P[GyroRollPitchType] ) {
 	case CustomGyro: break;
-	case IDG300:// 500 Deg/Sec 
-		RollRate = -RollRate * 2; // adjust for reversed roll gyro sense
-		PitchRate *= 2;
+	case IDG300:// 500 Deg/Sec (*1.667)
+		Rate[Roll] = -Gyro[Roll] * 2; 
+		Rate[Pitch] = Gyro[Pitch] * 2; 
 		break;
- 	case Gyro300D3V:// LY530ALH 300deg/S 3.3V
+ 	case Gyro300D3V:// LY530ALH 300deg/S 3.3V (1.0 Reference )
+		Rate[Roll] = Gyro[Roll];	
+		Rate[Pitch] = Gyro[Pitch];
 		break;
-	case Gyro300D5V:// ADXRS610/300 Melexis90609, ITG3200 or generically 300deg/S 5V
-		RollRate = SRS16(RollRate, 1);	
-		PitchRate = SRS16(PitchRate, 1);
+	case Gyro300D5V:// ADXRS610/300 (*0.667), Melexis90609 (*0.5)or generically 300deg/S 5V
+		Rate[Roll] = SRS16(Gyro[Roll], 1);	
+		Rate[Pitch] = SRS16(Gyro[Pitch], 1);
 		break;
-	case Gyro150D5V:	 // ADXRS613/150 or generically 150deg/S 5V
-		RollRate = SRS16(RollRate, 2); 
-		PitchRate = SRS16(PitchRate, 2);
+	case Gyro150D5V:// ADXRS613/150 or generically 150deg/S 5V (*0.263)
+		Rate[Roll] = SRS16(Gyro[Roll], 2); 
+		Rate[Pitch] = SRS16(Gyro[Pitch], 2);
 		break;
 	} // GyroRollPitchType
-
-	YawRate = (int16)YawRateADC - GyroMidYaw;
 
 	switch ( P[GyroYawType] ) {
 	case CustomGyro: break;
@@ -70,19 +78,21 @@ void CalculateGyroRates(void)
 		// dual not used for Yaw 
 		break;
  	case Gyro300D3V:
-		YawRate = SRS16(YawRate, 1);
+		Rate[Yaw] = SRS16(Gyro[Yaw], 1);
 		break;
 	case Gyro300D5V:
-		YawRate = SRS16(YawRate, 2);
+		Rate[Yaw] = SRS16(Gyro[Yaw], 2);
 		break;
 	case Gyro150D5V:
-		YawRate = SRS16(YawRate, 3);
+		Rate[Yaw] = SRS16(Gyro[Yaw], 3);
 		break;
 	} // GyroYawType
 
 	#ifndef USE_IRQ_ADC_FILTERS
-		LPFilter16(&YawRate, &YawRateF, YawFilterA);
+		LPFilter16(&Rate[Yaw], &YawGyroF, YawFilterA);
 	#endif // !USE_IRQ_ADC_FILTERS
+
+	#endif // USE_DCM
 
 } // GetGyroValues
 
@@ -99,22 +109,23 @@ void ErectGyros(void)
 
 		GetGyroValues();
 
-		RollAv += RollRateADC;
-		PitchAv += PitchRateADC;	
-		YawAv += YawRateADC;
+		RollAv += GyroADC[Roll];
+		PitchAv += GyroADC[Pitch];	
+		YawAv += GyroADC[Yaw];
 	}
 	
 	if( !F.AccelerationsValid )
 	{
 		RollAv += (int16)P[MiddleLR] * 2;
-		PitchAv += (int16)P[MiddleFB] * 2;
+		PitchAv += (int16)P[MiddleBF] * 2;
 	}
 	
-	GyroMidRoll = (int16)((RollAv + 16) >> 5);	
-	GyroMidPitch = (int16)((PitchAv + 16) >> 5);
-	GyroMidYaw = (int16)((YawAv + 16) >> 5);
+	GyroMid[Roll] = (int16)((RollAv + 16) >> 5);	
+	GyroMid[Pitch] = (int16)((PitchAv + 16) >> 5);
+	GyroMid[Yaw] = (int16)((YawAv + 16) >> 5);
 	
-	RollRate = PitchRate = YawRate = RollSum = PitchSum = YawSum = REp = PEp = YEp = 0;
+  	for ( i = 0; i < 3 ; i++)
+		Gyro[i] = Angle[i] = 0;
 	LEDRed_OFF;
 
 } // ErectGyros
@@ -122,7 +133,7 @@ void ErectGyros(void)
 void InitGyros(void)
 {
 	// nothing to be done for analog gyros - could check nominal midpoints?
-	YawRateF.i32 = 0;
+	YawGyroF.i32 = 0;
 	F.GyroFailure = false;
 } // InitGyros
 

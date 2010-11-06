@@ -31,6 +31,12 @@ int16 int32atan2(int32, int32);
 int16 int16sqrt(int16);
 int32 int32sqrt(int32);
 
+float VDot(float v1[3], float v2[3]);
+void VCross(float VOut[3], float v1[3], float v2[3]);
+void VScale(float VOut[3], float v[3], float s);
+void VAdd(float VOut[3],float v1[3], float v2[3]);
+void VSub(float VOut[3],float v1[3], float v2[3]);
+
 int16 SRS16(int16 x, uint8 s)
 {
 	static i16u Temp;
@@ -204,3 +210,49 @@ int32 int32sqrt(int32 n)
   return(r);
 } // int32sqrt
 
+#ifdef USE_DCM
+
+float VDot(float v1[3], float v2[3])
+{
+  static float op;
+  static uint8 i;
+
+  op = 0.0; 
+  for( i = 0; i < (uint8)3; i++ )
+    op += v1[i] * v2[i];
+
+  return op; 
+} // VDot
+
+void VCross(float VOut[3], float v1[3], float v2[3])
+{
+  VOut[0]= (v1[1] * v2[2]) - (v1[2] * v2[1]);
+  VOut[1]= (v1[2] * v2[0]) - (v1[0] * v2[2]);
+  VOut[2]= (v1[0] * v2[1]) - (v1[1] * v2[0]);
+} // VCross
+ 
+void VScale(float VOut[3], float v[3], float s)
+{
+  static uint8 i;
+
+  for ( i = 0; i < (uint8)3; i++ )
+    VOut[i] = v[i] * s; 
+} // VScale
+
+void VAdd(float VOut[3],float v1[3], float v2[3])
+{
+  static uint8 i;
+
+  for ( i = 0; i < (uint8)3; i++ )
+    VOut[i] = v1[i] + v2[i];
+} // VAdd
+
+void VSub(float VOut[3],float v1[3], float v2[3])
+{
+  static uint8 i;
+
+  for ( i = 0; i < (uint8)3; i++ )
+    VOut[i] = v1[i] - v2[i];
+} // VSub
+
+#endif // USE_DCM

@@ -23,12 +23,12 @@
 	-12, 			// RollKi,			02
 	50, 			// RollKd,			03
 	-1, 			// HorizDampKp,		04c 
-	5, 				// RollIntLimit,	05
+	3, 				// RollIntLimit,	05
 	-20, 			// PitchKp,			06
 	-12, 			// PitchKi,			07
 	50, 			// PitchKd,			08
 	8, 				// AltKp,			09
-	5, 				// PitchIntLimit,	10
+	3, 				// PitchIntLimit,	10
 	
 	-30, 			// YawKp, 			11
 	-25, 			// YawKi,			12
@@ -83,11 +83,11 @@
 	49,				// BatteryCapacity	54c	
 	Gyro300D5V,		// GyroYawType		55c		
 	-4,				// AltKd			56
-	#if (defined  TRICOPTER) | (defined VCOPTER )
+	#ifdef TRICOPTER
 	24,				// Orient			57
 	#else	
 	0,				// Orient			57
-	#endif // TRICOPTER | VCOPTER				
+	#endif // TRICOPTER				
 	
 	12,				// NavYawLimit		58
 	0,				// 58 - 64 unused currently	

@@ -112,7 +112,7 @@ void ShowSetup(boolean h)
 	switch ( UAVXAirframe ) {
 		case QuadAF: TxString("QUADROCOPTER\r\n"); break;
 		case TriAF: TxString("TRICOPTER\r\n"); break;
-		case VAF: TxString("VCOPTER\r\n"); break;
+		case HexAF: TxString("HEXACOPTER\r\n"); break;
 		case HeliAF: TxString("HELICOPTER\r\n"); break;
 		case ElevAF: TxString("FLYING WING\r\n"); break;
 		case AilAF: TxString("AILERON\r\n"); break;
@@ -135,11 +135,12 @@ void ShowSetup(boolean h)
 		TxString("deg CW from K1 motor(s)\r\n");
 	#endif // MULTICOPTER
 
-	TxString("Accelerometers: ");
-	if ( F.AccelerationsValid )
-		TxString("ONLINE\r\n");
-	else
-		TxString("FAILED\r\n");
+	if ( !F.AccelerationsValid )
+	#ifdef USE_FLAT_ACC
+		TxString("Accelerometers: OFFLINE (horiz.)\r\n");
+	#else
+		TxString("Accelerometers: OFFLINE\r\n");
+	#endif // USE_FLAT_ACC
 	
 	TxString("Roll/Pitch Gyros: ");
 	#ifdef GYRO_ITG3200
@@ -366,13 +367,13 @@ void ProcessCommand(void)
 			case 'N' :	// neutral values
 				GetNeutralAccelerations();
 				TxString("\r\nNeutral    R:");
-				TxValS(NeutralLR);
+				TxValS(Neutral[LR]);
 		
 				TxString("    P:");
-				TxValS(NeutralFB);
+				TxValS(Neutral[BF]);
 		
 				TxString("   V:");	
-				TxValS(NeutralDU);
+				TxValS(Neutral[UD]);
 				ShowPrompt();
 				break;
 			case 'Z' : // set Paramset

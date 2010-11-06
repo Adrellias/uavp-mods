@@ -89,7 +89,9 @@ void ReceivingGPSOnly(boolean r)
 		#endif // !TESTING
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
+		#ifndef USE_DCM
    		PIE1bits.RCIE = r;
+		#endif // !USE_DCM
 	}
 } // ReceivingGPSOnly
 
@@ -203,6 +205,8 @@ void high_isr_handler(void)
 		PIR1bits.CCP1IF = false;
 	}
 
+	#ifndef USE_DCM
+
 	if ( PIR1bits.RCIF & PIE1bits.RCIE )			// RCIE enabled for GPS
 	{
 		if ( RCSTAbits.OERR | RCSTAbits.FERR )
@@ -281,6 +285,8 @@ void high_isr_handler(void)
 		PIR1bits.RCIF = false;
 	}
 
+	#endif // !USE_DCM
+
 	if ( INTCONbits.T0IF )  
 	{
 		#ifdef CLOCK_16MHZ
@@ -295,6 +301,7 @@ void high_isr_handler(void)
 
 		mS[Clock]++;
 
+		#ifndef USE_DCM
 		if ( ( mS[UpdateTimeout] - mS[Clock] ) > 15 ) // should not happen! 
 		{
 			WaitingForSync = false;
@@ -306,6 +313,7 @@ void high_isr_handler(void)
 		}
 		else
 			WaitingForSync = mS[Clock] < mS[UpdateTimeout];
+		#endif // !USE_DCM
 
 		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{

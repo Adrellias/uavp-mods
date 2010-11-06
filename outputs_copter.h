@@ -232,6 +232,7 @@ OS006:
 					r += WriteESCI2CByte( PWM[LeftC] );
 					r += WriteESCI2CByte( PWM[RightC] );
 					ESCI2CFail[0] += r;
+//  other ESCs if a Hexacopter
 					ESCI2CStop();
 				}
 		#endif //  MULTICOPTER
