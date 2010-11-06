@@ -50,21 +50,37 @@ void DoMulticopterMix(int16 CurrThrottle)
 	static int16 Temp, YlNeg, YlNegOn2, YlPos, YlPosOn2, RlOn2, PlOn2;
 
 	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
-	#ifdef TRICOPTER
-		Temp = SRS16(Pl * 56, 7); // compensate for 30deg angle of rear arms
-		PWM[FrontC] -= Pl ;				// front motor
-		PWM[LeftC] += (Temp - Rl);		// right rear
-		PWM[RightC] += (Temp + Rl); 	// left rear
-
-		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
+	#ifdef TRICOPTER // usually flown K1 motor to the rear which is set using orientation of 24
+		#ifdef REBALANCE 
+			PWM[FrontC] -= Pl ;		// front motor
+			PWM[LeftC] -= Rl;		// right rear
+			PWM[RightC] += Rl; 		// left rear
+	
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		#else
+			Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
+			PWM[FrontC] -= Pl ;			// front motor
+			PWM[LeftC] += (Temp - Rl);	// right rear
+			PWM[RightC] += (Temp + Rl); // left rear
+	
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		#endif	// REBALANCE
 	#else
-	    #ifdef VCOPTER
-			Temp = SRS16(Pl * 56, 7); // compensate for 30deg angle of rear arms
-			PWM[LeftC] += (Temp - Rl);		// right rear
-			PWM[RightC] += (Temp + Rl); 	// left rear
-
-			PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
-			PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl; 
+	    #ifdef VCOPTER 	// usually flown VTail (K1+K4) to the rear which is set using orientation of 24
+			#ifdef REBALANCE
+				PWM[LeftC] -= Rl;		// right rear
+				PWM[RightC] += Rl; 		// left rear
+	
+				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl; 
+			#else			
+				Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
+				PWM[LeftC] += (Temp - Rl);	// right rear
+				PWM[RightC] += (Temp + Rl); // left rear
+	
+				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl;
+			#endif //REBALANCE
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;

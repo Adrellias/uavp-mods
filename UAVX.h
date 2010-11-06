@@ -1,5 +1,6 @@
 
 //#define JIM_MPX_INVERT
+#define REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //changes outside this rate are deemed sensor/buss errors
 #define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
