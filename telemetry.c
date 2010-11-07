@@ -69,17 +69,17 @@ void ShowAttitude(void)
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
 
-	TxESCi16(Rate[Roll]);
-	TxESCi16(Rate[Pitch]);
-	TxESCi16(Rate[Yaw]);
+	TxESCi16(RollRateADC - GyroMidRoll);
+	TxESCi16(PitchRateADC - GyroMidPitch);
+	TxESCi16(YawRateADC - GyroMidYaw);
 
-	TxESCi16(-Angle[Roll]); // for consistency with old coordinate scheme
-	TxESCi16(-Angle[Pitch]); // for consistency with old coordinate scheme
-	TxESCi16(Angle[Yaw]);
+	TxESCi16(RollSum);
+	TxESCi16(PitchSum);
+	TxESCi16(YawSum);
 
-	TxESCi16(-Acc[LR]); // for consistency with old coordinate scheme
-	TxESCi16(Acc[BF]); 
-	TxESCi16(Acc[UD]);
+	TxESCi16(LRAcc);
+	TxESCi16(FBAcc);
+	TxESCi16(DUAcc);
 } // ShowAttitude
 
 void SendFlightPacket(void)
@@ -102,10 +102,10 @@ void SendFlightPacket(void)
 
 	ShowAttitude();
 
-	TxESCi8((int8)Comp[LR]);
-	TxESCi8((int8)Comp[BF]);
-	TxESCi8((int8)Comp[UD]);
-	TxESCi8((int8)Comp[Alt]);
+	TxESCi8((int8)LRComp);
+	TxESCi8((int8)FBComp);
+	TxESCi8((int8)DUComp);
+	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);
@@ -380,7 +380,7 @@ void SendCustom(void) // 1.2mS @ 40MHz
 		TxChar('B');
 	TxChar(HT);
 
-	TxVal32(SRS32(Comp[Alt],1), 1, HT);		// ~% throttle compensation
+	TxVal32(SRS32(AltComp,1), 1, HT);		// ~% throttle compensation
 
 	TxVal32(GPSRelAltitude, 1, HT);
 	TxVal32(BaroRelAltitude, 1, HT);
@@ -417,22 +417,22 @@ void SensorTrace(void)
 		TxValH16(DesiredPitch); TxChar(';');
 		TxValH16(DesiredYaw); TxChar(';');
 
-		TxValH16(GyroADC[Roll] - GyroMid[Roll]); TxChar(';');
-		TxValH16(GyroADC[Pitch] - GyroMid[Pitch]); TxChar(';');
-		TxValH16(GyroADC[Yaw] - GyroMid[Yaw]); TxChar(';');
+		TxValH16(RollRateADC - GyroMidRoll); TxChar(';');
+		TxValH16(PitchRateADC - GyroMidPitch); TxChar(';');
+		TxValH16(YawRateADC - GyroMidYaw); TxChar(';');
 
-		TxValH16(Angle[Roll]); TxChar(';');
-		TxValH16(Angle[Pitch]); TxChar(';');
-		TxValH16(Angle[Yaw]); TxChar(';');
+		TxValH16(RollSum); TxChar(';');
+		TxValH16(PitchSum); TxChar(';');
+		TxValH16(YawSum); TxChar(';');
 
-		TxValH16(Acc[LR]); TxChar(';');
-		TxValH16(Acc[BF]); TxChar(';');
-		TxValH16(Acc[UD]); TxChar(';');
+		TxValH16(LRAcc); TxChar(';');
+		TxValH16(FBAcc); TxChar(';');
+		TxValH16(DUAcc); TxChar(';');
 
-		TxValH16(Comp[LR]); TxChar(';');
-		TxValH16(Comp[BF]); TxChar(';');
-		TxValH16(Comp[UD]); TxChar(';');
-		TxValH16(Comp[Alt]); TxChar(';');
+		TxValH16(LRComp); TxChar(';');
+		TxValH16(FBComp); TxChar(';');
+		TxValH16(DUComp); TxChar(';');
+		TxValH16(AltComp); TxChar(';');
 		TxNextLine();
 	} 
 	#endif // TESTING

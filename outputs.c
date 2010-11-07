@@ -50,18 +50,37 @@ void DoMulticopterMix(int16 CurrThrottle)
 	static int16 Temp, YlNeg, YlNegOn2, YlPos, YlPosOn2, RlOn2, PlOn2;
 
 	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
-	#ifdef TRICOPTER
-		//	Temp = (Pl * 50)/115; // compensate for 30deg angle of rear arms
-		Temp = SRS16(Pl * 56, 7);
-		PWM[FrontC] -= Pl ;				// front motor
-		PWM[LeftC] += (Temp - Rl);		// right rear
-		PWM[RightC] += (Temp + Rl); 	// left rear
-		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo	
+	#ifdef TRICOPTER // usually flown K1 motor to the rear which is set using orientation of 24
+		#ifdef TRI_REBALANCE 
+			PWM[FrontC] -= Pl ;		// front motor
+			PWM[LeftC] -= Rl;		// right rear
+			PWM[RightC] += Rl; 		// left rear
+	
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		#else
+			Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
+			PWM[FrontC] -= Pl ;			// front motor
+			PWM[LeftC] += (Temp - Rl);	// right rear
+			PWM[RightC] += (Temp + Rl); // left rear
+	
+			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		#endif	// TRI_REBALANCE
 	#else
-	    #ifdef HEXACOPTER
-
-			NOT YET!
-
+	    #ifdef VTCOPTER 	// usually flown VTail (K1+K4) to the rear which is set using orientation of 24
+			#ifdef VT_TREBALANCE
+				PWM[LeftC] -= Rl;		// right rear
+				PWM[RightC] += Rl; 		// left rear
+	
+				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl; 
+			#else			
+				Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
+				PWM[LeftC] += (Temp - Rl);	// right rear
+				PWM[RightC] += (Temp + Rl); // left rear
+	
+				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl;
+			#endif // VT_REBALANCE
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
@@ -122,7 +141,7 @@ void MixAndLimitMotors(void)
 
 	#ifdef MULTICOPTER
 		if ( State == InFlight )
-			 CurrThrottle += Comp[Alt] - Comp[UD]; // vertical compensation not optional
+			 CurrThrottle += (DUComp + AltComp); // vertical compensation not optional
 			
 		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
@@ -168,17 +187,17 @@ void MixAndLimitCam(void)
 	static i24u Temp;
 
 	// use only roll/pitch angle estimates
-	Temp.i24 = (int24)Angle[Roll] * P[CamRollKp];
+	Temp.i24 = (int24)CameraRollSum * P[CamRollKp];
 	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
 	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
 
-	Temp.i24 = (int24)Angle[Pitch] * P[CamPitchKp];
+	Temp.i24 = (int24)CameraPitchSum * P[CamPitchKp];
 	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
 	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 			
 
 } // MixAndLimitCam
 
-#if ( defined TRICOPTER | defined MULTICOPTER )
+#if ( defined TRICOPTER | defined MULTICOPTER | defined VTCOPTER )
 	#include "outputs_copter.h"
 #else
 	#include "outputs_conventional.h"

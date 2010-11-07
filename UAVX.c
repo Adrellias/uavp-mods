@@ -100,7 +100,6 @@ void main(void)
 
 					InitControl();
 					CaptureTrims();
-
 					InitGPS();
 					InitNavigation();
 
@@ -187,12 +186,12 @@ void main(void)
 			GetHeading();
 			AltitudeHold();
 
-			#ifndef USE_DCM // go flat out!
 			while ( WaitingForSync ) {};
 
 			mS[UpdateTimeout] += (int24)P[TimeSlots];
-			#endif // !USE_DCM
-		
+
+			GetGyroValues();
+			
 			DoControl();
 
 			MixAndLimitMotors();

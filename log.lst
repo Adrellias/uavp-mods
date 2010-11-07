@@ -1,10 +1,10 @@
 Starting makeall uavp 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -35,31 +35,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -153,20 +153,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -174,40 +174,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -218,10 +218,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -252,31 +252,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -370,20 +370,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -391,40 +391,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -435,10 +435,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -469,31 +469,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -587,20 +587,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -608,40 +608,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -652,10 +652,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -686,249 +686,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:106:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:135:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:157:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:159:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:160:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:161:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:162:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:193:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:217:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:232:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:234:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:239:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:254:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:257:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:263:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:265:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:268:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:274:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:281:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:283:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:289:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:306:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:307:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:321:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:328:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:336:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:368:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:371:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:374:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:393:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:394:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:395:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:396:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
-MPLAB C18 v3.36 (evaluation)
-Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -1023,20 +805,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -1044,40 +826,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -1088,10 +870,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -1122,31 +904,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -1241,20 +1023,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -1262,40 +1044,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -1306,10 +1088,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -1340,19 +1122,237 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:88:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:106:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:111:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:124:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:126:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:133:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:135:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:140:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:157:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:159:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:160:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:161:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:162:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:169:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:171:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:193:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:207:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:217:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:219:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:232:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:234:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:239:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:254:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:257:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:263:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:265:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:268:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:274:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:281:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:283:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:286:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:289:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:306:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:307:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:321:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:328:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:336:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:368:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:371:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:374:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:393:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:395:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:396:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLINK 4.37, Linker
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+MP2HEX 4.37, COFF to HEX File Converter
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
+C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
+MPLAB C18 v3.36 (evaluation)
+Copyright 2000-2010 Microchip Technology Inc.
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\accel.c:278:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:279:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:286:Warning [2054] suspicious pointer conversion
@@ -1367,16 +1367,16 @@ C:\Flight\Code\UAVX-GKE\accel.c:308:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:312:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -1482,10 +1482,10 @@ C:\Flight\Code\UAVX-GKE\menu.c:463:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:464:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\compass.c:130:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\compass.c:140:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\compass.c:162:Warning [2054] suspicious pointer conversion
@@ -1517,7 +1517,7 @@ C:\Flight\Code\UAVX-GKE\compass.c:257:Warning [2054] suspicious pointer conversi
 C:\Flight\Code\UAVX-GKE\compass.c:266:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
@@ -1540,7 +1540,7 @@ C:\Flight\Code\UAVX-GKE\baro.c:649:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:653:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:134:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:136:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:138:Warning [2054] suspicious pointer conversion
@@ -1556,7 +1556,7 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -1587,31 +1587,31 @@ C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\i2c.c:258:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:265:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:274:Warning [2054] suspicious pointer conversion
@@ -1634,7 +1634,7 @@ C:\Flight\Code\UAVX-GKE\i2c.c:461:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:464:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -1645,10 +1645,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -1679,19 +1679,19 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\accel.c:278:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:279:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:286:Warning [2054] suspicious pointer conversion
@@ -1706,16 +1706,16 @@ C:\Flight\Code\UAVX-GKE\accel.c:308:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:312:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -1822,10 +1822,10 @@ C:\Flight\Code\UAVX-GKE\menu.c:463:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:464:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\compass.c:130:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\compass.c:140:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\compass.c:162:Warning [2054] suspicious pointer conversion
@@ -1857,7 +1857,7 @@ C:\Flight\Code\UAVX-GKE\compass.c:257:Warning [2054] suspicious pointer conversi
 C:\Flight\Code\UAVX-GKE\compass.c:266:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
@@ -1880,7 +1880,7 @@ C:\Flight\Code\UAVX-GKE\baro.c:649:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:653:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:134:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:136:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:138:Warning [2054] suspicious pointer conversion
@@ -1896,7 +1896,7 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -1927,31 +1927,31 @@ C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\i2c.c:258:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:265:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:274:Warning [2054] suspicious pointer conversion
@@ -1974,7 +1974,7 @@ C:\Flight\Code\UAVX-GKE\i2c.c:461:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\i2c.c:464:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -1985,10 +1985,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -2019,31 +2019,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -2137,20 +2137,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -2158,40 +2158,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -2202,10 +2202,10 @@ Errors    : 0
 
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
@@ -2236,31 +2236,31 @@ C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\params.c:130:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\params.c:194:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\menu.c:77:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:84:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:86:Warning [2054] suspicious pointer conversion
@@ -2355,20 +2355,20 @@ C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:398:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\baro.c:593:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:594:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:595:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\baro.c:596:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\gyro.c:54:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:55:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:56:Warning [2054] suspicious pointer conversion
@@ -2376,40 +2376,40 @@ C:\Flight\Code\UAVX-GKE\gyro.c:57:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:58:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 C:\Flight\Code\UAVX-GKE\tests.c:176:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:180:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:182:Warning [2054] suspicious pointer conversion
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLAB C18 v3.36 (evaluation)
 Copyright 2000-2010 Microchip Technology Inc.
-Days remaining until evaluation becomes feature limited:  46
+Days remaining until evaluation becomes feature limited:  45
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0

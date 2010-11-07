@@ -91,7 +91,12 @@ int8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
 int16 	AltSum;
 
-
+void FailsafeHoldPosition(void)
+{
+	DesiredRoll = DesiredPitch = DesiredYaw = 0;
+	if ( F.GPSValid && F.CompassValid && F.AccelerationsValid ) 
+		Navigate(HoldLatitude, HoldLongitude);
+} // FailsafeHoldPosition
 
 void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 {
@@ -114,34 +119,6 @@ void DoFailsafeLanding(void)
 	else
 		DesiredThrottle = CruiseThrottle;
 } // DoFailsafeLanding
-
-#ifdef USE_DCM
-
-void DoNavigation(void)
-{
-
-
-
-} // DoNavigation
-
-void UAVXNavCommand(void)
-{
-
-} // UAVXNavCommand
-
-void InitNavigation(void)
-{
-	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr =  0;
-} // InitNavigation
-
-#else
-
-void FailsafeHoldPosition(void)
-{
-	DesiredRoll = DesiredPitch = DesiredYaw = 0;
-	if ( F.GPSValid && F.CompassValid ) 
-		Navigate(HoldLatitude, HoldLongitude);
-} // FailsafeHoldPosition
 
 void AcquireHoldPosition(void)
 {
@@ -343,7 +320,7 @@ void DoNavigation(void)
 
 	#ifndef TESTING // not used for testing - make space!
 
-	F.NavigationActive = F.GPSValid && F.CompassValid && ( mSClock() > mS[NavActiveTime]);
+	F.NavigationActive = F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
 
 	if ( F.NavigationActive )
 	{
@@ -475,7 +452,6 @@ void DoNavigation(void)
 		NavPCorr = NavRCorr =NavYCorr = 0;
 
 	#endif // !TESTING
-
 } // DoNavigation
 
 #ifdef USE_PPM_FAILSAFE
@@ -540,7 +516,7 @@ void DoPPMFailsafe(void)
 			{
 				// use last "good" throttle
 				Stats[RCFailsafesS]++;
-				if ( F.GPSValid && F.CompassValid )
+				if ( F.GPSValid && F.CompassValid && F.AccelerationsValid )
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_GPS_MS;
 				else
 					mS[NavStateTimeout] = mSClock() + ABORT_TIMEOUT_NO_GPS_MS;
@@ -622,7 +598,6 @@ void UAVXNavCommand(void)
 	} // switch
 
 	LEDBlue_OFF;
-
 } // UAVXNavCommand
 
 void GetWayPointEE(int8 wp)
@@ -655,6 +630,7 @@ void GetWayPointEE(int8 wp)
 	F.WayPointCentred =  F.WayPointAchieved = false;
 
 } // GetWaypointEE
+
 
 void InitNavigation(void)
 {
@@ -690,6 +666,4 @@ void InitNavigation(void)
 	GetWayPointEE(0);
 
 } // InitNavigation
-
-#endif // USE_DCM
 
