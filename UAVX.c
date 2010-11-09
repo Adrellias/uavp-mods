@@ -199,7 +199,8 @@ void main(void)
 			OutSignals();							// some jitter because sync precedes this
 
 			GetTemperature(); 
-			CheckAlarms();			CheckTelemetry();
+			CheckAlarms();
+			CheckTelemetry();
 
 			SensorTrace();
 		

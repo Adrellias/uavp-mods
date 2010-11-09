@@ -1,6 +1,6 @@
 
 //#define JIM_MPX_INVERT
-#define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
+//#define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //changes outside this rate are deemed sensor/buss errors
 #define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
@@ -26,15 +26,14 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-	#define GKE
+//	#define CASTLE_ESCS
 	//#define RX6CH
-	//#define EXPERIMENTAL
-	//#define TESTING						
-	//#define RX6CH 					// 6ch Receivers
+	#define EXPERIMENTAL
+//	#define TESTING						
 	//#define SIMULATE
-	//#define QUADROCOPTER
+	#define QUADROCOPTER
 	//#define TRICOPTER
-	#define VTCOPTER
+	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -47,7 +46,8 @@
 #endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
-	#define UAVXBOARD
+	#define GYRO_ITG3200
+//	#define UAVXBOARD
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW
@@ -1026,7 +1026,7 @@ extern const rom uint8 RxChMnem[];
 #define OUT_YGEI2C_MAXIMUM	240
 #define OUT_X3D_MAXIMUM		200
 
-extern uint8 SaturInt(int16);
+extern uint8 TC(int16);
 extern void DoMulticopterMix(int16 CurrThrottle);
 extern void CheckDemand(int16 CurrThrottle);
 extern void MixAndLimitMotors(void);

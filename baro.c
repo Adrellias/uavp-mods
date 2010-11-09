@@ -533,6 +533,12 @@ void InitBoschBarometer(void)
 {
 	int8 s;
 	int24 Temp, Diff, CompBaroPressureP;
+	int16 BaroStable;
+
+	if ( BaroType == BaroBMP085 )
+		BaroStable = 12;
+	else
+		BaroStable = 24;
 
 	AltitudeUpdateRate = 1000L / BOSCH_PRESS_TEMP_TIME_MS;
 
@@ -570,7 +576,7 @@ void InitBoschBarometer(void)
 			StartBoschBaroADC(AcquiringPressure); 	
 		}
 
-	} while ( ( ++BaroRetries < BARO_INIT_RETRIES ) && ( Abs(CompBaroPressure - CompBaroPressureP) > 12 ) ); // stable within ~0.5M
+	} while ( ( ++BaroRetries < BARO_INIT_RETRIES ) && ( Abs(CompBaroPressure - CompBaroPressureP) > BaroStable ) ); // stable within ~0.5M
 	
 	OriginBaroPressure = SRS32(CompBaroPressure, 2);
 

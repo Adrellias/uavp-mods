@@ -20,6 +20,7 @@
 
 #include "uavx.h"
 
+uint8 TC(int16);
 void DoMulticopterMix(int16);
 void CheckDemand(int16);
 void MixAndLimitMotors(void);
@@ -44,6 +45,29 @@ near int8 ServoToggle;
 int16 ESCMin, ESCMax;
 
 #ifdef MULTICOPTER
+
+#pragma idata throttlecurve
+const int16 ThrottleCurve[17] = { 
+	0,57,81,99,114,128,140, 151,
+	162,171,181,190,198,206,214,221,
+	229
+   };
+#pragma idata
+
+uint8 TC(int16 T)
+{
+	static int16 r;
+
+	r = Limit(T, ESCMin, ESCMax);
+
+	#ifdef CASTLE_ESCS 
+	if ( P[ESCType] == ESCPPM )
+		r =  Table16( r, ThrottleCurve );
+	#endif // CASTLE_ESCS
+
+	return ( r );
+
+} // TC
 
 void DoMulticopterMix(int16 CurrThrottle)
 {
