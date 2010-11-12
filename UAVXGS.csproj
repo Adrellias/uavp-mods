@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UAVXGS</RootNamespace>
-    <AssemblyName>UAVXGS 1.05X</AssemblyName>
+    <AssemblyName>UAVXGS</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -24,7 +24,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <SignManifests>true</SignManifests>
     <ApplicationIcon>uavpset.ico</ApplicationIcon>
-    <PublishUrl>C:\Program Files\UAVXGS 1.05X\</PublishUrl>
+    <PublishUrl>C:\Program Files\UAVXGS 1.05\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -35,11 +35,12 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
     <TargetCulture>en-AU</TargetCulture>
-    <ProductName>UAVXGS 1.05X</ProductName>
+    <ProductName>UAVXGS</ProductName>
     <PublisherName>gke</PublisherName>
     <SuiteName>UAVX</SuiteName>
+    <CreateWebPageOnPublish>false</CreateWebPageOnPublish>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>16</ApplicationRevision>
     <ApplicationVersion>1.5.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
