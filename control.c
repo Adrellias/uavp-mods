@@ -28,6 +28,7 @@ void LimitRollSum(void);
 void LimitPitchSum(void);
 void LimitYawSum(void);
 void DoOrientationTransform(void);
+int16 GS(int8);
 void DoControl(void);
 
 void CheckThrottleMoved(void);
@@ -313,17 +314,39 @@ void DoOrientationTransform(void)
 	}
 
 	if ( !F.NavigationActive )
-		NavRCorr = NavPCorr = NavYCorr = 0;
+		NavCorr[Yaw] = NavCorr[Pitch] = NavCorr[Yaw] = 0;
 
 	// -PS+RC
 	Temp.i24 = -DesiredPitch * OSO + DesiredRoll * OCO;
-	ControlRoll = Temp.i2_1 + NavRCorr - LRComp;
+	ControlRoll = Temp.i2_1 + NavCorr[Roll] - LRComp;
 		
 	// PC+RS
 	Temp.i24 = DesiredPitch * OCO + DesiredRoll * OSO;
-	ControlPitch = Temp.i2_1 + NavPCorr - FBComp; 
+	ControlPitch = Temp.i2_1 + NavCorr[Pitch] - FBComp; 
 
 } // DoOrientationTransform
+
+int16 GS(int8 K)
+{  // rudimentary gain scheduling (linear)
+
+	static int16 AttDiff, ThrDiff, NewK;
+	static int8 KSign;
+
+	KSign = Sign(K);
+	K = Abs(K);
+	NewK = (int32)K;
+
+	// also density altitude?
+
+ 	AttDiff = CurrMaxRollPitch - ATTITUDE_HOLD_LIMIT;
+	NewK = SRS32( (int32)NewK * ( 2048L - (AttDiff * GSATTITUDE) ), 11);
+	NewK = Limit(NewK, -K, K);
+
+ 	ThrDiff = DesiredThrottle - CruiseThrottle;
+	NewK = SRS32( (int32)NewK * ( 2048L - (ThrDiff * GSTHROTTLE) ), 11);
+
+	return ( NewK * KSign );
+} // GS
 
 void DoControl(void)
 {
@@ -357,7 +380,7 @@ void DoControl(void)
 	RE = SRS16(RollRate, 1); // discard 1 bit of resolution!
 	LimitRollSum();
  
-	Rl  = SRS16(RE *(int16)P[RollKp] + (REp-RE) * (int16)P[RollKd], 4);
+	Rl  = SRS16(RE * GS(P[RollKp]) + (REp-RE) * GS(P[RollKd]), 4);
 	Rl += SRS16(RollSum * (int16)P[RollKi], 9); 
 	Rl -= ControlRoll + SRS16((ControlRoll - ControlRollP) * ATTITUDE_FF_DIFF, 4);
 	ControlRollP = ControlRoll;
@@ -367,7 +390,7 @@ void DoControl(void)
 	PE = SRS16(PitchRate, 1); // discard 1 bit of resolution!
 	LimitPitchSum();
 
-	Pl  = SRS16(PE *(int16)P[PitchKp] + (PEp-PE) * (int16)P[PitchKd], 4);
+	Pl  = SRS16(PE * GS(P[PitchKp]) + (PEp-PE) * GS(P[PitchKd]), 4);
 	Pl += SRS16(PitchSum * (int16)P[PitchKi], 9);
 	Pl -= ControlPitch + SRS16((ControlPitch - ControlPitchP) * ATTITUDE_FF_DIFF, 4);
 	ControlPitchP = ControlPitch;
@@ -377,7 +400,7 @@ void DoControl(void)
 	YE = YawRate;
 	LimitYawSum();
 
-	YE += DesiredYaw + NavYCorr;
+	YE += DesiredYaw + NavCorr[Yaw];
 
 	Yl  = SRS16(YE *(int16)P[YawKp] + (YEp-YE) * (int16)P[YawKd], 4);
 	Yl += SRS16(YawSum * (int16)P[YawKi], 8);

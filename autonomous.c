@@ -35,7 +35,10 @@ void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
 
-int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
+int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
+
+int16 NavE[2], NavEp[2], NavDSum[2];
+
 int8 NavYCorrLimit;
 int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
@@ -122,7 +125,7 @@ void DoFailsafeLanding(void)
 
 void AcquireHoldPosition(void)
 {
-	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr =  0;
+	NavCorr[Pitch] = NavCorrp[Pitch] = NavCorr[Roll] = NavCorrp[Roll] = NavCorr[Yaw] =  0;
 	F.NavComputed = false;
 
 	HoldLatitude = GPSLatitude;
@@ -181,6 +184,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static int24 Temp;
 	static int32 EastDiff, NorthDiff;
 	static int16 RelHeading;
+	static uint8 a;
+	static int16 Diff, NavP, NavI, NavD;
 
 	DoPolarOrientation();
 
@@ -200,28 +205,61 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	Temp = DesiredAltitude - Altitude;
 	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(Temp) < NavProximityAltitude );
 
-	//	EffNavSensitivity = (NavSensitivity * ( ATTITUDE_HOLD_LIMIT * 4 - 
-	// 							CurrMaxRollPitch )) / (ATTITUDE_HOLD_LIMIT * 4);
-	EffNavSensitivity = SRS16(NavSensitivity * ( 32 - Limit(CurrMaxRollPitch, 0, 32) ) + 16, 5);
-
 	WayHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff));
 
-	if ( ( EffNavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
+	if ( ( NavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
 	{	
 		#ifdef NAV_WING
 		
 		// no Nav for conventional aircraft - yet!
-		NavPCorr = -5; // always moving forward
+		NavCorr[Pitch] = -5; // always moving forward
 		// Just use simple rudder only for now.
 		if ( !F.WayPointAchieved )
 		{
 			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
-			NavYCorr = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
-			NavYCorr = Limit(NavYCorr, -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
+			NavCorr[Yaw] = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
+			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
 		}
 
 		#else // MULTICOPTER
 
+
+		#ifdef EARLY_UAVX_NAV
+
+		// revert to original simpler version from UAVP->UAVX transition
+
+		SinHeading = int16sin(Heading);
+		CosHeading = int16cos(Heading);
+		
+		NavE[Roll] = SRS32( EastDiff * CosHeading, 8);
+		NavE[Pitch] = SRS32( NorthDiff * SinHeading, 8);
+		
+		// Roll & Pitch
+		
+		for ( a = 0; a < (uint8)2 ; a++ )
+		{
+			NavP = NavE[a] * P[RollKp];
+		
+			NavDSum[a] += NavE[a];
+			NavDSum[a] = Limit(NavDSum[a], -P[NavIntLimit], (int16)P[NavIntLimit]);
+			NavI = SRS16(NavDSum[a] * (int16)P[NavKi], 6);
+			NavDSum[a] = Decay1(NavDSum[a]);
+			
+			Diff = (NavE[a] - NavEp[a]);
+			Diff = Limit(Diff, -256, 256);
+			NavD = SRS16(Diff * (int16)P[NavKd], 8);
+			
+			NavEp[a] = NavE[a];
+			
+			NavCorr[a] = SRS16( (NavP + NavI + NavD ) * EffNavSensitivity, 8);
+
+		  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
+		  	NavCorr[a] = Limit(NavCorr[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+		 
+		  NavCorrp[a] = NavCorr[a];
+		}
+
+		#else
 		// direct solution make North and East coordinate errors zero
 
 		SinHeading = int16sin(Heading);
@@ -278,35 +316,39 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
 				
 		// Roll & Pitch
-		NavRCorr = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
-		NavRCorr = Limit(NavRCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);	
-		NavRCorr = SlewLimit(NavRCorrP, NavRCorr, NAV_CORR_SLEW_LIMIT);
-		NavRCorrP = NavRCorr;
+		NavCorr[Roll] = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
+		NavCorr[Roll] = Limit(NavCorr[Roll], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);	
+		NavCorr[Roll] = SlewLimit(NavCorrp[Roll], NavCorr[Roll], NAV_CORR_SLEW_LIMIT);
+		NavCorrp[Roll] = NavCorr[Roll];
 	
-		NavPCorr = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
-		NavPCorr = Limit(NavPCorr, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-		NavPCorr = SlewLimit(NavPCorrP, NavPCorr, NAV_CORR_SLEW_LIMIT);
-		NavPCorrP = NavPCorr;
-				
+		NavCorr[Pitch] = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
+		NavCorr[Pitch] = Limit(NavCorr[Pitch], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+		NavCorr[Pitch] = SlewLimit(NavCorrp[Pitch], NavCorr[Pitch], NAV_CORR_SLEW_LIMIT);
+		NavCorrp[Pitch] = NavCorr[Pitch];
+		
+		#endif // EARLY_UAVX_NAV
+		
 		// Yaw
 		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
 			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
-			NavYCorr = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
-			NavYCorr = Limit(NavYCorr, -NavYCorrLimit, NavYCorrLimit); // gently!
+			NavCorr[Yaw] = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
+			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NavYCorrLimit, NavYCorrLimit); // gently!
 		}
 		else
-			NavYCorr = 0;
+			NavCorr[Yaw] = 0;
 
-		#endif // NAV_WING	
+		#endif // NAV_WING
+
+	
 	}	
 	else
     #endif // !TESTING
 	{
 		// Neutral Zone - no GPS influence
-		NavPCorr = DecayX(NavPCorr, 2);
-		NavRCorr = DecayX(NavRCorr, 2);
-		NavYCorr = 0;
+		NavCorr[Pitch] = DecayX(NavCorr[Pitch], 2);
+		NavCorr[Roll] = DecayX(NavCorr[Roll], 2);
+		NavCorr[Yaw] = 0;
 		EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 	}
 
@@ -449,7 +491,7 @@ void DoNavigation(void)
 			} // switch NavState
 	}
 	else // kill nav correction immediately
-		NavPCorr = NavRCorr =NavYCorr = 0;
+		NavCorr[Pitch] = NavCorr[Roll] =NavCorr[Yaw] = 0;
 
 	#endif // !TESTING
 } // DoNavigation
@@ -637,7 +679,7 @@ void InitNavigation(void)
 	static uint8 wp;
 
 	HoldLatitude = HoldLongitude = WayHeading = 0;
-	NavPCorr = NavPCorrP = NavRCorr = NavRCorrP = NavYCorr = 0;
+	NavCorr[Pitch] = NavCorrp[Pitch] = NavCorr[Roll] = NavCorrp[Roll] = NavCorr[Yaw] = 0;
 	EastDiffP = NorthDiffP = 0;
 
 	NavState = HoldingStation;

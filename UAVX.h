@@ -1,9 +1,13 @@
 
+#define EARLY_UAVX_NAV	// use original nav code
+#define GSTHROTTLE	3		// 0 -> 10
+#define GSATTITUDE	10		// 0 -> 20
+#define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
+
 //#define JIM_MPX_INVERT
-//#define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //changes outside this rate are deemed sensor/buss errors
-#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
+
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -377,12 +381,7 @@ typedef struct { // GPS
 #define Min(i,j) 			((i<j) ? i : j )
 #define Decay1(i) 			(((i) < 0) ? (i+1) : (((i) > 0) ? (i-1) : 0))
 
-#define USE_LIMIT_MACRO
-#ifdef USE_LIMIT_MACRO
-	#define Limit(i,l,u) 	(((i) < l) ? l : (((i) > u) ? u : (i)))
-#else
-	#define Limit			ProcLimit
-#endif
+#define Limit(i,l,u) 	(((i) < l) ? l : (((i) > u) ? u : (i)))
 
 // To speed up NMEA sentence processing 
 // must have a positive argument
@@ -619,7 +618,9 @@ typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering};
 enum FailStates { MonitoringRx, Aborting, Terminating, Terminated };
 
-extern int16 NavRCorr, NavPCorr;
+enum Attitudes { Roll, Pitch, Yaw };
+
+extern int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
 
 #ifdef SIMULATE
 extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeHeading;
@@ -639,7 +640,7 @@ extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 AltSum;
 
-extern int16 NavRCorr, NavRCorrP, NavPCorr, NavPCorrP, NavYCorr, SumNavYCorr;
+extern int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
 extern int8 NavYCorrLimit;
 extern int16 EffNavSensitivity;
 extern int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
@@ -724,6 +725,7 @@ extern void LimitPitchSum(void);
 extern void LimitYawSum(void);
 extern void InertialDamping(void);
 extern void DoOrientationTransform(void);
+extern int16 GS(int8);
 extern void DoControl(void);
 
 extern void LightsAndSirens(void);

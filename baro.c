@@ -23,6 +23,8 @@
 
 #include "uavx.h"
 
+#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
+
 void GetBaroAltitude(void);
 void InitBarometer(void);
 

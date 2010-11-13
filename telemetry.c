@@ -167,9 +167,9 @@ void SendNavPacket(void)
 	TxESCi32(GPSMissionTime);
 
 	TxESCu8(NavSensitivity);
-	TxESCi8(NavRCorr);
-	TxESCi8(NavPCorr);
-	TxESCi8(NavYCorr);
+	TxESCi8(NavCorr[Roll]);
+	TxESCi8(NavCorr[Pitch]);
+	TxESCi8(NavCorr[Yaw]);
 } // SendNavPacket
 
 void SendStatsPacket(void) 

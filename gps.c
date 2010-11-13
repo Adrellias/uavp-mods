@@ -381,9 +381,9 @@ void UpdateGPS(void)
 		}
 		else
 		{
-			NavPCorr = DecayX(NavPCorr, 2);
-			NavRCorr = DecayX(NavRCorr, 2);
-			NavYCorr = 0;
+			NavCorr[Pitch] = DecayX(NavCorr[Pitch], 2);
+			NavCorr[Roll] = DecayX(NavCorr[Roll], 2);
+			NavCorr[Yaw] = 0;
 			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
 	}
