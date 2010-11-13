@@ -326,6 +326,15 @@ void DoOrientationTransform(void)
 
 } // DoOrientationTransform
 
+#ifdef TESTING
+
+int16 GS(int8 K)
+{
+	return(K);
+} // GS
+
+#else
+
 int16 GS(int8 K)
 {  // rudimentary gain scheduling (linear)
 
@@ -348,6 +357,8 @@ int16 GS(int8 K)
 	return ( NewK * KSign );
 } // GS
 
+#endif
+
 void DoControl(void)
 {
 	static i24u Temp;
@@ -358,9 +369,9 @@ void DoControl(void)
 
 	#ifdef SIMULATE
 
-	FakeDesiredRoll = DesiredRoll + NavRCorr;
-	FakeDesiredPitch = DesiredPitch + NavPCorr;
-	FakeDesiredYaw =  DesiredYaw + NavYCorr;
+	FakeDesiredRoll = DesiredRoll + NavCorr[Roll];
+	FakeDesiredPitch = DesiredPitch + NavCorr[Pitch];
+	FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
 	RollSum = SlewLimit(RollSum, -FakeDesiredRoll * 16, 4);
 	PitchSum = SlewLimit(PitchSum, -FakeDesiredPitch * 16, 4);
 	YawSum = SlewLimit(YawSum, FakeDesiredYaw, 4);
