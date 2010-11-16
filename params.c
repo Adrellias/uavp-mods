@@ -119,6 +119,7 @@ void ReadParametersEE(void)
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
 		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
+		NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
 
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
 
@@ -142,7 +143,6 @@ void ReadParametersEE(void)
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
 
-		F.UsingPolar = ((P[ConfigBits] & UsePolarMask) != 0);
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);

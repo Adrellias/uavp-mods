@@ -366,13 +366,13 @@ void ProcessCommand(void)
 			case 'N' :	// neutral values
 				GetNeutralAccelerations();
 				TxString("\r\nNeutral    R:");
-				TxValS(NeutralLR);
+				TxValS(AccNeutral[LR]);
 		
 				TxString("    P:");
-				TxValS(NeutralFB);
+				TxValS(AccNeutral[FB]);
 		
 				TxString("   V:");	
-				TxValS(NeutralDU);
+				TxValS(AccNeutral[DU]);
 				ShowPrompt();
 				break;
 			case 'Z' : // set Paramset

@@ -35,9 +35,8 @@ void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
 
-int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
-
-int16 NavE[2], NavEp[2], NavDSum[2];
+int16 NavCorr[3], NavCorrp[3];
+int16 NavE[2], NavEp[2], NavIntE[2];
 
 int8 NavYCorrLimit;
 int16 EffNavSensitivity;
@@ -86,7 +85,7 @@ int32 	WPLatitude, WPLongitude;
 int24 	WPLoiter;
 int16	WayHeading;
 
-int16 	NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude;
+int16 	NavPolarRadius, NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude;
 int16	CompassOffset;
 int24 	NavRTHTimeoutmS;
 
@@ -141,17 +140,16 @@ void DoPolarOrientation(void)
 	static int16 DesiredRelativeHeading;
 	static int16 P;
 
-	F.UsingPolar = false;
+	F.UsingPolar = F.UsingPolarCoordinates && F.NavValid && ( NavState == HoldingStation );
 	
-	if ( F.NavValid && F.UsingPolarCoordinates && ( NavState == HoldingStation ) )
+	if ( F.UsingPolar ) // needs rethink - probably arm using RTH switch
 	{
 		EastDiff = SRS32( (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
 		NorthDiff = OriginLatitude - GPSLatitude;
 	
 		Radius = Max(Abs(EastDiff), Abs(NorthDiff));
-		if ( Radius > NavClosingRadius )
+		if ( Radius > NavPolarRadius )
 		{ 
-			F.UsingPolar = true;
 			DesiredRelativeHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff) - MILLIPI - Heading );
 		
 			P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
@@ -181,11 +179,12 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	static int16 SinHeading, CosHeading;
     static int24 Radius;
-	static int24 Temp;
+	static int24 AltE;
 	static int32 EastDiff, NorthDiff;
 	static int16 RelHeading;
 	static uint8 a;
 	static int16 Diff, NavP, NavI, NavD;
+	static int16 NavERoll, NavEPitch;
 
 	DoPolarOrientation();
 
@@ -195,17 +194,14 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	EastDiff = SRS32((DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
 	NorthDiff = DesiredLatitude - GPSLatitude;
 
-	Radius = Max(Abs(EastDiff), Abs(NorthDiff));
-	if ( Radius < NavClosingRadius ) 
-		Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
-	else
-		Radius = NavClosingRadius;
+	Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
 
 	F.WayPointCentred =  Radius < NavNeutralRadius;
-	Temp = DesiredAltitude - Altitude;
-	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(Temp) < NavProximityAltitude );
+	AltE = DesiredAltitude - Altitude;
+	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(AltE) < NavProximityAltitude );
 
 	WayHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff));
+	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 
 	if ( ( NavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
 	{	
@@ -216,122 +212,49 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		// Just use simple rudder only for now.
 		if ( !F.WayPointAchieved )
 		{
-			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 			NavCorr[Yaw] = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
 			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
 		}
 
 		#else // MULTICOPTER
 
-
-		#ifdef EARLY_UAVX_NAV
-
 		// revert to original simpler version from UAVP->UAVX transition
 
-		SinHeading = int16sin(Heading);
-		CosHeading = int16cos(Heading);
+		SinHeading = int16sin(RelHeading);
+		CosHeading = int16cos(RelHeading);
 		
-		NavE[Roll] = SRS32( EastDiff * CosHeading, 8);
-		NavE[Pitch] = SRS32( NorthDiff * SinHeading, 8);
+		NavE[Roll] = SRS32( Radius * SinHeading, 8);
+		NavE[Pitch] = -SRS32( Radius * CosHeading, 8);
 		
 		// Roll & Pitch
 		
 		for ( a = 0; a < (uint8)2 ; a++ )
 		{
-			NavP = NavE[a] * P[RollKp];
+			NavP = Limit(NavE[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH); // * P[RollKp];
 		
-			NavDSum[a] += NavE[a];
-			NavDSum[a] = Limit(NavDSum[a], -P[NavIntLimit], (int16)P[NavIntLimit]);
-			NavI = SRS16(NavDSum[a] * (int16)P[NavKi], 6);
-			NavDSum[a] = Decay1(NavDSum[a]);
+			NavIntE[a] += NavE[a];
+			NavIntE[a] = Limit(NavIntE[a], -P[NavIntLimit], (int16)P[NavIntLimit]);
+			NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
+			NavIntE[a] = Decay1(NavIntE[a]);
 			
-			Diff = (NavE[a] - NavEp[a]);
+			Diff = (NavEp[a] - NavE[a]);
 			Diff = Limit(Diff, -256, 256);
 			NavD = SRS16(Diff * (int16)P[NavKd], 8);
+			NavD = Limit(NavD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
 			
 			NavEp[a] = NavE[a];
 			
-			NavCorr[a] = SRS16( (NavP + NavI + NavD ) * EffNavSensitivity, 8);
+			NavCorr[a] = SRS16( (NavP + NavI + NavD ) * NavSensitivity, 8);
 
 		  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
 		  	NavCorr[a] = Limit(NavCorr[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 		 
-		  NavCorrp[a] = NavCorr[a];
+		  	NavCorrp[a] = NavCorr[a];
 		}
 
-		#else
-		// direct solution make North and East coordinate errors zero
-
-		SinHeading = int16sin(Heading);
-		CosHeading = int16cos(Heading);
-
-		// East
-		if ( Abs(EastDiff) < NavClosingRadius )
-		{
-			Temp = ( EastDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
-			EastP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-	
-			EastDiffSum += EastDiff;
-			EastDiffSum = Limit(EastDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-		}
-		else
-		{
-			EastP = Limit(EastDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-			EastDiffSum = Limit(EastDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-		}
-	
-		EastI = SRS16((int32)EastDiffSum * (int16)P[NavKi], 6); 
-		EastI = Limit(EastI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
-		EastDiffSum = Decay1(EastDiffSum);
-	
-		EastD = SRS32((int32)(EastDiffP - EastDiff) * (int16)P[NavKd], 8);
-		EastDiffP = EastDiff;
-		EastD = Limit(EastD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-		
-		EastCorr = SRS16((EastP + EastI + EastD) * EffNavSensitivity, 8);
-	
-		// North
-		if ( Abs(NorthDiff) < NavClosingRadius )
-		{
-			Temp = ( NorthDiff * NAV_MAX_ROLL_PITCH )/ NavCloseToNeutralRadius;
-			NorthP = Limit(Temp, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-	
-			NorthDiffSum += NorthDiff;
-			NorthDiffSum = Limit(NorthDiffSum, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-		}
-		else
-		{
-			NorthP = Limit(NorthDiff, -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-			NorthDiffSum = Limit(NorthDiff, -NAV_INT_WINDUP_LIMIT, NAV_INT_WINDUP_LIMIT);
-		}
-
-		NorthI = SRS16((int32)NorthDiffSum * (int16)P[NavKi], 6);
-		NorthI = Limit(NorthI, (int16)(-P[NavIntLimit]), (int16)P[NavIntLimit]);
-		NorthDiffSum = Decay1(NorthDiffSum);
-	
-		NorthD = SRS32((int32)(NorthDiffP - NorthDiff) * (int16)P[NavKd], 8); 
-		NorthDiffP = NorthDiff;
-		NorthD = Limit(NorthD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
-	
-		NorthCorr = SRS16((NorthP + NorthI + NorthD) * EffNavSensitivity, 8); 
-				
-		// Roll & Pitch
-		NavCorr[Roll] = SRS16(CosHeading * EastCorr - SinHeading * NorthCorr, 8);
-		NavCorr[Roll] = Limit(NavCorr[Roll], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);	
-		NavCorr[Roll] = SlewLimit(NavCorrp[Roll], NavCorr[Roll], NAV_CORR_SLEW_LIMIT);
-		NavCorrp[Roll] = NavCorr[Roll];
-	
-		NavCorr[Pitch] = SRS16(-SinHeading * EastCorr - CosHeading * NorthCorr, 8);
-		NavCorr[Pitch] = Limit(NavCorr[Pitch], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
-		NavCorr[Pitch] = SlewLimit(NavCorrp[Pitch], NavCorr[Pitch], NAV_CORR_SLEW_LIMIT);
-		NavCorrp[Pitch] = NavCorr[Pitch];
-		
-		#endif // EARLY_UAVX_NAV
-		
 		// Yaw
 		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
-			RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 			NavCorr[Yaw] = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
 			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NavYCorrLimit, NavYCorrLimit); // gently!
 		}
@@ -688,17 +611,19 @@ void InitNavigation(void)
 	F.WayPointAchieved = F.WayPointCentred = false;
 	F.NavComputed = false;
 
-	if ( ReadEE(NAV_NO_WP) <= 0 )
+//	if ( ReadEE(NAV_NO_WP) <= 0 )
 	{
 		NavProximityRadius = ConvertMToGPS(NAV_PROXIMITY_RADIUS); 
 		NavProximityAltitude = NAV_PROXIMITY_ALTITUDE * 10L; // Decimetres
 	}
+/* zzz
 	else
 	{
 		// need minimum values in UAVXNav?
 		NavProximityRadius = ConvertMToGPS(ReadEE(NAV_PROX_RADIUS));
 		NavProximityAltitude = ReadEE(NAV_PROX_ALT) * 10L; // Decimetres
 	}
+*/
 
 	NoOfWayPoints = ReadEE(NAV_NO_WP);
 	if ( NoOfWayPoints <= 0 )

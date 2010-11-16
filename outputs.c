@@ -165,7 +165,7 @@ void MixAndLimitMotors(void)
 
 	#ifdef MULTICOPTER
 		if ( State == InFlight )
-			 CurrThrottle += (DUComp + AltComp); // vertical compensation not optional
+			 CurrThrottle += (Comp[DU] + Comp[Alt]); // vertical compensation not optional
 			
 		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
 		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
@@ -189,7 +189,7 @@ void MixAndLimitMotors(void)
 			#endif // !TRICOPTER
 		}
 	#else
-		CurrThrottle += AltComp; // simple - faster to climb with no elevator yet
+		CurrThrottle += Comp[Alt]; // simple - faster to climb with no elevator yet
 		
 		PWM[ThrottleC] = CurrThrottle;
 		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
@@ -211,11 +211,11 @@ void MixAndLimitCam(void)
 	static i24u Temp;
 
 	// use only roll/pitch angle estimates
-	Temp.i24 = (int24)CameraRollSum * P[CamRollKp];
+	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
 	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
 	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
 
-	Temp.i24 = (int24)CameraPitchSum * P[CamPitchKp];
+	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
 	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
 	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 			
 

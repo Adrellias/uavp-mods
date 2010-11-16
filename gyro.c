@@ -31,9 +31,7 @@ void ErectGyros(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16	GyroMidRoll, GyroMidPitch, GyroMidYaw;
-int16	RollRate, PitchRate, YawRate;
-int16	RollRateADC, PitchRateADC, YawRateADC;
+int16	Rate[3], GyroNeutral[3], GyroADC[3];
 i32u 	YawRateF;
 
 #ifdef GYRO_ITG3200
@@ -66,71 +64,66 @@ void CompensateRollPitchGyros(void)
 
 	static int16 Temp;
 	static int24 Temp24;
-	static int16 LRGrav, LRDyn, FBGrav, FBDyn;
-	static int16 NewLRAcc, NewDUAcc, NewFBAcc;
+	static int16 Grav[2], Dyn[2];
 
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
 
 		#ifdef USE_FLAT_ACC // chip up and twisted over
-			NewLRAcc = -Ax.i16;	
-			NewFBAcc = Ay.i16;
-			NewDUAcc = Az.i16;
+			Acc[LR] = -Ax.i16;	
+			Acc[FB] = Ay.i16;
+			Acc[DU] = Az.i16;
 		#else	
-			NewLRAcc = Ax.i16;
-			NewDUAcc = Ay.i16;
-			NewFBAcc = Az.i16;
+			Acc[LR] = Ax.i16;
+			Acc[DU] = Ay.i16;
+			Acc[FB] = Az.i16;
 		#endif // USE_FLAT_ACC
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
-		NewLRAcc -= (int16)P[MiddleLR];
-		NewFBAcc -= (int16)P[MiddleFB];
-		NewDUAcc -= (int16)P[MiddleDU];
+		Acc[LR] -= (int16)P[MiddleLR];
+		Acc[FB] -= (int16)P[MiddleFB];
+		Acc[DU] -= (int16)P[MiddleDU];
 
-		NewDUAcc -= 1024L;	// subtract 1g - not corrrect for other than level
-						// ??? could check for large negative Acc => upside down?
-
-		LRAcc = AccFilter((int32)LRAcc, (int32)NewLRAcc);
-		DUAcc = AccFilter((int32)DUAcc, (int32)NewDUAcc);
-		FBAcc = AccFilter((int32)FBAcc, (int32)NewFBAcc);	
+		Acc[DU] -= 1024L;	// subtract 1g - not corrrect for other than level
+						// ??? could check for large negative Acc => upside down?	
 			
 		// Roll
 
 		// static compensation due to Gravity
-		LRGrav = -SRS16(RollSum * GRAV_COMP, 5); 
+		Grav[LR] = -SRS16(Angle[Roll] * GRAV_COMP, 5); 
 	
 		// dynamic correction of moved mass
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_ROLL
-		LRDyn = 0;
+		Dyn[LR] = 0;
 		#else
-		LRDyn = RollRate;	
+		Dyn[LR] = Rate[Roll];	
 		#endif
 
 		// correct DC level of the integral
-		LRIntCorr = SRS16(LRAcc + LRGrav + LRDyn, 3); // / 10;
-		LRIntCorr = Limit(LRIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		IntCorr[LR] = SRS16(Acc[LR] + Grav[LR] + Dyn[LR], 3); // / 10;
+		IntCorr[LR] = Limit(IntCorr[LR], -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	
 		// Pitch
 
 		// static compensation due to Gravity
-		FBGrav = -SRS16(PitchSum * GRAV_COMP, 5); 
+		Grav[FB] = -SRS16(Angle[Pitch] * GRAV_COMP, 5); 
 	
 		// dynamic correction of moved mass		
 		#ifdef DISABLE_DYNAMIC_MASS_COMP_PITCH
-		FBDyn = 0;
+		Dyn[FB] = 0;
 		#else
-		FBDyn = PitchRate;
+		Dyn[FB] = Rate[Pitch];
 		#endif
 
 		// correct DC level of the integral	
-		FBIntCorr = SRS16(FBAcc + FBGrav + FBDyn, 3); // / 10;
-		FBIntCorr = Limit(FBIntCorr, -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); // / 10;
+		IntCorr[FB] = Limit(IntCorr[FB], -GYRO_COMP_STEP, GYRO_COMP_STEP); 
 	}	
 	else
-		LRIntCorr = FBIntCorr = LRAcc = FBAcc = DUAcc = 0;
+		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
 
 } // CompensateRollPitchGyros
 

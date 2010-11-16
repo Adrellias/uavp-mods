@@ -1,5 +1,4 @@
 
-#define EARLY_UAVX_NAV	// use original nav code
 #define GSTHROTTLE	3		// 0 -> 10
 #define GSATTITUDE	10		// 0 -> 20
 #define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
@@ -32,9 +31,9 @@
 #ifndef BATCHMODE
 //	#define CASTLE_ESCS
 	//#define RX6CH
-	#define EXPERIMENTAL
-//	#define TESTING						
-	//#define SIMULATE
+	//#define EXPERIMENTAL
+	//#define TESTING						
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define VTCOPTER
@@ -193,6 +192,7 @@
 #define NAV_CEILING					120L	// 400 feet
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
+#define NAV_POLAR_RADIUS			10L		// Polar coordinates arm outside this distance from origin
 
 #ifdef NAV_WING
 	#define NAV_PROXIMITY_RADIUS	20L		// Metres if there are no WPs
@@ -204,10 +204,21 @@
 
 // reads $GPGGA sentence - all others discarded
 
+#ifdef SIMULATE
+
+#define	GPS_MIN_SATELLITES			4		// preferably > 5 for 3D fix
+#define GPS_MIN_FIX					1		// must be 1 or 2 
+#define GPS_ORIGIN_SENTENCES 		5L		// Number of sentences needed to obtain reasonable Origin
+#define GPS_MIN_HDILUTE				250L	// HDilute * 100
+
+#else
+
 #define	GPS_MIN_SATELLITES			6		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
 #define GPS_ORIGIN_SENTENCES 		30L		// Number of sentences needed to obtain reasonable Origin
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
+
+#endif // SIMULATE
 
 #define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
 #define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
@@ -568,9 +579,9 @@ extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
 extern i16u Ax, Ay, Az;
-extern int8 LRIntCorr, FBIntCorr;
-extern int8 NeutralLR, NeutralFB, NeutralDU;
-extern int16 DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+extern int8 IntCorr[3];
+extern int8 AccNeutral[3];
+extern int16 Vel[3], Acc[3], Comp[4];
 
 //______________________________________________________________________________________________
 
@@ -620,8 +631,6 @@ enum FailStates { MonitoringRx, Aborting, Terminating, Terminated };
 
 enum Attitudes { Roll, Pitch, Yaw };
 
-extern int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
-
 #ifdef SIMULATE
 extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeHeading;
 #endif // SIMULATE
@@ -633,14 +642,15 @@ extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
-extern int16 NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
+extern int16 NavPolarRadius, NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 AltSum;
 
-extern int16 NavCorr[3], NavCorrp[3], SumNavCorr[3];
+extern int16 NavCorr[3], NavCorrp[3];
+extern int16 NavE[2], NavEp[2], NavIntE[2];
 extern int8 NavYCorrLimit;
 extern int16 EffNavSensitivity;
 extern int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
@@ -716,6 +726,9 @@ extern i32u HeadingValF;
 
 // control.c
 
+enum Attitudes { Roll, Pitch, Yaw, Heading };
+enum Directions { FB, LR, DU, Alt };
+
 extern void DoAltitudeHold(int24, int16);
 extern void UpdateAltitudeSource(void);
 extern void AltitudeHold(void);
@@ -731,13 +744,12 @@ extern void DoControl(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
-extern int16 RE, PE, YE, HE;					// gyro rate error	
-extern int16 REp, PEp, YEp;				// previous error for derivative
+extern int16 E[4], Ep[4];
 extern int16 Rl, Pl, Yl, Ylp;							// PID output values
 extern int24 OSO, OCO;
-extern int16 CameraRollSum, CameraPitchSum;
-extern int16 RollSum, PitchSum, YawSum;			// integral/angle	
-extern int16 RollTrim, PitchTrim, YawTrim;
+extern int16 CameraRollAngle, CameraPitchAngle;
+extern int16 Angle[3];			// integral/angle	
+extern int16 Trim[3];
 extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
@@ -830,10 +842,8 @@ extern uint8 ReadByteITG3200(uint8);
 extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 
-extern int16 GyroMidRoll, GyroMidPitch, GyroMidYaw;
-extern int16 RollRate, PitchRate, YawRate;
+extern int16 Rate[3], GyroNeutral[3], GyroADC[3];
 extern i32u YawRateF;
-extern int16 RollRateADC, PitchRateADC, YawRateADC;
 
 //______________________________________________________________________________________________
 

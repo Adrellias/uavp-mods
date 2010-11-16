@@ -35,9 +35,9 @@ void InitAccelerometers(void);
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
-int8	LRIntCorr, FBIntCorr;
-int8	NeutralLR, NeutralFB, NeutralDU;
-int16	DUVel, LRVel, FBVel, DUAcc, LRAcc, FBAcc, DUComp, LRComp, FBComp;
+int8	IntCorr[3];
+int8	AccNeutral[3];
+int16	Vel[3], Acc[3], Comp[4];
 #pragma udata
 
 #ifdef UAVX_HW
@@ -236,10 +236,10 @@ void GetNeutralAccelerations(void)
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
 	static uint8 i;
-	static int16 LR, FB, DU;
+	static int16 AccLR, AccFB, AccDU;
 
 	// already done in caller program
-	LR = FB = DU = 0;
+	AccLR = AccFB = AccDU = 0;
 	if ( F.AccelerationsValid )
 	{
 		for ( i = 16; i; i--)
@@ -248,26 +248,26 @@ void GetNeutralAccelerations(void)
 			ReadAccelerations();
 	
 		#ifdef USE_FLAT_ACC
-			LR -= Ax.i16;
-			FB += Ay.i16;
-			DU += Az.i16;
+			AccLR -= Ax.i16;
+			AccFB += Ay.i16;
+			AccDU += Az.i16;
 		#else
-			LR += Ax.i16;
-			DU += Ay.i16;
-			FB += Az.i16;
+			AccLR += Ax.i16;
+			AccDU += Ay.i16;
+			AccFB += Az.i16;
 		#endif // USE_FLAT_ACC
 		}	
 	
-		LR = SRS16(LR, 4);
-		FB = SRS16(FB, 4);
-		DU = SRS16(DU, 4);
+		AccLR = SRS16(AccLR, 4);
+		AccFB = SRS16(AccFB, 4);
+		AccDU = SRS16(AccDU, 4);
 	
-		NeutralLR = Limit(LR, -99, 99);
-		NeutralFB = Limit(FB, -99, 99);
-		NeutralDU = Limit(DU - 1024, -99, 99); // -1g
+		AccNeutral[LR] = Limit(AccLR, -99, 99);
+		AccNeutral[FB] = Limit(AccFB, -99, 99);
+		AccNeutral[DU] = Limit(AccDU - 1024, -99, 99); // -1g
 	}
 	else
-		NeutralLR = NeutralFB = NeutralDU = 0;
+		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;
 
 } // GetNeutralAccelerations
 
@@ -318,7 +318,7 @@ void InitAccelerometers(void)
 {
 	int8 i;
 
-	NeutralLR = NeutralFB = NeutralDU = Ax.i16 = Ay.i16 = Az.i16 = 0;
+	AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = Ax.i16 = Ay.i16 = Az.i16 = 0;
 
 	IsLISLActive();
 	if( F.AccelerationsValid )

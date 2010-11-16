@@ -191,8 +191,8 @@ void ParseGPGGASentence(void)
 
     //UpdateField();   // GHeight 
     //UpdateField();   // GHeightUnit 
- 
-    F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );
+
+   	F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );
 
 	if ( State == InFlight )
 	{
@@ -251,8 +251,6 @@ void SetGPSOrigin(void)
 		F.AcquireNewPosition = true;		
 	}
 } // SetGPSOrigin
-
-
 
 void ParseGPSSentence(void)
 {
