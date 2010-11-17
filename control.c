@@ -349,12 +349,18 @@ int16 GS(int8 K)
 	
 		// also density altitude?
 	
-	 	AttDiff = CurrMaxRollPitch - ATTITUDE_HOLD_LIMIT;
-		NewK = SRS32( (int32)NewK * ( 2048L - (AttDiff * GSATTITUDE) ), 11);
-		NewK = Limit(NewK, -K, K);
+		if (GSATTITUDE > 0)
+		{
+		 	AttDiff = CurrMaxRollPitch - ATTITUDE_HOLD_LIMIT;
+			NewK = SRS32( (int32)NewK * ( 2048L - (AttDiff * GSATTITUDE) ), 11);
+			NewK = Limit(NewK, -K, K);
+		}
 	
-	 	ThrDiff = DesiredThrottle - CruiseThrottle;
-		NewK = SRS32( (int32)NewK * ( 2048L - (ThrDiff * GSTHROTTLE) ), 11);
+		if ( GSTHROTTLE > 0 )
+		{
+		 	ThrDiff = DesiredThrottle - CruiseThrottle;
+			NewK = SRS32( (int32)NewK * ( 2048L - (ThrDiff * GSTHROTTLE) ), 11);
+		}			
 
 		return ( NewK * KSign );
 	}

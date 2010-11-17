@@ -1,6 +1,6 @@
 
-#define GSTHROTTLE	3		// 0 -> 10
-#define GSATTITUDE	10		// 0 -> 20
+#define GSTHROTTLE	0		// (3) 0 -> 10
+#define GSATTITUDE	0		// (10) 0 -> 20
 #define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //#define JIM_MPX_INVERT

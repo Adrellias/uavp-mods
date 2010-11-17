@@ -230,7 +230,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		
 		for ( a = 0; a < (uint8)2 ; a++ )
 		{
-			NavP = Limit(NavE[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH); // * P[RollKp];
+			NavP = Limit(NavE[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
 		
 			NavIntE[a] += NavE[a];
 			NavIntE[a] = Limit(NavIntE[a], -P[NavIntLimit], (int16)P[NavIntLimit]);
