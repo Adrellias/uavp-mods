@@ -294,32 +294,29 @@ namespace UAVXGS
 
         public FormMain()
         {
-            InitializeComponent();
+          InitializeComponent();
 
-           // COMSelectComboBox.Items.Add("Select COM Port");
-            string[] AvailableCOMPorts = ComPorts.readPorts();
-            foreach (string AvailableCOMPort in AvailableCOMPorts)
-                COMSelectComboBox.Items.Add(AvailableCOMPort);
-            COMSelectComboBox.Text = UAVXGS.Properties.Settings.Default.COMPort;
-            COMBaudRateComboBox.Text = string.Format("{0:n0}", UAVXGS.Properties.Settings.Default.COMBaudRate);
+         // COMSelectComboBox.Items.Add("Select COM Port");
+          string[] AvailableCOMPorts = ComPorts.readPorts();
+          foreach (string AvailableCOMPort in AvailableCOMPorts)
+              COMSelectComboBox.Items.Add(AvailableCOMPort);
+          COMSelectComboBox.Text = UAVXGS.Properties.Settings.Default.COMPort;
+          COMBaudRateComboBox.Text = string.Format("{0:n0}", UAVXGS.Properties.Settings.Default.COMBaudRate);
+          // Assign assembly version number to title bar text
+          Version vrs = new Version(Application.ProductVersion);
+          this.Text = this.Text + " v" + vrs.Major + "." + vrs.Minor + "." + vrs.Build;// vrs.MajorRevision + 
 
-            Version vrs = new Version(Application.ProductVersion);
-            this.Text = this.Text + " v" + vrs.Major + "." + vrs.Minor + "." + vrs.Build;
-
-            ReplayDelay = 20 - Convert.ToInt16(ReplayNumericUpDown.Text);
-
-            string AppLogDir = UAVXGS.Properties.Settings.Default.LogFileDirectory;
-            if (!(Directory.Exists(AppLogDir))) {
-              string sProgFilesLogDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-              sProgFilesLogDir += "\\" + "UAVXGS " + vrs.Major + "." + vrs.Minor;
-              if (!(Directory.Exists(sProgFilesLogDir))) {
-                Directory.CreateDirectory(sProgFilesLogDir);
-              }
-              UAVXGS.Properties.Settings.Default.LogFileDirectory = sProgFilesLogDir;
-            } 
-
-
-
+          ReplayDelay = 20 - Convert.ToInt16(ReplayNumericUpDown.Text);
+          // Create default data dir if it doesn't exist
+          string AppLogDir = UAVXGS.Properties.Settings.Default.LogFileDirectory;
+          if (!(Directory.Exists(AppLogDir))) {
+            string sProgFilesLogDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            sProgFilesLogDir += "\\" + "UAVXGS " + vrs.Major + "." + vrs.Minor;
+            if (!(Directory.Exists(sProgFilesLogDir))) {
+              Directory.CreateDirectory(sProgFilesLogDir);
+            }
+            UAVXGS.Properties.Settings.Default.LogFileDirectory = sProgFilesLogDir;
+          } 
         }
 
         public static class ComPorts
