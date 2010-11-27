@@ -22,7 +22,7 @@
 
 void GetGyroValues(void)
 { 
-	if ( P[GyroRollPitchType] == IDG300 ) // 500 Deg/Sec
+	if ( P[GyroType] == IDG300Gyro ) // 500 Deg/Sec
 	{
 		GyroADC[Roll] = ADC(IDGADCRollChan);
 		GyroADC[Pitch] = ADC(IDGADCPitchChan);
@@ -43,46 +43,41 @@ void CalculateGyroRates(void)
 
 	Rate[Roll] = GyroADC[Roll] - GyroNeutral[Roll];
 	Rate[Pitch] = GyroADC[Pitch] - GyroNeutral[Pitch];
-
-	switch ( P[GyroRollPitchType] ) {
-	case CustomGyro: break;
-	case IDG300:// 500 Deg/Sec 
-		Rate[Roll] = -Rate[Roll] * 2; // adjust for reversed roll gyro sense
-		Rate[Pitch] *= 2;
-		break;
- 	case Gyro300D3V:// LY530ALH 300deg/S 3.3V
-		break;
-	case Gyro300D5V:// ADXRS610/300 Melexis90609, ITG3200 or generically 300deg/S 5V
-		Rate[Roll] = SRS16(Rate[Roll], 1);	
-		Rate[Pitch] = SRS16(Rate[Pitch], 1);
-		break;
-	case Gyro150D5V:	 // ADXRS613/150 or generically 150deg/S 5V
-		Rate[Roll] = SRS16(Rate[Roll], 2); 
-		Rate[Pitch] = SRS16(Rate[Pitch], 2);
-		break;
-	} // GyroRollPitchType
-
 	Rate[Yaw] = (int16)GyroADC[Yaw] - GyroNeutral[Yaw];
 
-	switch ( P[GyroYawType] ) {
-	case CustomGyro: break;
-	case IDG300:
-		// dual not used for Yaw 
+	switch ( P[GyroType] ) {
+	case IDG300Gyro:// 500 Deg/Sec 
+		Rate[Roll] = -Rate[Roll] * 2; // adjust for reversed roll gyro sense
+		Rate[Pitch] *= 2;
+		Rate[Yaw] = SRS16(Rate[Yaw], 1); // ADXRS150 assumed
 		break;
- 	case Gyro300D3V:
+ 	case LY530Gyro:// generically 300deg/S 3.3V
 		Rate[Yaw] = SRS16(Rate[Yaw], 1);
 		break;
-	case Gyro300D5V:
+	case MLX90609Gyro:// generically 300deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 1);	
+		Rate[Pitch] = SRS16(Rate[Pitch], 1);
 		Rate[Yaw] = SRS16(Rate[Yaw], 2);
 		break;
-	case Gyro150D5V:
+	case ADXRS300Gyro:// ADXRS610/300 300deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 1);	// scaling is not correct
+		Rate[Pitch] = SRS16(Rate[Pitch], 1);
+		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		break;
+	case ITG3200Gyro:// ITG3200
+		Rate[Roll] = SRS16(Rate[Roll], 1);	
+		Rate[Pitch] = SRS16(Rate[Pitch], 1);
+		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		break;
+	case ADXRS150Gyro:	 // ADXRS613/150 or generically 150deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 2); 
+		Rate[Pitch] = SRS16(Rate[Pitch], 2);
 		Rate[Yaw] = SRS16(Rate[Yaw], 3);
 		break;
-	} // GyroYawType
+	default:;
+	} // GyroType
 
-	#ifndef USE_IRQ_ADC_FILTERS
-		LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
-	#endif // !USE_IRQ_ADC_FILTERS
+	LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
 
 } // GetGyroValues
 
@@ -115,10 +110,9 @@ void ErectGyros(void)
 	for ( g = 0; g < (int8)3; g++ )
 	{
 		GyroNeutral[g] = (int16)((Av[g] + 16) >> 5);	
-		Rate[Roll] =  Angle[Roll] = 0;
+		Rate[g] =  Ratep[g] = Angle[g] = 0;
 	}
  
-	Ep[Roll] = Ep[Pitch] = Ep[Yaw] = 0;
 	LEDRed_OFF;
 
 } // ErectGyros
@@ -153,13 +147,13 @@ void GyroTest(void)
 		A[c] = ((int24)ADC(c) * 50L + 512L)/1024L;
 
 	TxString("\r\nGyro Test\r\n");
-	if ( (P[GyroRollPitchType] == IDG300) || (P[GyroRollPitchType] == Gyro300D3V) ) // 3V gyros
+	if ( (P[GyroType] == IDG300Gyro ) || (P[GyroType] == LY530Gyro ) ) // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
 		{ lv = 20; hv = 30;}
 
 	// Roll
-	if ( P[GyroRollPitchType] == IDG300 )
+	if ( P[GyroType] == IDG300Gyro )
 		v = A[IDGADCRollChan];
 	else
 		v = A[NonIDGADCRollChan];
@@ -168,7 +162,7 @@ void GyroTest(void)
 	CheckGyroFault(v, lv, hv);
 
 	// Pitch
-	if ( P[GyroRollPitchType] == IDG300 )
+	if ( P[GyroType] == IDG300Gyro )
 		v = A[IDGADCPitchChan]; 
 	else 
 		v = A[NonIDGADCPitchChan]; 
@@ -177,7 +171,7 @@ void GyroTest(void)
 	CheckGyroFault(v, lv, hv);	
 
 	// Yaw
-	if ( P[GyroYawType] == Gyro300D3V )
+	if ( (P[GyroType] == IDG300Gyro ) || (P[GyroType] == LY530Gyro ) ) // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
 		{ lv = 20; hv = 30;}

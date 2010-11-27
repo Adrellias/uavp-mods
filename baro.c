@@ -224,7 +224,7 @@ FSError:
 
 int16 FreescaleToDM(int24 p)
 { // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-	return(-(p * (int24)8 )/(int24)P[BaroScale]);
+	return(-(p * (int24)8 )/ (int16)P[BaroScale] );
 }  // FreescaleToDM
 
 void GetFreescaleBaroAltitude(void)
@@ -291,7 +291,7 @@ void InitFreescaleBarometer(void)
 	BaroFilterA = ( (int24) FS_ADC_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) FS_ADC_TIME_MS );
 
 	BaroTemperature = 0;
-	Error = ((int16)P[BaroScale] * 2)/16;  // 0.2M
+	Error = ( (int16)P[BaroScale] * 2)/16;  // 0.2M
 	BaroPressure =  0;
 
 	BaroRetries = 0;
@@ -477,7 +477,7 @@ void GetBoschBaroAltitude(void)
 
 				LPFilter24(&Temp, &BaroValF, BaroFilterA);
 
-				BaroRelAltitude = -SRS32(Temp * (int16)P[BaroScale], 7);
+				BaroRelAltitude = -SRS32(Temp * (int32)P[BaroScale], 7);
 
 				#ifdef SIMULATE
 				if ( State == InFlight )

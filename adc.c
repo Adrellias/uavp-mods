@@ -52,25 +52,6 @@ void InitADC()
           ADC_VREFMINUS_VSS,	  
           ADCPORTCONFIG);
 
-	#ifdef USE_IRQ_ADC_FILTERS
-
-	for ( i = 0; i <= ADC_TOP_CHANNEL; i++)
-	{
-		ADCVal[i].v.i32 = 512L * 256L * 256L;
-		ADCVal[i].a = 0;
-		ADCVal[i].dt = ADC_TOP_CHANNEL;			// mS - channels are processed cyclically on each mS clock tick
-		ADCVal[i].f = ADC_ATT_FREQ;				// Hz
-	}
-	
-	ADCVal[ADCBattVoltsChan].f = ADC_BATT_FREQ;		
-	ADCVal[ADCAltChan].f = ADC_ALT_FREQ;		
-	ADCVal[ADCYawChan].f = ADC_YAW_FREQ;
-	
-	for ( i = 0; i <= ADC_TOP_CHANNEL; i++ )
-		ADCVal[i].a	 = ( (int24) ADCVal[i].dt * 256L) / ( 1000L / ( 6L * (int24) ADCVal[i].f ) + (int24) ADCVal[i].dt );
-
-	#endif // USE_IRQ_ADC_FILTERS
-
 	ADCChannel = 0;
 	SetChanADC(	ADCChannel);					// using automatic acq
 	ConvertADC();

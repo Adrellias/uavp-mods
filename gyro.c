@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void ShowGyroType(uint8);
+void ShowGyroType(void);
 void CompensateRollPitchGyros(void);
 void GetGyroValues(void);
 void CalculateGyroRates(void);
@@ -46,14 +46,30 @@ i32u 	YawRateF;
 
 #define AccFilter NoFilter
 
-void ShowGyroType(uint8 T)
+void ShowGyroType(void)
 {
-	switch ( P[T] ) {
-		case Gyro300D5V:TxString("ADXRS610/300 or MLX90609\r\n"); break;
-		case Gyro150D5V:TxString("ADXRS613/150\r\n"); break;
-		case IDG300:TxString("IDG300\r\n"); break;
-		case Gyro300D3V:TxString("ST-AY530\r\n"); break;
-		case CustomGyro:TxString("Custom\r\n"); break;
+    switch ( GyroType ) {
+        case MLX90609Gyro:
+            TxString("MLX90609\r\n");
+            break;
+        case ADXRS150Gyro:
+            TxString("ADXRS613/150\r\n");
+            break;
+        case IDG300Gyro:
+            TxString("IDG300\r\n");
+            break;
+        case LY530Gyro:
+            TxString("ST-AY530\r\n");
+            break;
+        case ADXRS300Gyro:
+            TxString("ADXRS610/300\r\n");
+            break;
+        case ITG3200Gyro:
+            TxString("ITG3200\r\n");
+            break;
+        default:
+            TxString("UNKNOWN\r\n");
+            break;
 	}
 } // ShowGyroType
 

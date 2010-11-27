@@ -58,7 +58,7 @@ int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int32 	DesiredLatitude, DesiredLongitude;
 int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
-int16 	GPSVel, GPSROC;
+int16 	GPSVel, GPSVelP, GPSROC;
 int8 	GPSNoOfSats;
 int8 	GPSFix;
 int16 	GPSHDilute;
@@ -256,10 +256,8 @@ void ParseGPSSentence(void)
 {
 	static int32 Temp;
 	static int24 LongitudeDiff, LatitudeDiff;
-	static int16 GPSVelP;
 	static int24 GPSInterval;
 
- 
 	#ifdef SIMULATE
 	static int16 CosH, SinH, A;
 
@@ -405,7 +403,7 @@ void InitGPS(void)
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSFix = GPSNoOfSats = GPSHDilute = 0;
 	GPSRelAltitude = GPSROC = GPSAltitude = 0;
-	GPSVel = 0;
+	GPSVel = GPSVelP = 0;
 
 	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;
 	OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude = 0;

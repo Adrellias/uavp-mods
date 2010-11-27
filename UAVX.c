@@ -188,7 +188,7 @@ void main(void)
 
 			while ( WaitingForSync ) {};
 
-			mS[UpdateTimeout] += (int24)P[TimeSlots];
+			mS[UpdateTimeout] += PID_CYCLE_MS;
 
 			GetGyroValues();
 			

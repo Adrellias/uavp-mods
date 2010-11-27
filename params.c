@@ -29,16 +29,6 @@ void InitParameters(void);
 
 const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
 
-const rom int8	ComParms[]={ // mask giving common variables across parameter sets
-	0,0,0,1,0,0,0,0,0,0,
-	0,0,0,0,0,1,1,1,0,1,
-	1,1,1,1,1,0,0,0,0,0,
-	0,0,0,1,1,1,1,0,0,1,
-	0,1,1,1,1,0,1,0,0,1,
-	1,1,1,1,1,0,1,1,0,0,
-	0,0,0,0
-	};
-
 #ifdef MULTICOPTER
 	#include "uavx_multicopter.h"
 #else
@@ -108,17 +98,13 @@ void ReadParametersEE(void)
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
-	
+
 		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
 		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
-		NavClosingRadius = Limit((int16)P[NavRadius], NAV_MAX_NEUTRAL_RADIUS+1, NAV_MAX_RADIUS);
-
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
-		NavClosingRadius = ConvertMToGPS(NavClosingRadius);
-		NavCloseToNeutralRadius = NavClosingRadius - NavNeutralRadius;
 		NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
 
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
@@ -128,7 +114,7 @@ void ReadParametersEE(void)
 
 		#ifdef MULTICOPTER
 			Orientation = P[Orient];
-			if (Orientation == 0xff ) // uninitialised
+			if (Orientation == -1 ) // uninitialised
 				Orientation = 0;
 			else
 				if (Orientation < 0 )
@@ -137,7 +123,7 @@ void ReadParametersEE(void)
 			Orientation = 0;
 		#endif // MULTICOPTER
 	
-		F.UsingSerialPPM = ((P[ConfigBits] & RxSerialPPMMask) != 0);
+		F.UsingSerialPPM = ( P[TxRxType] == ExternalDecoder ) || ( (P[ConfigBits] & RxSerialPPMMask ) != 0);
 		PIE1bits.CCP1IE = false;
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
@@ -150,9 +136,7 @@ void ReadParametersEE(void)
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 
-		#ifndef USE_IRQ_ADC_FILTERS
-			YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
-		#endif // !USE_IRQ_ADC_FILTERS
+		YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + PID_CYCLE_MS );
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
@@ -161,7 +145,7 @@ void ReadParametersEE(void)
 
 		ParametersChanged = false;
 
-		ServoInterval = ( 24 + (P[TimeSlots] >> 1) ) / P[TimeSlots];
+		ServoInterval = ( 24 + (PID_CYCLE_MS >> 1) ) / PID_CYCLE_MS;
 		ServoToggle = 0;
 	}
 	
@@ -182,7 +166,7 @@ void UseDefaultParameters(void)
 	int8 p;
 
 	for ( p = 0; p < MAX_PARAMETERS; p++ )
-		P[p] = DefaultParams[p];
+		P[p] = DefaultParams[p][0];
 
 	WriteParametersEE(1);
 	WriteParametersEE(2);
@@ -322,9 +306,7 @@ void InitParameters(void)
 	ReadParametersEE();
 	ParametersChanged = true;
 
-	#ifndef USE_IRQ_ADC_FILTERS
-		YawFilterA	= ( (int24) P[TimeSlots] * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + (int24) P[TimeSlots] );
-	#endif // !USE_IRQ_ADC_FILTERS
+	YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) ADC_YAW_FREQ ) + PID_CYCLE_MS );
 
 	ALL_LEDS_OFF;  
 } // InitParameters

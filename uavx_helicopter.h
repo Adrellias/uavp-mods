@@ -18,80 +18,81 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 	
-	const rom int8 DefaultParams[] = {
-	-24, 			// RollKp, 			01
-	-14, 			// RollKi,			02
-	75, 			// RollKd,			03
-	-1, 			// HorizDampKp,		04c 
-	3, 				// RollIntLimit,	05
-	-24, 			// PitchKp,			06
-	-14, 			// PitchKi,			07
-	75, 			// PitchKd,			08
-	32, 			// AltKp,			09
-	3, 				// PitchIntLimit,	10
+	const rom int8 DefaultParams[MAX_PARAMETERS][2] = {
+	{-20,0},			// RollKp, 			01
+	{-12,0},	 		// RollKi,			02
+	{50, 0},			// RollKd,			03
+	{-1,true},			// HorizDampKp,		04c 
+	{5,0},	 			// RollIntLimit,	05
+	{-20,0},	 		// PitchKp,			06
+	{-12,0},	 		// PitchKi,			07
+	{50,0},	 			// PitchKd,			08
+	{8,0},	 			// AltKp,			09
+	{5,0},	 			// PitchIntLimit,	10
 	
-	-30, 			// YawKp, 			11
-	-25, 			// YawKi,			12
-	0, 				// YawKd,			13
-	25, 			// YawLimit,		14
-	2, 				// YawIntLimit,		15
-	0, 				// ConfigBits,		16c
-#ifdef CLOCK_16MHZ
-	8, 				// TimeSlots,		17c
-#else // CLOCK_40MHZ
-	5, 				// TimeSlots,		17c
-#endif // CLOCK_16MHZ
-	48, 			// LowVoltThres,	18c
-	20, 			// CamRollKp,		19
-	45, 			// PercentCruiseThr,20c 
+	{-30,0},	 		// YawKp, 			11
+	{-25,0},	 		// YawKi,			12
+	{0,0},	 			// YawKd,			13
+	{25,0},	 			// YawLimit,		14
+	{2,0},	 			// YawIntLimit,		15
+	{0,true}, 			// ConfigBits,		16c
+	{0,true},			// was TimeSlots,	17c
+	{48,true}, 			// LowVoltThres,	18c
+	{20,true}, 			// CamRollKp,		19c
+	{45,true}, 			// PercentCruiseThr,20c 
 	
-	-1, 			// VertDampKp,		21c
-	0, 				// MiddleDU,		22c
-	20, 			// PercentIdleThr,	23c
-	0, 				// MiddleLR,		24c
-	0, 				// MiddleFB,		25c
-	20, 			// CamPitchKp,		26
-	10, 			// CompassKp,		27
-	8, 				// AltKi,			28
-	30, 			// NavRadius,		29
-	8, 				// NavKi,			30 
+	{-1,true}, 			// VertDampKp,		21c
+	{0,true}, 			// MiddleDU,		22c
+	{20,true}, 			// PercentIdleThr,	23c
+	{0,true}, 			// MiddleLR,		24c
+	{0,true}, 			// MiddleFB,		25c
+	{20,true}, 			// CamPitchKp,		26c
+	{10,0}, 			// CompassKp,		27
+	{8,0},				// AltKi,			28
+	{0,0}, 				// was NavRadius,	29
+	{8,0}, 				// NavKi,			30 
 
-	0, 				// unused1,			31
-	0, 				// unused2,			32
-	10, 			// NavRTHAlt,		33
-	0, 				// NavMagVar,		34c
-	Gyro300D5V, 	// GyroRollPitchType,	35c
-	ESCPPM, 		// ESCType,			36c
-	DX7AR7000, 		// TxRxType			37c
-	2,				// NeutralRadius	38
-	30,				// PercentNavSens6Ch	39
-	1,				// CamRollTrim,		40c
+	{0,0}, 				// GSThrottle,	    31
+	{0,0},				// GSAttitude,	    32
+	{0,0}, 				// NavRTHAlt,		33
+	{0,true},			// NavMagVar,		34c
+	{LY530Gyro,true}, 	// GyroType, 		35c
+	{ESCPPM,true}, 		// ESCType,			36c
+	{DX7AR7000,true}, 	// TxRxType			37c
+	{2,0},				// NeutralRadius	38
+	{30,0},				// PercentNavSens6Ch	39
+	{1,true},			// CamRollTrim,		40c
 
-	-16,			// NavKd			41
-	1,				// VertDampDecay    42c
-	1,				// HorizDampDecay	43c
-	56,				// BaroScale		44c
-	UAVXTelemetry,	// TelemetryType	45c
-	-8,				// MaxDescentRateDmpS 	46
-	30,				// DescentDelayS	47c
-	1,				// NavIntLimit		48
-	2,				// AltIntLimit		49
-	11,				// was GravComp		50c
-	1,				// CompSteps		51c
-	0,				// ServoSense		52c	
-	3,				// CompassOffsetQtr 53c
-	49,				// BatteryCapacity	54c	
-	Gyro300D5V,		// GyroYawType		55c		
-	-32,			// AltKd			56		
-	0,				// Orient			57				
+	{-16,0},			// NavKd			41
+	{1,true},			// VertDampDecay    42c
+	{1,true},			// HorizDampDecay	43c
+	{56,true},			// BaroScale	    44c
+	{NoTelemetry,true}, // TelemetryType	45c
+	{-8,0},				// MaxDescentRateDmpS 	46
+	{30,true},			// DescentDelayS	47c
+	{1,0},				// NavIntLimit		48
+	{2,0},				// AltIntLimit		49
+	{11,true},			// was GravComp		50c
+
+	{1,true},			// was CompSteps	51c
+	{0,true},			// ServoSense		52c	
+	{3,true},			// CompassOffsetQtr 53c
+	{49,true},			// BatteryCapacity	54c	
+	{LY530Gyro,true},	// was GyroYawType	55c		
+	{-4,0},				// AltKd			56
+	#if (defined  TRICOPTER) | (defined VTCOPTER )
+	{24,0},				// Orient			57
+	#else	
+	{0,0},				// Orient			57
+	#endif // TRICOPTER | VTCOPTER				
 	
-	12,				// NavYawLimit		58
-	0,				// 58 - 64 unused currently	
-	0,
+	{12,0},				// NavYawLimit		58
+	{50,0},				// Balance			59
+	{0,0},				// 60 - 64 unused currently	
+	{0,0},	
 
-	0,
-	0,
-	0,
-	0					
+	{0,0},	
+	{0,0},	
+	{0,0}						
 	};
 

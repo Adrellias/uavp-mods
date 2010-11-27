@@ -1,6 +1,4 @@
 
-#define GSTHROTTLE	0		// (3) 0 -> 10
-#define GSATTITUDE	0		// (10) 0 -> 20
 #define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //#define JIM_MPX_INVERT
@@ -33,7 +31,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define VTCOPTER
@@ -43,10 +41,6 @@
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 	//#define I2C_HW
 #endif // !BATCHMODE
-
-#ifdef CLOCK_40MHZ
-//	#define USE_IRQ_ADC_FILTERS					// Use digital LP filters for ADC inputs - 16MHz irq overheads too high
-#endif // CLOCK_40MHZ
 
 #ifdef EXPERIMENTAL
 	#define GYRO_ITG3200
@@ -117,6 +111,12 @@
 
 // Timeouts and Update Intervals
 
+#ifdef CLOCK_16MHZ
+	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
+#else
+	#define PID_CYCLE_MS			5		// mS 200Hz
+#endif // CLOCK_16MHZ
+
 #define FAILSAFE_TIMEOUT_MS			1000L 	// mS. hold last "good" settings and then restore flight or abort
 #define ABORT_TIMEOUT_GPS_MS		5000L	// mS. go to descend on position hold if GPS valid.
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
@@ -149,12 +149,6 @@
 #define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
 
 // Gyros
-
-#define ATTITUDE_FF_DIFF			24L		// 0 - 32 max feedforward speeds up roll/pitch recovery on fast stick change
-
-#define	ATTITUDE_ENABLE_DECAY				// enables decay to zero angle when roll/pitch is not in fact zero!
-											// unfortunately there seems to be a leak which cause the roll/pitch 
-											// to increase without the decay.
 
 // Enable "Dynamic mass" compensation Roll and/or Pitch
 // Normally disabled for pitch only 
@@ -565,6 +559,8 @@ enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
 extern near int8 State;
 
+//______________________________________________________________________________________________
+
 // accel.c
 
 extern void SendCommand(int8);
@@ -642,7 +638,7 @@ extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
-extern int16 NavPolarRadius, NavClosingRadius, NavNeutralRadius, NavCloseToNeutralRadius, NavProximityRadius, NavProximityAltitude; 
+extern int16 NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude; 
 extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
@@ -738,13 +734,13 @@ extern void LimitPitchSum(void);
 extern void LimitYawSum(void);
 extern void InertialDamping(void);
 extern void DoOrientationTransform(void);
-extern int16 GS(int8);
+extern void GainSchedule(void);
 extern void DoControl(void);
 
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
-extern int16 E[4], Ep[4];
+extern int16 Ratep[4];
 extern int16 Rl, Pl, Yl, Ylp;							// PID output values
 extern int24 OSO, OCO;
 extern int16 CameraRollAngle, CameraPitchAngle;
@@ -752,6 +748,7 @@ extern int16 Angle[3];			// integral/angle
 extern int16 Trim[3];
 extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
+extern int32 GS;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
@@ -827,7 +824,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 
 // gyro.c
 
-extern void ShowGyroType(uint8);
+extern void ShowGyroType(void);
 extern void CompensateRollPitchGyros(void);
 extern void GetGyroValues(void);
 extern void CalculateGyroRates(void);
@@ -1080,22 +1077,22 @@ extern void InitParameters(void);
 
 enum TxRxTypes { 
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
-	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, CustomTxRx };
+	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
-enum GyroTypes { Gyro300D5V, Gyro150D5V, IDG300, Gyro300D3V, CustomGyro};
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
 	RollKp, 			// 01
 	RollKi,				// 02
 	RollKd,				// 03
-	HorizDampKp,		// 04c
+	HorizDampKp,		// 04
 	RollIntLimit,		// 05
 	PitchKp,			// 06
 	PitchKi,			// 07
 	PitchKd,			// 08
-	AltKp,				// 09c
+	AltKp,				// 09
 	PitchIntLimit,		// 10
 	
 	YawKp, 				// 11
@@ -1103,53 +1100,54 @@ enum Params { // MAX 64
 	YawKd,				// 13
 	YawLimit,			// 14
 	YawIntLimit,		// 15
-	ConfigBits,			// 16c
-	TimeSlots,			// 17c
-	LowVoltThres,		// 18c
+	ConfigBits,			// 16
+	unused17,			// 17 was TimeSlots
+	LowVoltThres,		// 18
 	CamRollKp,			// 19
-	PercentCruiseThr,	// 20c 
+	PercentCruiseThr,	// 20 
 	
-	VertDampKp,			// 21c
-	MiddleDU,			// 22c
-	PercentIdleThr,		// 23c
-	MiddleLR,			// 24c
-	MiddleFB,			// 25c
+	VertDampKp,			// 21
+	MiddleDU,			// 22
+	PercentIdleThr,		// 23
+	MiddleLR,			// 24
+	MiddleFB,			// 25
 	CamPitchKp,			// 26
 	CompassKp,			// 27
-	AltKi,				// 28c 
-	NavRadius,			// 29
+	AltKi,				// 28c
+	unused29,			// 29 was NavRadius
 	NavKi,				// 30
 	
-	unused1,			// 31
-	unused2,			// 32
+	GSThrottle,			// 31
+	Acro,				// 32
 	NavRTHAlt,			// 33
-	NavMagVar,			// 34c
-	GyroRollPitchType,	// 35c
-	ESCType,			// 36c
-	TxRxType,			// 37c
+	NavMagVar,			// 34
+	GyroType,			// 35
+	ESCType,			// 36
+	TxRxType,			// 37
 	NeutralRadius,		// 38
 	PercentNavSens6Ch,	// 39
-	CamRollTrim,		// 40c
+	CamRollTrim,		// 40
 	NavKd,				// 41
-	VertDampDecay,		// 42c
-	HorizDampDecay,		// 43c
-	BaroScale,			// 44c
-	TelemetryType,		// 45c
+	VertDampDecay,		// 42
+	HorizDampDecay,		// 43
+	BaroScale,			// 44
+	TelemetryType,		// 45
 	MaxDescentRateDmpS,	// 46
-	DescentDelayS,		// 47c
+	DescentDelayS,		// 47
 	NavIntLimit,		// 48
 	AltIntLimit,		// 49
-	UnusedGravComp,		// 50c
-	CompSteps,			// 51c
-	ServoSense,			// 52c
-	CompassOffsetQtr,	// 53c
-	BatteryCapacity,	// 54c
-	GyroYawType,		// 55c
+	unused50,			// 50 was GravComp
+	unused51,			// 51 was CompSteps
+	ServoSense,			// 52
+	CompassOffsetQtr,	// 53
+	BatteryCapacity,	// 54
+	unused55,			// 55 was GyroYawType
 	AltKd,				// 56
 	Orient,				// 57
-	NavYawLimit			// 58
+	NavYawLimit,		// 58
+	Balance				// 59
 	
-	// 56 - 64 unused currently
+	// 60 - 64 unused currently
 	};
 
 #define FlyXMode 			0
@@ -1180,8 +1178,7 @@ enum Params { // MAX 64
 
 // bit 7 unusable in UAVPSet
 
-extern const rom int8 ComParms[];
-extern const rom int8 DefaultParams[];
+extern const rom int8 DefaultParams[MAX_PARAMETERS][2];
 
 extern const rom uint8 ESCLimits [];
 

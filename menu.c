@@ -149,9 +149,7 @@ void ShowSetup(boolean h)
 		else
 			TxString("ONLINE\r\n");
 	#else 
-		ShowGyroType(GyroRollPitchType);		
-		TxString("Yaw Gyro: ");
-		ShowGyroType(GyroYawType);
+		ShowGyroType();		
 	#endif // GYRO_ITG3200
 
 	TxString("Motor ESCs: ");	
@@ -195,6 +193,7 @@ void ShowSetup(boolean h)
 		case FutabaCh3_R617FS: TxString("Futaba Th 3 & R617FS {"); break; 
 		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 		case DX7aAR7000: TxString("Spektrum DX7a & AR7000 {"); break;
+		case ExternalDecoder: TxString("External Decoder {"); break;
 	}
 	
 	if ( F.UsingSerialPPM )
@@ -350,12 +349,12 @@ void ProcessCommand(void)
 					if( ParamSet == (uint8)1 )
 					{
 						WriteEE(p, d);
-						if ( ComParms[p] )
+						if ( DefaultParams[p][1] )
 							WriteEE(MAX_PARAMETERS + p, d);
 					}
 					else
 					{
-						if ( !ComParms[p] )
+						if ( !DefaultParams[p][1] )
 							WriteEE(MAX_PARAMETERS + p, d);
 					}
 					ParametersChanged = true;

@@ -46,65 +46,43 @@ int16 ESCMin, ESCMax;
 
 #ifdef MULTICOPTER
 
-#pragma idata throttlecurve
-const int16 ThrottleCurve[17] = { 
-	0,57,81,99,114,128,140, 151,
-	162,171,181,190,198,206,214,221,
-	229
-   };
-#pragma idata
-
 uint8 TC(int16 T)
 {
-	static int16 r;
-
-	r = Limit(T, ESCMin, ESCMax);
-
-	#ifdef CASTLE_ESCS 
-	if ( P[ESCType] == ESCPPM )
-		r =  Table16( r, ThrottleCurve );
-	#endif // CASTLE_ESCS
-
-	return ( r );
-
+	return ( Limit(T, ESCMin, ESCMax));
 } // TC
 
 void DoMulticopterMix(int16 CurrThrottle)
 {
-	static int16 Temp, YlNeg, YlNegOn2, YlPos, YlPosOn2, RlOn2, PlOn2;
+	static int16 Temp, B;
 
 	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
-	#ifdef TRICOPTER // usually flown K1 motor to the rear which is set using orientation of 24
-		#ifdef TRI_REBALANCE 
-			PWM[FrontC] -= Pl ;		// front motor
-			PWM[LeftC] -= Rl;		// right rear
-			PWM[RightC] += Rl; 		// left rear
+	#ifdef TRICOPTER // usually flown K1 motor to the rear - use orientation of 24
+		Temp = SRS16(Pl, 1); 			
+		PWM[FrontC] -= Pl;			// front motor
+		PWM[LeftC] += (Temp - Rl);	// right rear
+		PWM[RightC] += (Temp + Rl); // left rear
 	
-			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
-		#else
-			Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
-			PWM[FrontC] -= Pl ;			// front motor
+		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		if ( P[Balance] != 0 )
+		{
+			B = 128 + P[Balance];
+			PWM[FrontC] =  SRS32((int32)PWM[FrontC] * B, 7);
+		}
+	#else
+	    #ifdef VTCOPTER 	// usually flown VTail (K1+K4) to the rear - use orientation of 24
+			Temp = SRS16(Pl, 1); 	
+
 			PWM[LeftC] += (Temp - Rl);	// right rear
 			PWM[RightC] += (Temp + Rl); // left rear
 	
-			PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
-		#endif	// TRI_REBALANCE
-	#else
-	    #ifdef VTCOPTER 	// usually flown VTail (K1+K4) to the rear which is set using orientation of 24
-			#ifdef VT_TREBALANCE
-				PWM[LeftC] -= Rl;		// right rear
-				PWM[RightC] += Rl; 		// left rear
-	
-				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
-				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl; 
-			#else			
-				Temp = SRS16(Pl * 56, 7); 	// compensate for 30deg angle of rear arms
-				PWM[LeftC] += (Temp - Rl);	// right rear
-				PWM[RightC] += (Temp + Rl); // left rear
-	
-				PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
-				PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl;
-			#endif // VT_REBALANCE
+			PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
+			PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl;
+			if ( P[Balance] != 0 )
+			{
+				B = 128 + P[Balance];
+				PWM[FrontLeftC] = SRS32((int32)PWM[FrontLeftC] * B, 7);
+				PWM[FrontRightC] = SRS32((int32)PWM[FrontRightC] * B, 7);
+			}
 		#else // QUADROCOPTER
 			PWM[LeftC]  += -Rl - Yl;	
 			PWM[RightC] +=  Rl - Yl;
