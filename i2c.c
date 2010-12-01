@@ -453,8 +453,8 @@ void ConfigureESCs(void)
 					case 3 : TxString("Left");  break;
 				#endif // HEXACOPTER
 			}
-			TxString(" ESC, then press any key \r\n");
-			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button
+			TxString(" ESC, then the CONTINUE button \r\n");
+			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
 		//	TxString("\r\n");
 			ProgramSlaveAddress( 0x62 + ( m*2 ));
 		}

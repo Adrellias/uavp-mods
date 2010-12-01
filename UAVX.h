@@ -27,6 +27,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
+	#define CLOCK_40MHZ
 //	#define CASTLE_ESCS
 	//#define RX6CH
 	//#define EXPERIMENTAL

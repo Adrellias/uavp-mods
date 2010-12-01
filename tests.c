@@ -151,8 +151,8 @@ void LEDsAndBuzzer(void)
 		case 7: TxString("Aux3   "); break;
 		case 8: TxString("Beeper "); break;
 		}
-		TxString("\tPress any key (x) to continue\r\n");	
-		while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button
+		TxString("\tPress the CONTINUE button (x) to continue\r\n");	
+		while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
 
 		for( s = 0; s < 10; s++ )	// 10 flashes (count MUST be even!)
 		{

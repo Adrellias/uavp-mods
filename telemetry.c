@@ -341,8 +341,8 @@ void SendArduStation(void)
 	{
 	   	TxString("+++");
 		TxString("ASP:"); TxVal32(GPSVel / 100, 0, 0);
-		TxString(",RLL:"); TxVal32(RollSum / 35, 0, 0); // scale to degrees?
-		TxString(",PCH:"); TxVal32(PitchSum / 35, 0, 0);
+		TxString(",RLL:"); TxVal32(Angle[Roll]/ 35, 0, 0); // scale to degrees?
+		TxString(",PCH:"); TxVal32(Angle[Pitch]/ 35, 0, 0);
 		TxString(",THH:"); TxVal32( ((int24)DesiredThrottle * 100L) / RC_MAXIMUM, 0, 0);
 	}
 

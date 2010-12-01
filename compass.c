@@ -215,7 +215,7 @@ void DoCompassTest(void)
 	Temp = GetCompass();
 	if ( F.CompassMissRead ) goto CTerror;
 
-	TxVal32(((int32)Temp * 180L)/CENTIPI, 1, 0);
+	TxVal32((int32)Temp, 1, 0);
 	TxString(" deg Corrected to ");
 	Temp = Make2Pi((int16) ConvertDDegToMPi(Temp) - CompassOffset);
 	TxVal32(((int32)Temp * 180L)/CENTIPI, 1, 0);
@@ -229,8 +229,8 @@ CTerror:
 
 void CalibrateCompass(void)
 {	// calibrate the compass by rotating the ufo through 720 deg smoothly
-	TxString("\r\nCalib. compass - Press any key (x) to continue\r\n");	
-	while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for any key button
+	TxString("\r\nCalib. compass - Press the CONTINUE button (x) to continue\r\n");	
+	while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
 
 	I2CStart(); // Do Set/Reset now		
 	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
@@ -245,7 +245,7 @@ void CalibrateCompass(void)
 	if( WriteI2CByte('C')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
-	TxString("\r\nRotate horizontally 720 deg in ~30 sec. - Press any key (x) to FINISH\r\n");
+	TxString("\r\nRotate horizontally 720 deg in ~30 sec. - Press the CONTINUE button (x) to FINISH\r\n");
 	while( PollRxChar() != 'x' );
 
 	// set Compass device to End-Calibration mode 
