@@ -23,7 +23,7 @@
 #include "uavx.h"
 
 #ifdef CLOCK_16MHZ
-#define MIN_PPM_SYNC_PAUSE 2500  	// 2500 *2us = 5ms
+#define MIN_PPM_SYNC_PAUSE 1500  	// 2500 *2us = 5ms // 2500
 #else // CLOCK_40MHZ
 #define MIN_PPM_SYNC_PAUSE 6250  	// 6250 *0.8us = 5ms
 #endif //  CLOCK_16MHZ
