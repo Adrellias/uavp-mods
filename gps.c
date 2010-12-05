@@ -32,7 +32,6 @@ void ParseGPRMCSentence(void);
 void ParseGPGGASentence(void);
 void SetGPSOrigin(void);
 void ParseGPSSentence(void);
-void GPSTest(void);
 void InitGPS(void);
 void UpdateGPS(void);
 
@@ -44,13 +43,18 @@ void UpdateGPS(void);
 
 #define GPSVelocityFilter SoftFilterU		// done after position filter
 
-const rom uint8 NMEATag[6] = {"GPGGA"};
+const uint8 NMEATags[MAX_NMEA_SENTENCES][5]= {
+    // NMEA
+    {'G','P','G','G','A'}, // full positioning fix
+    {'G','P','R','M','C'}, // main current position and heading
+};
 
 #pragma udata gpsbuff
 NMEAStruct NMEA;
 #pragma udata
 
 #pragma udata gpsvars
+uint8 	GPSPacketTag;
 int32 	GPSMissionTime, GPSStartTime;
 int32 	GPSLatitude, GPSLongitude;
 int32 	OriginLatitude, OriginLongitude;
@@ -58,16 +62,15 @@ int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int32 	DesiredLatitude, DesiredLongitude;
 int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
-int16 	GPSVel, GPSVelP, GPSROC;
+int16	GPSHeading;
+int16 	GPSVel, GPSVelP;
 int8 	GPSNoOfSats;
 int8 	GPSFix;
 int16 	GPSHDilute;
 int32x4Q	GPSQ;
 #pragma udata
 
-#ifdef SIMULATE
-	int32 FakeGPSLongitude, FakeGPSLatitude;
-#endif // SIMULATE
+int32 FakeGPSLongitude, FakeGPSLatitude;
 
 #pragma udata gpsvars1
 uint8 nll, cc, lo, hi;
@@ -213,6 +216,56 @@ void ParseGPGGASentence(void)
 	}
 } // ParseGPGGASentence
 
+void ParseGPRMCSentence() 
+{ // main current position and heading
+
+	#ifndef TESTING
+
+    UpdateField();
+
+    UpdateField();   //UTime
+
+    UpdateField();
+    if ( NMEA.s[lo] == 'A' ) {
+        UpdateField();   //Lat
+        GPSLatitude = ConvertLatLonM(lo,hi);
+        UpdateField();   //LatH
+        if (NMEA.s[lo] == 'S')
+        	GPSLatitude= -GPSLatitude;
+
+        UpdateField();   //Lon
+        GPSLongitude = ConvertLatLonM(lo,hi);
+
+        UpdateField();   //LonH
+        if ( NMEA.s[lo] == 'W' )
+        	GPSLongitude = -GPSLongitude;
+
+        UpdateField();   // Groundspeed (Knots)
+		GPSVel = SRS32((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi) * 421, 13);// dm/S 514 / 10000; // 0.5144444 MPS/Kt
+
+        UpdateField();   // True course made good (Degrees)
+		GPSHeading = SRS32((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi) * 2859, 14); // MilliRadians 3142/18000; 
+
+      	/*
+        UpdateField();   //UDate
+
+        UpdateField();   // Magnetic Deviation (Degrees)
+        GPSMagDeviation = ConvertReal(lo, hi) * MILLIRAD;
+
+        UpdateField();   // East/West
+ 
+		if ( NMEA.s[lo] == 'W')
+            GPSMagHeading = GPSHeading - GPSMagDeviation; // need to check sign????
+        else
+            GPSMagHeading = GPSHeading +  GPSMagDeviation;
+		*/
+        F.HaveGPRMC = true;
+    } else
+	#endif // !TESTING
+        F.HaveGPRMC = false;
+
+} // ParseGPRMCSentence
+
 void SetGPSOrigin(void)
 {
 	static int32 Temp;
@@ -269,7 +322,14 @@ void ParseGPSSentence(void)
 	cc = 0;
 	nll = NMEA.length;
 
-	ParseGPGGASentence(); 
+	switch ( GPSPacketTag ) {
+    case GPGGAPacketTag:
+		ParseGPGGASentence();
+		break;
+	case GPRMCPacketTag:
+		ParseGPRMCSentence();
+		break;
+	} 
 
 	if ( F.GPSValid )
 	{
@@ -310,36 +370,14 @@ void ParseGPSSentence(void)
 			FakeGPSLatitude = GPSLatitude;
 
 			GPSRelAltitude = BaroRelAltitude;
-			GPSROC = BaroROC;
 		}
 		
 		#else
 
 		if (F.NavValid )
-		{
-			Temp = GPSAltitude - GPSOriginAltitude;	
-			if ( mSClock() > mS[GPSROCUpdate] )
-			{
-				mS[GPSROCUpdate] = mSClock() + 1000; // 1Sec
-				GPSROC = Temp - GPSRelAltitude;
-			}
-			GPSRelAltitude = Temp;
-		}			
+			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;				
 
 		#endif // SIMULATE
-
-		#ifdef GPS_INC_GROUNDSPEED
-		// nice to have but not essential 
-		LongitudeDiff = SRS32((GPSLongitude - LongitudeP) * GPSLongitudeCorrection, 8);
-		LatitudeDiff = GPSLatitude - LatitudeP;
-		Temp = int32sqrt(LongitudeDiff*LongitudeDiff + LatitudeDiff*LatitudeDiff);
-		GPSVel = ConvertGPSToM( (Temp*GPSInterval) / 100L ); // dM/Sec.
-		GPSVel = GPSVelocityFilter(GPSVelP, GPSVel);
-		GPSVelP = GPSVel;
-
-		LatitudeP = GPSLatitude;
-		LongitudeP = GPSLongitude;
-		#endif // GPS_INC_GROUNDSPEED			
 
 		if ( State == InFlight )
 		{
@@ -402,8 +440,8 @@ void InitGPS(void)
 
 	GPSLongitudeCorrection = 256; // 1.0
 	GPSMissionTime = GPSFix = GPSNoOfSats = GPSHDilute = 0;
-	GPSRelAltitude = GPSROC = GPSAltitude = 0;
-	GPSVel = GPSVelP = 0;
+	GPSRelAltitude = GPSAltitude = 0;
+	GPSHeading = GPSVel = GPSVelP = 0;
 
 	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;
 	OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude = 0;

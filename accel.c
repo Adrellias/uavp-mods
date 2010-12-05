@@ -22,35 +22,89 @@
 
 #include "uavx.h"
 
-void SendCommand(int8);
-uint8 ReadLISL(uint8);
-uint8 ReadLISLNext(void);
-void WriteLISL(uint8, uint8);
-void IsLISLActive(void);
-
+void ShowAccType(void);
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
 void AccelerometerTest(void);
 void InitAccelerometers(void);
+
+void ReadADXL345Acc(void);
+void InitADXL345Acc(void);
+boolean ADXL345AccActive(void);
+
+void SendCommand(int8);
+uint8 ReadLISL(uint8);
+uint8 ReadLISLNext(void);
+void WriteLISL(uint8, uint8);
+void InitLISLAcc(void);
+boolean LISLAccActive(void);
+void ReadLISLAcc(void);
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
 int8	IntCorr[3];
 int8	AccNeutral[3];
 int16	Vel[3], Acc[3], Comp[4];
+int8 	AccType;
 #pragma udata
 
-#ifdef UAVX_HW
+void ShowAccType(void)
+{
+    switch ( AccType ) {
+	case LISLAcc:
+		TxString("LIS3L SPI");
+		break;
+	case ADXL345Acc:
+		TxString("ADXL345 I2C");
+		break;
+	case AccUnknown:
+		TxString("UNKNOWN");
+		break;
+	default:;
+	} // switch
+} // ShowAccType
 
 void ReadAccelerations(void)
 {
- 	// I2C Acc not implemented yet - not used in UAVXLight
+	if ( AccType == LISLAcc )
+		ReadLISLAcc();
+	else
+		ReadADXL345Acc();
+
 } // ReadAccelerations
 
 void GetNeutralAccelerations(void)
 {
-	// I2C Acc not implemented yet - not used in UAVXLight
-	NeutralLR = NeutralFB = NeutralDU = 0;
+	// this routine is called ONLY ONCE while booting
+	// and averages accelerations over 16 samples.
+	// Puts values in Neutralxxx registers.
+	static uint8 i;
+	static int16 AccLR, AccFB, AccDU;
+
+	// already done in caller program
+	AccLR = AccFB = AccDU = 0;
+	if ( F.AccelerationsValid )
+	{
+		for ( i = 16; i; i--)
+		{
+			ReadAccelerations();
+
+			AccLR += Ax.i16;
+			AccDU += Ay.i16;
+			AccFB += Az.i16;
+		}	
+	
+		AccLR = SRS16(AccLR, 4);
+		AccFB = SRS16(AccFB, 4);
+		AccDU = SRS16(AccDU, 4);
+	
+		AccNeutral[LR] = Limit(AccLR, -99, 99);
+		AccNeutral[FB] = Limit(AccFB, -99, 99);
+		AccNeutral[DU] = Limit(AccDU - 1024, -99, 99); // -1g
+	}
+	else
+		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;
+
 } // GetNeutralAccelerations
 
 #ifdef TESTING
@@ -58,18 +112,158 @@ void GetNeutralAccelerations(void)
 void AccelerometerTest(void)
 {
 	TxString("\r\nAccelerometer test:\r\n");
-	TxString("\r\n(Acc. not active for UAVXLight)\r\n");
+	TxString("Read once - no averaging\r\n");
+
+	InitAccelerometers();
+	if( F.AccelerationsValid )
+	{
+		ReadAccelerations();
+	
+		TxString("\tL->R: \t");
+		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Ax.i16, 0 , ')');
+		if ( Abs((Ax.i16)) > 128 )
+			TxString(" fault?");
+		TxNextLine();
+
+		TxString("\tF->B: \t");	
+		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Az.i16, 0 , ')');
+		if ( Abs((Az.i16)) > 128 )
+			TxString(" fault?");	
+		TxNextLine();
+
+		TxString("\tD->U:    \t");
+	
+		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
+		TxString(" (");
+		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
+		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
+			TxString(" fault?");	
+		TxNextLine();
+	}
+	else
+		TxString("\r\n(Acc. not present)\r\n");
 } // AccelerometerTest
 
 #endif // TESTING
 
 void InitAccelerometers(void)
 {
-	F.AccelerationsValid = false;
-	F.AccFailure = true;
+	static int8 i;
+
+	AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = Ax.i16 = Ay.i16 = Az.i16 = 0;
+
+	if ( ADXL345AccActive() )
+	{
+		AccType = ADXL345Acc;
+		InitADXL345Acc();
+	}		
+	else
+		if ( LISLAccActive() )
+		{
+			AccType = LISLAcc;
+			InitLISLAcc();
+		}
+		else
+		{
+			AccType = AccUnknown;
+			F.AccelerationsValid = false;
+		}
+
+	if( F.AccelerationsValid )
+	{
+		LEDYellow_ON;
+		GetNeutralAccelerations();
+	}
+	else
+		F.AccFailure = true;
 } // InitAccelerometers
 
-#else
+//________________________________________________________________________________________________
+
+boolean ADXL345AccActive(void);
+
+#define ADXL345_ID          0x53
+#define ADXL345_W           ADXL345_ID
+
+void ReadADXL345Acc(void) {
+    static uint8 a;
+	static int8 r;
+    static char b[6];
+
+	I2CStart();	
+	if( WriteI2CByte(ADXL345_ID) != I2C_ACK ) goto SGerror;
+	r = ReadI2CString(b, 6);
+	I2CStop();
+
+	// SparkFun 6DOF & ITG3200 breakouts pins forward components up
+    Ax.b1 = b[1];
+	Ax.b0 = b[0];
+    Ay.b1 = b[3]; 
+	Ay.b0 = b[2];
+    Az.b1 = b[5];
+	Az.b0 = b[4];
+  
+  	Ax.i16 *= 4;
+  	Ay.i16 *= 4;
+  	Az.i16 *= 4;
+	
+	return;
+
+SGerror:
+	Ax.i16 = Ay.i16 = Az.i16 = 0;
+	if ( State == InFlight )
+	{
+		Stats[AccFailS]++;	// data over run - acc out of range
+		// use neutral values!!!!
+		F.AccFailure = true;
+	}
+
+} // ReadADXL345Acc
+
+void InitADXL345Acc() {
+    I2CStart();
+    WriteI2CByte(ADXL345_W);
+    WriteI2CByte(0x2D);  // power register
+    WriteI2CByte(0x08);  // measurement mode
+    I2CStop();
+
+    Delay1mS(5);
+
+    I2CStart();
+    WriteI2CByte(ADXL345_W);
+    WriteI2CByte(0x31);  // format
+    WriteI2CByte(0x08);  // full resolution, 2g
+    I2CStop();
+
+    Delay1mS(5);
+
+    I2CStart();
+    WriteI2CByte(ADXL345_W);
+    WriteI2CByte(0x2C);  // Rate
+    WriteI2CByte(0x0C);  // 400Hz
+    I2CStop();
+
+    Delay1mS(5);
+
+} // InitADXL345Acc
+
+boolean ADXL345AccActive(void) {
+
+    I2CStart();
+    F.AccelerationsValid = WriteI2CByte(ADXL345_ID) == I2C_ACK;
+    I2CStop();
+
+    return( F.AccelerationsValid );
+
+} // ADXL345AccActive
+
+//________________________________________________________________________________________________
+
+// LISL Acc
 
 #ifdef CLOCK_16MHZ
 	#define SPI_HI_DELAY Delay10TCY()
@@ -181,13 +375,11 @@ void WriteLISL(uint8 d, uint8 c)
 	SPI_IO = RD_SPI;	// IO is input (to allow RS232 reception)
 } // WriteLISL
 
-void IsLISLActive(void)
+void InitLISLAcc(void)
 {
 	static int8 r;
 
 	F.AccelerationsValid = false;
-	SPI_CS = DSEL_LISL;
-	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
 
 	r = ReadLISL(LISL_WHOAMI + LISL_READ);
 	if( r == 0x3A )	// a LIS03L sensor is there!
@@ -203,10 +395,23 @@ void IsLISLActive(void)
 	}
 	else
 		F.AccFailure = true;
-} // IsLISLActive
+} // InitLISLAcc
 
-void ReadAccelerations()
+boolean LISLAccActive(void)
 {
+	SPI_CS = DSEL_LISL;
+	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
+
+	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == 0x3a;
+
+	return ( F.AccelerationsValid );
+} // LISLAccActive
+
+void ReadLISLAcc()
+{
+
+//	while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
+
 	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a; // Acc still there?
 	if ( F.AccelerationsValid ) 
 	{
@@ -228,106 +433,7 @@ void ReadAccelerations()
 			F.AccFailure = true;
 		}
 	}
-} // ReadAccelerations
 
-void GetNeutralAccelerations(void)
-{
-	// this routine is called ONLY ONCE while booting
-	// and averages accelerations over 16 samples.
-	// Puts values in Neutralxxx registers.
-	static uint8 i;
-	static int16 AccLR, AccFB, AccDU;
+} // ReadLISLAcc
 
-	// already done in caller program
-	AccLR = AccFB = AccDU = 0;
-	if ( F.AccelerationsValid )
-	{
-		for ( i = 16; i; i--)
-		{
-			while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
-			ReadAccelerations();
-	
-		#ifdef USE_FLAT_ACC
-			AccLR -= Ax.i16;
-			AccFB += Ay.i16;
-			AccDU += Az.i16;
-		#else
-			AccLR += Ax.i16;
-			AccDU += Ay.i16;
-			AccFB += Az.i16;
-		#endif // USE_FLAT_ACC
-		}	
-	
-		AccLR = SRS16(AccLR, 4);
-		AccFB = SRS16(AccFB, 4);
-		AccDU = SRS16(AccDU, 4);
-	
-		AccNeutral[LR] = Limit(AccLR, -99, 99);
-		AccNeutral[FB] = Limit(AccFB, -99, 99);
-		AccNeutral[DU] = Limit(AccDU - 1024, -99, 99); // -1g
-	}
-	else
-		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;
 
-} // GetNeutralAccelerations
-
-#ifdef TESTING
-
-void AccelerometerTest(void)
-{
-	TxString("\r\nAccelerometer test:\r\n");
-	TxString("Read once - no averaging\r\n");
-
-	InitAccelerometers();
-	if( F.AccelerationsValid )
-	{
-		ReadAccelerations();
-	
-		TxString("\tL->R: \t");
-		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Ax.i16, 0 , ')');
-		if ( Abs((Ax.i16)) > 128 )
-			TxString(" fault?");
-		TxNextLine();
-
-		TxString("\tF->B: \t");	
-		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Az.i16, 0 , ')');
-		if ( Abs((Az.i16)) > 128 )
-			TxString(" fault?");	
-		TxNextLine();
-
-		TxString("\tD->U:    \t");
-	
-		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
-		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
-			TxString(" fault?");	
-		TxNextLine();
-	}
-	else
-		TxString("\r\n(Acc. not present)\r\n");
-} // AccelerometerTest
-
-#endif // TESTING
-
-void InitAccelerometers(void)
-{
-	int8 i;
-
-	AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = Ax.i16 = Ay.i16 = Az.i16 = 0;
-
-	IsLISLActive();
-	if( F.AccelerationsValid )
-	{
-		LEDYellow_ON;
-		GetNeutralAccelerations();
-	}
-	else
-		F.AccFailure = true;
-} // InitAccelerometers
-
-#endif // UAVX_HW

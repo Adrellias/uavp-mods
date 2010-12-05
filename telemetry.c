@@ -69,9 +69,9 @@ void ShowAttitude(void)
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
 
-	TxESCi16(GyroADC[Roll] - GyroNeutral[Roll]);
-	TxESCi16(GyroADC[Pitch] - GyroNeutral[Pitch]);
-	TxESCi16(GyroADC[Yaw] - GyroNeutral[Yaw]);
+	TxESCi16(Rate[Roll]);
+	TxESCi16(Rate[Pitch]);
+	TxESCi16(Rate[Yaw]);
 
 	TxESCi16(Angle[Roll]);
 	TxESCi16(Angle[Pitch]);
@@ -151,7 +151,7 @@ void SendNavPacket(void)
 	TxESCi16(WayHeading);
 	
 	TxESCi16(GPSVel);
-	TxESCi16(GPSROC); 							// dm/S
+	TxESCi16(0); 							    // dm/S
 	
 	TxESCi24(GPSRelAltitude); 					// dm
 	TxESCi32(GPSLatitude); 						// 5 decimal minute units
@@ -417,9 +417,9 @@ void SensorTrace(void)
 		TxValH16(DesiredPitch); TxChar(';');
 		TxValH16(DesiredYaw); TxChar(';');
 
-		TxValH16(GyroADC[Roll] - GyroNeutral[Roll]); TxChar(';');
-		TxValH16(GyroADC[Pitch] - GyroNeutral[Pitch]); TxChar(';');
-		TxValH16(GyroADC[Yaw] - GyroNeutral[Yaw]); TxChar(';');
+		TxValH16(Rate[Roll]); TxChar(';');
+		TxValH16(Rate[Pitch]); TxChar(';');
+		TxValH16(Rate[Yaw]); TxChar(';');
 
 		TxValH16(Angle[Roll]); TxChar(';');
 		TxValH16(Angle[Pitch]); TxChar(';');

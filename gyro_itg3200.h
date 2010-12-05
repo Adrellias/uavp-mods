@@ -36,9 +36,9 @@
 #define ITG_GZ_L	0x22
 #define ITG_PWR_M	0x3E
 
-#define ITG_I2C_ID 	0xD2
-#define ITG_R 		(ITG_I2C_ID+1)	
-#define ITG_W 		ITG_I2C_ID
+#define ITG_ID 	0xD2
+#define ITG_R 		(ITG_ID+1)	
+#define ITG_W 		ITG_ID
 
 // depending on orientation of chip
 #define ITG_ROLL_H	ITG_GX_H
@@ -55,6 +55,7 @@ void BlockReadITG3200(void);
 uint8 ReadByteITG3200(uint8);
 void WriteByteITG3200(uint8, uint8);
 void InitITG3200(void);
+boolean ITG3200GyroActive(void);
 
 void BlockReadITG3200(void)
 {
@@ -75,9 +76,9 @@ void BlockReadITG3200(void)
 	GY.b0 = G[3]; GY.b1 = G[2];
 	GZ.b0 = G[5]; GZ.b1 = G[4];
 
-	RollRateADC = GX.i16;
-	PitchRateADC = -GY.i16;
-	YawRateADC = -GZ.i16;
+	GyroADC[Roll] = GX.i16;
+	GyroADC[Pitch] = -GY.i16;
+	GyroADC[Yaw] = -GZ.i16;
 
 	return;	
 
@@ -140,67 +141,18 @@ void InitITG3200(void)
 	WriteByteITG3200(ITG_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
 } // InitITG3200
 
-void GetGyroValues(void)
-{ 
-	BlockReadITG3200();
-} // GetGyroValues
-
-void CalculateGyroRates(void)
+boolean ITG3200GyroActive(void) 
 {
-	static int16 Temp;
+    I2CStart();
+    F.GyroFailure = WriteI2CByte(ITG_ID) != I2C_ACK;
+    I2CStop();
 
-	// ITG-3200 Gyro
-	Rate[Roll] = SRS16( GyroADC[Roll] - GyroNeutral[Roll], 4);	
-	Rate[Pitch] = SRS16( GyroADC[Pitch] - GyroNeutral[Pitch], 4);
-	
-	Rate[Yaw] = GyroADC[Yaw] - GyroNeutral[Yaw]; 
-	Rate[Yaw] = SRS16(Rate[Yaw], 4);	
-
-} // CalculateGyroRates
-
-void ErectGyros(void)
-{
-	static int16 i;
-	extern uint8 a;
-	static int32 Av[3];
-
-	LEDRed_ON;
-	
-	Av[Roll] = Av[Pitch] = Av[Yaw] =0;	
-    for ( i = 0; i < 32 ; i++ )
-	{
-		BlockReadITG3200();
-	
-		Av[Roll] += GyroADC[Roll];
-		Av[Pitch] += GyroADC[Pitch];	
-		Av[Yaw] += GyroADC[Yaw];
-	}
-	
-	for ( a = 0; a < (int8)3; a++ )
-	{
-		GyroNeutral[a] = SRS32(Av[a], 5);		
-		Rate[a] = Angle[Roll] = 0;
-	}
-
-	REp = PEp = YEp = 0;
-
-	LEDRed_OFF;
-
-} // ErectGyros
-
-void InitGyros(void)
-{
-	InitITG3200();
-} // InitGyros
+    return ( !F.GyroFailure );
+} // ITG3200GyroActive
 
 #ifdef TESTING
 
-void CheckGyroFault(uint8 v, uint8 lv, uint8 hv)
-{
-	// not used for ITG-3000
-} // CheckGyroFault
-
-void GyroTest(void)
+void GyroITG3200Test(void)
 {
 	TxString("\r\nITG3200 3 axis I2C Gyro Test\r\n");
 	TxString("WHO_AM_I  \t"); TxValH(ReadByteITG3200(ITG_WHO)); TxNextLine();
@@ -221,7 +173,7 @@ void GyroTest(void)
 	else
 		TxString("Test OK\r\n");
 
-} // GyroTest
+} // GyroITG3200Test
 
 #endif // TESTING
 

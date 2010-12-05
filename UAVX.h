@@ -27,11 +27,9 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
-//	#define CLOCK_40MHZ
-//	#define CASTLE_ESCS
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -44,7 +42,6 @@
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
-	#define GYRO_ITG3200
 //	#define UAVXBOARD
 #endif // EXPERIMENTAL
 
@@ -57,12 +54,13 @@
 
 //________________________________________________________________________________________________
 
-#define USE_PPM_FAILSAFE
+#ifndef TESTING
+	#define USE_PPM_FAILSAFE
+#endif // !TESTING
 
 // Airframe
 
 #ifdef UAVXBOARD
-	#define GYRO_ITG3200
 	#define UAVX_HW
 #endif
 
@@ -483,7 +481,7 @@ typedef struct { // GPS
 
 // main.c
 
-#define FLAG_BYTES 8
+#define FLAG_BYTES 10
 #define TELEMETRY_FLAG_BYTES 6
 typedef union {
 	uint8 AllFlags[FLAG_BYTES];
@@ -552,7 +550,8 @@ typedef union {
 		NewBaroValue:1,
 		BeeperInUse:1,
 		RFInInches:1,
-		FirstArmed:1;		
+		FirstArmed:1,
+		HaveGPRMC:1;		
 		};
 } Flags;
 
@@ -564,21 +563,31 @@ extern near int8 State;
 
 // accel.c
 
-extern void SendCommand(int8);
-extern uint8 ReadLISL(uint8);
-extern uint8 ReadLISLNext(void);
-extern void WriteLISL(uint8, uint8);
-extern void IsLISLActive(void);
+enum AccTypes { LISLAcc, ADXL345Acc, AccUnknown };
 
+extern void ShowAccType(void);
 extern void ReadAccelerations(void);
 extern void GetNeutralAccelerations(void);
 extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
+extern void ReadADXL345Acc(void);
+void InitADXL345Acc(void);
+extern boolean ADXL345AccActive(void);
+
+extern void SendCommand(int8);
+extern uint8 ReadLISL(uint8);
+extern uint8 ReadLISLNext(void);
+extern void WriteLISL(uint8, uint8);
+extern void InitLISLAcc(void);
+extern boolean LISLAccActive(void);
+extern void ReadLISLAcc(void);
+
 extern i16u Ax, Ay, Az;
 extern int8 IntCorr[3];
 extern int8 AccNeutral[3];
 extern int16 Vel[3], Acc[3], Comp[4];
+extern int8 AccType;
 
 //______________________________________________________________________________________________
 
@@ -787,7 +796,6 @@ extern void ParseGPRMCSentence(void);
 extern void ParseGPGGASentence(void);
 extern void SetGPSOrigin(void);
 extern void ParseGPSSentence(void);
-extern void GPSTest(void);
 extern void UpdateGPS(void);
 extern void InitGPS(void);
 
@@ -798,8 +806,14 @@ typedef struct {
 		uint8 	length;
 	} NMEAStruct;
 
+#define MAX_NMEA_SENTENCES 2
+#define NMEA_TAG_INDEX 4
+
+enum GPSPackeType { GPGGAPacketTag, GPRMCPacketTag,  GPSUnknownPacketTag };
 extern NMEAStruct NMEA;
-extern const rom uint8 NMEATag[];
+extern const uint8 NMEATags[MAX_NMEA_SENTENCES][5];
+
+extern uint8 GPSPacketTag;
 
 extern int32 GPSMissionTime, GPSStartTime;
 extern int32 GPSLatitude, GPSLongitude;
@@ -808,7 +822,8 @@ extern int24 GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 extern int32 DesiredLatitude, DesiredLongitude;
 extern int32 LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 extern int16 GPSLongitudeCorrection;
-extern int16 GPSVel, GPSROC;
+extern int16 GPSHeading;
+extern int16 GPSVel;
 extern int8 GPSNoOfSats;
 extern int8 GPSFix;
 extern int16 GPSHDilute;
@@ -839,9 +854,11 @@ extern void BlockReadITG3200(void);
 extern uint8 ReadByteITG3200(uint8);
 extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
+extern boolean ITG3200GyroActive(void);
 
 extern int16 Rate[3], GyroNeutral[3], GyroADC[3];
 extern i32u YawRateF;
+extern int8 GyroType;
 
 //______________________________________________________________________________________________
 
@@ -907,7 +924,7 @@ extern near uint8 Intersection, PrevPattern, CurrPattern;
 extern near i16u Width, Timer0;
 extern near int24 PauseTime; // for tests
 extern near uint8 RxState;
-extern near uint8 ll, tt, gps_ch;
+extern near uint8 ll, ss, tt, gps_ch;
 extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 extern near boolean WaitingForSync;
 
@@ -1081,7 +1098,7 @@ enum TxRxTypes {
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
-enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, UnknownGyro };
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
@@ -1122,7 +1139,7 @@ enum Params { // MAX 64
 	Acro,				// 32
 	NavRTHAlt,			// 33
 	NavMagVar,			// 34
-	GyroType,			// 35
+	DesGyroType,		// 35
 	ESCType,			// 36
 	TxRxType,			// 37
 	NeutralRadius,		// 38

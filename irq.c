@@ -23,9 +23,9 @@
 #include "uavx.h"
 
 #ifdef CLOCK_16MHZ
-#define MIN_PPM_SYNC_PAUSE 1500  	// 2500 *2us = 5ms // 2500
+#define MIN_PPM_SYNC_PAUSE 1500  	// 1500 *2us = 3ms // 2500 was 5
 #else // CLOCK_40MHZ
-#define MIN_PPM_SYNC_PAUSE 6250  	// 6250 *0.8us = 5ms
+#define MIN_PPM_SYNC_PAUSE 3750  	// 3750 *0.8us = 3ms // was 6250 5mS
 #endif //  CLOCK_16MHZ
 // no less than 1500
 
@@ -48,7 +48,7 @@ near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
 near int24 	PauseTime;
 near uint8 	RxState;
-near uint8 	ll, tt, RxCh;
+near uint8 	ll, ss, tt, RxCh;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near int8	State, FailState;
 near boolean WaitingForSync;
@@ -255,19 +255,23 @@ void high_isr_handler(void)
 							
 				break;
 			case WaitTag:
-				RxCheckSum ^= RxCh;
-				if ( RxCh == NMEATag[tt] ) 
-					if ( tt == (uint8)MAXTAGINDEX )
-						RxState = WaitBody;
-			        else
-						tt++;
-				else
-			        RxState = WaitSentinel;
+            	RxCheckSum ^= RxCh;
+            	while ( ( RxCh != NMEATags[ss][tt] ) && ( ss < MAX_NMEA_SENTENCES ) ) ss++;
+           		if ( RxCh == NMEATags[ss][tt] )
+                	if ( tt == (uint8)NMEA_TAG_INDEX ) 
+					{
+                    	GPSPacketTag = ss;
+                    	RxState = WaitBody;
+                	} 
+					else
+                    	tt++;
+            	else
+                	RxState = WaitSentinel;
 				break;
 			case WaitSentinel: // highest priority skipping unused sentence types
 				if ( RxCh == '$' )
 				{
-					ll = tt = RxCheckSum = 0;
+					ll = tt = ss = RxCheckSum = 0;
 					RxState = WaitTag;
 				}
 				break;	

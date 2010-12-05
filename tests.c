@@ -112,6 +112,8 @@ void ReceiverTest(void)
 
 } // ReceiverTest
 
+#ifndef CLOCK_40MHZ
+
 void PowerOutput(int8 d)
 {
 	int8 s;
@@ -165,7 +167,16 @@ void LEDsAndBuzzer(void)
 	LEDShadow  = LEDSave;
 	SendLEDs();	
 	TxString("Test Finished\r\n");		
-} // PowerOutput
+} // LEDsAndBuzzer
+
+#else
+
+void LEDsAndBuzzer(void)
+{
+	TxString("Test deleted - no space\r\n");
+} // LEDsAndBuzzer
+
+#endif // !CLOCK_40MHZ
 
 #endif // TESTING
 

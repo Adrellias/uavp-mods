@@ -140,6 +140,7 @@ void DoPolarOrientation(void)
 	static int16 DesiredRelativeHeading;
 	static int16 P;
 
+	#ifndef TESTING
 	F.UsingPolar = F.UsingPolarCoordinates && F.NavValid && ( NavState == HoldingStation );
 	
 	if ( F.UsingPolar ) // needs rethink - probably arm using RTH switch
@@ -162,6 +163,7 @@ void DoPolarOrientation(void)
 			P = 0; 
 	}
 	else
+	#endif // !TESTING
 		P = 0;
 
 	PolarOrientation = P;
@@ -262,8 +264,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			NavCorr[Yaw] = 0;
 
 		#endif // NAV_WING
-
-	
 	}	
 	else
     #endif // !TESTING

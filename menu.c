@@ -136,21 +136,15 @@ void ShowSetup(boolean h)
 	#endif // MULTICOPTER
 
 	TxString("Accelerometers: ");
+	ShowAccType();	
 	if ( F.AccelerationsValid )
-		TxString("ONLINE\r\n");
+		TxString(" ONLINE\r\n");
 	else
-		TxString("FAILED\r\n");
+		TxString(" FAILED\r\n");
 	
 	TxString("Roll/Pitch Gyros: ");
-	#ifdef GYRO_ITG3200
-		TxString("ITG-3200 3-axis I2C ");
-		if (F.GyroFailure )
-			TxString("FAILED\r\n");
-		else
-			TxString("ONLINE\r\n");
-	#else 
-		ShowGyroType();		
-	#endif // GYRO_ITG3200
+	ShowGyroType();	
+	TxNextLine();
 
 	TxString("Motor ESCs: ");	
 	switch ( P[ESCType] ) {
@@ -235,7 +229,7 @@ void ShowSetup(boolean h)
 		TxString("\tAuto descend disabled\r\n");
 
 	if ( F.AllowTurnToWP )
-		TxString("\tTurn toward Way Point\r\n");
+		TxString("\tTurn toward way point\r\n");
 	else
 		TxString("\tHold heading\r\n");
 
@@ -450,6 +444,7 @@ void ProcessCommand(void)
 			case '7':
 			case '8':
 				TxString("\r\nOutput test\r\n");
+				#ifndef CLOCK_40MHZ
 				TxChar(ch);
 				TxChar(':');
 				switch( ch ) {
@@ -464,6 +459,9 @@ void ProcessCommand(void)
 				}
 				TxNextLine();
 				PowerOutput(ch-'1');
+				#else
+				TxString("Test deleted - no space\r\n");
+				#endif // !CLOCK_40MHZ
 				ShowPrompt();
 				break;
 			case 'T':

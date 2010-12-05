@@ -33,68 +33,174 @@ void InitGyros(void);
 
 int16	Rate[3], GyroNeutral[3], GyroADC[3];
 i32u 	YawRateF;
+int8 	GyroType;
 
-#ifdef GYRO_ITG3200
-	#include "gyro_itg3200.h"
-#else // GYRO_ITG3200
-	#ifdef GYRO_WII
-		#include "gyro_wii.h"
-	#else
-		#include "gyro_analog.h"
-	#endif // GYRO_WII
-#endif // GYRO_ITG3200
+#include "gyro_itg3200.h"
+#include "gyro_analog.h"
 
 #define AccFilter NoFilter
+
+void GetGyroValues(void)
+{
+	if ( GyroType == ITG3200Gyro )
+		BlockReadITG3200();
+	else
+		GetAnalogGyroValues();
+} // GetGyroValues
+
+void CalculateGyroRates(void)
+{
+	static i24u Temp;
+
+	Rate[Roll] = GyroADC[Roll] - GyroNeutral[Roll];
+	Rate[Pitch] = GyroADC[Pitch] - GyroNeutral[Pitch];
+	Rate[Yaw] = (int16)GyroADC[Yaw] - GyroNeutral[Yaw];
+
+	switch ( GyroType ) {
+	case IDG300Gyro:// 500 Deg/Sec 
+		Rate[Roll] = -Rate[Roll] * 2; // adjust for reversed roll gyro sense
+		Rate[Pitch] *= 2;
+		Rate[Yaw] = SRS16(Rate[Yaw], 1); // ADXRS150 assumed
+		break;
+ 	case LY530Gyro:// generically 300deg/S 3.3V
+		Rate[Yaw] = SRS16(Rate[Yaw], 1);
+		break;
+	case MLX90609Gyro:// generically 300deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 1);	
+		Rate[Pitch] = SRS16(Rate[Pitch], 1);
+		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		break;
+	case ADXRS300Gyro:// ADXRS610/300 300deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 1);	// scaling is not correct
+		Rate[Pitch] = SRS16(Rate[Pitch], 1);
+		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		break;
+	case ITG3200Gyro:// ITG3200
+		Rate[Roll] = SRS16(Rate[Roll], 8);	
+		Rate[Pitch] = SRS16(Rate[Pitch], 8);
+		Rate[Yaw] = SRS16(Rate[Yaw], 9);
+		break;
+	case IRSensors:// IR Sensors - NOT IMPLEMENTED IN PIC VERSION
+		Rate[Roll] = 0;	
+		Rate[Pitch] = 0;
+		Rate[Yaw] = 0;
+		break;
+	case ADXRS150Gyro:	 // ADXRS613/150 or generically 150deg/S 5V
+		Rate[Roll] = SRS16(Rate[Roll], 2); 
+		Rate[Pitch] = SRS16(Rate[Pitch], 2);
+		Rate[Yaw] = SRS16(Rate[Yaw], 3);
+		break;
+	default:;
+	} // GyroType
+
+//	LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
+
+} // CalculateGyroRates
+
+void ErectGyros(void)
+{
+	static int8 i, g;
+	static int32 Av[3];
+
+	for ( g = 0; g < (int8)3; g++ )	
+		Av[g] = 0;
+
+    for ( i = 32; i ; i-- )
+	{
+		LEDRed_TOG;
+		Delay100mSWithOutput(1);
+
+		GetGyroValues();
+
+		Av[Roll] += GyroADC[Roll];
+		Av[Pitch] += GyroADC[Pitch];	
+		Av[Yaw] += GyroADC[Yaw];
+	}
+	
+	if( !F.AccelerationsValid )
+	{
+		Av[Roll] += (int16)P[MiddleLR] * 2;
+		Av[Pitch] += (int16)P[MiddleFB] * 2;
+	}
+	
+	for ( g = 0; g < (int8)3; g++ )
+	{
+		GyroNeutral[g] = (int16)(Av[g]/32);	
+		Rate[g] =  Ratep[g] = Angle[g] = 0;
+	}
+ 
+	LEDRed_OFF;
+
+} // ErectGyros
 
 void ShowGyroType(void)
 {
     switch ( GyroType ) {
         case MLX90609Gyro:
-            TxString("MLX90609\r\n");
+            TxString("MLX90609");
             break;
         case ADXRS150Gyro:
-            TxString("ADXRS613/150\r\n");
+            TxString("ADXRS613/150");
             break;
         case IDG300Gyro:
-            TxString("IDG300\r\n");
+            TxString("IDG300");
             break;
         case LY530Gyro:
-            TxString("ST-AY530\r\n");
+            TxString("ST-AY530");
             break;
         case ADXRS300Gyro:
-            TxString("ADXRS610/300\r\n");
+            TxString("ADXRS610/300");
             break;
         case ITG3200Gyro:
-            TxString("ITG3200\r\n");
+            TxString("ITG3200");
+            break;
+        case IRSensors:
+            TxString("IR Sensors");
             break;
         default:
-            TxString("UNKNOWN\r\n");
+            TxString("UNKNOWN");
             break;
 	}
 } // ShowGyroType
+
+void InitGyros(void)
+{
+	if ( ITG3200GyroActive() )
+	{
+		InitITG3200();
+		GyroType = ITG3200Gyro;
+	}
+	else
+	{
+		GyroType = P[DesGyroType];
+		InitAnalogGyros();
+	}
+} // InitGyros
+
+#ifdef TESTING
+void GyroTest(void)
+{
+	if ( GyroType == ITG3200Gyro )
+		GyroITG3200Test();
+	else
+		GyroAnalogTest();
+} // GyroTest
+#endif // TESTING
 
 void CompensateRollPitchGyros(void)
 {
 	#define GRAV_COMP 11L
 	#define GYRO_COMP_STEP 3
 
-	static int16 Temp;
-	static int24 Temp24;
 	static int16 Grav[2], Dyn[2];
 
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
-
-		#ifdef USE_FLAT_ACC // chip up and twisted over
-			Acc[LR] = -Ax.i16;	
-			Acc[FB] = Ay.i16;
-			Acc[DU] = Az.i16;
-		#else	
-			Acc[LR] = Ax.i16;
-			Acc[DU] = Ay.i16;
-			Acc[FB] = Az.i16;
-		#endif // USE_FLAT_ACC
+	
+		Acc[LR] = Ax.i16;
+		Acc[DU] = Ay.i16;
+		Acc[FB] = Az.i16;
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
