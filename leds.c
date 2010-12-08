@@ -25,7 +25,7 @@ void LEDsOn(uint8);
 void LEDsOff(uint8);
 void LEDChaser(void);
 
-uint8 LEDShadow, SaveLEDs, LEDPattern = 0;
+uint8 LEDShadow, SavedLEDs, LEDPattern = 0;
 boolean PrevHolding = false;
 const uint8 LEDChase[7] = {
 		AUX1M,	
@@ -36,6 +36,17 @@ const uint8 LEDChase[7] = {
 		GreenM,
 		BlueM
 	};
+
+void SaveLEDs(void)
+{ // one level only
+	SavedLEDs = LEDShadow;
+} // SaveLEDs
+
+void RestoreLEDs(void)
+{
+	LEDShadow = SavedLEDs;
+	SendLEDs();
+} // RestoreLEDs
 
 #ifdef UAVX_HW
 
@@ -109,7 +120,7 @@ void LEDChaser(void)
 		}
 		else
 		{
-			LEDShadow = SaveLEDs;
+			RestoreLEDs();
 			SendLEDs();
 		}
 	

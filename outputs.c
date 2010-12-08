@@ -28,6 +28,8 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 void StopMotors(void);
+void ExercisePWM(void);
+void CyclePWM(uint8, int16);
 void InitMotors(void);
 
 boolean OutToggle;
@@ -260,8 +262,52 @@ void StopMotors(void)
 	F.MotorsArmed = false;
 } // StopMotors
 
+void ExercisePWM(void)
+{ // used for testing that all PIC ports are switching cleanly - need scope
+
+	TxString("\r\nPWM Exercise Test - 1mS pulse only\r\n");
+	CyclePWM(0x3f, 50);
+
+} // ExercisePWM
+
+void CyclePWM(uint8 m, int16 Cycles)
+{
+	static int16 i;
+
+	SaveLEDs();
+	ALL_LEDS_ON;
+
+	for ( i = 0; i < Cycles; i++)
+	{
+		DisableInterrupts;
+
+		PORTB = m;
+
+		#ifdef CLOCK_16MHZ
+			Delay10TCYx(200);
+			Delay10TCYx(200);
+		#else
+			Delay10TCYx(160);
+		#endif // CLOCK_16MHZ
+			
+		PORTB = 0;
+		DisableInterrupts;
+		Delay1mS(20);
+	}
+
+	RestoreLEDs();
+} // CyclePWM
+
 void InitMotors(void)
 {
+
+	if ( P[ESCType] == ESCPPM )
+	#ifdef TRICOPTER
+		CyclePWM( 0x07, 200 );
+	#else
+		CyclePWM( 0x0f, 200 );
+	#endif // TRICOPTER
+
 	StopMotors();
 	#ifdef TRICOPTER
 		PWM[BackC] = OUT_NEUTRAL;

@@ -1005,12 +1005,14 @@ extern void ConfigureESCs(void);
 #define Beeper_ON		LEDsOn(BeeperM)
 #define Beeper_TOG		if( (LEDShadow&BeeperM) == (uint8)0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
 
+extern void SaveLEDs(void);
+extern void RestoreLEDs(void);
 extern void SendLEDs(void);
 extern void LEDsOn(uint8);
 extern void LEDsOff(uint8);
 extern void LEDChaser(void);
 
-extern uint8 LEDShadow, SaveLEDs, LEDPattern;
+extern uint8 LEDShadow, SavedLEDs, LEDPattern;
 
 //______________________________________________________________________________________________
 
@@ -1061,6 +1063,8 @@ extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void InitI2CESCs(void);
 extern void StopMotors(void);
+extern void ExercisePWM(void);
+extern void CyclePWM(uint8, int16);
 extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs

@@ -51,6 +51,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#endif // TESTING
 	"D..Load default parameter set\r\n"
 	#ifdef TESTING
+	"E..Exercise PWM\r\n"
 	"G..Gyro test\r\n"
 	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
@@ -308,6 +309,10 @@ void ProcessCommand(void)
 				}
 			case 'D':
 				UseDefaultParameters();
+				ShowPrompt();
+				break;
+			case 'E':
+				ExercisePWM();
 				ShowPrompt();
 				break;
 			case 'L'  :	// List parameters

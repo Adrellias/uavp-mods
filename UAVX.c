@@ -125,7 +125,7 @@ void main(void)
 						LEDPattern = 0;
 						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
 						Stats[RCGlitchesS] = RCGlitches; // start of flight
-						SaveLEDs = LEDShadow;
+						SaveLEDs();
 						if ( ParameterSanityCheck() )
 							State = InFlight;
 						else
@@ -163,7 +163,7 @@ void main(void)
 					if ( StickThrottle < IdleThrottle )
 					{
 						mS[ThrottleIdleTimeout] = mSClock() + THROTTLE_LOW_DELAY_MS;
-						LEDShadow = SaveLEDs;
+						RestoreLEDs();
 						State = Landing;
 					}
 					break;
