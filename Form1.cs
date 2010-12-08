@@ -65,8 +65,8 @@ namespace UAVXGS
         const byte WaitUPLength = 6;
         const byte WaitUPBody = 7;
 
-        const byte DefaultAttitudeToDegrees = 35;
-        byte AttitudeToDegrees;
+        const float MILLIRADDEG = (float)0.057295;
+        const byte AttitudeToDegrees = 28;
 
         const int DefaultRangeLimit = 100;
         const int MaximumRangeLimit = 250; // You carry total responsibility if you increase this value
@@ -190,9 +190,9 @@ namespace UAVXGS
         short RollRateT;                // 25
         short PitchRateT;               // 27
         short YawRateT;                 // 29
-        short RollSumT;                 // 31
-        short PitchSumT;                // 33
-        short YawSumT;                  // 35
+        short RollAngleT;                 // 31
+        short PitchAngleT;                // 33
+        short YawAngleT;                  // 35
         short LRAccT;                   // 37
         short FBAccT;                   // 39
         short DUAccT;                   // 41
@@ -217,7 +217,7 @@ namespace UAVXGS
         short BaroROCT;                 // 7 
         int RelBaroAltitudeT;           // 9
 
-        short RangefinderROCT;          // 12
+        short GPSHeadingT;              // 12
         short RangefinderAltitudeT;     // 14
 
         short GPSHDiluteT;              // 16
@@ -252,6 +252,8 @@ namespace UAVXGS
         double OCO = 1.0;
         bool DoneOrientation = false;
 
+        bool UAVXArm = false;
+
         byte[] UAVXPacket = new byte[256];
 
         const short RxQueueLength = 2048;
@@ -265,7 +267,7 @@ namespace UAVXGS
         int ControlPacketsReceived = 0;
 
         short RxPacketByteCount;
-        byte RxPacketTag, RxPacketLength, PacketLength, PacketRxState;
+        byte RxPacketTag, RxPacketLength, PacketRxState;
         byte ReceivedPacketTag;
         bool PacketReceived = false;
         long ReplayProgress = 0;
@@ -561,13 +563,13 @@ namespace UAVXGS
             "CurrWP," +
             "BaroROC," +
             "RelBaroAlt," +
-            "RFROC," +
+            "Unused," +
             "RFAlt," +
             "GPSHD," +
             "Heading," +
             "DesCourse," +
             "GPSVel," +
-            "GPSROC," +
+            "Unused," +
             "GPSRelAlt," +
             "GPSLat," +
             "GPSLon," +
@@ -656,16 +658,6 @@ namespace UAVXGS
             } 
         }
 
-        private void UserAttitudeToDegrees_TextChanged(object sender, EventArgs e)
-        {
-            double outValue;
-
-            if (double.TryParse(UserAttitudeToDegrees.Text, out outValue))
-                AttitudeToDegrees = Convert.ToByte(outValue);
-            else
-                AttitudeToDegrees = DefaultAttitudeToDegrees;
-        }
-
         private void ReadReplayLogFile()
         {
             byte b;
@@ -729,16 +721,20 @@ namespace UAVXGS
             }
         }
 
+
+
+
+
         void InitPollPacket()
         {
-              RxPacketByteCount = 0;   
-              RxCheckSum = 0;
+            RxPacketByteCount = 0;
+            RxCheckSum = 0;
 
-              Zero(ref UAVXPacket, 256);    
-              RxPacketTag = UnknownPacketTag;
+            Zero(ref UAVXPacket, 256);
+            RxPacketTag = UnknownPacketTag;
 
-              RxPacketLength = 2; // set as minimum
-              PacketRxState = WaitRxSentinel;    
+            RxPacketLength = 2; // set as minimum
+            PacketRxState = WaitRxSentinel;
         }
 
         void AddToBuffer(byte ch)
@@ -749,91 +745,74 @@ namespace UAVXGS
             if (RxPacketByteCount == 1)
             {
                 RxPacketTag = ch;
-                switch ( RxPacketTag ) {
-                    case UAVXFlightPacketTag: PacketLength = 54; break;
-                    case UAVXNavPacketTag: PacketLength = 59; break;
-                    case UAVXControlPacketTag: PacketLength = 33; break;
-                    case UAVXStatsPacketTag: PacketLength = 44; break;
-                default:
-                    RxIllegalErrors++;
-                    RxPacketTag=UnknownPacketTag;  
-                    break;
-                } // switch
-                if (RxPacketTag==UnknownPacketTag)
-                    PacketRxState=WaitRxSentinel;
-                else
-                    PacketRxState=WaitRxBody;
+                PacketRxState = WaitRxBody;
             }
             else
                 if (RxPacketByteCount == 2)
                 {
-                    RxPacketLength = ch; // ignore
+                    RxPacketLength = ch;
                     PacketRxState = WaitRxBody;
                 }
                 else
-                    if(RxPacketByteCount >= 255 ) // zzzsizeof(Packet)) // packet too long for buffer
+                    if (RxPacketByteCount >= (RxPacketLength + 3))
                     {
-                        RxLengthErrors++;
+                        RxPacketError = RxCheckSum != 0;
+
+                        CheckSumError = RxPacketError;
+
+                        if (CheckSumError)
+                            RxCheckSumErrors++;
+
+                        if (!RxPacketError)
+                        {
+                            PacketReceived = true;
+                            ReceivedPacketTag = RxPacketTag;
+                        }
                         PacketRxState = WaitRxSentinel;
+                        //   InitPollPacket(); 
                     }
                     else
-                        if (RxPacketByteCount >= (PacketLength+3))
-                        {
-                            RxPacketError = RxCheckSum != 0;
-
-                            CheckSumError = RxPacketError;
-                            if (CheckSumError)
-                                RxCheckSumErrors++;
-
-                            RxPacketError=false;
-                            if (!RxPacketError)
-                            {
-                                PacketReceived = true;
-                                ReceivedPacketTag=RxPacketTag;   
-                            }
-                            PacketRxState = WaitRxSentinel;
-                         //   InitPollPacket(); 
-                        }
-                        else
-                            PacketRxState = WaitRxBody;         
+                        PacketRxState = WaitRxBody;
         }
 
-        void ParsePacket(byte ch) 
+        void ParsePacket(byte ch)
         {
-            switch (PacketRxState) {
-            case WaitRxSentinel:
-                if (ch == SOH)
-                {
-                    InitPollPacket();
-                    CheckSumError = false;
-                    PacketRxState = WaitRxBody;
-                }
-                break;
-            case WaitRxBody:
-               if (ch == ESC)
-                   PacketRxState = WaitRxESC;
-                else
-                    if (ch == SOH) // unexpected start of packet
+            RxCheckSum ^= ch;
+            switch (PacketRxState)
+            {
+                case WaitRxSentinel:
+                    if (ch == SOH)
                     {
-                        RxLengthErrors++;
-
                         InitPollPacket();
+                        CheckSumError = false;
                         PacketRxState = WaitRxBody;
                     }
+                    break;
+                case WaitRxBody:
+                    if (ch == ESC)
+                        PacketRxState = WaitRxESC;
                     else
-                        if (ch == EOT) // unexpected end of packet 
+                        if (ch == SOH) // unexpected start of packet
                         {
                             RxLengthErrors++;
-                            PacketRxState = WaitRxSentinel;
+
+                            InitPollPacket();
+                            PacketRxState = WaitRxBody;
                         }
                         else
-                            AddToBuffer(ch); 
-                break;
-            case WaitRxESC:
-                AddToBuffer(ch);
-                break;
-            default: PacketRxState = WaitRxSentinel; break; 
-            } 
+                            if (ch == EOT) // unexpected end of packet 
+                            {
+                                RxLengthErrors++;
+                                PacketRxState = WaitRxSentinel;
+                            }
+                            else
+                                AddToBuffer(ch);
+                    break;
+                case WaitRxESC:
+                    AddToBuffer(ch);
+                    break;
+                default: PacketRxState = WaitRxSentinel; break;
+            }
         }
 
         public void UAVXReadTelemetry(object sender, EventArgs e)
@@ -859,8 +838,6 @@ namespace UAVXGS
 
                     if (DoingLogfileReplay)
                         ReplayProgressBar.Value = (int)ReplayProgress;
-
-                    AttitudeToDegrees = Convert.ToByte(UserAttitudeToDegrees.Text);
 
                     switch (RxPacketTag)
                     {
@@ -892,6 +869,10 @@ namespace UAVXGS
 
                             BadT = ExtractShort(ref UAVXPacket, 40);
                             AirframeT = ExtractByte(ref UAVXPacket, 42);
+
+                            UAVXArm = (AirframeT & 0x80) != 0;
+                            AirframeT &= 0x7f;
+
                             OrientT = ExtractByte(ref UAVXPacket, 43);
                             BadNumT = ExtractShort(ref UAVXPacket, 44);
 
@@ -919,15 +900,26 @@ namespace UAVXGS
 
                             BadS.Text = string.Format("{0:n0}", BadT);
 
-                            switch (AirframeT)
-                            {
-                                case 0: Airframe.Text = "Quadrocopter"; break;
-                                case 1: Airframe.Text = "Tricopter"; break;
-                                case 2: Airframe.Text = "Hexacopter"; break;
-                                case 3: Airframe.Text = "Helicopter"; break;
-                                case 4: Airframe.Text = "Flying Wing"; break;
-                                case 5: Airframe.Text = "Conventional"; break;
-                            }
+                            if (UAVXArm)
+                                switch (AirframeT)
+                                {
+                                    case 0: Airframe.Text = "Arm Quadrocopter"; break;
+                                    case 1: Airframe.Text = "Arm Tricopter"; break;
+                                    case 2: Airframe.Text = "Arm VTCopter"; break;
+                                    case 3: Airframe.Text = "Arm Helicopter"; break;
+                                    case 4: Airframe.Text = "Arm Flying Wing"; break;
+                                    case 5: Airframe.Text = "Arm Conventional"; break;
+                                }
+                            else
+                                switch (AirframeT)
+                                {
+                                    case 0: Airframe.Text = "Quadrocopter"; break;
+                                    case 1: Airframe.Text = "Tricopter"; break;
+                                    case 2: Airframe.Text = "Hexacopter"; break;
+                                    case 3: Airframe.Text = "Helicopter"; break;
+                                    case 4: Airframe.Text = "Flying Wing"; break;
+                                    case 5: Airframe.Text = "Conventional"; break;
+                                }
 
                             // OrientT 
                             // BadNumT 
@@ -985,18 +977,16 @@ namespace UAVXGS
                                 GPSValidBox.BackColor = System.Drawing.Color.Green;
                             else
                                 GPSValidBox.BackColor = System.Drawing.Color.Red;
+
                             if ((Flags[0] & 0x80) != 0)
-                            {
                                 NavValidBox.BackColor = System.Drawing.Color.Green;
-                                GPSROC.BackColor = AltitudeGroupBox.BackColor;
-                                GPSRelAltitude.BackColor = AltitudeGroupBox.BackColor;
-                            }
                             else
-                            {
                                 NavValidBox.BackColor = System.Drawing.Color.Red;
-                                GPSROC.BackColor = System.Drawing.Color.Red;
-                                GPSRelAltitude.BackColor = System.Drawing.Color.Red;
-                            }
+
+                            //if (UAVXArm)
+                           // GPSROC.Visible = false;
+                            //else
+                            //    GPSROC.Visible = true;
 
                             if ((Flags[1] & 0x01) != 0)
                                 BaroFailBox.BackColor = System.Drawing.Color.Red;
@@ -1060,13 +1050,11 @@ namespace UAVXGS
                             {
                                 RangefinderAltValidBox.BackColor = System.Drawing.Color.Green;
                                 RangefinderAltitude.BackColor = AltitudeGroupBox.BackColor;
-                                RangefinderROC.BackColor = AltitudeGroupBox.BackColor;
                             }
                             else
                             {
                                 RangefinderAltValidBox.BackColor = FlagsGroupBox.BackColor;
                                 RangefinderAltitude.BackColor = System.Drawing.Color.Orange;
-                                RangefinderROC.BackColor = System.Drawing.Color.Orange;
                             }
                             if ((Flags[2] & 0x80) != 0)
                                 UsingRangefinderBox.BackColor = System.Drawing.Color.Green;
@@ -1074,7 +1062,7 @@ namespace UAVXGS
                                 UsingRangefinderBox.BackColor = FlagsGroupBox.BackColor;
 
                             if ((Flags[3] & 0x08) != 0)
-                                SimulationTextBox.Text = "Simulation";
+                                SimulationTextBox.Text = "SIMULATION";
                             else
                                 SimulationTextBox.Text = " ";
 
@@ -1089,7 +1077,7 @@ namespace UAVXGS
                                 FocusLockedBox.BackColor = System.Drawing.Color.LightSteelBlue;
 
                             if ((Flags[3] & 0x80) != 0)
-                                PolarBox.BackColor = System.Drawing.Color.Orange;
+                                PolarBox.BackColor = System.Drawing.Color.Green;
                             else
                                 PolarBox.BackColor = FlagsGroupBox.BackColor;
 
@@ -1115,9 +1103,9 @@ namespace UAVXGS
                             RollRateT = ExtractShort(ref UAVXPacket, 25);
                             PitchRateT = ExtractShort(ref UAVXPacket, 27);
                             YawRateT = ExtractShort(ref UAVXPacket, 29);
-                            RollSumT = ExtractShort(ref UAVXPacket, 31);
-                            PitchSumT = ExtractShort(ref UAVXPacket, 33);
-                            YawSumT = ExtractShort(ref UAVXPacket, 35);
+                            RollAngleT = ExtractShort(ref UAVXPacket, 31);
+                            PitchAngleT = ExtractShort(ref UAVXPacket, 33);
+                            YawAngleT = ExtractShort(ref UAVXPacket, 35);
                             LRAccT = ExtractShort(ref UAVXPacket, 37);
                             FBAccT = ExtractShort(ref UAVXPacket, 39);
                             DUAccT = ExtractShort(ref UAVXPacket, 41);
@@ -1131,9 +1119,18 @@ namespace UAVXGS
 
                             MissionTimeMilliSecT = ExtractInt24(ref UAVXPacket, 53);
 
-                            BatteryVolts.Text = string.Format("{0:n1}", (float)BatteryVoltsT * 27.73 / 1024.0); // ADC units 5V * (10K+2K2)/2K2.
-                            BatteryCurrent.Text = string.Format("{0:n1}", ((float)BatteryCurrentT * CurrentSensorMax) / 1024.0); // ADC units sent
-                            BatteryCharge.Text = string.Format("{0:n0}", (float)BatteryChargeT); // mAH // converted as it is used on board
+                            if (UAVXArm)
+                            {
+                                BatteryVolts.Text = string.Format("{0:n1}", (float)BatteryVoltsT * 0.1);
+                                BatteryCurrent.Text = string.Format("{0:n1}", (float)BatteryCurrentT * 0.1);
+                                BatteryCharge.Text = string.Format("{0:n0}", (float)BatteryChargeT);
+                            }
+                            else
+                            {
+                                BatteryVolts.Text = string.Format("{0:n1}", (float)BatteryVoltsT * 27.73 / 1024.0); // ADC units 5V * (10K+2K2)/2K2.
+                                BatteryCurrent.Text = string.Format("{0:n1}", ((float)BatteryCurrentT * CurrentSensorMax) / 1024.0); // ADC units sent
+                                BatteryCharge.Text = string.Format("{0:n0}", (float)BatteryChargeT); // mAH // converted as it is used on board
+                            }
 
                             RCGlitches.Text = string.Format("{0:n0}", RCGlitchesT);
                             if (RCGlitchesT > 20)
@@ -1145,15 +1142,38 @@ namespace UAVXGS
                             DesiredRoll.Text = string.Format("{0:n0}", ((float)DesiredRollT * 200.0) / RCMaximum);
                             DesiredPitch.Text = string.Format("{0:n0}", ((float)DesiredPitchT * 200.0) / RCMaximum);
                             DesiredYaw.Text = string.Format("{0:n0}", ((float)DesiredYawT * 200.0) / RCMaximum);
-                            RollRate.Text = string.Format("{0:n0}", RollRateT);
-                            PitchRate.Text = string.Format("{0:n0}", PitchRateT);
-                            YawRate.Text = string.Format("{0:n0}", YawRateT);
-                            RollSum.Text = string.Format("{0:n0}", -RollSumT / AttitudeToDegrees);
-                            PitchSum.Text = string.Format("{0:n0}", -PitchSumT / AttitudeToDegrees);
-                            YawSum.Text = string.Format("{0:n0}", YawSumT / AttitudeToDegrees);
-                            LRAcc.Text = string.Format("{0:n2}", (float)LRAccT / 1024.0);
-                            FBAcc.Text = string.Format("{0:n2}", (float)FBAccT / 1024.0);
-                            DUAcc.Text = string.Format("{0:n2}", (float)DUAccT / 1024.0);
+
+                            if (UAVXArm)
+                            {
+                                RollRate.Text = string.Format("{0:n0}", RollRateT * MILLIRADDEG);
+                                PitchRate.Text = string.Format("{0:n0}", PitchRateT * MILLIRADDEG);
+                                YawRate.Text = string.Format("{0:n0}", YawRateT * MILLIRADDEG);
+                                RollAngle.Text = string.Format("{0:n0}", RollAngleT * MILLIRADDEG);
+                                PitchAngle.Text = string.Format("{0:n0}", PitchAngleT * MILLIRADDEG);
+                                YawAngle.Text = string.Format("{0:n0}", YawAngleT * MILLIRADDEG);
+                                LRAcc.Text = string.Format("{0:n2}", (float)LRAccT * 0.001);
+                                FBAcc.Text = string.Format("{0:n2}", -(float)FBAccT * 0.001);
+                                DUAcc.Text = string.Format("{0:n2}", -(float)DUAccT * 0.001);
+
+                                FBAccLabel.Text = "BF";
+                                DUAccLabel.Text = "UD";
+
+                                FBCompLabel.Text = "BF";
+                                DUCompLabel.Text = "UD";
+                            }
+                            else
+                            {
+                                RollRate.Text = string.Format("{0:n0}", RollRateT);
+                                PitchRate.Text = string.Format("{0:n0}", PitchRateT);
+                                YawRate.Text = string.Format("{0:n0}", YawRateT);
+                                RollAngle.Text = string.Format("{0:n0}", -RollAngleT / AttitudeToDegrees);
+                                PitchAngle.Text = string.Format("{0:n0}", -PitchAngleT / AttitudeToDegrees);
+                                YawAngle.Text = string.Format("{0:n0}", YawAngleT / AttitudeToDegrees);
+                                LRAcc.Text = string.Format("{0:n2}", (float)LRAccT / 1024.0);
+                                FBAcc.Text = string.Format("{0:n2}", (float)FBAccT / 1024.0);
+                                DUAcc.Text = string.Format("{0:n2}", (float)DUAccT / 1024.0);
+                            }
+
                             LRComp.Text = string.Format("{0:n0}", LRCompT * OUTMaximumScale);
                             FBComp.Text = string.Format("{0:n0}", FBCompT * OUTMaximumScale);
                             DUComp.Text = string.Format("{0:n0}", DUCompT * OUTMaximumScale);
@@ -1171,10 +1191,10 @@ namespace UAVXGS
                                     Output2Label.Text = "R";
                                     Output3Label.Text = "L";
                                     break;// Tricopter
-                                case 2: Output0Label.Text = "0";
-                                    Output1Label.Text = "1";
-                                    Output2Label.Text = "2";
-                                    Output3Label.Text = "3";
+                                case 2: Output0Label.Text = "FL";
+                                    Output1Label.Text = "FR";
+                                    Output2Label.Text = "R";
+                                    Output3Label.Text = "L";
                                     break;// Hexacopter
                                 case 3: Output0Label.Text = "Th";
                                     Output1Label.Text = "R";
@@ -1201,7 +1221,7 @@ namespace UAVXGS
                             OutputT5.Text = string.Format("{0:n0}", OutputT[5] * OUTMaximumScale);
 
                             MissionTimeSec.Text = string.Format("{0:n3}", MissionTimeMilliSecT * 0.001);
-                
+
                             WriteTextLogFile();
                             break;
                         case UAVXControlPacketTag:
@@ -1214,9 +1234,9 @@ namespace UAVXGS
                             RollRateT = ExtractShort(ref UAVXPacket, 10);
                             PitchRateT = ExtractShort(ref UAVXPacket, 12);
                             YawRateT = ExtractShort(ref UAVXPacket, 14);
-                            RollSumT = ExtractShort(ref UAVXPacket, 16);
-                            PitchSumT = ExtractShort(ref UAVXPacket, 18);
-                            YawSumT = ExtractShort(ref UAVXPacket, 20);
+                            RollAngleT = ExtractShort(ref UAVXPacket, 16);
+                            PitchAngleT = ExtractShort(ref UAVXPacket, 18);
+                            YawAngleT = ExtractShort(ref UAVXPacket, 20);
                             LRAccT = ExtractShort(ref UAVXPacket, 22);
                             FBAccT = ExtractShort(ref UAVXPacket, 24);
                             DUAccT = ExtractShort(ref UAVXPacket, 26);
@@ -1230,15 +1250,38 @@ namespace UAVXGS
                             DesiredRoll.Text = string.Format("{0:n0}", ((float)DesiredRollT * 200.0) / RCMaximum);
                             DesiredPitch.Text = string.Format("{0:n0}", ((float)DesiredPitchT * 200.0) / RCMaximum);
                             DesiredYaw.Text = string.Format("{0:n0}", ((float)DesiredYawT * 200.0) / RCMaximum);
-                            RollRate.Text = string.Format("{0:n0}", RollRateT);
-                            PitchRate.Text = string.Format("{0:n0}", PitchRateT);
-                            YawRate.Text = string.Format("{0:n0}", YawRateT);
-                            RollSum.Text = string.Format("{0:n0}", -RollSumT / AttitudeToDegrees);
-                            PitchSum.Text = string.Format("{0:n0}", -PitchSumT / AttitudeToDegrees);
-                            YawSum.Text = string.Format("{0:n0}", YawSumT / AttitudeToDegrees);
-                            LRAcc.Text = string.Format("{0:n2}", (float)LRAccT / 1024.0);
-                            FBAcc.Text = string.Format("{0:n2}", (float)FBAccT / 1024.0);
-                            DUAcc.Text = string.Format("{0:n2}", (float)DUAccT / 1024.0);
+
+                            if (UAVXArm)
+                            {
+                                RollRate.Text = string.Format("{0:n0}", RollRateT * MILLIRADDEG);
+                                PitchRate.Text = string.Format("{0:n0}", PitchRateT * MILLIRADDEG);
+                                YawRate.Text = string.Format("{0:n0}", YawRateT * MILLIRADDEG);
+                                RollAngle.Text = string.Format("{0:n0}", RollAngleT * MILLIRADDEG);
+                                PitchAngle.Text = string.Format("{0:n0}", PitchAngleT * MILLIRADDEG);
+                                YawAngle.Text = string.Format("{0:n0}", YawAngleT * MILLIRADDEG);
+                                LRAcc.Text = string.Format("{0:n2}", (float)LRAccT * 0.001);
+                                FBAcc.Text = string.Format("{0:n2}", (float)FBAccT * 0.001);
+                                DUAcc.Text = string.Format("{0:n2}", (float)DUAccT * 0.001);
+
+                                FBAccLabel.Text = "BF";
+                                DUAccLabel.Text = "UD";
+
+                                FBCompLabel.Text = "BF";
+                                DUCompLabel.Text = "UD";
+                            }
+                            else
+                            {
+                                RollRate.Text = string.Format("{0:n0}", RollRateT);
+                                PitchRate.Text = string.Format("{0:n0}", PitchRateT);
+                                YawRate.Text = string.Format("{0:n0}", YawRateT);
+                                RollAngle.Text = string.Format("{0:n0}", -RollAngleT / AttitudeToDegrees);
+                                PitchAngle.Text = string.Format("{0:n0}", -PitchAngleT / AttitudeToDegrees);
+                                YawAngle.Text = string.Format("{0:n0}", YawAngleT / AttitudeToDegrees);
+                                LRAcc.Text = string.Format("{0:n2}", (float)LRAccT / 1024.0);
+                                FBAcc.Text = string.Format("{0:n2}", (float)FBAccT / 1024.0);
+                                DUAcc.Text = string.Format("{0:n2}", (float)DUAccT / 1024.0);
+                            }
+
                             LRComp.Text = string.Format("{0:n0}", LRCompT * OUTMaximumScale);
                             FBComp.Text = string.Format("{0:n0}", FBCompT * OUTMaximumScale);
                             DUComp.Text = string.Format("{0:n0}", DUCompT * OUTMaximumScale);
@@ -1277,7 +1320,7 @@ namespace UAVXGS
                                     Output3Label.Text = "R";
                                     break;// Conventional
                             }
-                           
+
                             OutputT0.Text = string.Format("{0:n0}", OutputT[0] * OUTMaximumScale);
                             OutputT1.Text = string.Format("{0:n0}", OutputT[1] * OUTMaximumScale);
                             OutputT2.Text = string.Format("{0:n0}", OutputT[2] * OUTMaximumScale);
@@ -1339,7 +1382,7 @@ namespace UAVXGS
                             CurrWPT = ExtractByte(ref UAVXPacket, 6);
                             BaroROCT = ExtractShort(ref UAVXPacket, 7);
                             RelBaroAltitudeT = ExtractInt24(ref UAVXPacket, 9);
-                            RangefinderROCT = ExtractShort(ref UAVXPacket, 12);
+                            GPSHeadingT = ExtractShort(ref UAVXPacket, 12);
                             RangefinderAltitudeT = ExtractShort(ref UAVXPacket, 14);
                             GPSHDiluteT = ExtractShort(ref UAVXPacket, 16);
                             HeadingT = ExtractShort(ref UAVXPacket, 18);
@@ -1403,10 +1446,12 @@ namespace UAVXGS
                             else
                                 BaroROC.BackColor = AltitudeGroupBox.BackColor;
 
-                            RangefinderROC.Text = string.Format("{0:n2}", (float)RangefinderROCT * 0.01);
-                            RangefinderAltitude.Text = string.Format("{0:n2}", (float)RangefinderAltitudeT * 0.01);
+                            if (UAVXArm)
+                                RangefinderAltitude.Text = string.Format("{0:n2}", (float)RangefinderAltitudeT * 0.01);
+                            else
+                                RangefinderAltitude.Text = string.Format("{0:n2}", (float)RangefinderAltitudeT * 0.1);
 
-                            Heading.Text = string.Format("{0:n0}", ((int)HeadingT * 180) / 3142);
+                            Heading.Text = string.Format("{0:n0}", (float)HeadingT * MILLIRADDEG);
 
                             if ((Flags[2] & 0x80) != 0)
                             {
@@ -1435,7 +1480,8 @@ namespace UAVXGS
                             AltitudeError.Text = string.Format("{0:n1}", (float)AltError * 0.1);
 
                             GPSVel.Text = string.Format("{0:n1}", (double)GPSVelT * 0.1); // dM/Sec
-                            GPSROC.Text = string.Format("{0:n1}", (float)GPSROCT * 0.1);
+                            //GPSROC.Text = string.Format("{0:n1}", (float)GPSROCT * 0.1);
+                            GPSHeading.Text = string.Format("{0:n0}", (float)GPSHeadingT * MILLIRADDEG);
                             GPSRelAltitude.Text = string.Format("{0:n1}", (double)GPSRelAltitudeT * 0.1);
                             GPSLongitude.Text = string.Format("{0:n6}", (double)GPSLongitudeT / 6000000.0);
                             GPSLatitude.Text = string.Format("{0:n6}", (double)GPSLatitudeT / 6000000.0);
@@ -1443,14 +1489,15 @@ namespace UAVXGS
                             if ((Flags[0] & 0x40) != 0) // GPSValid
                             {
                                 GPSVel.BackColor = NavGroupBox.BackColor;
-                                GPSROC.BackColor = NavGroupBox.BackColor;
+                               // GPSROC.BackColor = NavGroupBox.BackColor;
+                                GPSHeading.BackColor = NavGroupBox.BackColor;
                                 GPSRelAltitude.BackColor = NavGroupBox.BackColor;
                                 GPSLongitude.BackColor = NavGroupBox.BackColor;
                                 GPSLatitude.BackColor = NavGroupBox.BackColor;
                                 WayHeading.BackColor = NavGroupBox.BackColor;
                                 DistanceToDesired.BackColor = NavGroupBox.BackColor;
 
-                                WayHeading.Text = string.Format("{0:n0}", (DesiredCourseT * 180) / 3142);
+                                WayHeading.Text = string.Format("{0:n0}", (float)DesiredCourseT * MILLIRADDEG);
 
                                 LongitudeCorrection = Math.Cos(Math.PI / 180.0 * (DesiredLatitudeT + GPSLatitudeT) / 12000000.0);
 
@@ -1464,7 +1511,8 @@ namespace UAVXGS
                             {
 
                                 GPSVel.BackColor = System.Drawing.Color.Orange;
-                                GPSROC.BackColor = System.Drawing.Color.Orange;
+                               // GPSROC.BackColor = System.Drawing.Color.Orange;
+                                GPSHeading.BackColor = System.Drawing.Color.Orange;
                                 GPSRelAltitude.BackColor = System.Drawing.Color.Orange;
                                 GPSLongitude.BackColor = System.Drawing.Color.Orange;
                                 GPSLatitude.BackColor = System.Drawing.Color.Orange;
@@ -1485,7 +1533,7 @@ namespace UAVXGS
                                 LongitudeCorrection = Math.Cos(Math.PI / 180.0 * (GPSLatitudeT + OriginLatitude) / 12000000.0);
 
                                 EastDiff = (GPSLongitudeT - OriginLongitude) * LongitudeCorrection;
-                                WhereDirection = Math.Atan2(EastDiff, NorthDiff) * 180.0 / Math.PI;
+                                WhereDirection = Math.Atan2(EastDiff, NorthDiff) * MILLIRADDEG;
                                 while (WhereDirection < 0)
                                     WhereDirection += 360.0;
                                 WhereBearing.Text = string.Format("{0:n0}", WhereDirection);
@@ -1506,7 +1554,7 @@ namespace UAVXGS
                             }
 
                             if (NavStateTimeoutT >= 0)
-                                NavStateTimeout.Text = string.Format("{0:n0}", NavStateTimeoutT / 1000);
+                                NavStateTimeout.Text = string.Format("{0:n0}", (float)NavStateTimeoutT * 0.001);
                             else
                                 NavStateTimeout.Text = " ";
 
@@ -1520,19 +1568,26 @@ namespace UAVXGS
                             if (AmbientTempT < 0.0)
                                 AmbientTemp.BackColor = System.Drawing.Color.LightSteelBlue;
                             else
-                                AmbientTemp.BackColor = EnvGroupBox.BackColor;
+                                if (AmbientTempT > 300.0)
+                                    AmbientTemp.BackColor = System.Drawing.Color.Orange;
+                                else
+                                    AmbientTemp.BackColor = EnvGroupBox.BackColor;
 
                             break;
                         default: break;
                     } // switch
 
-                    FlightRoll = PitchSumT * OSO + RollSumT * OCO;
-                    FlightPitch = PitchSumT * OCO - RollSumT * OSO; 
+                    FlightRoll = PitchAngleT * OSO + RollAngleT * OCO;
+                    FlightPitch = PitchAngleT * OCO - RollAngleT * OSO;
 
-                    attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(
-                        -FlightPitch / AttitudeToDegrees, FlightRoll / AttitudeToDegrees);
+                    if (UAVXArm)
+                        attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(
+                            -FlightPitch * MILLIRADDEG, FlightRoll * MILLIRADDEG);
+                    else
+                        attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(
+                            -FlightPitch / AttitudeToDegrees, FlightRoll / AttitudeToDegrees);
 
-                    FlightHeading = (int)((( HeadingT + FlightHeadingOffset ) * 180 ) / 3142);
+                    FlightHeading = (int)((HeadingT + FlightHeadingOffset) * MILLIRADDEG);
                     if (FlightHeading >= 360) FlightHeading -= 360;
 
                     headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(FlightHeading);
@@ -1599,9 +1654,9 @@ namespace UAVXGS
             RollRateT + "," +
             PitchRateT + "," +
             YawRateT + "," +
-            RollSumT + "," +
-            PitchSumT + "," +
-            YawSumT + "," +
+            RollAngleT + "," +
+            PitchAngleT + "," +
+            YawAngleT + "," +
             LRAccT + "," +
             FBAccT + "," +
             DUAccT + "," +
@@ -1623,7 +1678,7 @@ namespace UAVXGS
             CurrWPT + "," +
             BaroROCT + "," +
             RelBaroAltitudeT + "," +
-            RangefinderROCT + "," +
+            GPSHeadingT + "," +
             RangefinderAltitudeT + "," +
             GPSHDiluteT + "," +
             HeadingT + "," +
@@ -1675,6 +1730,7 @@ namespace UAVXGS
             BadNumT);
 
         }
+
 
         void UAVXCloseTelemetry()
         {
@@ -1757,6 +1813,7 @@ namespace UAVXGS
         {
             ReplayDelay = 20 - Convert.ToInt16(ReplayNumericUpDown.Text);
         }
+
 
       
        
