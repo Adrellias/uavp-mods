@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UAVXGS</RootNamespace>
-    <AssemblyName>UAVXGS 1.6</AssemblyName>
+    <AssemblyName>UAVXGS 1.7</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -36,11 +36,11 @@
     <MapFileExtensions>false</MapFileExtensions>
     <SupportUrl>http://code.google.com/p/uavp-mods/wiki/UAVXGS</SupportUrl>
     <TargetCulture>en-AU</TargetCulture>
-    <ProductName>UAVXGS 1.6</ProductName>
+    <ProductName>UAVXGS 1.7</ProductName>
     <PublisherName>UAVX</PublisherName>
     <SuiteName>UAVXGS</SuiteName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.7.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
