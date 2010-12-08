@@ -227,6 +227,9 @@ void ParseGPRMCSentence()
 
     UpdateField();
     if ( NMEA.s[lo] == 'A' ) {
+	
+		F.GPSValid = true;
+
         UpdateField();   //Lat
         GPSLatitude = ConvertLatLonM(lo,hi);
         UpdateField();   //LatH

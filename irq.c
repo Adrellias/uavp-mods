@@ -23,11 +23,11 @@
 #include "uavx.h"
 
 #ifdef CLOCK_16MHZ
-#define MIN_PPM_SYNC_PAUSE 1500  	// 1500 *2us = 3ms // 2500 was 5
+#define MIN_PPM_SYNC_PAUSE 1200  	// 1200 *2us = 2.4ms // 2500 was 5ms reduced for Futaba composite
 #else // CLOCK_40MHZ
-#define MIN_PPM_SYNC_PAUSE 3750  	// 3750 *0.8us = 3ms // was 6250 5mS
+#define MIN_PPM_SYNC_PAUSE 3750  	// 3000 *0.8us = 2.4ms // was 6250 5mS
 #endif //  CLOCK_16MHZ
-// no less than 1500
+// no less than 1500 ?? 
 
 void SyncToTimer0AndDisableInterrupts(void);
 void ReceivingGPSOnly(uint8);

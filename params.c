@@ -132,7 +132,7 @@ void ReadParametersEE(void)
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
-		F.UsingGPSAlt = ((P[ConfigBits] & UseGPSAltMask) != 0);
+		F.UsingGPSAlt = false;
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 

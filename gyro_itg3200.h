@@ -139,6 +139,9 @@ void InitITG3200(void)
 	WriteByteITG3200(ITG_DLPF, 0b00011001);		// 188Hz, 2000deg/S
 	WriteByteITG3200(ITG_INT_C, 0b00000000);	// no interrupts
 	WriteByteITG3200(ITG_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
+
+	Delay1mS(50);
+
 } // InitITG3200
 
 boolean ITG3200GyroActive(void) 
