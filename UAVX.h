@@ -2,6 +2,7 @@
 #define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
 
 //#define JIM_MPX_INVERT
+#define SIX_DOF
 
 //changes outside this rate are deemed sensor/buss errors
 
@@ -29,7 +30,7 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER

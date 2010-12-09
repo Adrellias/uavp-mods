@@ -58,7 +58,7 @@ void ShowAccType(void)
 		TxString("ADXL345 I2C");
 		break;
 	case AccUnknown:
-		TxString("UNKNOWN");
+		TxString("Unknown");
 		break;
 	default:;
 	} // switch
@@ -186,35 +186,44 @@ void InitAccelerometers(void)
 
 boolean ADXL345AccActive(void);
 
-#define ADXL345_ID          0x53
+#define ADXL345_ID          0xA6
 #define ADXL345_W           ADXL345_ID
+#define ADXL345_R           (ADXL345_ID+1)
 
 void ReadADXL345Acc(void) {
     static uint8 a;
 	static int8 r;
     static char b[6];
 
+    I2CStart();
+    r = WriteI2CByte(ADXL345_ID);
+    r = WriteI2CByte(0x32); // point to acc data
+    I2CStop();
+
 	I2CStart();	
-	if( WriteI2CByte(ADXL345_ID) != I2C_ACK ) goto SGerror;
+	if( WriteI2CByte(ADXL345_R) != I2C_ACK ) goto SGerror;
 	r = ReadI2CString(b, 6);
 	I2CStop();
 
 	// SparkFun 6DOF & ITG3200 breakouts pins forward components up
-    Ax.b1 = b[1];
-	Ax.b0 = b[0];
-    Ay.b1 = b[3]; 
-	Ay.b0 = b[2];
-    Az.b1 = b[5];
-	Az.b0 = b[4];
+
+    Az.b1 = b[1];
+	Az.b0 = b[0];
+
+    Ay.b1 = b[5];
+	Ay.b0 = b[4];
+
+    Ax.b1 = b[3]; 
+	Ax.b0 = b[2];
   
-  	Ax.i16 *= 4;
-  	Ay.i16 *= 4;
-  	Az.i16 *= 4;
+  	Ax.i16 *= 4; // LR
+  	Ay.i16 *= 4; // DU
+  	Az.i16 *= 4; // FB
 	
 	return;
 
 SGerror:
-	Ax.i16 = Ay.i16 = Az.i16 = 0;
+	Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
 	if ( State == InFlight )
 	{
 		Stats[AccFailS]++;	// data over run - acc out of range
