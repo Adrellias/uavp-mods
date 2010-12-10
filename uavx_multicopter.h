@@ -35,7 +35,7 @@
 	{0,0},	 			// YawKd,			13
 	{25,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
-	{0,true}, 			// ConfigBits,		16c
+	{2,true}, 			// ConfigBits,		16c
 	{0,true},			// was TimeSlots,	17c
 	{48,true}, 			// LowVoltThres,	18c
 	{20,true}, 			// CamRollKp,		19c
@@ -80,11 +80,11 @@
 	{49,true},			// BatteryCapacity	54c	
 	{LY530Gyro,true},	// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
-	#if (defined  TRICOPTER) | (defined VTCOPTER )
+	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
 	{24,0},				// Orient			57
 	#else	
 	{0,0},				// Orient			57
-	#endif // TRICOPTER | VTCOPTER				
+	#endif // TRICOPTER | VTCOPTER | Y6COPTER			
 	
 	{12,0},				// NavYawLimit		58
 	{50,0},				// Balance			59

@@ -42,6 +42,7 @@ if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
 if "%CFG%" == "TRICOPTER"           set C=-TRI
 if "%CFG%" == "HELICOPTER"			set C=-HELI
 if "%CFG%" == "VTCOPTER"			set C=-VT
+if "%CFG%" == "Y6COPTER"			set C=-Y6
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
 
@@ -75,19 +76,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.724gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V1.729gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX%L%-V1.724gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo compiled - UAVX%L%-V1.724gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX%L%-V1.729gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo compiled - UAVX%L%-V1.729gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX%L%-V1.724gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo failed - UAVX%L%-V1.724gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX%L%-V1.729gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo failed - UAVX%L%-V1.729gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

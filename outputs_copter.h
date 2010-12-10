@@ -39,15 +39,6 @@ void OutSignals(void)
 	if ( !F.MotorsArmed )
 		StopMotors();
 
-	// Save TMR0 and reset
-	DisableInterrupts;
-	SaveClockmS = mS[Clock];
-	GetTimer0;
-	SaveTimer0.u16 = Timer0.u16;
-	FastWriteTimer0(TMR0_1MS);
-	INTCONbits.TMR0IF = false;
-	EnableInterrupts;
-
 	PWM[FrontC] = TC(PWM[FrontC]);
 	PWM[LeftC] = TC(PWM[LeftC]);
 	PWM[RightC] = TC(PWM[RightC]);
@@ -65,6 +56,15 @@ void OutSignals(void)
 	PWM3 = PWM[BackC];
 	PWM4 = PWM[CamRollC];
 	PWM5 = PWM[CamPitchC];
+
+	// Save TMR0 and reset
+	DisableInterrupts;
+	SaveClockmS = mS[Clock];
+	GetTimer0;
+	SaveTimer0.u16 = Timer0.u16;
+	FastWriteTimer0(TMR0_1MS);
+	INTCONbits.TMR0IF = false;
+	EnableInterrupts;
 
 	if ( P[ESCType] == ESCPPM )
 	{
@@ -323,13 +323,13 @@ OS002:
 
 	#else
 
-		PWM[FrontC] = Limit(PWM[FrontC], ESCMin, ESCMax);
-		PWM[LeftC] = Limit(PWM[LeftC], ESCMin, ESCMax);
-		PWM[RightC] = Limit(PWM[RightC], ESCMin, ESCMax);
+		PWM[FrontC] = TC(PWM[FrontC]);
+		PWM[LeftC] = TC(PWM[LeftC]);
+		PWM[RightC] = TC(PWM[RightC]);
 		#ifdef TRICOPTER
 			PWM[BackC] = Limit(PWM[BackC], 1, OUT_MAXIMUM);
 		#else
-			PWM[BackC] = Limit(PWM[BackC], ESCMin, ESCMax);
+			PWM[BackC] = TC(PWM[BackC]);
 		#endif
 		PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
 		PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);

@@ -51,15 +51,15 @@ void OutSignals(void)
 	MOVWF	SHADOWB,1
 	_endasm
 
-	for ( s = 0; s < (uint8)6; s++ )
-	PWM[s] = TC(PWM[s]);
+//	for ( s = 0; s < (uint8)6; s++ )
+//		PWM[s] = TC(PWM[s]);
 
-	PWM0 = OUT_NEUTRAL;//PWM[FrontTC];
-	PWM1 = OUT_NEUTRAL;//PWM[LeftTC];
-	PWM2 = OUT_NEUTRAL;//PWM[RightTC];
-	PWM3 = 1;//PWM[FrontBC];
-	PWM4 = 1;//PWM[LeftBC];
-	PWM5 = OUT_NEUTRAL;//PWM[RightBC];
+	PWM0 = PWM[FrontTC];
+	PWM1 = PWM[LeftTC];
+	PWM2 = PWM[RightTC];
+	PWM3 = PWM[FrontBC];
+	PWM4 = PWM[LeftBC];
+	PWM5 = PWM[RightBC];
 
 	SyncToTimer0AndDisableInterrupts();
 
@@ -182,11 +182,16 @@ OS010:
 	else
 		Clock[mS] = SaveClockmS + 2;
 	
-
 	EnableInterrupts;
 
 	#else
 
+		PWM[FrontTC] = TC(PWM[FrontTC]);
+		PWM[LeftTC] = TC(PWM[LeftTC]);
+		PWM[RightTC] = TC(PWM[RightTC]);
+		PWM[FrontBC] = TC(PWM[FrontBC]);
+		PWM[LeftBC] = TC(PWM[LeftBC]);
+		PWM[RightBC] = TC(PWM[RightBC]);
 
 	#endif // !(SIMULATE | TESTING)
 

@@ -57,7 +57,12 @@ void DoMulticopterMix(int16 CurrThrottle)
 {
 	static int16 Temp, B;
 
-	PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
+	#ifdef Y6COPTER
+		PWM[FrontTC] = PWM[LeftTC] = PWM[RightTC] = CurrThrottle;
+	#else
+		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
+	#endif
+
 	#ifdef TRICOPTER // usually flown K1 motor to the rear - use orientation of 24
 		Temp = SRS16(Pl, 1); 			
 		PWM[FrontC] -= Pl;			// front motor
@@ -85,11 +90,40 @@ void DoMulticopterMix(int16 CurrThrottle)
 				PWM[FrontLeftC] = SRS32((int32)PWM[FrontLeftC] * B, 7);
 				PWM[FrontRightC] = SRS32((int32)PWM[FrontRightC] * B, 7);
 			}
-		#else // QUADROCOPTER
-			PWM[LeftC]  += -Rl - Yl;	
-			PWM[RightC] +=  Rl - Yl;
-			PWM[FrontC] += -Pl + Yl;
-			PWM[BackC]  +=  Pl + Yl;
+		#else 
+			#ifdef Y6COPTER
+
+				Temp = SRS16(Pl, 1); 			
+				PWM[FrontTC] -= Pl;			 // front motor
+				PWM[LeftTC] += (Temp - Rl);	 // right rear
+				PWM[RightTC] += (Temp + Rl); // left rear
+			
+				PWM[FrontBC] = PWM[FrontTC];
+				PWM[LeftBC]  = PWM[LeftTC];
+				PWM[RightBC] = PWM[RightTC];
+
+				if ( P[Balance] != 0 )
+				{
+					B = 128 + P[Balance];
+					PWM[FrontTC] =  SRS32((int32)PWM[FrontTC] * B, 7);
+					PWM[FrontBC] = PWM[FrontTC];
+				}
+
+				Temp = Yl / 2;
+				PWM[FrontTC] += Temp;
+				PWM[LeftTC]  += Temp;
+				PWM[RightTC] += Temp;
+
+				PWM[FrontBC] -= Temp;
+				PWM[LeftBC]  -= Temp; 
+				PWM[RightBC] -= Temp; 
+
+			#else
+				PWM[LeftC]  += -Rl - Yl;	
+				PWM[RightC] +=  Rl - Yl;
+				PWM[FrontC] += -Pl + Yl;
+				PWM[BackC]  +=  Pl + Yl;
+			#endif
 		#endif
 	#endif
 
@@ -101,11 +135,19 @@ void CheckDemand(int16 CurrThrottle)
 {
 	static int24 Scale, ScaleHigh, ScaleLow, MaxMotor, DemandSwing;
 
-	MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
-	MaxMotor = Max(MaxMotor, PWM[RightC]);
-	#ifndef TRICOPTER
-		MaxMotor = Max(MaxMotor, PWM[BackC]);
-	#endif // TRICOPTER
+	#ifdef Y6COPTER
+		MaxMotor = Max(PWM[FrontTC], PWM[LeftTC]);
+		MaxMotor = Max(MaxMotor, PWM[RightTC]);
+		MaxMotor = Max(MaxMotor, PWM[FrontBC]);
+		MaxMotor = Max(MaxMotor, PWM[LeftBC]);
+		MaxMotor = Max(MaxMotor, PWM[RightBC]);
+	#else
+		MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
+		MaxMotor = Max(MaxMotor, PWM[RightC]);
+		#ifndef TRICOPTER
+			MaxMotor = Max(MaxMotor, PWM[BackC]);
+		#endif // TRICOPTER
+	#endif // Y6COPTER
 
 	DemandSwing = MaxMotor - CurrThrottle;
 
@@ -137,6 +179,7 @@ void CheckDemand(int16 CurrThrottle)
 void MixAndLimitMotors(void)
 { 	// expensive ~160uSec @ 40MHz
     static int16 Temp, TempElevon, TempElevator;
+	static uint8 m;
 
 	if ( DesiredThrottle < IdleThrottle )
 		CurrThrottle = 0;
@@ -161,12 +204,17 @@ void MixAndLimitMotors(void)
 		}
 		else
 		{
-			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
-			#ifdef TRICOPTER
-				PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+			#ifdef Y6COPTER
+				for ( m = 0; m < (uint8)6; m++ )
+					PWM[m] = CurrThrottle;
 			#else
-				PWM[BackC] = CurrThrottle;
-			#endif // !TRICOPTER
+				PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+				#ifdef TRICOPTER
+					PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+				#else
+					PWM[BackC] = CurrThrottle;
+				#endif // !TRICOPTER
+			#endif // Y6COPTER
 		}
 	#else
 		CurrThrottle += Comp[Alt]; // simple - faster to climb with no elevator yet
@@ -188,6 +236,7 @@ void MixAndLimitMotors(void)
 
 void MixAndLimitCam(void)
 {
+	#ifndef Y6COPTER
 	static i24u Temp;
 
 	// use only roll/pitch angle estimates
@@ -197,14 +246,19 @@ void MixAndLimitCam(void)
 
 	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
 	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
-	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 			
+	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 
+	#endif // !Y6COPTER			
 
 } // MixAndLimitCam
 
-#if ( defined TRICOPTER | defined MULTICOPTER | defined VTCOPTER )
-	#include "outputs_copter.h"
+#if ( defined Y6COPTER )
+	#include "outputs_y6.h"
 #else
-	#include "outputs_conventional.h"
+	#if ( defined TRICOPTER | defined MULTICOPTER | defined VTCOPTER )
+		#include "outputs_copter.h"
+	#else
+		#include "outputs_conventional.h"
+	#endif // Y6COPTER
 #endif // TRICOPTER | MULTICOPTER
 
 void InitI2CESCs(void)
@@ -213,6 +267,8 @@ void InitI2CESCs(void)
 	static uint8 r;
 	
 	#ifdef MULTICOPTER
+
+	#ifndef Y6COPTER
 
 	if ( P[ESCType] ==  ESCHolger )
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
@@ -245,16 +301,24 @@ void InitI2CESCs(void)
 				ESCI2CFail[0] += r;
 				ESCI2CStop();
 			}
+
+	#endif // !Y6COPTER
+
 	#endif // MULTICOPTER
 } // InitI2CESCs
 
 void StopMotors(void)
 {
 	#ifdef MULTICOPTER
-		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
-		#ifndef TRICOPTER
-			PWM[BackC] = ESCMin;
-		#endif // !TRICOPTER	
+		#ifdef Y6COPTER
+			PWM[FrontTC] = PWM[LeftTC] = PWM[RightTC] = 
+			PWM[FrontBC] = PWM[LeftBC] = PWM[RightBC] = ESCMin;
+		#else
+			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+			#ifndef TRICOPTER
+				PWM[BackC] = ESCMin;
+			#endif // !TRICOPTER
+		#endif // Y6COPTER	
 	#else
 		PWM[ThrottleC] = ESCMin;
 	#endif // MULTICOPTER
@@ -300,7 +364,9 @@ void CyclePWM(uint8 m, int16 Cycles, boolean h)
 		}
 			
 		PORTB = 0;
-		DisableInterrupts;
+
+		EnableInterrupts;
+
 		Delay1mS(20);
 	}
 
@@ -309,25 +375,36 @@ void CyclePWM(uint8 m, int16 Cycles, boolean h)
 
 void InitMotors(void)
 {
+	static uint8 m;
+
+	#ifdef MULTICOPTER
 
 	if ( P[ESCType] == ESCPPM )
 	{
-	#ifdef TRICOPTER
-		CyclePWM( 0x07, 5, true);
-		CyclePWM( 0x07, 15, false);
-	#else
+		#ifdef TRICOPTER
+			m = 0x07;
+		#else
+			#ifdef Y6COPTER
+				m = 0x3f;
+			#else
+				m = 0x0f;
+			#endif
+		#endif // TRICOPTER
 		CyclePWM( 0x0f, 5, true);
 		CyclePWM( 0x0f, 15, false);
-	#endif // TRICOPTER
 	}
 
-	StopMotors();
-	#ifdef TRICOPTER
-		PWM[BackC] = OUT_NEUTRAL;
-	#endif // !TRICOPTER
+	#endif // MULTICOPTER
 
-	PWM[CamRollC] = OUT_NEUTRAL;
-	PWM[CamPitchC] = OUT_NEUTRAL;
+	StopMotors();
+
+	#ifndef Y6COPTER
+		#ifdef TRICOPTER
+			PWM[BackC] = OUT_NEUTRAL;
+		#endif // !TRICOPTER	
+		PWM[CamRollC] = OUT_NEUTRAL;
+		PWM[CamPitchC] = OUT_NEUTRAL;
+	#endif // Y6COPTER
 
 } // InitMotors
 

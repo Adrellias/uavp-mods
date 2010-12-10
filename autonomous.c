@@ -413,8 +413,13 @@ void DoNavigation(void)
 				break;
 			} // switch NavState
 	}
-	else // kill nav correction immediately
-		NavCorr[Pitch] = NavCorr[Roll] =NavCorr[Yaw] = 0;
+#ifdef FAIL1
+	else 
+    	if ( F.ReturnHome || F.Navigate )
+			DoPPMFailsafe();
+#endif // FAIL1
+		else // kill nav correction immediately
+		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0;
 
 	#endif // !TESTING
 } // DoNavigation

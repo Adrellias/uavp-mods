@@ -1,8 +1,9 @@
 
-#define VT_REBALANCE		// if defined most of the load is on K2 and K3 motors but CG forward onto K1!
+
+// #ifdef FAIL1			// Jim - if this is uncommented then immediate auto descend happens if nav sensitivity is up
 
 //#define JIM_MPX_INVERT
-#define SIX_DOF
+//#define SIX_DOF
 
 //changes outside this rate are deemed sensor/buss errors
 
@@ -32,8 +33,9 @@
 	//#define EXPERIMENTAL
 	//#define TESTING						
 	//#define SIMULATE
-	#define QUADROCOPTER
+	//#define QUADROCOPTER
 	//#define TRICOPTER
+	 #define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
@@ -65,7 +67,7 @@
 	#define UAVX_HW
 #endif
 
-#if ( defined TRICOPTER | defined QUADROCOPTER | defined VTCOPTER )
+#if ( defined TRICOPTER | defined QUADROCOPTER | defined Y6COPTER | defined VTCOPTER )
 	#define MULTICOPTER
 #endif
 
@@ -83,6 +85,9 @@
 #endif
 #ifdef VTCOPTER
 	#define AF_TYPE VAF
+#endif
+#ifdef Y6COPTER
+	#define AF_TYPE Y6AF
 #endif
 #ifdef HELICOPTER
 	#define AF_TYPE HeliAF
@@ -1070,6 +1075,7 @@ extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags5 {FrontLeftC=0, FrontRightC}; // VTCopter
+enum PWMTags6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
 enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
@@ -1104,7 +1110,7 @@ enum TxRxTypes {
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
-enum AFs { QuadAF, TriAF, VAF, HeliAF, ElevAF, AilAF };
+enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
 	RollKp, 			// 01
@@ -1378,7 +1384,7 @@ extern void BatteryTest(void);
 #error RC_MAXIMUM < RC_NEUTRAL !
 #endif
 
-#if (( defined TRICOPTER + defined QUADROCOPTER + defined VTCOPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
+#if (( defined TRICOPTER + defined QUADROCOPTER + defined VTCOPTER + defined Y6COPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
 #error None or more than one aircraft configuration defined !
 #endif
 

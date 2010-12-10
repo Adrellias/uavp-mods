@@ -114,6 +114,7 @@ void ShowSetup(boolean h)
 		case QuadAF: TxString("QUADROCOPTER\r\n"); break;
 		case TriAF: TxString("TRICOPTER\r\n"); break;
 		case VAF: TxString("VTCOPTER\r\n"); break;
+		case Y6AF: TxString("Y6COPTER\r\n"); break;
 		case HeliAF: TxString("HELICOPTER\r\n"); break;
 		case ElevAF: TxString("FLYING WING\r\n"); break;
 		case AilAF: TxString("AILERON\r\n"); break;
