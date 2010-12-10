@@ -29,7 +29,7 @@ void OutSignals(void);
 void InitI2CESCs(void);
 void StopMotors(void);
 void ExercisePWM(void);
-void CyclePWM(uint8, int16);
+void CyclePWM(uint8, int16, boolean);
 void InitMotors(void);
 
 boolean OutToggle;
@@ -266,11 +266,11 @@ void ExercisePWM(void)
 { // used for testing that all PIC ports are switching cleanly - need scope
 
 	TxString("\r\nPWM Exercise Test - 1mS pulse only\r\n");
-	CyclePWM(0x3f, 50);
+	CyclePWM(0x3f, 50, false);
 
 } // ExercisePWM
 
-void CyclePWM(uint8 m, int16 Cycles)
+void CyclePWM(uint8 m, int16 Cycles, boolean h)
 {
 	static int16 i;
 
@@ -289,6 +289,15 @@ void CyclePWM(uint8 m, int16 Cycles)
 		#else
 			Delay10TCYx(160);
 		#endif // CLOCK_16MHZ
+		if ( h )
+		{
+		#ifdef CLOCK_16MHZ
+			Delay10TCYx(200);
+			Delay10TCYx(200);
+		#else
+			Delay10TCYx(160);
+		#endif // CLOCK_16MHZ
+		}
 			
 		PORTB = 0;
 		DisableInterrupts;
@@ -302,11 +311,15 @@ void InitMotors(void)
 {
 
 	if ( P[ESCType] == ESCPPM )
+	{
 	#ifdef TRICOPTER
-		CyclePWM( 0x07, 200 );
+		CyclePWM( 0x07, 5, true);
+		CyclePWM( 0x07, 15, false);
 	#else
-		CyclePWM( 0x0f, 200 );
+		CyclePWM( 0x0f, 5, true);
+		CyclePWM( 0x0f, 15, false);
 	#endif // TRICOPTER
+	}
 
 	StopMotors();
 	#ifdef TRICOPTER

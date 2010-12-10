@@ -1065,7 +1065,7 @@ extern void OutSignals(void);
 extern void InitI2CESCs(void);
 extern void StopMotors(void);
 extern void ExercisePWM(void);
-extern void CyclePWM(uint8, int16);
+extern void CyclePWM(uint8, int16, boolean);
 extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
