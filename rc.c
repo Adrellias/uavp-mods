@@ -22,6 +22,7 @@
 void DoRxPolarity(void);
 void InitRC(void);
 void MapRC(void);
+void CheckSticksHaveChanged(void);
 void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
@@ -101,13 +102,17 @@ void InitRC(void)
 
 	DoRxPolarity();
 
+ 	mS[StickChangeUpdate] = mSClock();
+	mS[StickChangeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+	F.SticksUnchanged = false;
+
 	SignalCount = -RC_GOOD_BUCKET_MAX;
 	F.Signal = F.RCNewValues = false;
 	
 	for (c = 0; c < RC_CONTROLS; c++)
 	{
 		PPM[c].i16 = 0;
-		RC[c] = RC_NEUTRAL;
+		RC[c] = RCp[c] = RC_NEUTRAL;
 
 		#ifdef CLOCK_16MHZ
 		for (q = 0; q <= PPMQMASK; q++)
@@ -155,7 +160,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 		#else // CLOCK_40MHZ	
 			//RC[c] = ( (int32)PPMQSum[i] * RC_MAXIMUM + 2500L )/5000L; // scale to 4uS res. for now	
 			Temp2.i32 = (int32)PPMQSum[i] * (RC_MAXIMUM * 13L) + 32768L; 
-			RC[c] = (uint8)Temp2.iw1;
+			RC[c] = Temp2.iw1;
 		#endif // CLOCK_16MHZ		
 	}
 
@@ -163,6 +168,51 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 		RC[ThrottleC] = SlewLimit(LastThrottle, RC[ThrottleC], THROTTLE_SLEW_LIMIT);
 
 } // MapRC
+
+void CheckSticksHaveChanged(void)
+{
+	static boolean Change;
+	static uint8 c;
+
+	if ( mSClock() > mS[StickChangeUpdate] )
+	{
+		mS[StickChangeUpdate] = mSClock() + 500;
+
+		Change = false;
+		for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
+		{
+			Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
+			RCp[c] = RC[c];
+		}
+	}
+
+	if ( Change )
+	{
+		mS[StickChangeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+		mS[NavStateTimeout] = mSClock();
+		F.SticksUnchanged = false;
+		if ( FailState == MonitoringRx )
+		{
+			if ( F.LostModel )
+			{
+				Beeper_OFF;
+				F.LostModel = false;
+			}
+		}
+	}
+	else
+		if ( mSClock() > mS[StickChangeTimeout] )
+		{
+			if ( !F.SticksUnchanged && ( State == InFlight ))
+			{
+				Stats[RCFailsafesS]++;
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+			}
+
+			F.SticksUnchanged = F.LostModel = State == InFlight; // abort if not navigating
+		}
+
+} // CheckSticksHaveChanged
 
 void UpdateControls(void)
 {
@@ -256,6 +306,18 @@ void UpdateControls(void)
 		F.AttitudeHold = true;	
 		if ( AttitudeHoldResetCount > 1 )
 			AttitudeHoldResetCount -= 2;		// Faster decay
+	}
+
+	//_________________________________________________________________________________________
+			
+	// Rx has gone to failsafe
+
+	CheckSticksHaveChanged();
+
+	if ( F.SticksUnchanged )
+	{
+		F.AltHoldEnabled = true;
+
 	}
 		
 	F.NewCommands = true;

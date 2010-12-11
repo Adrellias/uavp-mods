@@ -30,7 +30,7 @@ void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
 void DoNavigation(void);
-void DoPPMFailsafe(void);
+void DoFailsafe(void);
 void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
@@ -113,9 +113,10 @@ void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
 	DesiredAltitude = -500;
-	if ( !InTheAir || (( mSClock() > mS[NavStateTimeout]) && (( NavState == Touchdown ) || (FailState == Terminated))) )
+	if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) && ( F.SticksUnchanged || ( NavState == Touchdown ) || (FailState == Terminated))) )
 	{
 		State = Shutdown;
+	//	FailState = Terminated;
 		StopMotors();
 	}
 	else
@@ -313,6 +314,7 @@ void DoNavigation(void)
 					}
 					else
 						DoFailsafeLanding();
+
 				#endif // NAV_WING
 				else
 					AcquireHoldPosition();
@@ -413,18 +415,19 @@ void DoNavigation(void)
 				break;
 			} // switch NavState
 	}
-#ifdef FAIL1
 	else 
-    	if ( F.ReturnHome || F.Navigate )
-			DoPPMFailsafe();
-#endif // FAIL1
+    	if ( F.SticksUnchanged )
+		{
+			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
+			if ( Altitude > LAND_DM )
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+			DoFailsafeLanding();
+		}
 		else // kill nav correction immediately
 		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0;
 
 	#endif // !TESTING
 } // DoNavigation
-
-#ifdef USE_PPM_FAILSAFE
 
 void CheckFailsafeAbort(void)
 {
@@ -443,13 +446,13 @@ void CheckFailsafeAbort(void)
 		mS[AbortTimeout] += ABORT_UPDATE_MS;
 } // CheckFailsafeAbort
 
-void DoPPMFailsafe(void)
-{ // only relevant to PPM Rx or Quad NOT synchronising with Rx
+void DoFailsafe(void)
+{ // only relevant to PPM Rx or Quad NOT synchronising with Rx and sticks unchanged
 
 	#ifndef TESTING // not used for testing - make space!
 
 	if ( State == InFlight )
-		switch ( FailState ) { // FailStates { MonitoringRx, Aborting, Terminating, Terminated }
+		switch ( FailState ) { // FailStates { MonitoringRx, Aborting, Terminating, Terminated, RxTerminate }
 		case Terminated: // Basic assumption is that aircraft is being flown over a safe area!
 			FailsafeHoldPosition();
 			DoFailsafeLanding();	
@@ -494,15 +497,15 @@ void DoPPMFailsafe(void)
 				FailState = Aborting; 
 			}
 			break;
+		case RxTerminate: break; // invoked if Rx controls are not changing
+		default:;
 		} // Switch FailState
 	else
 		DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 
 	#endif // !TESTING
 			
-} // DoPPMFailsafe
-
-#endif // USE_PPM_FAILSAFE
+} // DoFailsafe
 
 void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed

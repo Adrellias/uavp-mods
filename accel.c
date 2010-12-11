@@ -52,10 +52,10 @@ void ShowAccType(void)
 {
     switch ( AccType ) {
 	case LISLAcc:
-		TxString("LIS3L SPI");
+		TxString("LIS3L");
 		break;
 	case ADXL345Acc:
-		TxString("ADXL345 I2C");
+		TxString("ADXL345");
 		break;
 	case AccUnknown:
 		TxString("Unknown");

@@ -183,7 +183,7 @@ void CheckAlarms(void)
 	if ( F.BeeperInUse )
 	{
 		if( F.LowBatt ) // repeating beep
-			if( ((int16)mSClock() & 0x0200) == 0 )
+			if( ( mSClock() & 0x000200) == 0 )
 			{
 				Beeper_ON;
 				LEDRed_ON;
@@ -195,7 +195,7 @@ void CheckAlarms(void)
 			}	
 		else
 			if ( F.LostModel ) // 2 beeps with interval
-				if( ((int16)mSClock() & 0x0400) == 0 )
+				if( ( mSClock() & 0x000400) == 0 )
 				{
 					Beeper_ON;
 					LEDRed_ON;

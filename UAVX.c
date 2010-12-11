@@ -168,20 +168,11 @@ void main(void)
 					}
 					break;
 				} // Switch State
-				F.LostModel = false;
 				mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
 				FailState = MonitoringRx;
 			}
 			else
-			#ifdef USE_PPM_FAILSAFE
-				DoPPMFailsafe();
-			#else
-			{
-				Stats[RCFailsafesS]++;
-				DesiredRoll = DesiredPitch = DesiredYaw = 0;
-			    DesiredThrottle = CruiseThrottle; 
-			}
-			#endif // USE_PPM_FAILSAFE
+				DoFailsafe();
 
 			GetHeading();
 			AltitudeHold();

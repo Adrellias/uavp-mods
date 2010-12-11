@@ -118,11 +118,11 @@ void SendControlPacket(void)
 	static int8 b;
 
 	TxESCu8(UAVXControlPacketTag);
-	TxESCu8(33);
+	TxESCu8(35);
  			
 	ShowAttitude();
 
-	for ( b = 0; b < 4; b++ ) // motor/servo channels
+	for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);
 
 	TxESCi24(mSClock() - mS[StartTime]);
@@ -143,7 +143,7 @@ void SendNavPacket(void)
 	TxESCi16(BaroROC); 							// dm/S
 	TxESCi24(BaroRelAltitude);
 	
-	TxESCi16(RangefinderROC); 					// dm/S 
+	TxESCi16(0); 								// dm/S was RF ROC
 	TxESCi16(RangefinderAltitude); 				// dm
 	
 	TxESCi16(GPSHDilute);

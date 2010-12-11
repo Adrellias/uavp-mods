@@ -32,10 +32,10 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	//#define SIMULATE
+	#define SIMULATE
 	//#define QUADROCOPTER
 	//#define TRICOPTER
-	 #define Y6COPTER
+	#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
@@ -127,11 +127,13 @@
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
 #define ABORT_UPDATE_MS				1000L	// mS. retry period for RC Signal and restore Pilot in Control
 
+#define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
+
 #define THROTTLE_LOW_DELAY_MS		1000L	// mS. that motor runs at idle after the throttle is closed
 #define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
 
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
+#define NAV_RTH_LAND_TIMEOUT_MS		15000L	// mS. Shutdown throttle if descent lasts too long
 
 #define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
@@ -144,7 +146,7 @@
 
 // Altitude Hold
 
-#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
+//#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
 #define ALT_HOLD_MAX_ROC_DMPS		5L		// Must be changing altitude at less than this for alt. hold to be detected
 
 // Accelerometers
@@ -529,7 +531,7 @@ typedef union {
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		NavigationActive:1,
-		UsingPolar:1,
+		SticksUnchanged:1,
 
 		Signal:1,
 		RCFrameOK:1, 
@@ -557,7 +559,8 @@ typedef union {
 		BeeperInUse:1,
 		RFInInches:1,
 		FirstArmed:1,
-		HaveGPRMC:1;		
+		HaveGPRMC:1,
+		UsingPolar:1;		
 		};
 } Flags;
 
@@ -630,7 +633,7 @@ extern void AcquireHoldPosition(void);
 extern void NavGainSchedule(int16);
 extern void DoNavigation(void);
 extern void FakeFlight(void); 
-extern void DoPPMFailsafe(void);
+extern void DoFailsafe(void);
 extern void WriteWayPointEE(uint8, int32, int32, int16, uint8);
 extern void UAVXNavCommand(void);
 extern void GetWayPointEE(int8);
@@ -639,7 +642,7 @@ extern void InitNavigation(void);
 typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering};
-enum FailStates { MonitoringRx, Aborting, Terminating, Terminated };
+enum FailStates { MonitoringRx, Aborting, Terminating, Terminated, RxTerminate };
 
 enum Attitudes { Roll, Pitch, Yaw };
 
@@ -899,6 +902,8 @@ extern int8 GyroType;
 #define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
 #define RC_THR_MAX 			RC_MAXIMUM
 
+#define RC_NO_CHANGE_TIMEOUT_MS 10000L
+
 #define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
 
 #ifdef RX6CH 
@@ -915,13 +920,14 @@ extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, StartTime, AccTimeout, 
-	GPSTimeout, GPSROCUpdate, LEDChaserUpdate, LastBattery, TelemetryUpdate, RangefinderROCUpdate, NavActiveTime, 
+	GPSTimeout, GPSROCUpdate, StickChangeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
+  	TelemetryUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
 
 extern int24 mS[];
-extern int16 RC[];
+extern int16 RC[], RCp[];
 
 extern near i16u PPM[];
 extern near int8 PPM_Index;
@@ -1228,7 +1234,7 @@ extern uint8 UAVXAirframe;
 extern void GetRangefinderAltitude(void);
 extern void InitRangefinder(void);
 
-extern int16 RangefinderAltitude, RangefinderAltitudeP, RangefinderROC;
+extern int16 RangefinderAltitude, RangefinderAltitudeP;
 
 //__________________________________________________________________________________________
 
@@ -1237,6 +1243,7 @@ extern int16 RangefinderAltitude, RangefinderAltitudeP, RangefinderROC;
 extern void DoRxPolarity(void);
 extern void InitRC(void);
 extern void MapRC(void);
+extern void CheckSticksHaveChanged(void);
 extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void CheckThrottleMoved(void);

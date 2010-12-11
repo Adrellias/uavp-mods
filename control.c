@@ -35,7 +35,7 @@ void CheckThrottleMoved(void);
 void LightsAndSirens(void);
 void InitControl(void);
 
-int16 RC[CONTROLS];
+int16 RC[CONTROLS], RCp[CONTROLS];
 
 int16 Ratep[4];					// gyro rate error	
 
@@ -118,7 +118,7 @@ void UpdateAltitudeSource(void)
 	if ( F.UsingRangefinderAlt )
 	{
 		Altitude = RangefinderAltitude / 10; 	// Decimetres for now
-		ROC = RangefinderROC / 10; 				// Decimetres/Sec.
+		ROC = 0;
 	}
 	else
 	{
@@ -135,15 +135,15 @@ void AltitudeHold()
 	GetRangefinderAltitude();
 	CheckThrottleMoved();
 
-	if ( F.AltHoldEnabled )
-	{
-		if ( F.NewBaroValue  ) // sync on Baro which MUST be working
-		{		
-			F.NewBaroValue = false;
+	if ( F.NewBaroValue  ) // sync on Baro which MUST be working
+	{		
+		F.NewBaroValue = false;
 
-			UpdateAltitudeSource();
+		UpdateAltitudeSource();
 
-			if ( ( NavState != HoldingStation ) && F.AllowNavAltitudeHold ) 
+		if ( F.AltHoldEnabled )
+		{
+			if ( F.SticksUnchanged || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
 				DoAltitudeHold(Altitude, ROC);
@@ -166,12 +166,13 @@ void AltitudeHold()
 					DoAltitudeHold(Altitude, ROC);
 				}	
 		}
+		else
+		{
+			Comp[Alt] = Decay1(Comp[Alt]);
+			F.HoldingAlt = false;
+		}	
 	}
-	else
-	{
-		Comp[Alt] = Decay1(Comp[Alt]);
-		F.HoldingAlt = false;
-	}
+
 } // AltitudeHold
 
 void InertialDamping(void)
