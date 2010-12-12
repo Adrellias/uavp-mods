@@ -1,12 +1,10 @@
 
 
-// #ifdef FAIL1			// Jim - if this is uncommented then immediate auto descend happens if nav sensitivity is up
-
 //#define JIM_MPX_INVERT
 //#define SIX_DOF
 
 //changes outside this rate are deemed sensor/buss errors
-
+#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -31,11 +29,11 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
-	#define SIMULATE
+	#define TESTING						
+	//#define SIMULATE
 	//#define QUADROCOPTER
-	//#define TRICOPTER
-	#define Y6COPTER
+	#define TRICOPTER
+	//#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
@@ -902,7 +900,7 @@ extern int8 GyroType;
 #define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
 #define RC_THR_MAX 			RC_MAXIMUM
 
-#define RC_NO_CHANGE_TIMEOUT_MS 10000L
+#define RC_NO_CHANGE_TIMEOUT_MS 20000L		// mS.
 
 #define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
 

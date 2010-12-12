@@ -111,15 +111,16 @@ void ShowSetup(boolean h)
 
 	TxString("Aircraft: ");
 	switch ( UAVXAirframe ) {
-		case QuadAF: TxString("QUADROCOPTER\r\n"); break;
-		case TriAF: TxString("TRICOPTER\r\n"); break;
-		case VAF: TxString("VTCOPTER\r\n"); break;
-		case Y6AF: TxString("Y6COPTER\r\n"); break;
-		case HeliAF: TxString("HELICOPTER\r\n"); break;
-		case ElevAF: TxString("FLYING WING\r\n"); break;
-		case AilAF: TxString("AILERON\r\n"); break;
-		default: TxString("UNKNOWN\r\n");
+		case QuadAF: TxString("QUAD"); break;
+		case TriAF: TxString("TRI"); break;
+		case VAF: TxString("VT"); break;
+		case Y6AF: TxString("Y6"); break;
+		case HeliAF: TxString("HELI"); break;
+		case ElevAF: TxString("FLYING WING"); break;
+		case AilAF: TxString("AILERON"); break;
+		default: TxString("Unknown");
 	}
+	TxNextLine();
 
 	if( F.CompassValid )
 	{
@@ -168,8 +169,10 @@ void ShowSetup(boolean h)
 	TxNextLine();
 	
 	#ifdef RX6CH
-		TxString("6 CHANNEL VERSION - 5 ACTIVE CHANNELS ONLY\r\n");
+		TxString("6 CH - 5 ACTIVE CHANNELS\r\n");
 	#endif // RX6CH
+
+	#ifndef CLOCK_40MHZ
 
 	TxString("Tx/Rx: ");
 	
@@ -190,7 +193,10 @@ void ShowSetup(boolean h)
 		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 		case DX7aAR7000: TxString("Spektrum DX7a & AR7000 {"); break;
 		case ExternalDecoder: TxString("External Decoder {"); break;
+		default: ;
 	}
+
+	#endif // CLOCK_40MHZ
 	
 	if ( F.UsingSerialPPM )
 		ShowRxSetup();
@@ -221,10 +227,6 @@ void ShowSetup(boolean h)
 	TxNextLine();
 
 	TxString("\r\nNav:\r\n");
-	if ( F.UsingGPSAlt )
-		TxString("\tGPS is alt. source\r\n");
-	else
-		TxString("\tBaro is alt. source\r\n");
 	if ( F.UsingRTHAutoDescend )
 		TxString("\tAuto descend ENABLED\r\n");
 	else
@@ -236,9 +238,9 @@ void ShowSetup(boolean h)
 		TxString("\tHold heading\r\n");
 
 	if ( F.AllowNavAltitudeHold )
-		TxString("\tAllow Nav Altitude Hold\r\n");
+		TxString("\tAllow Nav Alt Hold\r\n");
 	else
-		TxString("\tWARNING: Manual Nav Altitude Hold\r\n");
+		TxString("\tManual Nav Alt Hold CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
 	#ifdef TESTING
@@ -246,7 +248,7 @@ void ShowSetup(boolean h)
 	#endif // TESTING
 
 	if ( !F.ParametersValid )
-		TxString("\tOne or more flight parameters are INVALID!\r\n");
+		TxString("\tINVALID flight paramters (PID)!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
 		TxString("\tBarometer: OFFLINE\r\n");
@@ -254,26 +256,19 @@ void ShowSetup(boolean h)
 		TxString("\tBaro Init: FAILED\r\n");
 
 	if ( !F.RangefinderAltitudeValid )
-		if ( F.RFInInches )
-			TxString("\tRangefinder: OFFLINE (inches)\r\n");
-		else
-			TxString("\tRangefinder: OFFLINE\r\n");
+		TxString("\tRangefinder: OFFLINE\r\n");
 
 	if ( F.GyroFailure )
 		TxString("\tGyro: FAILURE\r\n");
 
 	if ( !F.AccelerationsValid )
-	#ifdef USE_FLAT_ACC
-		TxString("\tAccelerometers: OFFLINE (horiz.)\r\n");
-	#else
 		TxString("\tAccelerometers: OFFLINE\r\n");
-	#endif // USE_FLAT_ACC
 
 	if ( !F.CompassValid )
 		TxString("\tCompass: OFFLINE\r\n");
 
 	if ( !F.Signal )
-		TxString("\tRC signal invalid - bad EPAs or Tx may be switched off?\r\n");
+		TxString("\tBad EPAs or Tx switched off?\r\n");
 	if ( Armed && FirstPass ) 
 		TxString("\tUAVX is armed - DISARM!\r\n");
 
@@ -281,7 +276,7 @@ void ShowSetup(boolean h)
 		TxString("\tNavigate/RTH is selected - DESELECT!\r\n");
 
 	if ( InitialThrottle >= RC_THRES_START )
-		TxString("\tThrottle may be open - CLOSE THROTTLE!\r\n");
+		TxString("\tThrottle may be open - CLOSE!\r\n");
 	
 	ShowPrompt();
 } // ShowSetup

@@ -431,6 +431,9 @@ void DoNavigation(void)
 
 void CheckFailsafeAbort(void)
 {
+
+	#ifndef TESTING
+
 	if ( mSClock() > mS[AbortTimeout] )
 	{
 		if ( F.Signal )
@@ -444,6 +447,8 @@ void CheckFailsafeAbort(void)
 	}
 	else
 		mS[AbortTimeout] += ABORT_UPDATE_MS;
+
+	#endif // !TESTING
 } // CheckFailsafeAbort
 
 void DoFailsafe(void)
