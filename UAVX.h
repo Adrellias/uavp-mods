@@ -125,6 +125,8 @@
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
 #define ABORT_UPDATE_MS				1000L	// mS. retry period for RC Signal and restore Pilot in Control
 
+#define	ALT_DESCENT_UPDATE_MS		500L	// mS time between throttle reduction clicks in failsafe descent without baro	
+
 #define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
 
 #define THROTTLE_LOW_DELAY_MS		1000L	// mS. that motor runs at idle after the throttle is closed
@@ -661,6 +663,7 @@ extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 AltSum;
+extern int16 DescentComp;
 
 extern int16 NavCorr[3], NavCorrp[3];
 extern int16 NavE[2], NavEp[2], NavIntE[2];
@@ -917,7 +920,7 @@ extern void ReceivingGPSOnly(uint8);
 extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
-	FailsafeTimeout, AbortTimeout, NavStateTimeout, LastValidRx, LastGPS, StartTime, AccTimeout, 
+	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, StartTime, AccTimeout, 
 	GPSTimeout, GPSROCUpdate, StickChangeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
   	TelemetryUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};

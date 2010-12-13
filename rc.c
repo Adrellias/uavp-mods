@@ -197,6 +197,7 @@ void CheckSticksHaveChanged(void)
 			{
 				Beeper_OFF;
 				F.LostModel = false;
+				DescentComp = 0;
 			}
 		}
 	}
@@ -206,7 +207,9 @@ void CheckSticksHaveChanged(void)
 			if ( !F.SticksUnchanged && ( State == InFlight ))
 			{
 				Stats[RCFailsafesS]++;
-				mS[NavStateTimeout] = mSClock();// + NAV_RTH_LAND_TIMEOUT_MS;
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+				mS[DescentUpdate]  = mSClock();
+				DescentComp = 0; // for no Baro case
 			}
 
 			F.SticksUnchanged = State == InFlight; // abort if not navigating

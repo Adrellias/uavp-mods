@@ -42,6 +42,7 @@ int8 NavYCorrLimit;
 int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
+int16 DescentComp;
 
 #ifdef SIMULATE
 int16 FakeDesiredRoll, FakeDesiredPitch, FakeDesiredYaw, FakeHeading;
@@ -112,15 +113,29 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	DesiredAltitude = -500;
-	if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) && ( F.SticksUnchanged || ( NavState == Touchdown ) || (FailState == Terminated))) )
+	if ( F.BaroAltitudeValid )
 	{
-		State = Shutdown;
-	//	FailState = Terminated;
-		StopMotors();
+		DesiredAltitude = -500;
+		if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) 
+			&& ( F.SticksUnchanged || ( NavState == Touchdown ) || (FailState == Terminated))) )
+		{
+			State = Shutdown;
+			StopMotors();
+		}
+		else
+			DesiredThrottle = CruiseThrottle;
 	}
 	else
-		DesiredThrottle = CruiseThrottle;
+	{
+		if ( mSClock() > mS[DescentUpdate] )
+		{
+			mS[DescentUpdate] = mSClock() + ALT_DESCENT_UPDATE_MS;
+			DesiredThrottle = CruiseThrottle - DescentComp;
+			if ( DescentComp < CruiseThrottle )
+				DescentComp++;
+		}
+	}
+
 } // DoFailsafeLanding
 
 void AcquireHoldPosition(void)
