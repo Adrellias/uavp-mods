@@ -51,8 +51,8 @@ void OutSignals(void)
 	MOVWF	SHADOWB,1
 	_endasm
 
-//	for ( s = 0; s < (uint8)6; s++ )
-//		PWM[s] = TC(PWM[s]);
+	for ( s = 0; s < (uint8)6; s++ )
+		PWM[s] = TC(PWM[s]);
 
 	PWM0 = PWM[FrontTC];
 	PWM1 = PWM[LeftTC];

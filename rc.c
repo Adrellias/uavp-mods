@@ -206,10 +206,10 @@ void CheckSticksHaveChanged(void)
 			if ( !F.SticksUnchanged && ( State == InFlight ))
 			{
 				Stats[RCFailsafesS]++;
-				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+				mS[NavStateTimeout] = mSClock();// + NAV_RTH_LAND_TIMEOUT_MS;
 			}
 
-			F.SticksUnchanged = F.LostModel = State == InFlight; // abort if not navigating
+			F.SticksUnchanged = State == InFlight; // abort if not navigating
 		}
 
 } // CheckSticksHaveChanged
@@ -313,13 +313,7 @@ void UpdateControls(void)
 	// Rx has gone to failsafe
 
 	CheckSticksHaveChanged();
-
-	if ( F.SticksUnchanged )
-	{
-		F.AltHoldEnabled = true;
-
-	}
-		
+	
 	F.NewCommands = true;
 
 } // UpdateControls

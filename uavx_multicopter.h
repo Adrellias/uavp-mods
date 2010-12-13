@@ -54,7 +54,7 @@
 
 	{0,0}, 				// GSThrottle,	    31
 	{0,0},				// Acro,	    	32
-	{0,0}, 				// NavRTHAlt,		33
+	{10,0}, 		    // NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
 	{LY530Gyro,true}, 	// GyroType, 		35c
 	{ESCPPM,true}, 		// ESCType,			36c

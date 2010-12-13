@@ -282,7 +282,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 void DoNavigation(void)
 {
-	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
+
 
 	#ifndef TESTING // not used for testing - make space!
 
@@ -416,15 +416,18 @@ void DoNavigation(void)
 			} // switch NavState
 	}
 	else 
-    	if ( F.SticksUnchanged )
+    	if ( F.SticksUnchanged && F.NewCommands )
 		{
 			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
 			if ( Altitude > LAND_DM )
 				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+			F.LostModel = true;
 			DoFailsafeLanding();
 		}
 		else // kill nav correction immediately
 		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0;
+
+	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 
 	#endif // !TESTING
 } // DoNavigation
