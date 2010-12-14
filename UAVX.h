@@ -30,7 +30,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -125,7 +125,7 @@
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
 #define ABORT_UPDATE_MS				1000L	// mS. retry period for RC Signal and restore Pilot in Control
 
-#define	ALT_DESCENT_UPDATE_MS		500L	// mS time between throttle reduction clicks in failsafe descent without baro	
+#define	ALT_DESCENT_UPDATE_MS		1000L	// mS time between throttle reduction clicks in failsafe descent without baro	
 
 #define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
 

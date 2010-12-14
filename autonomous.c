@@ -113,9 +113,12 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
+	DesiredAltitude = -500;
 	if ( F.BaroAltitudeValid )
 	{
-		DesiredAltitude = -500;
+		if ( Altitude > LAND_DM )
+				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+
 		if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) 
 			&& ( F.SticksUnchanged || ( NavState == Touchdown ) || (FailState == Terminated))) )
 		{
@@ -131,8 +134,11 @@ void DoFailsafeLanding(void)
 		{
 			mS[DescentUpdate] = mSClock() + ALT_DESCENT_UPDATE_MS;
 			DesiredThrottle = CruiseThrottle - DescentComp;
-			if ( DescentComp < CruiseThrottle )
-				DescentComp++;
+			if ( DesiredThrottle < IdleThrottle )
+				StopMotors();
+			else
+				if ( DescentComp < CruiseThrottle )
+					DescentComp++;		
 		}
 	}
 
@@ -297,14 +303,14 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 void DoNavigation(void)
 {
-
-
 	#ifndef TESTING // not used for testing - make space!
 
 	F.NavigationActive = F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
 
 	if ( F.NavigationActive )
 	{
+		F.LostModel = F.SticksUnchanged = false;
+
 		if ( !F.NavComputed )
 			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 			case Touchdown:
@@ -434,8 +440,6 @@ void DoNavigation(void)
     	if ( F.SticksUnchanged && F.NewCommands )
 		{
 			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
-			if ( Altitude > LAND_DM )
-				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 			F.LostModel = true;
 			DoFailsafeLanding();
 		}
@@ -483,11 +487,7 @@ void DoFailsafe(void)
 		case Terminating:
 			FailsafeHoldPosition();
 			if ( Altitude < LAND_DM )
-			{
-				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-				NavState = Touchdown;
 				FailState = Terminated;
-			}
 			DoFailsafeLanding();
 			break;
 		case Aborting:

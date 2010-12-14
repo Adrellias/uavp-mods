@@ -208,7 +208,7 @@ void CheckSticksHaveChanged(void)
 			{
 				Stats[RCFailsafesS]++;
 				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-				mS[DescentUpdate]  = mSClock();
+				mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
 				DescentComp = 0; // for no Baro case
 			}
 

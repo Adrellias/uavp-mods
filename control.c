@@ -163,7 +163,7 @@ void AltitudeHold()
 						NewCruiseThrottle = DesiredThrottle + Comp[Alt];
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
 					}
-					DoAltitudeHold(Altitude, ROC);
+					DoAltitudeHold(Altitude, ROC); // not using cruise throttle
 				}	
 		}
 		else

@@ -237,27 +237,8 @@ void GetFreescaleBaroAltitude(void)
 		if ( F.BaroAltitudeValid )
 		{
 			BaroPressure = (int24)BaroVal.u16; // sum of 4 samples
-
-			LPFilter24(&BaroPressure, &BaroValF, BaroFilterA); 
-		
+			LPFilter24(&BaroPressure, &BaroValF, BaroFilterA); 		
 			BaroRelAltitude = FreescaleToDM(BaroPressure - OriginBaroPressure);
-
-			#ifdef SIMULATE
-			if ( State == InFlight )
-			{
-				if ( ++SimulateCycles == AltitudeUpdateRate )
-				{
-					FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + Comp[Alt];
-					if ( FakeBaroRelAltitude < 0 ) 
-						FakeBaroRelAltitude = 0;
-		
-					SimulateCycles = 0;
-				}
-		
-				BaroRelAltitude = FakeBaroRelAltitude;
-			}				
-			#endif // SIMULATE
-
 			F.NewBaroValue = F.BaroAltitudeValid;
 		}
 	}	
@@ -474,27 +455,8 @@ void GetBoschBaroAltitude(void)
 				// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
 
 				Temp = (int24)CompBaroPressure;
-
 				LPFilter24(&Temp, &BaroValF, BaroFilterA);
-
 				BaroRelAltitude = -SRS32(Temp * (int32)P[BaroScale], 7);
-
-				#ifdef SIMULATE
-				if ( State == InFlight )
-				{
-					if ( ++SimulateCycles == AltitudeUpdateRate )
-					{
-						FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + Comp[Alt];
-						if ( FakeBaroRelAltitude < 0 ) 
-							FakeBaroRelAltitude = 0;
-				
-						SimulateCycles = 0;
-					}
-			
-					BaroRelAltitude = FakeBaroRelAltitude;
-				}				
-				#endif // SIMULATE
-
 				F.NewBaroValue = F.BaroAltitudeValid;			
 			}
 			else
@@ -672,29 +634,49 @@ void GetBaroAltitude(void)
 	else
 		GetBoschBaroAltitude();
 
-	AltChange = BaroRelAltitude - BaroRelAltitudeP;
-
-	if ( Abs(AltChange) > BARO_SANITY_CHECK_DMPS )
+	if ( F.NewBaroValue )
 	{
-		BaroRelAltitude = BaroRelAltitudeP;	// use previous value
-		Stats[BaroFailS]++;
-	}
+		#ifdef SIMULATE
 
-	Temp = AltChange * AltitudeUpdateRate;
-	BaroROC = BaroROCFilter(BaroROC, Temp);					
-	BaroRelAltitudeP = BaroRelAltitude;
-	BaroRelAltitudeP = BaroRelAltitude;
+		if ( State == InFlight )
+		{
+			if ( ++SimulateCycles == AltitudeUpdateRate )
+			{
+				FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + Comp[Alt];
+				if ( FakeBaroRelAltitude < 0 ) 
+					FakeBaroRelAltitude = 0;
+			
+				SimulateCycles = 0;
+			}
+			
+			BaroRelAltitude = FakeBaroRelAltitude;
+		}					
+		#endif // SIMULATE
 
-	if ( ( State == InFlight ) && F.NewBaroValue )
-	{
-		if ( BaroROC > Stats[MaxBaroROCS] )
-			Stats[MaxBaroROCS] = BaroROC;
-		else
-			if ( BaroROC < Stats[MinBaroROCS] )
-				Stats[MinBaroROCS] = BaroROC;
-	
-		if ( BaroRelAltitude > Stats[BaroRelAltitudeS] ) 
-			Stats[BaroRelAltitudeS] = BaroRelAltitude;
+		AltChange = BaroRelAltitude - BaroRelAltitudeP;
+
+		if ( Abs(AltChange) > BARO_SANITY_CHECK_DMPS )
+		{
+			BaroRelAltitude = BaroRelAltitudeP;	// use previous value
+			Stats[BaroFailS]++;
+		}
+
+		Temp = AltChange * AltitudeUpdateRate;
+		BaroROC = BaroROCFilter(BaroROC, Temp);					
+		BaroRelAltitudeP = BaroRelAltitude;
+		BaroRelAltitudeP = BaroRelAltitude;
+
+		if ( State == InFlight )
+		{
+			if ( BaroROC > Stats[MaxBaroROCS] )
+				Stats[MaxBaroROCS] = BaroROC;
+			else
+				if ( BaroROC < Stats[MinBaroROCS] )
+					Stats[MinBaroROCS] = BaroROC;
+		
+			if ( BaroRelAltitude > Stats[BaroRelAltitudeS] ) 
+				Stats[BaroRelAltitudeS] = BaroRelAltitude;
+		}
 	}
 	
 } // GetBaroAltitude
