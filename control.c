@@ -50,7 +50,7 @@ int16 Trim[3];
 int16 HoldYaw;
 int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
 
-int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 int16 CurrMaxRollPitch;
@@ -143,7 +143,7 @@ void AltitudeHold()
 
 		if ( F.AltHoldEnabled )
 		{
-			if ( F.SticksUnchanged || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
+			if ( F.ForceFailsafe || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
 				DoAltitudeHold(Altitude, ROC);
@@ -158,10 +158,11 @@ void AltitudeHold()
 				else
 				{
 					F.HoldingAlt = true;
-					if ( Abs(BaroROC) < ALT_HOLD_MAX_ROC_DMPS  ) // Use Baro NOT GPS
+					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_DMPS  ) 
 					{
 						NewCruiseThrottle = DesiredThrottle + Comp[Alt];
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
+						CruiseThrottle = Limit(CruiseThrottle , IdleThrottle, THROTTLE_MAX_CRUISE );
 					}
 					DoAltitudeHold(Altitude, ROC); // not using cruise throttle
 				}	

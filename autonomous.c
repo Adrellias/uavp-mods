@@ -113,14 +113,14 @@ void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	DesiredAltitude = -500;
+	DesiredAltitude = -200;
 	if ( F.BaroAltitudeValid )
 	{
 		if ( Altitude > LAND_DM )
-				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+			mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 
 		if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) 
-			&& ( F.SticksUnchanged || ( NavState == Touchdown ) || (FailState == Terminated))) )
+			&& ( F.ForceFailsafe || ( NavState == Touchdown ) || (FailState == Terminated))) )
 		{
 			State = Shutdown;
 			StopMotors();
@@ -309,7 +309,7 @@ void DoNavigation(void)
 
 	if ( F.NavigationActive )
 	{
-		F.LostModel = F.SticksUnchanged = false;
+		F.LostModel = F.ForceFailsafe = false;
 
 		if ( !F.NavComputed )
 			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
@@ -437,14 +437,14 @@ void DoNavigation(void)
 			} // switch NavState
 	}
 	else 
-    	if ( F.SticksUnchanged && F.NewCommands )
+    	if ( F.ForceFailsafe && F.NewCommands )
 		{
 			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
 			F.LostModel = true;
 			DoFailsafeLanding();
 		}
 		else // kill nav correction immediately
-		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0;
+		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0; // zzz
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 

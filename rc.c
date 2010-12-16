@@ -103,8 +103,8 @@ void InitRC(void)
 	DoRxPolarity();
 
  	mS[StickChangeUpdate] = mSClock();
-	mS[StickChangeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
-	F.SticksUnchanged = false;
+	mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+	F.ForceFailsafe = false;
 
 	SignalCount = -RC_GOOD_BUCKET_MAX;
 	F.Signal = F.RCNewValues = false;
@@ -174,46 +174,65 @@ void CheckSticksHaveChanged(void)
 	static boolean Change;
 	static uint8 c;
 
-	if ( mSClock() > mS[StickChangeUpdate] )
+	if ( F.ReturnHome || F.Navigate  )
 	{
-		mS[StickChangeUpdate] = mSClock() + 500;
-
-		Change = false;
-		for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
+		if ( mSClock() > mS[StickChangeUpdate] )
 		{
-			Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
-			RCp[c] = RC[c];
-		}
-	}
-
-	if ( Change )
-	{
-		mS[StickChangeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
-		mS[NavStateTimeout] = mSClock();
-		F.SticksUnchanged = false;
-		if ( FailState == MonitoringRx )
-		{
-			if ( F.LostModel )
-			{
-				Beeper_OFF;
-				F.LostModel = false;
-				DescentComp = 0;
-			}
-		}
-	}
-	else
-		if ( mSClock() > mS[StickChangeTimeout] )
-		{
-			if ( !F.SticksUnchanged && ( State == InFlight ))
+			mS[StickChangeUpdate] = mSClock() + 500;
+			if ( !F.ForceFailsafe && ( State == InFlight ))
 			{
 				Stats[RCFailsafesS]++;
 				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 				mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
 				DescentComp = 0; // for no Baro case
 			}
-
-			F.SticksUnchanged = State == InFlight; // abort if not navigating
+		
+			F.ForceFailsafe = State == InFlight; // abort if not navigating
 		}
+	}
+	else
+	{
+		if ( mSClock() > mS[StickChangeUpdate] )
+		{
+			mS[StickChangeUpdate] = mSClock() + 500;
+	
+			Change = false;
+			for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
+			{
+				Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
+				RCp[c] = RC[c];
+			}
+		}
+	
+		if ( Change )
+		{
+			mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+			mS[NavStateTimeout] = mSClock();
+			F.ForceFailsafe = false;
+			if ( FailState == MonitoringRx )
+			{
+				if ( F.LostModel )
+				{
+					Beeper_OFF;
+					F.LostModel = false;
+					DescentComp = 0;
+				}
+			}
+		}
+		else
+			if ( mSClock() > mS[RxFailsafeTimeout] )
+			{
+				if ( !F.ForceFailsafe && ( State == InFlight ))
+				{
+					Stats[RCFailsafesS]++;
+					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+					mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
+					DescentComp = 0; // for no Baro case
+				}
+	
+				F.ForceFailsafe = State == InFlight; // abort if not navigating
+			}
+	}
 
 } // CheckSticksHaveChanged
 
@@ -241,10 +260,10 @@ void UpdateControls(void)
 		else
 			F.AllowTurnToWP = SaveAllowTurnToWP;
 	else
-		if ( RC[RTHC] > ((3L*RC_MAXIMUM)/4) )
+		if ( RC[RTHC] > ((2L*RC_MAXIMUM)/3L) )
 			F.ReturnHome = true;
 		else
-			if ( RC[RTHC] > (RC_NEUTRAL/2) )
+			if ( RC[RTHC] > (RC_NEUTRAL/3L) )
 				F.Navigate = true;
 	
 	F.Ch5Active = NewCh5Active;

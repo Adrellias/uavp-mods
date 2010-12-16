@@ -67,8 +67,8 @@
 	{1,true},			// VertDampDecay    42c
 	{1,true},			// HorizDampDecay	43c
 	{56,true},			// BaroScale	    44c
-	{NoTelemetry,true}, // TelemetryType	45c
-	{-8,0},				// MaxDescentRateDmpS 	46
+	{UAVXTelemetry,true}, // TelemetryType	45c
+	{-12,0},			// MaxDescentRateDmpS 	46
 	{30,true},			// DescentDelayS	47c
 	{1,0},				// NavIntLimit		48
 	{2,0},				// AltIntLimit		49

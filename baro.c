@@ -23,7 +23,7 @@
 
 #include "uavx.h"
 
-#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
+#define BARO_SANITY_CHECK_DMPS	200L		// dm/S 20,40,60,80 or 100
 
 void GetBaroAltitude(void);
 void InitBarometer(void);
@@ -59,10 +59,8 @@ int8	BaroRetries;
 i32u	BaroValF;
 int16	BaroFilterA;
 
-#ifdef SIMULATE
 int24	FakeBaroRelAltitude;
-int8 SimulateCycles = 0;
-#endif // SIMULATE
+int8 	SimulateCycles;
 
 // -----------------------------------------------------------
 
@@ -627,7 +625,7 @@ BAerror:
 
 void GetBaroAltitude(void)
 {
-	static int24 Temp, AltChange;
+	static int16 Temp, AltChange;
 
 	if ( BaroType == BaroMPX4115 )
 		GetFreescaleBaroAltitude();
@@ -637,34 +635,38 @@ void GetBaroAltitude(void)
 	if ( F.NewBaroValue )
 	{
 		#ifdef SIMULATE
-
 		if ( State == InFlight )
 		{
-			if ( ++SimulateCycles == AltitudeUpdateRate )
+			if ( ++SimulateCycles >= AltitudeUpdateRate )
 			{
 				FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + Comp[Alt];
-				if ( FakeBaroRelAltitude < 0 ) 
+				if ( FakeBaroRelAltitude < -50 ) 
 					FakeBaroRelAltitude = 0;
 			
 				SimulateCycles = 0;
-			}
 			
+				BaroROC = FakeBaroRelAltitude - BaroRelAltitudeP;
+				BaroRelAltitudeP = FakeBaroRelAltitude;	
+			}
 			BaroRelAltitude = FakeBaroRelAltitude;
 		}					
+		#else 
+
+			AltChange = BaroRelAltitude - BaroRelAltitudeP;
+			Temp = AltChange * AltitudeUpdateRate;
+	
+			if ( Abs( Temp ) > BARO_SANITY_CHECK_DMPS )
+			{
+				BaroRelAltitude = BaroRelAltitudeP;	// use previous value
+				Temp = 0;
+				Stats[BaroFailS]++;
+			}
+
+			Temp = Limit( Temp , -BARO_SANITY_CHECK_DMPS, BARO_SANITY_CHECK_DMPS );
+			BaroROC = SRS16( BaroROC * 31 + Temp, 5 );				
+			BaroRelAltitudeP = BaroRelAltitude;
+
 		#endif // SIMULATE
-
-		AltChange = BaroRelAltitude - BaroRelAltitudeP;
-
-		if ( Abs(AltChange) > BARO_SANITY_CHECK_DMPS )
-		{
-			BaroRelAltitude = BaroRelAltitudeP;	// use previous value
-			Stats[BaroFailS]++;
-		}
-
-		Temp = AltChange * AltitudeUpdateRate;
-		BaroROC = BaroROCFilter(BaroROC, Temp);					
-		BaroRelAltitudeP = BaroRelAltitude;
-		BaroRelAltitudeP = BaroRelAltitude;
 
 		if ( State == InFlight )
 		{
@@ -683,7 +685,7 @@ void GetBaroAltitude(void)
 
 void InitBarometer(void)
 {
-	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = 0;
+	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = SimulateCycles = 0;
 	BaroType = BaroUnknown;
 
 	Comp[Alt] = AltDiffSum = AltDSum = 0;

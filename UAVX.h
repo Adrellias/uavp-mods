@@ -3,9 +3,6 @@
 //#define JIM_MPX_INVERT
 //#define SIX_DOF
 
-//changes outside this rate are deemed sensor/buss errors
-#define BARO_SANITY_CHECK_DMPS	100		// dm/S 20,40,60,80 or 100
-
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -30,7 +27,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -169,7 +166,7 @@
 
 #define LAND_DM						30L		// Decimetres deemed to have landed when below this height
 
-#define ALT_MAX_THR_COMP			40L		// Stick units was 32
+#define ALT_MAX_THR_COMP			80L		// Stick units was 40
 
 #define ALT_INT_WINDUP_LIMIT		16L
 
@@ -238,11 +235,13 @@
 
 #define	THROTTLE_MAX_CURRENT		40L		// Amps total current at full throttle for estimated mAH
 #define	CURRENT_SENSOR_MAX			50L		// Amps range of current sensor - used for estimated consumption - no actual sensor yet.
-#define	THROTTLE_CURRENT_SCALE	((THROTTLE_MAX_CURRENT * 1024L)/(200L * CURRENT_SENSOR_MAX ))
+#define	THROTTLE_CURRENT_SCALE		((THROTTLE_MAX_CURRENT * 1024L)/(200L * CURRENT_SENSOR_MAX ))
 
 #define THROTTLE_SLEW_LIMIT			0		// limits the rate at which the throttle can change (=0 no slew limit, 5 OK)
 #define THROTTLE_MIDDLE				10  	// throttle stick dead zone for baro 
 #define THROTTLE_MIN_ALT_HOLD		75		// min throttle stick for altitude lock
+
+#define THROTTLE_MAX_CRUISE			((RC_MAXIMUM * 60L * OUT_MAXIMUM)/100L) // 60%
 
 // RC
 
@@ -531,7 +530,7 @@ typedef union {
 		AcquireNewPosition:1, 
 		MotorsArmed:1,
 		NavigationActive:1,
-		SticksUnchanged:1,
+		ForceFailsafe:1,
 
 		Signal:1,
 		RCFrameOK:1, 
@@ -770,7 +769,7 @@ extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
 extern int32 GS;
 extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
-extern int16 CruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 extern int16 CurrMaxRollPitch;
@@ -840,7 +839,6 @@ extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
-extern int32 SumGPSRelAltitude, SumBaroRelAltitude;
 
 #ifdef SIMULATE
 extern int32 FakeGPSLongitude, FakeGPSLatitude;
@@ -921,7 +919,7 @@ extern int24 mSClock(void);
 
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, StartTime, AccTimeout, 
-	GPSTimeout, GPSROCUpdate, StickChangeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
+	GPSTimeout, GPSROCUpdate, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
   	TelemetryUpdate, NavActiveTime, 
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
