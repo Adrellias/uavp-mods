@@ -171,6 +171,8 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 void CheckSticksHaveChanged(void)
 {
+	#ifndef TESTING
+
 	static boolean Change;
 	static uint8 c;
 
@@ -233,6 +235,7 @@ void CheckSticksHaveChanged(void)
 				F.ForceFailsafe = State == InFlight; // abort if not navigating
 			}
 	}
+	#endif // !TESTING
 
 } // CheckSticksHaveChanged
 
