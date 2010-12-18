@@ -111,7 +111,7 @@ namespace UAVXGS
             this.RangefinderAltValidBox = new System.Windows.Forms.TextBox();
             this.GPSValidBox = new System.Windows.Forms.TextBox();
             this.NavValidBox = new System.Windows.Forms.TextBox();
-            this.PolarBox = new System.Windows.Forms.TextBox();
+            this.SticksFrozenBox = new System.Windows.Forms.TextBox();
             this.LowBatteryBox = new System.Windows.Forms.TextBox();
             this.ThrottleMovingBox = new System.Windows.Forms.TextBox();
             this.HoldingAltBox = new System.Windows.Forms.TextBox();
@@ -971,7 +971,7 @@ namespace UAVXGS
             this.flowLayoutPanel1.Controls.Add(this.RangefinderAltValidBox);
             this.flowLayoutPanel1.Controls.Add(this.GPSValidBox);
             this.flowLayoutPanel1.Controls.Add(this.NavValidBox);
-            this.flowLayoutPanel1.Controls.Add(this.PolarBox);
+            this.flowLayoutPanel1.Controls.Add(this.SticksFrozenBox);
             this.flowLayoutPanel1.Controls.Add(this.LowBatteryBox);
             this.flowLayoutPanel1.Controls.Add(this.ThrottleMovingBox);
             this.flowLayoutPanel1.Controls.Add(this.HoldingAltBox);
@@ -1094,16 +1094,17 @@ namespace UAVXGS
             this.NavValidBox.Text = "Origin Recorded";
             this.NavValidBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // PolarBox
+            // SticksFrozenBox
             // 
-            this.PolarBox.BackColor = System.Drawing.SystemColors.Window;
-            this.PolarBox.Location = new System.Drawing.Point(118, 107);
-            this.PolarBox.Name = "PolarBox";
-            this.PolarBox.ReadOnly = true;
-            this.PolarBox.Size = new System.Drawing.Size(109, 20);
-            this.PolarBox.TabIndex = 126;
-            this.PolarBox.Text = "Polar Active";
-            this.PolarBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.SticksFrozenBox.AcceptsTab = true;
+            this.SticksFrozenBox.BackColor = System.Drawing.SystemColors.Window;
+            this.SticksFrozenBox.Location = new System.Drawing.Point(118, 107);
+            this.SticksFrozenBox.Name = "SticksFrozenBox";
+            this.SticksFrozenBox.ReadOnly = true;
+            this.SticksFrozenBox.Size = new System.Drawing.Size(109, 20);
+            this.SticksFrozenBox.TabIndex = 126;
+            this.SticksFrozenBox.Text = "Rx Active";
+            this.SticksFrozenBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // LowBatteryBox
             // 
@@ -1804,7 +1805,7 @@ namespace UAVXGS
             // Output2Label
             // 
             this.Output2Label.AutoSize = true;
-            this.Output2Label.Location = new System.Drawing.Point(96, 13);
+            this.Output2Label.Location = new System.Drawing.Point(102, 12);
             this.Output2Label.Name = "Output2Label";
             this.Output2Label.Size = new System.Drawing.Size(13, 13);
             this.Output2Label.TabIndex = 73;
@@ -1813,7 +1814,7 @@ namespace UAVXGS
             // Output3Label
             // 
             this.Output3Label.AutoSize = true;
-            this.Output3Label.Location = new System.Drawing.Point(128, 13);
+            this.Output3Label.Location = new System.Drawing.Point(140, 12);
             this.Output3Label.Name = "Output3Label";
             this.Output3Label.Size = new System.Drawing.Size(13, 13);
             this.Output3Label.TabIndex = 72;
@@ -1822,7 +1823,7 @@ namespace UAVXGS
             // Output1Label
             // 
             this.Output1Label.AutoSize = true;
-            this.Output1Label.Location = new System.Drawing.Point(56, 13);
+            this.Output1Label.Location = new System.Drawing.Point(64, 12);
             this.Output1Label.Name = "Output1Label";
             this.Output1Label.Size = new System.Drawing.Size(13, 13);
             this.Output1Label.TabIndex = 71;
@@ -1831,25 +1832,25 @@ namespace UAVXGS
             // Output5Label
             // 
             this.Output5Label.AutoSize = true;
-            this.Output5Label.Location = new System.Drawing.Point(208, 13);
+            this.Output5Label.Location = new System.Drawing.Point(212, 12);
             this.Output5Label.Name = "Output5Label";
-            this.Output5Label.Size = new System.Drawing.Size(35, 13);
+            this.Output5Label.Size = new System.Drawing.Size(21, 13);
             this.Output5Label.TabIndex = 70;
-            this.Output5Label.Text = "CamP";
+            this.Output5Label.Text = "CP";
             // 
             // Output4Label
             // 
             this.Output4Label.AutoSize = true;
-            this.Output4Label.Location = new System.Drawing.Point(169, 13);
+            this.Output4Label.Location = new System.Drawing.Point(173, 12);
             this.Output4Label.Name = "Output4Label";
-            this.Output4Label.Size = new System.Drawing.Size(36, 13);
+            this.Output4Label.Size = new System.Drawing.Size(22, 13);
             this.Output4Label.TabIndex = 69;
-            this.Output4Label.Text = "CamR";
+            this.Output4Label.Text = "CR";
             // 
             // Output0Label
             // 
             this.Output0Label.AutoSize = true;
-            this.Output0Label.Location = new System.Drawing.Point(18, 13);
+            this.Output0Label.Location = new System.Drawing.Point(26, 12);
             this.Output0Label.Name = "Output0Label";
             this.Output0Label.Size = new System.Drawing.Size(13, 13);
             this.Output0Label.TabIndex = 68;
@@ -1857,7 +1858,7 @@ namespace UAVXGS
             // 
             // OutputT5
             // 
-            this.OutputT5.Location = new System.Drawing.Point(210, 30);
+            this.OutputT5.Location = new System.Drawing.Point(206, 29);
             this.OutputT5.Name = "OutputT5";
             this.OutputT5.ReadOnly = true;
             this.OutputT5.Size = new System.Drawing.Size(32, 20);
@@ -1866,7 +1867,7 @@ namespace UAVXGS
             // 
             // OutputT4
             // 
-            this.OutputT4.Location = new System.Drawing.Point(172, 30);
+            this.OutputT4.Location = new System.Drawing.Point(168, 29);
             this.OutputT4.Name = "OutputT4";
             this.OutputT4.ReadOnly = true;
             this.OutputT4.Size = new System.Drawing.Size(32, 20);
@@ -1875,7 +1876,7 @@ namespace UAVXGS
             // 
             // OutputT3
             // 
-            this.OutputT3.Location = new System.Drawing.Point(122, 30);
+            this.OutputT3.Location = new System.Drawing.Point(130, 29);
             this.OutputT3.Name = "OutputT3";
             this.OutputT3.ReadOnly = true;
             this.OutputT3.Size = new System.Drawing.Size(32, 20);
@@ -1884,7 +1885,7 @@ namespace UAVXGS
             // 
             // OutputT2
             // 
-            this.OutputT2.Location = new System.Drawing.Point(84, 30);
+            this.OutputT2.Location = new System.Drawing.Point(92, 29);
             this.OutputT2.Name = "OutputT2";
             this.OutputT2.ReadOnly = true;
             this.OutputT2.Size = new System.Drawing.Size(32, 20);
@@ -1893,7 +1894,7 @@ namespace UAVXGS
             // 
             // OutputT1
             // 
-            this.OutputT1.Location = new System.Drawing.Point(46, 30);
+            this.OutputT1.Location = new System.Drawing.Point(54, 29);
             this.OutputT1.Name = "OutputT1";
             this.OutputT1.ReadOnly = true;
             this.OutputT1.Size = new System.Drawing.Size(32, 20);
@@ -1902,7 +1903,7 @@ namespace UAVXGS
             // 
             // OutputT0
             // 
-            this.OutputT0.Location = new System.Drawing.Point(8, 30);
+            this.OutputT0.Location = new System.Drawing.Point(16, 29);
             this.OutputT0.Name = "OutputT0";
             this.OutputT0.ReadOnly = true;
             this.OutputT0.Size = new System.Drawing.Size(32, 20);
@@ -2791,7 +2792,7 @@ namespace UAVXGS
         private System.Windows.Forms.TextBox FocusLockedBox;
         private System.Windows.Forms.TextBox Airframe;
         private System.Windows.Forms.NumericUpDown ReplayNumericUpDown;
-        private System.Windows.Forms.TextBox PolarBox;
+        private System.Windows.Forms.TextBox SticksFrozenBox;
         private System.Windows.Forms.GroupBox NavCompBox;
         private System.Windows.Forms.TextBox NavSensitivity;
         private System.Windows.Forms.Label NavSensitivityLabel;

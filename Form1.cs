@@ -513,7 +513,7 @@ namespace UAVXGS
             "AcqPos," +
             "Armed," +
             "NavActive," +
-            "Polar,");
+            "Freeze,");
 
             for (i = 4; i < NoOfFlagBytes; i++)
                 SaveTextLogFileStreamWriter.Write("F[" + i + "],");
@@ -545,10 +545,11 @@ namespace UAVXGS
             {
                 case 0: SaveTextLogFileStreamWriter.Write("MFront, MBack, MRight, MLeft,"); break;// Quadrocopter
                 case 1: SaveTextLogFileStreamWriter.Write("MFront, Steering, MRight, MLeft,"); break;// Tricopter
-                case 2: SaveTextLogFileStreamWriter.Write("M0, M1, M2, M3,"); break;// Hexacopter
-                case 3: SaveTextLogFileStreamWriter.Write("Throttle, Roll, Pitch, Tail,"); break;// Helicopter
-                case 4: SaveTextLogFileStreamWriter.Write("Throttle, RElevon, LEelevon, Rudder,"); break;// Flying Wing
-                case 5: SaveTextLogFileStreamWriter.Write("Throttle, Aileron, Elevator, Rudder,"); break;// Conventional
+                case 2: SaveTextLogFileStreamWriter.Write("M0, M1, M2, M3,"); break;// VTcopter
+                case 3: SaveTextLogFileStreamWriter.Write("TF, TL, TR, BF, BL, BR, "); break;// Y6copter
+                case 4: SaveTextLogFileStreamWriter.Write("Throttle, Roll, Pitch, Tail,"); break;// Helicopter
+                case 5: SaveTextLogFileStreamWriter.Write("Throttle, RElevon, LEelevon, Rudder,"); break;// Flying Wing
+                case 6: SaveTextLogFileStreamWriter.Write("Throttle, Aileron, Elevator, Rudder,"); break;// Conventional
             }
 
             SaveTextLogFileStreamWriter.Write("CamRoll, CamPitch,");
@@ -815,6 +816,58 @@ namespace UAVXGS
             }
         }
 
+        public void DoAirframeLabels()
+        {
+            switch (AirframeT)
+            {
+            case 0: 
+                Output0Label.Text = "F";
+                Output1Label.Text = "B";
+                Output2Label.Text = "R";
+                Output3Label.Text = "L";
+                break;// Quadrocopter
+            case 1: 
+                Output0Label.Text = "F";
+                Output1Label.Text = "S";
+                Output2Label.Text = "R";
+                Output3Label.Text = "L";
+                break;// Tricopter
+            case 2: 
+                Output0Label.Text = "0";
+                Output1Label.Text = "1";
+                Output2Label.Text = "2";
+                Output3Label.Text = "3";
+                break;// VTcopter
+            case 3: 
+                Output0Label.Text = "Th";
+                Output0Label.Text = "TF";
+                Output1Label.Text = "TL";
+                Output2Label.Text = "TR";
+                Output3Label.Text = "BF";
+                Output4Label.Text = "BL";
+                Output5Label.Text = "BR";
+                break;// Y6copter
+            case 4:
+                Output0Label.Text = "Th";
+                Output1Label.Text = "R";
+                Output2Label.Text = "P";
+                Output3Label.Text = "Y";
+                break;// Helicopter
+            case 5: 
+                Output0Label.Text = "Th";
+                Output1Label.Text = "RE";
+                Output2Label.Text = "LE";
+                Output3Label.Text = "R";
+                break;// Flying Wing
+            case 6: 
+                Output0Label.Text = "Th";
+                Output1Label.Text = "A";
+                Output2Label.Text = "E";
+                Output3Label.Text = "R";
+                break;// Conventional
+            }
+        }
+
         public void UAVXReadTelemetry(object sender, EventArgs e)
         {
             byte b, m;
@@ -906,19 +959,21 @@ namespace UAVXGS
                                     case 0: Airframe.Text = "Arm Quadrocopter"; break;
                                     case 1: Airframe.Text = "Arm Tricopter"; break;
                                     case 2: Airframe.Text = "Arm VTCopter"; break;
-                                    case 3: Airframe.Text = "Arm Helicopter"; break;
-                                    case 4: Airframe.Text = "Arm Flying Wing"; break;
-                                    case 5: Airframe.Text = "Arm Conventional"; break;
+                                    case 3: Airframe.Text = "Arm Y6Copter"; break;
+                                    case 4: Airframe.Text = "Arm Helicopter"; break;
+                                    case 5: Airframe.Text = "Arm Flying Wing"; break;
+                                    case 6: Airframe.Text = "Arm Conventional"; break;
                                 }
                             else
                                 switch (AirframeT)
                                 {
                                     case 0: Airframe.Text = "Quadrocopter"; break;
                                     case 1: Airframe.Text = "Tricopter"; break;
-                                    case 2: Airframe.Text = "Hexacopter"; break;
-                                    case 3: Airframe.Text = "Helicopter"; break;
-                                    case 4: Airframe.Text = "Flying Wing"; break;
-                                    case 5: Airframe.Text = "Conventional"; break;
+                                    case 2: Airframe.Text = "VTcopter"; break;
+                                    case 3: Airframe.Text = "Y6copter"; break;
+                                    case 4: Airframe.Text = "Helicopter"; break;
+                                    case 5: Airframe.Text = "Flying Wing"; break;
+                                    case 6: Airframe.Text = "Conventional"; break;
                                 }
 
                             // OrientT 
@@ -1077,9 +1132,9 @@ namespace UAVXGS
                                 FocusLockedBox.BackColor = System.Drawing.Color.LightSteelBlue;
 
                             if ((Flags[3] & 0x80) != 0)
-                                PolarBox.BackColor = System.Drawing.Color.Green;
+                                SticksFrozenBox.BackColor = System.Drawing.Color.Orange;
                             else
-                                PolarBox.BackColor = FlagsGroupBox.BackColor;
+                                SticksFrozenBox.BackColor = System.Drawing.Color.Green;
 
                             StateT = ExtractByte(ref UAVXPacket, 8);
                             switch (StateT)
@@ -1179,39 +1234,7 @@ namespace UAVXGS
                             DUComp.Text = string.Format("{0:n0}", DUCompT * OUTMaximumScale);
                             AltComp.Text = string.Format("{0:n0}", AltCompT * OUTMaximumScale);
 
-                            switch (AirframeT)
-                            {
-                                case 0: Output0Label.Text = "F";
-                                    Output1Label.Text = "B";
-                                    Output2Label.Text = "R";
-                                    Output3Label.Text = "L";
-                                    break;// Quadrocopter
-                                case 1: Output0Label.Text = "F";
-                                    Output1Label.Text = "S";
-                                    Output2Label.Text = "R";
-                                    Output3Label.Text = "L";
-                                    break;// Tricopter
-                                case 2: Output0Label.Text = "FL";
-                                    Output1Label.Text = "FR";
-                                    Output2Label.Text = "R";
-                                    Output3Label.Text = "L";
-                                    break;// Hexacopter
-                                case 3: Output0Label.Text = "Th";
-                                    Output1Label.Text = "R";
-                                    Output2Label.Text = "P";
-                                    Output3Label.Text = "Y";
-                                    break;// Helicopter
-                                case 4: Output0Label.Text = "Th";
-                                    Output1Label.Text = "RE";
-                                    Output2Label.Text = "LE";
-                                    Output3Label.Text = "R";
-                                    break;// Flying Wing
-                                case 5: Output0Label.Text = "Th";
-                                    Output1Label.Text = "A";
-                                    Output2Label.Text = "E";
-                                    Output3Label.Text = "R";
-                                    break;// Conventional
-                            }
+                            DoAirframeLabels();
 
                             OutputT0.Text = string.Format("{0:n0}", OutputT[0] * OUTMaximumScale);
                             OutputT1.Text = string.Format("{0:n0}", OutputT[1] * OUTMaximumScale);
@@ -1241,7 +1264,7 @@ namespace UAVXGS
                             FBAccT = ExtractShort(ref UAVXPacket, 24);
                             DUAccT = ExtractShort(ref UAVXPacket, 26);
 
-                            for (m = 28; m < (28 + 4); m++)
+                            for (m = 28; m < (28 + 6); m++)
                                 OutputT[m - 28] = ExtractByte(ref UAVXPacket, m);
 
                             MissionTimeMilliSecT = ExtractInt24(ref UAVXPacket, 32);
@@ -1287,40 +1310,8 @@ namespace UAVXGS
                             DUComp.Text = string.Format("{0:n0}", DUCompT * OUTMaximumScale);
                             AltComp.Text = string.Format("{0:n0}", AltCompT * OUTMaximumScale);
 
-                            switch (AirframeT)
-                            {
-                                case 0: Output0Label.Text = "F";
-                                    Output1Label.Text = "B";
-                                    Output2Label.Text = "R";
-                                    Output3Label.Text = "L";
-                                    break;// Quadrocopter
-                                case 1: Output0Label.Text = "F";
-                                    Output1Label.Text = "S";
-                                    Output2Label.Text = "R";
-                                    Output3Label.Text = "L";
-                                    break;// Tricopter
-                                case 2: Output0Label.Text = "0";
-                                    Output1Label.Text = "1";
-                                    Output2Label.Text = "2";
-                                    Output3Label.Text = "3";
-                                    break;// Hexacopter
-                                case 3: Output0Label.Text = "Th";
-                                    Output1Label.Text = "R";
-                                    Output2Label.Text = "P";
-                                    Output3Label.Text = "Y";
-                                    break;// Helicopter
-                                case 4: Output0Label.Text = "Th";
-                                    Output1Label.Text = "RE";
-                                    Output2Label.Text = "LE";
-                                    Output3Label.Text = "R";
-                                    break;// Flying Wing
-                                case 5: Output0Label.Text = "Th";
-                                    Output1Label.Text = "A";
-                                    Output2Label.Text = "E";
-                                    Output3Label.Text = "R";
-                                    break;// Conventional
-                            }
-
+                            DoAirframeLabels();
+                            
                             OutputT0.Text = string.Format("{0:n0}", OutputT[0] * OUTMaximumScale);
                             OutputT1.Text = string.Format("{0:n0}", OutputT[1] * OUTMaximumScale);
                             OutputT2.Text = string.Format("{0:n0}", OutputT[2] * OUTMaximumScale);
@@ -1373,6 +1364,9 @@ namespace UAVXGS
                                     break;
                                 case 3: FailState.Text = "Terminated";
                                     FailState.BackColor = System.Drawing.Color.Red;
+                                    break;
+                                case 4: FailState.Text = "Terminating";
+                                    FailState.BackColor = System.Drawing.Color.Orange;
                                     break;
                                 default: FailState.Text = "Unknown"; break;
                             } // switch
@@ -1582,7 +1576,7 @@ namespace UAVXGS
 
                     if (UAVXArm)
                         attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(
-                            -FlightPitch * MILLIRADDEG, FlightRoll * MILLIRADDEG);
+                            FlightPitch * MILLIRADDEG, -FlightRoll * MILLIRADDEG);
                     else
                         attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(
                             -FlightPitch / AttitudeToDegrees, FlightRoll / AttitudeToDegrees);
@@ -1637,7 +1631,7 @@ namespace UAVXGS
             ((Flags[3] & 0x10) >> 4) + "," + // AcquireNewPosition
             ((Flags[3] & 0x20) >> 5) + "," + // MotorsArmed
             ((Flags[3] & 0x40) >> 6) + "," + // NavigationActive
-            ((Flags[3] & 0x80) >> 7) + ","); // UsingPolar
+            ((Flags[3] & 0x80) >> 7) + ","); // Sticks Frozen
 
             for (i = 4; i < NoOfFlagBytes; i++)
                 SaveTextLogFileStreamWriter.Write(Flags[i] + ",");
@@ -1814,9 +1808,6 @@ namespace UAVXGS
             ReplayDelay = 20 - Convert.ToInt16(ReplayNumericUpDown.Text);
         }
 
-
-      
-       
     
     }
 }
