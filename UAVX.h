@@ -26,12 +26,12 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
-	//#define QUADROCOPTER
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
-	#define VTCOPTER
+	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON

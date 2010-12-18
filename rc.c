@@ -224,15 +224,16 @@ void CheckSticksHaveChanged(void)
 		else
 			if ( mSClock() > mS[RxFailsafeTimeout] )
 			{
-				if ( !F.ForceFailsafe && ( State == InFlight ))
+				if ( !F.ForceFailsafe && ( ( State == InFlight ) || ( ( mSClock() - mS[RxFailsafeTimeout])  > 120000 ) ) )
 				{
 					Stats[RCFailsafesS]++;
 					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 					mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
 					DescentComp = 0; // for no Baro case
+					F.ForceFailsafe = true;
 				}
 	
-				F.ForceFailsafe = State == InFlight; // abort if not navigating
+			//	F.ForceFailsafe = State == InFlight; // abort if not navigating
 			}
 	}
 	#endif // !TESTING

@@ -116,6 +116,8 @@ void main(void)
 						DesiredThrottle = 0;
 						SetGPSOrigin();
 						GetHeading();
+    					if ( F.NewCommands )
+							F.LostModel = F.ForceFailsafe;
 					}
 					else
 					{
