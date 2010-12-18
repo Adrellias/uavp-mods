@@ -391,7 +391,7 @@ void InitMotors(void)
 			#endif
 		#endif // TRICOPTER
 		CyclePWM( 0x0f, 5, true);
-		CyclePWM( 0x0f, 50, false);
+		CyclePWM( 0x0f, 10, false);
 	}
 
 	#endif // MULTICOPTER
