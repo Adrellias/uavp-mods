@@ -377,6 +377,7 @@ void InitMotors(void)
 {
 	static uint8 m;
 
+	/*
 	#ifdef MULTICOPTER
 
 	if ( P[ESCType] == ESCPPM )
@@ -395,6 +396,7 @@ void InitMotors(void)
 	}
 
 	#endif // MULTICOPTER
+	*/
 
 	StopMotors();
 
