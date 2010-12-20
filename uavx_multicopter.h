@@ -56,7 +56,7 @@
 	{0,0},				// Acro,	    	32
 	{10,0}, 		    // NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
-	{LY530Gyro,true}, 	// GyroType, 		35c
+	{LY530Gyro,true}, 	// was GyroType, 	35c
 	{ESCPPM,true}, 		// ESCType,			36c
 	{DX7AR7000,true}, 	// TxRxType			37c
 	{2,0},				// NeutralRadius	38
@@ -78,7 +78,7 @@
 	{0,true},			// ServoSense		52c	
 	{3,true},			// CompassOffsetQtr 53c
 	{49,true},			// BatteryCapacity	54c	
-	{LY530Gyro,true},	// was GyroYawType	55c		
+	{0,0},				// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
 	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
 	{24,0},				// Orient			57

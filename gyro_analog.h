@@ -69,7 +69,7 @@ void GyroAnalogTest(void)
 	TxString("\r\n ");
 	ShowGyroType();
 	TxString(" - Gyro Test\r\n");
-	if ( (P[GyroType] == IDG300Gyro ) || (P[GyroType] == LY530Gyro ) ) // 3V gyros
+	if ( (GyroType == IDG300Gyro ) || (GyroType == LY530Gyro ) ) // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
 		{ lv = 20; hv = 30;}

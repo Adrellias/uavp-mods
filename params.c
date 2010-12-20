@@ -79,6 +79,9 @@ void ReadParametersEE(void)
 			InitI2CESCs();
 		}
 
+		InitGyros();
+		InitAccelerometers();
+
 		b = P[ServoSense];
 		for ( i = 0; i < 6; i++ )
 		{
