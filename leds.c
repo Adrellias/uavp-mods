@@ -25,7 +25,7 @@ void LEDsOn(uint8);
 void LEDsOff(uint8);
 void LEDChaser(void);
 
-uint8 LEDShadow, SavedLEDs, LEDPattern = 0;
+uint8 LEDShadow, LEDShadowp, SavedLEDs, LEDPattern = 0;
 boolean PrevHolding = false;
 const uint8 LEDChase[7] = {
 		AUX1M,	
@@ -66,28 +66,34 @@ void SendLEDs(void) // 39.3 uS @ 40MHz
 {
 	static int8	i, s;
 
-	i = LEDShadow;
-	SPI_CS = DSEL_LISL;	
-	SPI_IO = WR_SPI;	// SDA is output
-	SPI_SCL = 0;		// because shift is on positive edge
-	
-	for(s = 8; s ; s--)
+	if ( LEDShadow != LEDShadowp )
 	{
-		if( i & 0x80 )
-			SPI_SDA = 1;
-		else
-			SPI_SDA = 0;
-		i<<=1;
-		Delay10TCY();
-		SPI_SCL = 1;
-		Delay10TCY();
-		SPI_SCL = 0;
+		i = LEDShadow;
+		SPI_CS = DSEL_LISL;	
+		SPI_IO = WR_SPI;	// SDA is output
+		SPI_SCL = 0;		// because shift is on positive edge
+		
+		for(s = 8; s ; s--)
+		{
+			if( i & 0x80 )
+				SPI_SDA = 1;
+			else
+				SPI_SDA = 0;
+			i<<=1;
+			Delay10TCY();
+			SPI_SCL = 1;
+			Delay10TCY();
+			SPI_SCL = 0;
+		}
+	
+		PORTCbits.RC1 = 1;
+		PORTCbits.RC1 = 0;	// latch into drivers
+		SPI_SCL = 1;		// rest state for LISL
+		SPI_IO = RD_SPI;
+		
+		LEDShadowp = LEDShadow;
 	}
 
-	PORTCbits.RC1 = 1;
-	PORTCbits.RC1 = 0;	// latch into drivers
-	SPI_SCL = 1;		// rest state for LISL
-	SPI_IO = RD_SPI;
 } // SendLEDs
 
 #endif // UAVX_HW

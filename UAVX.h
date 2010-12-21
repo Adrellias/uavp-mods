@@ -1023,7 +1023,7 @@ extern void LEDsOn(uint8);
 extern void LEDsOff(uint8);
 extern void LEDChaser(void);
 
-extern uint8 LEDShadow, SavedLEDs, LEDPattern;
+extern uint8 LEDShadow, LEDShadowp, SavedLEDs, LEDPattern;
 
 //______________________________________________________________________________________________
 
@@ -1075,7 +1075,7 @@ extern void OutSignals(void);
 extern void InitI2CESCs(void);
 extern void StopMotors(void);
 extern void ExercisePWM(void);
-extern void CyclePWM(uint8, int16, boolean);
+extern void PulsePWM(uint8, int16);
 extern void InitMotors(void);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
