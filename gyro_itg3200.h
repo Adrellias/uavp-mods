@@ -76,13 +76,36 @@ void BlockReadITG3200(void)
 	r = ReadI2CString(G, 6);
 	I2CStop();
 
-	GX.b0 = G[1]; GX.b1 = G[0];
-	GY.b0 = G[3]; GY.b1 = G[2];
-	GZ.b0 = G[5]; GZ.b1 = G[4];
+	// Roll Right +, Pitch Up +, Yaw ACW +
+
+	#ifdef NINE_DOF
+
+		// Roll
+		GX.b0 = G[1]; GX.b1 = G[0]; GX.i16 = -GX.i16;
+
+		// Pitch
+		GY.b0 = G[3]; GY.b1 = G[2]; 
+
+		// Yaw
+		GZ.b0 = G[5]; GZ.b1 = G[4];
+		GZ.i16 = - GZ.i16;
+
+	#else
+
+		// Roll
+		GX.b0 = G[1]; GX.b1 = G[0];
+
+		// Pitch
+		GY.b0 = G[3]; GY.b1 = G[2]; GY.i16 = - GY.i16;
+
+		// Yaw
+		GZ.b0 = G[5]; GZ.b1 = G[4]; GZ.i16 = - GZ.i16;
+
+	#endif // NINE_DOF
 
 	GyroADC[Roll] = GX.i16;
-	GyroADC[Pitch] = -GY.i16;
-	GyroADC[Yaw] = -GZ.i16;
+	GyroADC[Pitch] = GY.i16;
+	GyroADC[Yaw] = GZ.i16;
 
 	return;	
 

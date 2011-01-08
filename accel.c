@@ -205,21 +205,38 @@ void ReadADXL345Acc(void) {
 	r = ReadI2CString(b, 6);
 	I2CStop();
 
-	// SparkFun 6DOF & ITG3200 breakouts pins forward components up
+	// Ax LR, Ay DU, Az FB
 
-    Az.b1 = b[1];
-	Az.b0 = b[0];
+	#ifdef NINE_DOF
+		// SparkFun 9DOF breakouts pins forward components up
 
-    Ay.b1 = b[5];
-	Ay.b0 = b[4];
+		// Ax LR
+		Ax.b1 = b[1]; Ax.b0 = b[0]; Ax.i16 = -Ax.i16;	
+	    
+		// Ay DU	
+	    Ay.b1 = b[5]; Ay.b0 = b[4];
 
-    Ax.b1 = b[3]; 
-	Ax.b0 = b[2];
+		// Az FB	
+	    Az.b1 = b[3]; Az.b0 = b[2];
+	
+	#else 
+		// SparkFun 6DOF & ITG3200 breakouts pins forward components up
+
+		// Ax LR	    	
+	    Ax.b1 = b[3]; Ax.b0 = b[2];
+	
+		// Ay DU
+	    Ay.b1 = b[5]; Ay.b0 = b[4];
+
+		// Az FB
+		Az.b1 = b[1]; Az.b0 = b[0];	
+
+	#endif // NINE_DOF
   
   	Ax.i16 *= 4; // LR
   	Ay.i16 *= 4; // DU
   	Az.i16 *= 4; // FB
-	
+
 	return;
 
 SGerror:

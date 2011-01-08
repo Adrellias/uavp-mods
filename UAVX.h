@@ -1,7 +1,7 @@
 
-
 //#define JIM_MPX_INVERT
 //#define SIX_DOF
+#define NINE_DOF
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -41,6 +41,7 @@
 
 #ifdef EXPERIMENTAL
 //	#define UAVXBOARD
+	#define NINE_DOF
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW
