@@ -361,6 +361,7 @@ void PulsePWM(uint8 m, int16 Cycles)
 		Delay1mS(20);
 	}
 
+	ALL_LEDS_OFF;
 	RestoreLEDs();
 } // PulsePWM
 

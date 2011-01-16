@@ -1,7 +1,6 @@
 
 //#define JIM_MPX_INVERT
-//#define SIX_DOF
-#define NINE_DOF
+//#define THREE_DOF		// ITG3200 ONLY
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -42,6 +41,7 @@
 #ifdef EXPERIMENTAL
 //	#define UAVXBOARD
 	#define NINE_DOF
+	//#define HMC5843 // not commissioned
 #endif // EXPERIMENTAL
 
 #ifdef I2C_HW
@@ -721,7 +721,6 @@ extern int24 FakeBaroRelAltitude;
 
 // compass.c
 
-#define COMPASS_I2C_ID		0x42		// I2C slave address
 #define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz

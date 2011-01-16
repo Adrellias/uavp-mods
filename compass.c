@@ -33,27 +33,18 @@ void InitCompass(void);
 i24u 	Compass;
 int16 	HeadingFilterA;
 i32u 	HeadingValF;
-
-int16 GetCompass(void)
-{
-	static i16u CompassVal;
-
-	I2CStart();
-	F.CompassMissRead = WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK; 
-	CompassVal.b1 = ReadI2CByte(I2C_ACK);
-	CompassVal.b0 = ReadI2CByte(I2C_NACK);
-	I2CStop();
-
-	return ( CompassVal.i16 );
-} // GetCompass
+int16 	MagHeading;
 
 void GetHeading(void)
 {
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
-		Heading = GetCompass();
-		Heading = Make2Pi((int16) ConvertDDegToMPi(Heading) - CompassOffset);
+		MagHeading = GetCompass();
+		Heading = Make2Pi(MagHeading - CompassOffset);
 
+		if ( Abs ( Heading - HeadingValF.iw1 ) > MILLIPI )
+			HeadingValF.iw1 = Heading;
+		
 		LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
@@ -80,6 +71,150 @@ void GetHeading(void)
 
 } // GetHeading
 
+void InitHeading(void)
+{
+	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
+	HeadingValF.i32 = 0;
+
+	MagHeading = GetCompass();
+	HeadingValF.iw1 = Heading = Make2Pi( MagHeading - CompassOffset );
+
+	#ifdef SIMULATE
+		FakeHeading = Heading = 0;
+	#endif // SIMULATE
+	DesiredHeading = Heading;
+
+} // InitHeading
+
+#ifdef HMC5843_DO_NOT_USE_FOR_PIC_VERSION
+
+//________________________________________________________________________________________
+
+// HMC5843 3 Axis Magnetometer
+
+#define HMC5843_ID      0x3C        // 0x1E 9DOF
+
+int16 Mag[3];
+
+int16 GetCompass(void) {
+    static char b[6];
+    static i16u X, Y, Z;
+    static uint8 r;
+    static int16 mx, my;
+    static int16 CRoll, SRoll, CPitch, SPitch;
+	static int16 CompassVal;
+
+    I2CStart();
+    r = WriteI2CByte(HMC5843_ID);
+    r = WriteI2CByte(0x03); // point to data
+    I2CStop();
+
+	I2CStart();	
+	if( WriteI2CByte(HMC5843_ID+1) != I2C_ACK ) goto SGerror;
+	r = ReadI2CString(b, 6);
+	I2CStop();
+
+    X.b1 = b[0]; X.b0 = b[1];
+    Y.b1 = b[2]; Y.b0 = b[3];
+    Z.b1 = b[4]; Z.b0 = b[5];
+
+    Mag[LR] = X.i16;     // Y axis (internal sensor x axis)
+    Mag[FB] = -Y.i16;    // X axis (internal sensor y axis)
+    Mag[DU] = -Z.i16;    // Z axis
+
+	// UNFORTUNATELY THE ANGLE ESTIMATES ARE NOT VALID FOR THE PIC VERSION
+	// AS THEY ARE NOT BOUNDED BY +/- Pi
+    CRoll = int16cos(Angle[Roll]);
+    SRoll = int16sin(Angle[Roll]);
+    CPitch = int16cos(Angle[Pitch]);
+    SPitch = int16sin(Angle[Pitch]);
+
+    // Tilt compensated Magnetic field X:
+    mx = Mag[0] * CPitch + Mag[1] * SRoll * SPitch + Mag[2] * CRoll * SPitch;
+
+    // Tilt compensated Magnetic field Y:
+    my =  Mag[1] * CRoll - Mag[2] * SRoll;
+
+    // Magnetic Heading
+    CompassVal = int32atan2( -my, mx );
+
+    F.CompassValid = true;
+    return ( CompassVal );
+
+SGerror:
+	F.CompassValid = false;
+	return ( 0 );
+
+} // GetCompass
+
+void CalibrateCompass(void) {
+
+} // CalibrateCompass
+
+void DoCompassTest(void) {
+	int32 Temp;
+
+    TxString("\r\nCompass test (HMC5843)\r\n\r\n");
+
+    GetHeading();
+
+    TxString("Mag:\t");
+    TxVal32(Mag[LR], 0, HT);
+    TxVal32(Mag[FB], 0, HT);
+    TxVal32(Mag[DU], 0, HT);
+    TxNextLine();
+    TxNextLine();
+
+    TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);
+    TxString(" deg (Compass)\r\n");
+    TxVal32(ConvertMPiToDDeg(Heading), 1, 0);
+    TxString(" deg (True)\r\n");
+} // DoCompassTest
+
+void InitCompass(void) {
+    uint8 r;
+
+    I2CStart();
+    F.CompassValid = !(WriteI2CByte(HMC5843_ID) != I2C_ACK);
+    I2CStop();
+
+	Delay1mS(COMPASS_TIME_MS);
+
+	if ( F.CompassValid ) {
+
+	    I2CStart();
+	    r = WriteI2CByte(HMC5843_ID);
+	    r = WriteI2CByte(0x02);
+	    r = WriteI2CByte(0x00);   // Set continuous mode (default to 10Hz)
+	    I2CStop();
+
+		Delay1mS(COMPASS_TIME_MS);
+	}
+else TxString("zzzz");
+
+} // InitCompass
+
+#else
+
+//________________________________________________________________________________________
+
+// HMC6352 Compass
+
+#define HMC6352_ID             0x42
+
+int16 GetCompass(void)
+{
+	static i16u CompassVal;
+
+	I2CStart();
+	F.CompassMissRead = WriteI2CByte(HMC6352_ID+1) != I2C_ACK; 
+	CompassVal.b1 = ReadI2CByte(I2C_ACK);
+	CompassVal.b0 = ReadI2CByte(I2C_NACK);
+	I2CStop();
+
+	return ( ConvertDDegToMPi( CompassVal.i16 ) );
+} // GetCompass
+
 static uint8 CP[9];
 
 #ifdef TESTING
@@ -93,7 +228,7 @@ void GetCompassParameters(void)
 	uint8 r;
 
 	I2CStart();
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
@@ -108,7 +243,7 @@ void GetCompassParameters(void)
 		Delay1mS(10);
 
 		I2CStart();
-		if ( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+		if ( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 		if ( WriteI2CByte('r')  != I2C_ACK ) goto CTerror;
 		if ( WriteI2CByte(r)  != I2C_ACK ) goto CTerror;
 		I2CStop();
@@ -116,7 +251,7 @@ void GetCompassParameters(void)
 		Delay1mS(10);
 
 		I2CStart();
-		if( WriteI2CByte(COMPASS_I2C_ID+1) != I2C_ACK ) goto CTerror;
+		if( WriteI2CByte(HMC6352_ID+1) != I2C_ACK ) goto CTerror;
 		CP[r] = ReadI2CByte(I2C_NACK);
 		I2CStop();
 	}
@@ -136,11 +271,12 @@ void DoCompassTest(void)
 {
 	uint16 v, prev;
 	int16 Temp;
+	uint8 i;
 
-	TxString("\r\nCompass test\r\n");
+	TxString("\r\nCompass test (HMC6352)\r\n");
 
 	I2CStart();
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(TEST_COMP_OPMODE) != I2C_ACK ) goto CTerror;
@@ -149,7 +285,7 @@ void DoCompassTest(void)
 	Delay1mS(1);
 
 	I2CStart(); // Do Set/Reset now		
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
@@ -212,14 +348,13 @@ void DoCompassTest(void)
 
 	Delay1mS(COMPASS_TIME_MS);
 
-	Temp = GetCompass();
+    GetHeading();
 	if ( F.CompassMissRead ) goto CTerror;
 
-	TxVal32((int32)Temp, 1, 0);
-	TxString(" deg Corrected to ");
-	Temp = Make2Pi((int16) ConvertDDegToMPi(Temp) - CompassOffset);
-	TxVal32(((int32)Temp * 180L)/CENTIPI, 1, 0);
-	TxString(" deg\r\n");
+    TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);
+    TxString(" deg (Compass)\r\n");
+    TxVal32(ConvertMPiToDDeg(Heading), 1, 0);
+    TxString(" deg (True)\r\n");
 	
 	return;
 CTerror:
@@ -233,7 +368,7 @@ void CalibrateCompass(void)
 	while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
 
 	I2CStart(); // Do Set/Reset now		
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CCerror;
 	if( WriteI2CByte('O')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
@@ -241,7 +376,7 @@ void CalibrateCompass(void)
 
 	// set Compass device to Calibration mode 
 	I2CStart();
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CCerror;
 	if( WriteI2CByte('C')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
@@ -250,7 +385,7 @@ void CalibrateCompass(void)
 
 	// set Compass device to End-Calibration mode 
 	I2CStart();
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CCerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CCerror;
 	if( WriteI2CByte('E')  != I2C_ACK ) goto CCerror;
 	I2CStop();
 
@@ -268,11 +403,8 @@ CCerror:
 
 #endif // TESTING
 
-void InitCompass(void)
+void InitCompass(void) 
 {
-
-	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
-	HeadingValF.i32 = 0;
 
 	// 20Hz continuous read with periodic reset.
 	#ifdef SUPPRESS_COMPASS_SR
@@ -283,7 +415,7 @@ void InitCompass(void)
 
 	// Set device to Compass mode 
 	I2CStart();
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('G')  != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(0x74) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte(COMP_OPMODE) != I2C_ACK ) goto CTerror;
@@ -292,14 +424,14 @@ void InitCompass(void)
 	Delay1mS(1);
 
 	I2CStart(); // save operation mode in EEPROM
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('L')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
 	Delay1mS(1);
 
 	I2CStart(); // Do Bridge Offset Set/Reset now
-	if( WriteI2CByte(COMPASS_I2C_ID) != I2C_ACK ) goto CTerror;
+	if( WriteI2CByte(HMC6352_ID) != I2C_ACK ) goto CTerror;
 	if( WriteI2CByte('O')  != I2C_ACK ) goto CTerror;
 	I2CStop();
 
@@ -317,19 +449,6 @@ CTerror:
 	I2CStop();
 } // InitCompass
 
-void InitHeading(void)
-{
-	static int16 CompassVal;
 
-	HeadingValF.i32 = 0;
-	CompassVal = GetCompass();
-	HeadingValF.iw1 = Make2Pi((int16) ConvertDDegToMPi(CompassVal) - CompassOffset);
-
-	#ifdef SIMULATE
-		FakeHeading = Heading = 0;
-	#endif // SIMULATE
-	DesiredHeading = Heading;
-
-} // InitHeading
-
+#endif // HMC6352
 

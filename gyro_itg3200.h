@@ -36,11 +36,11 @@
 #define ITG_GZ_L	0x22
 #define ITG_PWR_M	0x3E
 
-#ifdef SIX_DOF
-	#define ITG_ID 	0xD0
-#else
+#ifdef THREE_DOF
 	#define ITG_ID 	0xD2
-#endif // SIX_DOF
+#else
+	#define ITG_ID 	0xD0
+#endif // THREE_DOF
 #define ITG_R 		(ITG_ID+1)	
 #define ITG_W 		ITG_ID
 
