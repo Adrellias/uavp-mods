@@ -45,6 +45,7 @@ const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 2,0,1,3,4,5,6 },	// Futaba Th 3/R617FS
 	{ 4,0,2,3,5,1,6 },	// Spektrum DX7a/AR7000
 	{ 2,0,1,3,4,6,5 }, 	// External decoder (Futaba Thr 3 6/7 swap)
+	{ 5,0,3,6,2,1,4 },	// UNDEFINED Spektrum DX7/AR7000
 	{ 2,0,1,3,4,5,6 }	// Custom
 //{ 4,0,2,1,3,5,6 }	// Custom
 	};
@@ -69,6 +70,7 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 		true,	// Futaba Thr 3/R617FS
 		true, 	// Spektrum DX7a/AR7000
 		false, 	// External decoder (Futaba Ch3 Throttle)
+		true,	// UNKNOWN using Spektrum DX7/AR7000
 		true	// custom Tx/Rx combination
 	};
 

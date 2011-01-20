@@ -58,7 +58,7 @@
 	{0,true},			// NavMagVar,		34c
 	{LY530Gyro,true}, 	// was GyroType, 	35c
 	{ESCPPM,true}, 		// ESCType,			36c
-	{DX7AR7000,true}, 	// TxRxType			37c
+	{UnknownTxRx,true}, 	// TxRxType			37c
 	{2,0},				// NeutralRadius	38
 	{30,true},			// PercentNavSens6Ch	39
 	{1,true},			// CamRollTrim,		40c

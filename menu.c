@@ -193,6 +193,7 @@ void ShowSetup(boolean h)
 		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 		case DX7aAR7000: TxString("Spektrum DX7a & AR7000 {"); break;
 		case ExternalDecoder: TxString("External Decoder {"); break;
+		case UnknownTxRx: TxString("UNKNOWN {"); break;
 		default: ;
 	}
 
@@ -201,18 +202,19 @@ void ShowSetup(boolean h)
 	if ( F.UsingSerialPPM )
 		ShowRxSetup();
 	else
-	{	
-		for ( i = 0; i < RC_CONTROLS; i++)
-			TxChar(RxChMnem[RMap[i]]);
-		
-		TxString("} connect {");
-		
-		for ( i = 0; i < RC_CONTROLS; i+=2)
-		{
-			TxChar(RxChMnem[RMap[i]]);
-			TxChar(' ');
+		if ( P[TxRxType] != UnknownTxRx )	
+		{	
+			for ( i = 0; i < RC_CONTROLS; i++)
+				TxChar(RxChMnem[RMap[i]]);
+			
+			TxString("} connect {");
+			
+			for ( i = 0; i < RC_CONTROLS; i+=2)
+			{
+				TxChar(RxChMnem[RMap[i]]);
+				TxChar(' ');
+			}
 		}
-	}
 	TxChar('}');
 	if (( P[TxRxType] == DX7AR6200 ) || ( P[TxRxType] == DX6iAR6200))
 		TxString(" Mix Rudder to Aux1/Flaps ");
@@ -243,12 +245,14 @@ void ShowSetup(boolean h)
 		TxString("\tManual Nav Alt Hold CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
+	if ( P[TxRxType] == UnknownTxRx )
+		TxString("\tTX/RX TYPE - combination not set\r\n");
 	#ifdef TESTING
 		TxString("\tTEST VERSION - No Motors\r\n");
 	#endif // TESTING
 
 	if ( !F.ParametersValid )
-		TxString("\tINVALID flight paramters (PID)!\r\n");
+		TxString("\tINVALID flight parameters (PID)!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
 		TxString("\tBarometer: OFFLINE\r\n");
