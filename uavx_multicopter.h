@@ -81,9 +81,9 @@
 	{0,0},				// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
 	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
-	{24,0},				// Orient			57
+	{24,true},				// Orient			57
 	#else	
-	{0,0},				// Orient			57
+	{0,true},				// Orient			57
 	#endif // TRICOPTER | VTCOPTER | Y6COPTER			
 	
 	{12,0},				// NavYawLimit		58

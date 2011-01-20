@@ -81,9 +81,9 @@
 	{LY530Gyro,true},	// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
 	#if (defined  TRICOPTER) | (defined VTCOPTER )
-	{24,0},				// Orient			57
+	{24,true},				// Orient			57
 	#else	
-	{0,0},				// Orient			57
+	{0,true},				// Orient			57
 	#endif // TRICOPTER | VTCOPTER				
 	
 	{12,0},				// NavYawLimit		58
