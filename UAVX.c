@@ -152,6 +152,7 @@ void main(void)
 					break;
 				case Shutdown:
 					// wait until arming switch is cycled
+					F.LostModel = true;
 					DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
 					StopMotors();
 					break;

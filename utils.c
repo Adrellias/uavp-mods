@@ -163,9 +163,12 @@ void DoStartingBeepsWithOutput(uint8 b)
 	DoBeep100mSWithOutput(8,0);
 } // DoStartingBeeps
 
+boolean BeeperOn = false;
+
 void CheckAlarms(void)
 {
 	static int16 Temp;
+	static int16 BeeperOffTime, BeeperOnTime;
 
 	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
 	BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
@@ -182,34 +185,41 @@ void CheckAlarms(void)
 
 	if ( F.BeeperInUse )
 	{
-		if( F.LowBatt ) // repeating beep
-			if( ( mSClock() & 0x000200) == 0 )
-			{
-				Beeper_ON;
-				LEDRed_ON;
-			}
-			else
-			{
-				Beeper_OFF;
-				LEDRed_OFF;
-			}	
+		if( F.LowBatt ) 
+		{
+			BeeperOffTime = 500;
+			BeeperOnTime = 500;
+		}	
 		else
-			if ( F.LostModel ) // 2 beeps with interval
-				if( ( mSClock() & 0x000400) == 0 )
+			if ( F.LostModel )
+			{
+				if ( State == Shutdown )
 				{
-					Beeper_ON;
-					LEDRed_ON;
+					BeeperOffTime = 4750;
+					BeeperOnTime = 250;
 				}
 				else
 				{
-					Beeper_OFF;
-					LEDRed_OFF;
-				}	
-			else
-				{
-					Beeper_OFF;
-					LEDRed_OFF;
-				}
+					BeeperOffTime = 125;
+					BeeperOnTime = 125;
+				}		
+			}
+
+		if ( (mSClock() > mS[BeeperUpdate]) && BeeperOn )
+		{
+				mS[BeeperUpdate] = mSClock() + BeeperOffTime;
+				Beeper_OFF;
+				LEDRed_OFF;	
+				BeeperOn = false;				
+		}
+		else
+			if ( (mSClock() > mS[BeeperUpdate]) && !BeeperOn )
+			{
+				mS[BeeperUpdate] = mSClock() + BeeperOnTime;
+				Beeper_ON;
+				LEDRed_ON;	
+				BeeperOn = true;	
+			}	
 	}	
 	#ifdef NAV_ACQUIRE_BEEPER
 	else

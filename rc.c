@@ -173,6 +173,10 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 void CheckSticksHaveChanged(void)
 {
+
+// DISABLED AS UNSAFE ON THE BENCH
+#ifdef ENABLE_STICK_CHANGE_FAILSAFE
+
 	#ifndef TESTING
 
 	static boolean Change;
@@ -239,6 +243,12 @@ void CheckSticksHaveChanged(void)
 			}
 	}
 	#endif // !TESTING
+
+#else
+
+	F.ForceFailsafe = false;
+
+#endif // ENABLE_STICK_CHANGE_FAILSAFE
 
 } // CheckSticksHaveChanged
 

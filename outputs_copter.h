@@ -24,7 +24,7 @@ void OutSignals(void)
 	// Interrupts are enabled during the first part which uses TMR0.  TMR0 is monitored until 
 	// there is just sufficient time for one remaining interrupt latency before disabling 
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
-	// remaining time AND conditionally disabling the interupt. 
+	// remaining time AND conditionally disabling the interrupt. 
 	static int8 m;
 	static uint8 r;
 	static i16u SaveTimer0;

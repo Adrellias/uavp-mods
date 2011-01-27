@@ -246,7 +246,7 @@ void ShowSetup(boolean h)
 
 	TxString("\r\nALARM (if any):\r\n");
 	if ( P[TxRxType] == UnknownTxRx )
-		TxString("\tTX/RX TYPE - combination not set\r\n");
+		TxString("\tTx/Rx TYPE not set\r\n");
 	#ifdef TESTING
 		TxString("\tTEST VERSION - No Motors\r\n");
 	#endif // TESTING
@@ -255,21 +255,21 @@ void ShowSetup(boolean h)
 		TxString("\tINVALID flight parameters (PID)!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
-		TxString("\tBarometer: OFFLINE\r\n");
+		TxString("\tBarometer OFFLINE\r\n");
 	if ( BaroRetries >= BARO_INIT_RETRIES )
 		TxString("\tBaro Init: FAILED\r\n");
 
 	if ( !F.RangefinderAltitudeValid )
-		TxString("\tRangefinder: OFFLINE\r\n");
+		TxString("\tRangefinder OFFLINE\r\n");
 
 	if ( F.GyroFailure )
-		TxString("\tGyro: FAILURE\r\n");
+		TxString("\tGyro FAILURE\r\n");
 
 	if ( !F.AccelerationsValid )
-		TxString("\tAccelerometers: OFFLINE\r\n");
+		TxString("\tAccelerometers OFFLINE\r\n");
 
 	if ( !F.CompassValid )
-		TxString("\tCompass: OFFLINE\r\n");
+		TxString("\tCompass OFFLINE\r\n");
 
 	if ( !F.Signal )
 		TxString("\tBad EPAs or Tx switched off?\r\n");

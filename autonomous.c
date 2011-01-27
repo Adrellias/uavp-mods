@@ -436,15 +436,18 @@ void DoNavigation(void)
 				break;
 			} // switch NavState
 	}
+	#ifdef ENABLE_STICK_CHANGE_FAILSAFE
 	else 
-    	if ( F.ForceFailsafe && F.NewCommands )
+    	if ( F.ForceFailsafe && F.NewCommands  && ( StickThrottle >= IdleThrottle ) )
 		{
 			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
 			F.LostModel = true;
 			DoFailsafeLanding();
 		}
+	#endif // ENABLE_STICK_CHANGE_FAILSAFE
 		else // kill nav correction immediately
 		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0; // zzz
+
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 

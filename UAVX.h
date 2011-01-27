@@ -25,7 +25,7 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -118,6 +118,9 @@
 	#define PID_CYCLE_MS			5		// mS 200Hz
 #endif // CLOCK_16MHZ
 
+// DISABLED AS UNSAFE ON BENCH 
+#define ENABLE_STICK_CHANGE_FAILSAFE
+
 #define FAILSAFE_TIMEOUT_MS			1000L 	// mS. hold last "good" settings and then restore flight or abort
 #define ABORT_TIMEOUT_GPS_MS		5000L	// mS. go to descend on position hold if GPS valid.
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
@@ -131,7 +134,7 @@
 #define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
 
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_LAND_TIMEOUT_MS		15000L	// mS. Shutdown throttle if descent lasts too long
+#define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
 
 #define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
@@ -165,7 +168,7 @@
 // the range within which throttle adjustment is proportional to altitude error
 #define ALT_BAND_DM					50L		// Decimetres
 
-#define LAND_DM						30L		// Decimetres deemed to have landed when below this height
+#define LAND_DM						100L	// Decimetres deemed to have landed when below this height
 
 #define ALT_MAX_THR_COMP			80L		// Stick units was 40
 
@@ -920,7 +923,7 @@ extern int24 mSClock(void);
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, StartTime, AccTimeout, 
 	GPSTimeout, GPSROCUpdate, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
-  	TelemetryUpdate, NavActiveTime, 
+  	TelemetryUpdate, NavActiveTime, BeeperUpdate,
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
