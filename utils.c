@@ -163,8 +163,6 @@ void DoStartingBeepsWithOutput(uint8 b)
 	DoBeep100mSWithOutput(8,0);
 } // DoStartingBeeps
 
-boolean BeeperOn = false;
-
 void CheckAlarms(void)
 {
 	static int16 Temp;
@@ -181,44 +179,40 @@ void CheckAlarms(void)
 	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
 	F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
 
-	F.BeeperInUse = F.LowBatt || F.LostModel;
+	F.BeeperInUse = F.LowBatt || F.LostModel  || (State == Shutdown);
 
 	if ( F.BeeperInUse )
 	{
 		if( F.LowBatt ) 
 		{
-			BeeperOffTime = 500;
-			BeeperOnTime = 500;
+			BeeperOffTime = 750;
+			BeeperOnTime = 250;
 		}	
 		else
-			if ( F.LostModel )
+			if ( State == Shutdown )
 			{
-				if ( State == Shutdown )
-				{
-					BeeperOffTime = 4750;
-					BeeperOnTime = 250;
-				}
-				else
+				BeeperOffTime = 4750;
+				BeeperOnTime = 250;
+			}
+			else
+				if ( F.LostModel )
 				{
 					BeeperOffTime = 125;
-					BeeperOnTime = 125;
-				}		
-			}
+					BeeperOnTime = 125;		
+				}
 
-		if ( (mSClock() > mS[BeeperUpdate]) && BeeperOn )
+		if ( (mSClock() > mS[BeeperUpdate]) && BEEPER_IS_ON )
 		{
 				mS[BeeperUpdate] = mSClock() + BeeperOffTime;
 				Beeper_OFF;
-				LEDRed_OFF;	
-				BeeperOn = false;				
+				LEDRed_OFF;					
 		}
 		else
-			if ( (mSClock() > mS[BeeperUpdate]) && !BeeperOn )
+			if ( (mSClock() > mS[BeeperUpdate]) && BEEPER_IS_OFF )
 			{
 				mS[BeeperUpdate] = mSClock() + BeeperOnTime;
 				Beeper_ON;
-				LEDRed_ON;	
-				BeeperOn = true;	
+				LEDRed_ON;		
 			}	
 	}	
 	#ifdef NAV_ACQUIRE_BEEPER

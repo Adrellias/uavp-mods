@@ -217,6 +217,7 @@ void CheckSticksHaveChanged(void)
 			mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
 			mS[NavStateTimeout] = mSClock();
 			F.ForceFailsafe = false;
+
 			if ( FailState == MonitoringRx )
 			{
 				if ( F.LostModel )
@@ -226,6 +227,7 @@ void CheckSticksHaveChanged(void)
 					DescentComp = 0;
 				}
 			}
+
 		}
 		else
 			if ( mSClock() > mS[RxFailsafeTimeout] )

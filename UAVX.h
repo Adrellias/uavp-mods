@@ -125,6 +125,7 @@
 #define ABORT_TIMEOUT_GPS_MS		5000L	// mS. go to descend on position hold if GPS valid.
 #define ABORT_TIMEOUT_NO_GPS_MS		0L		// mS. go to descend on position hold if GPS valid.  
 #define ABORT_UPDATE_MS				1000L	// mS. retry period for RC Signal and restore Pilot in Control
+#define ARMED_TIMEOUT_MS			150000L	// mS. automatic disarming if armed for this long and landed
 
 #define	ALT_DESCENT_UPDATE_MS		1000L	// mS time between throttle reduction clicks in failsafe descent without baro	
 
@@ -923,7 +924,7 @@ extern int24 mSClock(void);
 enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, StartTime, AccTimeout, 
 	GPSTimeout, GPSROCUpdate, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
-  	TelemetryUpdate, NavActiveTime, BeeperUpdate,
+  	TelemetryUpdate, NavActiveTime, BeeperUpdate, ArmedTimeout,
 	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
@@ -1017,7 +1018,10 @@ extern void ConfigureESCs(void);
 #define LEDGreen_TOG	if( (LEDShadow&GreenM) == (uint8)0 ) LEDsOn(GreenM); else LEDsOff(GreenM)
 #define Beeper_OFF		LEDsOff(BeeperM)
 #define Beeper_ON		LEDsOn(BeeperM)
-#define Beeper_TOG		if( (LEDShadow&BeeperM) == (uint8)0 ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
+
+#define BEEPER_IS_ON       ((LEDShadow&BeeperM)!=(uint8)0)
+#define BEEPER_IS_OFF      ((LEDShadow&BeeperM)==(uint8)0)
+#define Beeper_TOG		if( BEEPER_IS_ON ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
 
 extern void SaveLEDs(void);
 extern void RestoreLEDs(void);

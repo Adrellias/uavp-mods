@@ -91,6 +91,7 @@ void main(void)
 				case Starting:	// this state executed once only after arming
 
 					LEDYellow_OFF;
+					F.LostModel = false;
 
 					if ( !F.FirstArmed )
 					{
@@ -108,32 +109,35 @@ void main(void)
 					ZeroStats();
 					DoStartingBeepsWithOutput(3);
 
+					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
 					State = Landed;
 					break;
 				case Landed:
-					if ( StickThrottle < IdleThrottle )
-					{
-						DesiredThrottle = 0;
-						SetGPSOrigin();
-						GetHeading();
-    					if ( F.NewCommands )
-							F.LostModel = F.ForceFailsafe;
-					}
-					else
-					{
-						#ifdef SIMULATE
-						FakeBaroRelAltitude = 0;
-						#endif // SIMULATE						
-						LEDPattern = 0;
-						mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
-						Stats[RCGlitchesS] = RCGlitches; // start of flight
-						SaveLEDs();
-						if ( ParameterSanityCheck() )
-							State = InFlight;
+					if ( mSClock() > mS[ArmedTimeout] )
+						State = Shutdown;
+					else	
+						if ( StickThrottle < IdleThrottle )
+						{
+							DesiredThrottle = 0;
+							SetGPSOrigin();
+							GetHeading();
+	    					if ( F.NewCommands )
+								F.LostModel = F.ForceFailsafe;
+						}
 						else
-							ALL_LEDS_ON;	
-					}
-						
+						{
+							#ifdef SIMULATE
+							FakeBaroRelAltitude = 0;
+							#endif // SIMULATE						
+							LEDPattern = 0;
+							mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
+							Stats[RCGlitchesS] = RCGlitches; // start of flight
+							SaveLEDs();
+							if ( ParameterSanityCheck() )
+								State = InFlight;
+							else
+								ALL_LEDS_ON;	
+						}						
 					break;
 				case Landing:
 					if ( StickThrottle > IdleThrottle )
@@ -147,6 +151,7 @@ void main(void)
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
+							mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
 							State = Landed;
 						}
 					break;
