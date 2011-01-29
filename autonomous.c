@@ -97,7 +97,6 @@ int16 	AltSum;
 void DoShutdown(void)
 {
 	State = Shutdown;
-	DesiredThrottle = 0;
 	StopMotors();
 } // DoShutdown
 

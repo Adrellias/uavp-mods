@@ -110,6 +110,7 @@ void main(void)
 					DoStartingBeepsWithOutput(3);
 
 					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
+
 					mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
 					F.ForceFailsafe = F.LostModel = false;
 
@@ -136,11 +137,12 @@ void main(void)
 							mS[NavActiveTime] = mSClock() + NAV_ACTIVE_DELAY_MS;
 							Stats[RCGlitchesS] = RCGlitches; // start of flight
 							SaveLEDs();
+
+							mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+							F.ForceFailsafe = F.LostModel = false;
+
 							if ( ParameterSanityCheck() )
-							{
-								mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
 								State = InFlight;
-							}
 							else
 								ALL_LEDS_ON;	
 						}						
@@ -167,7 +169,7 @@ void main(void)
 				case Shutdown:
 					// wait until arming switch is cycled
 					F.LostModel = true;
-					DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = 0;
+					DesiredRoll = DesiredPitch = DesiredYaw = 0;
 					StopMotors();
 					break;
 				case InFlight:

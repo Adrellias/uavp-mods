@@ -553,7 +553,7 @@ typedef union {
 		AltitudeValid:1,		
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
-		UsingAltOrientation:1,
+		Unused0:1,
 
 		// outside telemetry flags
 
