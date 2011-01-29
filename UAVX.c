@@ -137,7 +137,10 @@ void main(void)
 							Stats[RCGlitchesS] = RCGlitches; // start of flight
 							SaveLEDs();
 							if ( ParameterSanityCheck() )
+							{
+								mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
 								State = InFlight;
+							}
 							else
 								ALL_LEDS_ON;	
 						}						
@@ -168,11 +171,12 @@ void main(void)
 					StopMotors();
 					break;
 				case InFlight:
-					F.MotorsArmed = true;
-					DoNavigation();		
+					F.MotorsArmed = true;		
 					LEDChaser();
 
 					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
+
+					DoNavigation();
 
 					if ( StickThrottle < IdleThrottle )
 					{

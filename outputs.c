@@ -323,6 +323,7 @@ void StopMotors(void)
 		PWM[ThrottleC] = ESCMin;
 	#endif // MULTICOPTER
 
+	DesiredThrottle = 0;
 	F.MotorsArmed = false;
 } // StopMotors
 

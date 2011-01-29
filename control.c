@@ -471,7 +471,7 @@ void LightsAndSirens(void)
 				}
 				GetBaroAltitude();
 				InitialThrottle = StickThrottle;
-				StickThrottle = 0; 
+				StickThrottle = DesiredThrottle = 0; 
 				OutSignals();
 				if( mSClock() > Ch5Timeout )
 				{
