@@ -91,7 +91,7 @@ void main(void)
 				case Starting:	// this state executed once only after arming
 
 					LEDYellow_OFF;
-					F.LostModel = false;
+
 
 					if ( !F.FirstArmed )
 					{
@@ -110,6 +110,9 @@ void main(void)
 					DoStartingBeepsWithOutput(3);
 
 					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
+					mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+					F.ForceFailsafe = F.LostModel = false;
+
 					State = Landed;
 					break;
 				case Landed:

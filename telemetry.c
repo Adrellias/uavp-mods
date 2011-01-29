@@ -288,6 +288,8 @@ void SendUAVXControl(void) // 0.516mS at 40MHz?
 
 void SendArduStation(void)
 {
+	#ifdef USE_ARDU	// ArdStation required scaling etc. too slow for 16MHz
+
 	// This form of telemetry using the flight controller to convert 
 	// to readable text is FAR to EXPENSIVE in computation time.
 
@@ -314,8 +316,6 @@ void SendArduStation(void)
     PCH: Pitch in degrees
     SST: Switch Status, used for debugging, but is disabled in the current version.
 	*/
-
-	#ifdef CLOCK_40MHZ	// ArdStation required scaling etc. too slow for 16MHz
 
 	F.TxToBuffer = true;
 
@@ -350,7 +350,7 @@ void SendArduStation(void)
 
 	F.TxToBuffer = false;
 
-	#endif // CLOCK_40MHZ
+	#endif // USE_ARDU
 
 } // SendArduStation
 
