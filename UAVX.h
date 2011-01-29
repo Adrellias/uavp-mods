@@ -25,7 +25,7 @@
 #ifndef BATCHMODE
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -628,6 +628,7 @@ extern uint8 ADCChannel;
 
 // autonomous.c
 
+extern void DoShutdown(void);
 extern void FailsafeHoldPosition(void);
 extern void DoPolarOrientation(void);
 extern void Navigate(int32, int32);

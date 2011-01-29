@@ -116,12 +116,12 @@ void main(void)
 					State = Landed;
 					break;
 				case Landed:
+					DesiredThrottle = 0;
 					if ( mSClock() > mS[ArmedTimeout] )
-						State = Shutdown;
+						DoShutdown();
 					else	
 						if ( StickThrottle < IdleThrottle )
 						{
-							DesiredThrottle = 0;
 							SetGPSOrigin();
 							GetHeading();
 	    					if ( F.NewCommands )
@@ -144,7 +144,10 @@ void main(void)
 					break;
 				case Landing:
 					if ( StickThrottle > IdleThrottle )
+					{
+						DesiredThrottle = 0;
 						State = InFlight;
+					}
 					else
 						if ( mSClock() < mS[ThrottleIdleTimeout] )
 							DesiredThrottle = IdleThrottle;

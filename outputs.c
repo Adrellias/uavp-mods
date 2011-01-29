@@ -367,6 +367,7 @@ void PulsePWM(uint8 m, int16 Cycles)
 
 void InitMotors(void)
 {
+/*
 	static uint8 m;
 
 	#ifdef MULTICOPTER
@@ -387,7 +388,7 @@ void InitMotors(void)
 	}
 
 	#endif // MULTICOPTER
-
+*/
 	StopMotors();
 
 	#ifndef Y6COPTER

@@ -177,7 +177,7 @@ void CheckAlarms(void)
 
 	Temp = ADC(ADCBattVoltsChan);
 	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
-	F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
+	F.LowBatt = BatteryVoltsADC < BatteryVoltsLimitADC;
 
 	F.BeeperInUse = F.LowBatt || F.LostModel  || (State == Shutdown);
 

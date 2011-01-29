@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void FailsafeLevelFlight(void);
+void DoShutdown(void);
 void DoPolarOrientation(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int16);
@@ -94,6 +94,13 @@ int8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
 int16 	AltSum;
 
+void DoShutdown(void)
+{
+	State = Shutdown;
+	DesiredThrottle = 0;
+	StopMotors();
+} // DoShutdown
+
 void FailsafeHoldPosition(void)
 {
 	DesiredRoll = DesiredPitch = DesiredYaw = 0;
@@ -121,10 +128,7 @@ void DoFailsafeLanding(void)
 
 		if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) 
 			&& ( F.ForceFailsafe || ( NavState == Touchdown ) || (FailState == Terminated))) )
-		{
-			State = Shutdown;
-			StopMotors();
-		}
+			DoShutdown();
 		else
 			DesiredThrottle = CruiseThrottle;
 	}
@@ -324,8 +328,6 @@ void DoNavigation(void)
 				{
 					// needs more thought - runway direction?
 					DoFailsafeLanding();
-					State = Shutdown;
-					StopMotors();
 				}
 				#else
 					if ( Altitude < LAND_DM )
