@@ -100,12 +100,12 @@ void CalculateGyroRates(void)
 void ErectGyros(void)
 {
 	static int8 i, g;
-	static int24 Av[3];
+	static int32 Av[3];
 
 	for ( g = 0; g < (int8)3; g++ )	
 		Av[g] = 0;
 
-    for ( i = 64; i ; i-- )
+    for ( i = 32; i ; i-- )
 	{
 		LEDRed_TOG;
 		Delay100mSWithOutput(1);
@@ -119,7 +119,7 @@ void ErectGyros(void)
 	
 	for ( g = 0; g < (int8)3; g++ )
 	{
-		GyroNeutral[g] = (int16)(Av[g]>>6);	
+		GyroNeutral[g] = (int16)SRS32( Av[g], 5); // ITG3200 is signed
 		Rate[g] =  Ratep[g] = Angle[g] = 0;
 	}
  
