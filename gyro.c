@@ -169,6 +169,7 @@ void InitGyros(void)
 		GyroType = P[DesGyroType];
 		InitAnalogGyros();
 	}
+
 } // InitGyros
 
 #ifdef TESTING

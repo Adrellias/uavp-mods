@@ -185,8 +185,8 @@ void CheckAlarms(void)
 	{
 		if( F.LowBatt ) 
 		{
-			BeeperOffTime = 750;
-			BeeperOnTime = 250;
+			BeeperOffTime = 600;
+			BeeperOnTime = 600;
 		}	
 		else
 			if ( State == Shutdown )
