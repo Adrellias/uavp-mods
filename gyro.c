@@ -100,12 +100,12 @@ void CalculateGyroRates(void)
 void ErectGyros(void)
 {
 	static int8 i, g;
-	static int32 Av[3];
+	static int24 Av[3];
 
 	for ( g = 0; g < (int8)3; g++ )	
 		Av[g] = 0;
 
-    for ( i = 32; i ; i-- )
+    for ( i = 64; i ; i-- )
 	{
 		LEDRed_TOG;
 		Delay100mSWithOutput(1);
@@ -117,15 +117,9 @@ void ErectGyros(void)
 		Av[Yaw] += GyroADC[Yaw];
 	}
 	
-	if( !F.AccelerationsValid )
-	{
-		Av[Roll] += (int16)P[MiddleLR] * 2;
-		Av[Pitch] += (int16)P[MiddleFB] * 2;
-	}
-	
 	for ( g = 0; g < (int8)3; g++ )
 	{
-		GyroNeutral[g] = (int16)(Av[g]/32);	
+		GyroNeutral[g] = (int16)(Av[g]>>6);	
 		Rate[g] =  Ratep[g] = Angle[g] = 0;
 	}
  

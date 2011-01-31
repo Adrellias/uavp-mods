@@ -119,6 +119,8 @@ void SendControlPacket(void)
 
 	TxESCu8(UAVXControlPacketTag);
 	TxESCu8(35);
+
+	TxESCi16(DesiredThrottle);
  			
 	ShowAttitude();
 
