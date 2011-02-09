@@ -138,6 +138,7 @@
 #define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
 
 #define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
+#define UAVX_SLOW_TELEMETRY_INTERVAL_MS		1000L	// mS. emit an interleaved telemetry packet slow rate for example to FrSky
 #define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
 #define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 100L	// mS. flight control only
 #define CUSTOM_TELEMETRY_INTERVAL_MS	250L	// mS.
@@ -392,6 +393,7 @@ typedef struct { // GPS
 
 #define Abs(i)				(((i)<0) ? -(i) : (i))
 #define Sign(i)				(((i)<0) ? -1 : 1)
+#define Sqr(r)				( r * r )
 
 #define Max(i,j) 			((i<j) ? j : i)
 #define Min(i,j) 			((i<j) ? i : j )
@@ -1332,7 +1334,7 @@ enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPac
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
 	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag};
 
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, ArduStationTelemetry, CustomTelemetry };
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, UAVXSlowTelemetry, ArduStationTelemetry, CustomTelemetry };
 
 //______________________________________________________________________________________________
 

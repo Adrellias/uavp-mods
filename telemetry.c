@@ -42,6 +42,10 @@ void CheckTelemetry(void)
 			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS; 
 			SendUAVX(); 	
 			break;
+		case UAVXSlowTelemetry:
+			mS[TelemetryUpdate] = mSClock() + UAVX_SLOW_TELEMETRY_INTERVAL_MS; 
+			SendUAVX(); 	
+			break;
 		case UAVXControlTelemetry:
 			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TELEMETRY_INTERVAL_MS; 
 			SendUAVXControl(); 	
