@@ -329,14 +329,11 @@ void DoNavigation(void)
 					DoFailsafeLanding();
 				}
 				#else
+				{
 					if ( Altitude < LAND_DM )
-					{
-						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 						NavState = Touchdown;
-					}
-					else
-						DoFailsafeLanding();
-
+					DoFailsafeLanding();
+				}
 				#endif // NAV_WING
 				else
 					AcquireHoldPosition();
@@ -348,7 +345,10 @@ void DoNavigation(void)
 					if ( F.WayPointAchieved ) // check still @ Home
 					{
 						if ( F.UsingRTHAutoDescend && ( mSClock() > mS[NavStateTimeout] ) )
+						{
+							mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 							NavState = Descending;
+						}
 					}
 					else
 						NavState = ReturningHome;

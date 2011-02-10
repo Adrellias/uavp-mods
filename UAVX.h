@@ -26,7 +26,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -135,7 +135,7 @@
 #define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
 
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
-#define NAV_RTH_LAND_TIMEOUT_MS		10000L	// mS. Shutdown throttle if descent lasts too long
+#define NAV_RTH_LAND_TIMEOUT_MS		15000L	// mS. Shutdown throttle if descent lasts too long
 
 #define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
 #define UAVX_SLOW_TELEMETRY_INTERVAL_MS		1000L	// mS. emit an interleaved telemetry packet slow rate for example to FrSky
@@ -170,7 +170,7 @@
 // the range within which throttle adjustment is proportional to altitude error
 #define ALT_BAND_DM					50L		// Decimetres
 
-#define LAND_DM						100L	// Decimetres deemed to have landed when below this height
+#define LAND_DM						30L	// Decimetres deemed to have landed when below this height
 
 #define ALT_MAX_THR_COMP			80L		// Stick units was 40
 
