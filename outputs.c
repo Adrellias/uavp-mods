@@ -239,7 +239,7 @@ void MixAndLimitCam(void)
 	#ifndef Y6COPTER
 	static i24u Temp;
 
-	#define TARRO_CAM
+//	#define TARRO_CAM
 	#ifdef TARRO_CAM
 	// use only roll/pitch angle estimates
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
@@ -252,7 +252,7 @@ void MixAndLimitCam(void)
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
 	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
 	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
-	#endif TARRO_CAM
+	#endif // TARRO_CAM
 
 	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
 	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
