@@ -125,7 +125,7 @@ void ReadParametersEE(void)
 			Orientation = 0;
 		#endif // MULTICOPTER
 	
-		F.UsingSerialPPM = ( P[TxRxType] == ExternalDecoder ) || ( (P[ConfigBits] & RxSerialPPMMask ) != 0);
+		F.UsingSerialPPM = ( P[TxRxType] == FrSkyDJT_D8R ) || ( P[TxRxType] == ExternalDecoder ) || ( (P[ConfigBits] & RxSerialPPMMask ) != 0);
 		PIE1bits.CCP1IE = false;
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
@@ -159,13 +159,17 @@ void WriteParametersEE(uint8 s)
 	uint16 addr;
 	
 	addr = (s - 1)* MAX_PARAMETERS;
+
 	for ( p = 0; p < MAX_PARAMETERS; p++)
 		WriteEE( addr + p,  P[p]);
 } // WriteParametersEE
 
 void UseDefaultParameters(void)
 { // loads a representative set of initial parameters as a base for tuning
-	int8 p;
+	uint16 p;
+
+	for ( p = 0; p < MAX_EEPROM; p++ )
+		WriteEE( p,  0xff);
 
 	for ( p = 0; p < MAX_PARAMETERS; p++ )
 		P[p] = DefaultParams[p][0];

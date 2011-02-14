@@ -56,10 +56,10 @@
 	{0,0},				// Acro,	    	32
 	{10,0}, 		    // NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
-	{LY530Gyro,true}, 	// was GyroType, 	35c
+	{LY530Gyro,true}, 	// DesGyroType,     35c
 	{ESCPPM,true}, 		// ESCType,			36c
-	{UnknownTxRx,true}, 	// TxRxType			37c
-	{2,0},				// NeutralRadius	38
+	{UnknownTxRx,true}, // TxRxType			37c
+	{2,true},			// NeutralRadius	38
 	{30,true},			// PercentNavSens6Ch	39
 	{1,true},			// CamRollTrim,		40c
 
@@ -81,9 +81,9 @@
 	{0,0},				// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
 	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
-	{24,true},				// Orient			57
+	{24,true},			// Orient			57
 	#else	
-	{0,true},				// Orient			57
+	{0,true},			// Orient			57
 	#endif // TRICOPTER | VTCOPTER | Y6COPTER			
 	
 	{12,true},			// NavYawLimit		58

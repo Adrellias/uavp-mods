@@ -192,6 +192,7 @@ void ShowSetup(boolean h)
 		case FutabaCh3_R617FS: TxString("Futaba Th 3 & R617FS {"); break; 
 		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
 		case DX7aAR7000: TxString("Spektrum DX7a & AR7000 {"); break;
+		case FrSkyDJT_D8R: TxString("FrSky DJT & D8R-SP Composite {"); break;
 		case ExternalDecoder: TxString("External Decoder {"); break;
 		case UnknownTxRx: TxString("UNKNOWN {"); break;
 		default: ;

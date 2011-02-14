@@ -56,10 +56,10 @@
 	{0,0},				// Acro,	  		32
 	{0,0}, 				// NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
-	{LY530Gyro,true}, 	// GyroType, 		35c
+	{LY530Gyro,true}, 	// DesGyroType, 		35c
 	{ESCPPM,true}, 		// ESCType,			36c
 	{UnknownTxRx,true}, 	// TxRxType			37c
-	{2,0},				// NeutralRadius	38
+	{2,true},				// NeutralRadius	38
 	{30,true},				// PercentNavSens6Ch	39
 	{1,true},			// CamRollTrim,		40c
 

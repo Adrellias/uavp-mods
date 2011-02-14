@@ -59,8 +59,8 @@
 	{LY530Gyro,true}, 	// GyroType, 		35c
 	{ESCPPM,true}, 		// ESCType,			36c
 	{DX7AR7000,true}, 	// TxRxType			37c
-	{2,0},				// NeutralRadius	38
-	{30,0},				// PercentNavSens6Ch	39
+	{2,true},				// NeutralRadius	38
+	{30,true},				// PercentNavSens6Ch	39
 	{1,true},			// CamRollTrim,		40c
 
 	{-16,0},			// NavKd			41
@@ -86,7 +86,7 @@
 	{0,0},				// Orient			57
 	#endif // TRICOPTER | VTCOPTER				
 	
-	{12,0},				// NavYawLimit		58
+	{12,true},				// NavYawLimit		58
 	{50,0},				// Balance			59
 	{0,0},				// 60 - 64 unused currently	
 	{0,0},	

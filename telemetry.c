@@ -20,13 +20,17 @@
 
 #include "uavx.h"
 
+void SendPacketHeader(void);
+void SendPacketTrailer(void);
 void SendTelemetry(void);
-void SendUAVX(void);
-void SendUAVXControl(void);
+void SendCycle(void);
+void SendControl(void);
+void SendMinPacket(void);
 void SendFlightPacket(void);
 void SendNavPacket(void);
 void SendControlPacket(void);
 void SendStatsPacket(void);
+void SendParamsPacket(uint8);
 void SendArduStation(void);
 void SendCustom(void);
 void SensorTrace(void);
@@ -39,24 +43,23 @@ void CheckTelemetry(void)
 	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry:
-			mS[TelemetryUpdate] = mSClock() + UAVX_TELEMETRY_INTERVAL_MS; 
-			SendUAVX(); 	
+			mS[TelemetryUpdate] = mSClock() + UAVX_TEL_INTERVAL_MS; 
+			SendCycle(); 	
 			break;
-		case UAVXSlowTelemetry:
-			mS[TelemetryUpdate] = mSClock() + UAVX_SLOW_TELEMETRY_INTERVAL_MS; 
-			SendUAVX(); 	
+		case UAVXMinTelemetry:
+			mS[TelemetryUpdate] = mSClock() + UAVX_MIN_TEL_INTERVAL_MS; 
+			SendMinPacket(); 	
 			break;
 		case UAVXControlTelemetry:
-			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TELEMETRY_INTERVAL_MS; 
-			SendUAVXControl(); 	
+			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TEL_INTERVAL_MS; 
+			SendControlPacket(); 	
 			break;
 		case ArduStationTelemetry:
-			mS[TelemetryUpdate] = mSClock() + ARDU_TELEMETRY_INTERVAL_MS; 
-			SendArduStation(); 
-			
+			mS[TelemetryUpdate] = mSClock() + ARDU_TEL_INTERVAL_MS; 
+			SendArduStation(); 			
 			break;
 		case CustomTelemetry: 
-			mS[TelemetryUpdate] = mSClock() + CUSTOM_TELEMETRY_INTERVAL_MS;
+			mS[TelemetryUpdate] = mSClock() + CUSTOM_TEL_INTERVAL_MS;
 			SendCustom(); 
 			break;
 		case GPSTelemetry: break;
@@ -66,6 +69,33 @@ void CheckTelemetry(void)
 
 #define NAV_STATS_INTERLEAVE	10
 static int8 StatsNavAlternate = 0; 
+
+void SendPacketHeader(void)
+{
+	static int8 b;
+
+	F.TxToBuffer = true;
+
+	#ifdef TELEMETRY_PREAMBLE
+	for (b=10;b;b--) 
+		TxChar(0x55);
+	#endif // TELEMETRY_PREAMBLE
+	      
+	TxChar(0xff); // synchronisation to "jolt" USART	
+	TxChar(SOH);	
+	TxCheckSum = 0;
+} // SendPacketHeader
+
+void SendPacketTrailer(void)
+{
+	TxESCu8(TxCheckSum);	
+	TxChar(EOT);
+	
+	TxChar(CR);
+	TxChar(LF); 
+
+	F.TxToBuffer = false; 
+} // SendPacketTrailer
 
 void ShowAttitude(void)
 {
@@ -89,6 +119,8 @@ void ShowAttitude(void)
 void SendFlightPacket(void)
 {
 	static int8 b;
+
+	SendPacketHeader();
 
 	TxESCu8(UAVXFlightPacketTag);
 	TxESCu8(48 + TELEMETRY_FLAG_BYTES);
@@ -115,11 +147,15 @@ void SendFlightPacket(void)
 	 	TxESCu8((uint8)PWM[b]);
 
 	TxESCi24(mSClock() - mS[StartTime]);
+
+	SendPacketTrailer();
 } // SendFlightPacket
 
 void SendControlPacket(void)
 {
 	static int8 b;
+
+	SendPacketHeader();
 
 	TxESCu8(UAVXControlPacketTag);
 	TxESCu8(35);
@@ -132,10 +168,15 @@ void SendControlPacket(void)
 	 	TxESCu8((uint8)PWM[b]);
 
 	TxESCi24(mSClock() - mS[StartTime]);
+
+	SendPacketTrailer();
+
 } // SendControlPacket
 
 void SendNavPacket(void)
 {
+	SendPacketHeader();
+
 	TxESCu8(UAVXNavPacketTag);
 	TxESCu8(59);
 		
@@ -176,10 +217,15 @@ void SendNavPacket(void)
 	TxESCi8(NavCorr[Roll]);
 	TxESCi8(NavCorr[Pitch]);
 	TxESCi8(NavCorr[Yaw]);
+
+	SendPacketTrailer();
+
 } // SendNavPacket
 
 void SendStatsPacket(void) 
 {
+	SendPacketHeader();
+
 	TxESCu8(UAVXStatsPacketTag);
 	TxESCu8(44);
 	
@@ -212,23 +258,68 @@ void SendStatsPacket(void)
 	TxESCu8(UAVXAirframe);
 	TxESCu8(Orientation);
 	TxESCi16(Stats[BadNumS]);
+
+	SendPacketTrailer();
+
 } // SendStatsPacket
 
-void SendUAVX(void) // 800uS at 40MHz?
+void SendMinPacket(void)
 {
 	static int8 b;
-	static i32u Temp;
 
-	F.TxToBuffer = true;
+	SendPacketHeader();
 
-	#ifdef TELEMETRY_PREAMBLE
-	for (b=10;b;b--) 
-		TxChar(0x55);
-	#endif // TELEMETRY_PREAMBLE
-	      
-	TxChar(0xff); // synchronisation to "jolt" USART	
-	TxChar(SOH);	
-	TxCheckSum = 0;
+	TxESCu8(UAVXMinPacketTag);
+	TxESCu8(33 + TELEMETRY_FLAG_BYTES);
+	for ( b = 0; b < TELEMETRY_FLAG_BYTES; b++ )
+		TxESCu8(F.AllFlags[b]); 
+		
+	TxESCu8(State);	
+	TxESCu8(NavState);	
+	TxESCu8(FailState);
+
+	TxESCi16(BatteryVoltsADC);
+	TxESCi16(BatteryCurrentADC);
+	TxESCi16(BatteryChargeUsedmAH);	
+
+	TxESCi16(Angle[Roll]);
+	TxESCi16(Angle[Pitch]);
+		
+	TxESCi24(BaroRelAltitude);
+	TxESCi16(RangefinderAltitude); 				// cm
+
+	TxESCi16(Heading);
+	
+	TxESCi32(GPSLatitude); 						// 5 decimal minute units
+	TxESCi32(GPSLongitude);
+
+	TxESCu8(UAVXAirframe);
+	TxESCu8(Orientation);
+
+	TxESCi24(mSClock() - mS[StartTime]);
+
+	SendPacketTrailer();
+
+} // SendMinPacket
+
+void SendParamsPacket(uint8 p) {
+
+	static uint8 b;
+
+    SendPacketHeader();
+
+    TxESCu8(UAVXParamsPacketTag);
+    TxESCu8(MAX_PARAMETERS+1);
+    TxESCu8(p);
+    for (b = 0; b < (uint8)MAX_PARAMETERS; b++ )
+         TxESCi8(ReadEE(MAX_PARAMETERS*2+b));
+
+	SendPacketTrailer();
+ 
+} // SendParamPacket
+
+void SendCycle(void) // 800uS at 40MHz?
+{
 	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
@@ -253,44 +344,8 @@ void SendUAVX(void) // 800uS at 40MHz?
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;		
 	}
-		
-	TxESCu8(TxCheckSum);	
-	TxChar(EOT);
-	
-	TxChar(CR);
-	TxChar(LF); 
-
-	F.TxToBuffer = false; 
-	
-} // SendUAVX
-
-void SendUAVXControl(void) // 0.516mS at 40MHz?
-{
-	static int8 b;
-	static i32u Temp;
-
-	F.TxToBuffer = true;
-
-	#ifdef TELEMETRY_PREAMBLE
-	for (b=10;b;b--) 
-		TxChar(0x55);
-	#endif // TELEMETRY_PREAMBLE
-	      
-	TxChar(0xff); // synchronisation to "jolt" USART	
-	TxChar(SOH);	
-	TxCheckSum = 0;
-	
-	SendControlPacket();
-
-	TxESCu8(TxCheckSum);	
-	TxChar(EOT);
-	
-	TxChar(CR);
-	TxChar(LF); 
-
-	F.TxToBuffer = false; 
-	
-} // SendUAVXControl
+			
+} // SendCycle
 
 void SendArduStation(void)
 {

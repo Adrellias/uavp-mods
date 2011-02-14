@@ -26,7 +26,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING						
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -115,7 +115,7 @@
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
 #else
-	#define PID_CYCLE_MS			5		// mS 200Hz
+	#define PID_CYCLE_MS			8 // 5		// mS 200Hz
 #endif // CLOCK_16MHZ
 
 // DISABLED AS UNSAFE ON BENCH 
@@ -137,11 +137,11 @@
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_LAND_TIMEOUT_MS		15000L	// mS. Shutdown throttle if descent lasts too long
 
-#define UAVX_TELEMETRY_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
-#define UAVX_SLOW_TELEMETRY_INTERVAL_MS		1000L	// mS. emit an interleaved telemetry packet slow rate for example to FrSky
-#define ARDU_TELEMETRY_INTERVAL_MS		200L	// mS. alternating 1:5
-#define UAVX_CONTROL_TELEMETRY_INTERVAL_MS 100L	// mS. flight control only
-#define CUSTOM_TELEMETRY_INTERVAL_MS	250L	// mS.
+#define UAVX_TEL_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
+#define UAVX_MIN_TEL_INTERVAL_MS	500L	// mS. emit minimum data packet for example to FrSky
+#define ARDU_TEL_INTERVAL_MS		200L	// mS. alternating 1:5
+#define UAVX_CONTROL_TEL_INTERVAL_MS 100L	// mS. flight control only
+#define CUSTOM_TEL_INTERVAL_MS		250L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
 
@@ -469,8 +469,9 @@ typedef struct { // GPS
 
 // EEPROM
 
-#define PARAMS_ADDR_EE		0			// code assumes zero!
-#define MAX_PARAMETERS	64		// parameters in EEPROM start at zero
+#define MAX_EEPROM			1024
+#define PARAMS_ADDR_EE		0		// code assumes zero!
+#define MAX_PARAMETERS		64		// parameters in EEPROM start at zero
 
 #define STATS_ADDR_EE	 	( PARAMS_ADDR_EE + (MAX_PARAMETERS *2) )
 #define MAX_STATS			64
@@ -1122,7 +1123,7 @@ extern void InitParameters(void);
 enum TxRxTypes { 
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
-    UnknownTxRx, CustomTxRx };
+    FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
@@ -1315,12 +1316,16 @@ extern int16 Stats[];
 
 // telemetry.c
 
+extern void SendPacketHeader(void);
+extern void SendPacketTrailer(void);
 extern void SendTelemetry(void);
-extern void SendUAVX(void);
-extern void SendUAVXControl(void);
+extern void SendCycle(void);
+extern void SendControl(void);
+extern void SendMin(void);
 extern void SendFlightPacket(void);
 extern void SendNavPacket(void);
 extern void SendControlPacket(void);
+extern void SendParamsPacket(uint8);
 extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
@@ -1332,9 +1337,9 @@ extern uint8 UAVXCurrPacketTag;
 enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
 	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
-	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag};
+	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag, UAVXParamsPacketTag, UAVXMinPacketTag };
 
-enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, UAVXSlowTelemetry, ArduStationTelemetry, CustomTelemetry };
+enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, UAVXMinTelemetry, ArduStationTelemetry, CustomTelemetry };
 
 //______________________________________________________________________________________________
 
