@@ -290,11 +290,17 @@ void high_isr_handler(void)
 		#ifdef CLOCK_16MHZ
 			// do nothing - just let TMR0 wrap around for 1.024mS intervals
 		#else // CLOCK_40MHZ
-			Timer0.b0 = TMR0L;
-			Timer0.b1 = TMR0H;
-			Timer0.u16 += TMR0_1MS; 
-			TMR0H = Timer0.b1;
-			TMR0L = Timer0.b0;
+			#ifdef OLD_1MS
+				Timer0.b0 = TMR0L;
+				Timer0.b1 = TMR0H;
+				Timer0.u16 += TMR0_1MS; 
+				TMR0H = Timer0.b1;
+				TMR0L = Timer0.b0;
+			#else
+				Timer0.u16 = TMR0_1MS;
+				TMR0H = Timer0.b1;
+				TMR0L = Timer0.b0;
+			#endif // OLD_1MS
 		#endif // CLOCK_40MHZ
 
 		mS[Clock]++;

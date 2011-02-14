@@ -425,31 +425,7 @@ void SendCustom(void) // 1.2mS @ 40MHz
 	// separator may be a single 'char', HT for tab, or 0 (no space)
 	// -> 
 
-	// ~1mS @ 40MHz
-
-	TxVal32(mSClock(), 3, HT);
-
-	if ( F.HoldingAlt ) // are we holding
-		TxChar('H');
-	else
-		TxChar('N');
-	TxChar(HT);
-
-	if (F.UsingRangefinderAlt ) // are we using the rangefinder
-		TxChar('R');
-	else
-		TxChar('B');
-	TxChar(HT);
-
-	TxVal32(SRS32(Comp[Alt],1), 1, HT);		// ~% throttle compensation
-
-	TxVal32(GPSRelAltitude, 1, HT);
-	TxVal32(BaroRelAltitude, 1, HT);
-	TxVal32(RangefinderAltitude, 2, HT);
-
-	TxVal32(BaroPressure, 0, HT);			// eff. sensor reading
-	TxVal32(BaroTemperature, 0, HT); 		// eff. sensor reading redundant for MPX4115
-	TxVal32(CompBaroPressure, 0, HT);  		// moving sum of last 8 readings
+	// add user specific code
 
 	// <-
 
