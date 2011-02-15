@@ -100,49 +100,25 @@ void InitMisc(void)
 
 void Delay1mS(int16 d)
 { 
-	int16 i;
-	boolean T0IntEn;
+	static int24 Timeout;
 
-	T0IntEn = INTCONbits.TMR0IE;	// not protected?
-	INTCONbits.TMR0IE = false;
-
-	// if d is 1 then delay can be less than 1mS due to 	
-	for (i = d; i ; i--)
-	{						// compromises ClockMilliSec;
-		while ( !INTCONbits.TMR0IF ) {};
-		INTCONbits.TMR0IF = 0;
-		FastWriteTimer0(TMR0_1MS);
-	}
-
-	INTCONbits.TMR0IE = T0IntEn;
+	Timeout = mSClock() + d + 1;
+	while ( mSClock() < Timeout ) {};
 
 } // Delay1mS
 
 void Delay100mSWithOutput(int16 dur)
-{  // Motor and servo pulses are still output every 10ms
-	int16 i;
-	uint8 j;
-	boolean T0IntEn;
+{  // Motor and servo pulses are still output
 
-	T0IntEn = INTCONbits.TMR0IE;	// not protected?
-	INTCONbits.TMR0IE = false;
+	static int24 Timeout;
 
-	for( i = 0; i < dur*10; i++)
-		{
-			for (j = 8; j ; j--)
-			{
-				while ( !INTCONbits.TMR0IF ) {};
-				INTCONbits.TMR0IF = 0;
-				FastWriteTimer0(TMR0_1MS);
-			}
-			OutSignals(); // 1-2 ms Duration
-			if( PIR1bits.RCIF )
-			{
-				INTCONbits.TMR0IE = T0IntEn;
-				return;
-			}
-		}
-	INTCONbits.TMR0IE = T0IntEn;
+	Timeout = mSClock() + dur * 100;
+	while ( mSClock() < Timeout )
+	{
+		Delay1mS(PID_CYCLE_MS - 2);		
+		OutSignals(); // 1-3 ms Duration
+	}
+
 } // Delay100mSWithOutput
 
 void DoBeep100mSWithOutput(uint8 t, uint8 d)
@@ -200,6 +176,7 @@ void CheckAlarms(void)
 					BeeperOffTime = 125;
 					BeeperOnTime = 125;		
 				}
+				else
 
 		if ( (mSClock() > mS[BeeperUpdate]) && BEEPER_IS_ON )
 		{

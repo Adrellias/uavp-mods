@@ -59,6 +59,7 @@ void OutSignals(void)
 
 	// Save TMR0 and reset
 	DisableInterrupts;
+	INTCONbits.TMR0IE = false;
 	SaveClockmS = mS[Clock];
 	GetTimer0;
 	SaveTimer0.u16 = Timer0.u16;
@@ -304,7 +305,8 @@ OS002:
 	}
 
 	FastWriteTimer0(SaveTimer0.u16);
-	// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?
+
+	// add in period mS Clock was disabled
 	if ( P[ESCType] == ESCPPM )
 		if ( ServoToggle == 0 )
 			Clock[mS] = SaveClockmS + 3;
@@ -318,7 +320,7 @@ OS002:
 
 	if ( ++ServoToggle == ServoInterval )
 		ServoToggle = 0;
-
+	INTCONbits.TMR0IE = true;
 	EnableInterrupts;
 
 	#else

@@ -472,7 +472,7 @@ void LightsAndSirens(void)
 				GetBaroAltitude();
 				InitialThrottle = StickThrottle;
 				StickThrottle = DesiredThrottle = 0; 
-				OutSignals();
+				OutSignals(); // synced to New RC signals
 				if( mSClock() > Ch5Timeout )
 				{
 					if ( F.Navigate || F.ReturnHome || !F.ParametersValid )
@@ -507,7 +507,7 @@ void LightsAndSirens(void)
 
 	mS[LastBattery] = mSClock();
 	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
-	mS[UpdateTimeout] = mSClock() + PID_CYCLE_MS;
+	PIDUpdate = mSClock() + PID_CYCLE_MS;
 	F.LostModel = false;
 	FailState = MonitoringRx;
 

@@ -36,7 +36,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -190,7 +190,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -344,7 +344,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -498,7 +498,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -652,162 +652,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:120:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:121:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:141:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:148:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:157:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:164:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:167:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:193:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:211:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:223:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:225:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:232:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:234:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:239:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:250:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:261:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:264:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:267:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:270:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:276:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:281:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:284:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:302:Warning [2058] call of function without prototype
-C:\Flight\Code\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:325:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:327:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:335:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:367:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:370:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:373:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:391:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:393:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:394:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:395:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:396:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:561:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:562:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:563:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\baro.c:564:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:134:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:137:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:140:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:143:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\outputs.c:344:Warning [2054] suspicious pointer conversion
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:171:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\params.c:174:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\params.c:183:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\params.c:184:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\accel.c:55:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -962,7 +807,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1117,7 +962,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1272,7 +1117,162 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:89:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:120:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:121:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:129:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:132:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:138:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:141:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:148:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:157:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:164:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:167:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:172:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:180:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:181:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:183:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:185:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:188:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:190:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:192:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:193:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:195:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:197:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:211:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:223:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:225:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:232:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:234:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:236:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:239:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:244:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:246:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:248:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:250:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:256:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:259:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:261:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:264:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:267:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:270:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:276:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:281:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:284:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:301:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:302:Warning [2058] call of function without prototype
+C:\Flight\Code\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:325:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:327:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:335:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:367:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:370:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:373:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:391:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:392:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:393:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:395:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:396:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\menu.c:397:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:561:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:562:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:563:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\baro.c:564:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:134:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:137:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:140:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:143:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:146:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:149:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:152:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:155:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\outputs.c:344:Warning [2054] suspicious pointer conversion
+MPLINK 4.37, Linker
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+MP2HEX 4.37, COFF to HEX File Converter
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+C:\Flight\Code\UAVX-GKE\stats.c:79:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:83:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:86:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:95:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:97:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:100:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:104:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:110:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:114:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:117:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:122:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:128:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:133:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\stats.c:135:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\params.c:171:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\params.c:174:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\params.c:183:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\params.c:184:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\accel.c:55:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1407,7 +1407,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1542,7 +1542,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1677,7 +1677,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1812,7 +1812,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -1948,7 +1948,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -2084,7 +2084,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -2220,7 +2220,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -2368,7 +2368,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:144:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:148:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -2658,7 +2658,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:144:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:148:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -2937,7 +2937,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -3091,7 +3091,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -3258,7 +3258,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:144:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:148:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -3490,7 +3490,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:144:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:148:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -3711,7 +3711,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
@@ -3846,7 +3846,7 @@ C:\Flight\Code\UAVX-GKE\accel.c:58:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:61:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:205:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\accel.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Flight\Code\UAVX-GKE\irq.c:259:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Flight\Code\UAVX-GKE\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\menu.c:78:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion

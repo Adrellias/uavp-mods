@@ -37,7 +37,8 @@ void low_isr_handler(void);
 void high_isr_handler(void);
 
 #pragma udata clocks
-int24	mS[CompassUpdate+1];
+volatile int24	mS[CompassUpdate+1];
+volatile int24 PIDUpdate;
 #pragma udata
 
 #pragma udata access isrvars
@@ -290,32 +291,13 @@ void high_isr_handler(void)
 		#ifdef CLOCK_16MHZ
 			// do nothing - just let TMR0 wrap around for 1.024mS intervals
 		#else // CLOCK_40MHZ
-			#ifdef OLD_1MS
-				Timer0.b0 = TMR0L;
-				Timer0.b1 = TMR0H;
-				Timer0.u16 += TMR0_1MS; 
-				TMR0H = Timer0.b1;
-				TMR0L = Timer0.b0;
-			#else
-				Timer0.u16 = TMR0_1MS;
-				TMR0H = Timer0.b1;
-				TMR0L = Timer0.b0;
-			#endif // OLD_1MS
+			Timer0.u16 = TMR0_1MS;
+			TMR0H = Timer0.b1;
+			TMR0L = Timer0.b0;
 		#endif // CLOCK_40MHZ
 
 		mS[Clock]++;
-
-		if ( ( mS[UpdateTimeout] - mS[Clock] ) > 15 ) // should not happen! 
-		{
-			WaitingForSync = false;
-			if ( State == InFlight )
-			{
-				Stats[BadS]++;
-				Stats[BadNumS] = mS[UpdateTimeout] - mS[Clock];
-			}
-		}
-		else
-			WaitingForSync = mS[Clock] < mS[UpdateTimeout];
+		WaitingForSync = mS[Clock] < PIDUpdate;
 
 		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
 		{

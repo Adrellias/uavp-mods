@@ -933,7 +933,8 @@ enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, T
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
 
-extern int24 mS[];
+extern volatile int24 mS[];
+extern volatile int24 PIDUpdate;
 extern int16 RC[], RCp[];
 
 extern near i16u PPM[];

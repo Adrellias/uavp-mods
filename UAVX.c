@@ -113,7 +113,6 @@ void main(void)
 					SendParamsPacket(1);
 
 					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
-
 					mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
 					F.ForceFailsafe = F.LostModel = false;
 
@@ -202,8 +201,8 @@ void main(void)
 
 			while ( WaitingForSync ) {};
 
-			mS[UpdateTimeout] += PID_CYCLE_MS;
-
+		//	mS[UpdateTimeout] += PID_CYCLE_MS;
+PIDUpdate = mSClock() + PID_CYCLE_MS;
 			GetGyroValues();
 			
 			DoControl();
