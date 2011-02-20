@@ -40,7 +40,7 @@ int16 RC[CONTROLS], RCp[CONTROLS];
 int16 Ratep[4];					// gyro rate error	
 
 int16 Angle[3];		// integral
-int16 CameraRollAngle, CameraPitchAngle;
+int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;
 int16 Rl, Pl, Yl, Ylp;					// PID output values 	
 int24 OSO, OCO;
 int16 YawFilterA;

@@ -23,9 +23,10 @@
 //    If not, see http://www.gnu.org/licenses/
 
 #ifndef BATCHMODE
+	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-//#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER

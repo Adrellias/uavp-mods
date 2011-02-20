@@ -349,6 +349,7 @@ void SendCycle(void) // 800uS at 40MHz?
 
 void SendArduStation(void)
 {
+
 	#ifdef USE_ARDU	// ArdStation required scaling etc. too slow for 16MHz
 
 	// This form of telemetry using the flight controller to convert 

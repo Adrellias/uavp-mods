@@ -238,26 +238,29 @@ void MixAndLimitCam(void)
 {
 	#ifndef Y6COPTER
 	static i24u Temp;
+	static int32 NewCamRoll, NewCamPitch;
 
 //	#define TARRO_CAM
 	#ifdef TARRO_CAM
 	// use only roll/pitch angle estimates
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
-	PWM[CamRollC] =  SRS32((int32)Temp.i2_1 * Limit(128 - DesiredCamPitchTrim, 0, 128 ), 7);
-	PWM[CamRollC] += (int16)P[CamRollTrim]; 
-	PWM[CamRollC] *= PWMSense[CamRollC];
-	PWM[CamRollC] += OUT_NEUTRAL;
+	NewCamRoll =  SRS32((int32)Temp.i2_1 * Limit(128 - DesiredCamPitchTrim, 0, 128 ), 7);
+	NewCamRoll += (int16)P[CamRollTrim]; 
+	NewCamRoll *= PWMSense[CamRollC];
+	NewCamRoll += OUT_NEUTRAL;
+	PWM[RollC] = SlewLimit( PWM[RollC], NewCamRoll, 2);
 	#else
 	// use only roll/pitch angle estimates
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
-	PWM[CamRollC] = Temp.i2_1 + (int16)P[CamRollTrim];
-	PWM[CamRollC] = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
+	NewCamRoll = Temp.i2_1 + (int16)P[CamRollTrim];
+	NewCamRoll = PWMSense[CamRollC] * PWM[CamRollC] + OUT_NEUTRAL;
+	PWM[RollC] = SlewLimit( PWM[RollC], NewCamRoll, 2);
 	#endif // TARRO_CAM
 
 	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
-	PWM[CamPitchC] = Temp.i2_1 + DesiredCamPitchTrim;
-	PWM[CamPitchC] = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 
-
+	NewCamPitch = Temp.i2_1 + DesiredCamPitchTrim;
+	NewCamPitch = PWMSense[CamPitchC] * PWM[CamPitchC] + OUT_NEUTRAL; 
+	PWM[PitchC] = SlewLimit( PWM[PitchC], NewCamPitch, 2);
 	#endif // !Y6COPTER			
 
 } // MixAndLimitCam
@@ -379,7 +382,6 @@ void PulsePWM(uint8 m, int16 Cycles)
 
 void InitMotors(void)
 {
-/*
 	static uint8 m;
 
 	#ifdef MULTICOPTER
@@ -400,7 +402,7 @@ void InitMotors(void)
 	}
 
 	#endif // MULTICOPTER
-*/
+
 	StopMotors();
 
 	#ifndef Y6COPTER
