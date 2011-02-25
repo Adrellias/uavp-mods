@@ -190,8 +190,6 @@ void InitCompass(void) {
 
 		Delay1mS(COMPASS_TIME_MS);
 	}
-else TxString("zzzz");
-
 } // InitCompass
 
 #else

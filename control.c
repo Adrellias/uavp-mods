@@ -390,7 +390,7 @@ void DoControl(void)
 	// Roll
 				
 	LimitRollAngle();
- 
+
 	Rl  = SRS16(Rate[Roll] * P[RollKp] + (Ratep[Roll]-Rate[Roll]) * P[RollKd], 5);
 	Rl += SRS16(Angle[Roll] * (int16)P[RollKi], 9); 
 	Rl -= NavCorr[Roll] - Comp[LR];

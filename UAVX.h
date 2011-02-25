@@ -2,6 +2,8 @@
 //#define JIM_MPX_INVERT
 //#define THREE_DOF		// ITG3200 ONLY
 
+//#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
+
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -441,7 +443,7 @@ typedef struct { // GPS
 
 // Parameters for UART port ClockHz/(16*(BaudRate+1))
 #ifdef CLOCK_16MHZ
-#define _B9600			104
+#define _B9600			104 			// 105 -> 9.434Kb, 104 -> 9.615Kb
 #define _B38400			26 
 #else // CLOCK_40MHZ
 #define _B9600			65
@@ -1327,7 +1329,8 @@ extern void SendMin(void);
 extern void SendFlightPacket(void);
 extern void SendNavPacket(void);
 extern void SendControlPacket(void);
-extern void SendParamsPacket(uint8);
+extern void SendParamPacket(uint8, uint8);
+extern void SendParameters(uint8);
 extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
@@ -1339,7 +1342,9 @@ extern uint8 UAVXCurrPacketTag;
 enum PacketTags {UnknownPacketTag = 0, LevPacketTag, NavPacketTag, MicropilotPacketTag, WayPacketTag, 
 	AirframePacketTag, NavUpdatePacketTag, BasicPacketTag, RestartPacketTag, TrimblePacketTag, 
 	MessagePacketTag, EnvironmentPacketTag, BeaconPacketTag, UAVXFlightPacketTag, 
-	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag, UAVXParamsPacketTag, UAVXMinPacketTag };
+	UAVXNavPacketTag, UAVXStatsPacketTag, UAVXControlPacketTag, UAVXParamPacketTag, UAVXMinPacketTag, 
+	UAVXArmParamPacketTag, UAVStickPacketTag, 
+	FrSkyPacketTag = 99 };
 
 enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelemetry, UAVXMinTelemetry, ArduStationTelemetry, CustomTelemetry };
 

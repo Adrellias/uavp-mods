@@ -27,6 +27,7 @@
 #include "uavx.h"
 
 Flags 	F;
+uint8 p;
 
 void main(void)
 {
@@ -109,8 +110,8 @@ void main(void)
 					ZeroStats();
 					DoStartingBeepsWithOutput(3);
 
-					SendParamsPacket(0);
-					SendParamsPacket(1);
+					SendParameters(0);
+					SendParameters(1);
 
 					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
 					mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;

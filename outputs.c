@@ -244,7 +244,7 @@ void MixAndLimitCam(void)
 	#ifdef TARRO_CAM
 	// use only roll/pitch angle estimates
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
-	NewCamRoll =  SRS32((int32)Temp.i2_1 * Limit(128 - DesiredCamPitchTrim, 0, 128 ), 7);
+	NewCamRoll =  SRS32((int32)Temp.i2_1 * Limit(DesiredCamPitchTrim, 0, 128 ), 7);
 	NewCamRoll += (int16)P[CamRollTrim]; 
 	NewCamRoll *= PWMSense[CamRollC];
 	NewCamRoll += OUT_NEUTRAL;

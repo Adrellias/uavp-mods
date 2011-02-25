@@ -30,7 +30,8 @@ void SendFlightPacket(void);
 void SendNavPacket(void);
 void SendControlPacket(void);
 void SendStatsPacket(void);
-void SendParamsPacket(uint8);
+void SendParamPacket(uint8, uint8);
+void SendParameters(uint8);
 void SendArduStation(void);
 void SendCustom(void);
 void SensorTrace(void);
@@ -158,11 +159,12 @@ void SendControlPacket(void)
 	SendPacketHeader();
 
 	TxESCu8(UAVXControlPacketTag);
-	TxESCu8(35);
+	TxESCu8(36);
 
 	TxESCi16(DesiredThrottle);
  			
 	ShowAttitude();
+	TxESCu8(UAVXAirframe);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);
@@ -286,11 +288,11 @@ void SendMinPacket(void)
 	TxESCi16(Angle[Pitch]);
 		
 	TxESCi24(BaroRelAltitude);
-	TxESCi16(RangefinderAltitude); 				// cm
+	TxESCi16(RangefinderAltitude); 		
 
 	TxESCi16(Heading);
 	
-	TxESCi32(GPSLatitude); 						// 5 decimal minute units
+	TxESCi32(GPSLatitude); 					
 	TxESCi32(GPSLongitude);
 
 	TxESCu8(UAVXAirframe);
@@ -302,21 +304,27 @@ void SendMinPacket(void)
 
 } // SendMinPacket
 
-void SendParamsPacket(uint8 p) {
-
-	static uint8 b;
+void SendParamPacket(uint8 s, uint8 p) {
 
     SendPacketHeader();
 
-    TxESCu8(UAVXParamsPacketTag);
-    TxESCu8(MAX_PARAMETERS+1);
-    TxESCu8(p);
-    for (b = 0; b < (uint8)MAX_PARAMETERS; b++ )
-         TxESCi8(ReadEE(MAX_PARAMETERS*2+b));
-
+    TxESCu8(UAVXParamPacketTag);
+    TxESCu8(3);
+    TxESCu8(s);
+	TxESCu8(p);
+    TxESCi8( ReadEE( (s-1) * MAX_PARAMETERS + p ) );
 	SendPacketTrailer();
  
 } // SendParamPacket
+
+void SendParameters(uint8 s) {
+
+	static uint8 p;
+
+	for ( p = 0; p < (uint8)MAX_PARAMETERS; p++ )
+		SendParamPacket(s, p );
+	SendParamPacket(0, MAX_PARAMETERS);
+} // SendParameters
 
 void SendCycle(void) // 800uS at 40MHz?
 {
