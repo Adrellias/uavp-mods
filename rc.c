@@ -365,9 +365,7 @@ void UpdateControls(void)
 void CaptureTrims(void)
 { 	// only used in detecting movement from neutral in hold GPS position
 	// Trims are invalidated if Nav sensitivity is changed - Answer do not use trims ?
-	#ifdef TESTING
-
-	#else
+	#ifndef TESTING
 	Trim[Roll] = Limit(DesiredRoll, -NAV_MAX_TRIM, NAV_MAX_TRIM);
 	Trim[Yaw] = Limit(DesiredPitch, -NAV_MAX_TRIM, NAV_MAX_TRIM);
 	Trim[Yaw] = Limit(DesiredYaw, -NAV_MAX_TRIM, NAV_MAX_TRIM);

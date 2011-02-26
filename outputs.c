@@ -28,8 +28,6 @@ void MixAndLimitCam(void);
 void OutSignals(void);
 void InitI2CESCs(void);
 void StopMotors(void);
-void ExercisePWM(void);
-void PulsePWM(uint8, int16);
 void InitMotors(void);
 
 boolean OutToggle;
@@ -341,69 +339,10 @@ void StopMotors(void)
 	F.MotorsArmed = false;
 } // StopMotors
 
-void ExercisePWM(void)
-{ // used for testing that all PIC ports are switching cleanly - need scope
 
-	TxString("\r\nPWM Exercise Test - 1mS pulse only\r\n");
-	PulsePWM(0x3f, 50);
-
-} // ExercisePWM
-
-void PulsePWM(uint8 m, int16 Cycles)
-{
-	static int16 i;
-
-	SaveLEDs();
-	ALL_LEDS_ON;
-
-	for ( i = 0; i < Cycles; i++)
-	{
-		DisableInterrupts;
-
-		PORTB = m;
-
-		#ifdef CLOCK_16MHZ
-			Delay10TCYx(200);
-			Delay10TCYx(200);
-		#else
-			Delay10TCYx(160);
-		#endif // CLOCK_16MHZ
-	
-		PORTB = 0;
-
-		EnableInterrupts;
-
-		Delay1mS(20);
-	}
-
-	ALL_LEDS_OFF;
-	RestoreLEDs();
-} // PulsePWM
 
 void InitMotors(void)
 {
-	/*
-	static uint8 m;
-
-	#ifdef MULTICOPTER
-
-	if ( P[ESCType] == ESCPPM )
-	{
-		#ifdef TRICOPTER
-			m = 0x07;
-		#else
-			#ifdef Y6COPTER
-				m = 0x3f;
-			#else
-				m = 0x0f;
-			#endif
-		#endif // TRICOPTER
-
-		PulsePWM( m, 20);
-	}
-
-	#endif // MULTICOPTER
-	*/
 
 	StopMotors();
 

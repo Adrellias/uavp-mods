@@ -26,7 +26,7 @@ void OutSignals(void)
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interrupt. 
 	static int8 m;
-	static uint8 r;
+	static uint8 r, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
@@ -65,6 +65,19 @@ void OutSignals(void)
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
+
+	// dead timing code - caution
+	#ifdef  CLOCK_16MHZ
+		d = 7;
+		do
+			Delay10TCY(); 
+		while ( --d > 0 );
+	#else
+		d = 16;
+		while ( --d > 0 ) 
+			Delay10TCY();
+	#endif // CLOCK_16MHZ
+
 	EnableInterrupts;
 
 	if ( P[ESCType] == ESCPPM )
@@ -84,9 +97,9 @@ void OutSignals(void)
 		#endif // TRICOPTER
 		MOVWF	SHADOWB,1
 		_endasm
-	
-		SyncToTimer0AndDisableInterrupts();
 
+		SyncToTimer0AndDisableInterrupts();
+	
 		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
 		{
 			PORTB |= 0x3f;

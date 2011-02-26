@@ -108,6 +108,7 @@ void main(void)
 					DesiredThrottle = 0;
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
 					ZeroStats();
+					InitBarometer(); // try to get launch alt as close as possible.
 					DoStartingBeepsWithOutput(3);
 
 					SendParameters(0);
