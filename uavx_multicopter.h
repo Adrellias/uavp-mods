@@ -70,7 +70,7 @@
 	{UAVXTelemetry,true}, // TelemetryType	45c
 	{-12,0},			// MaxDescentRateDmpS 	46
 	{30,true},			// DescentDelayS	47c
-	{1,0},				// NavIntLimit		48
+	{4,0},				// NavIntLimit		48
 	{2,0},				// AltIntLimit		49
 	{11,true},			// was GravComp		50c
 
