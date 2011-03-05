@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UAVXGS</RootNamespace>
-    <AssemblyName>UAVXGS 1.7</AssemblyName>
+    <AssemblyName>UAVXGS 1.8</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -36,12 +36,12 @@
     <MapFileExtensions>false</MapFileExtensions>
     <SupportUrl>http://code.google.com/p/uavp-mods/wiki/UAVXGS</SupportUrl>
     <TargetCulture>en-AU</TargetCulture>
-    <ProductName>UAVXGS 1.7</ProductName>
+    <ProductName>UAVXGS 1.8</ProductName>
     <PublisherName>UAVX</PublisherName>
     <SuiteName>UAVXGS</SuiteName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>1.7.0.%2a</ApplicationVersion>
+    <ApplicationRevision>50</ApplicationRevision>
+    <ApplicationVersion>1.8.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -95,23 +95,44 @@
     <Compile Include="AvionicsInstrumentsControls\VerticalSpeedIndicatorInstrumentControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Parameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Parameters.Designer.cs">
+      <DependentUpon>Parameters.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AvionicsInstrumentsControls\AvionicsInstrumentsControlsResources.resx" />
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="FormMain.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Form1.cs</DependentUpon>
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Parameters.resx">
+      <DependentUpon>Parameters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Receiver.de.resx">
+      <DependentUpon>Receiver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Receiver.en-US.resx">
+      <DependentUpon>Receiver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Receiver.fr.resx">
+      <DependentUpon>Receiver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Receiver.resx">
+      <DependentUpon>Receiver.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -129,6 +150,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Receiver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Receiver.Designer.cs">
+      <DependentUpon>Receiver.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
   </ItemGroup>
