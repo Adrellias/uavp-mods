@@ -31,7 +31,6 @@ void InitHeading(void);
 void InitCompass(void);
 
 i24u 	Compass;
-int16 	HeadingFilterA;
 i32u 	HeadingValF;
 int16 	MagHeading;
 
@@ -45,7 +44,7 @@ void GetHeading(void)
 		if ( Abs ( Heading - HeadingValF.iw1 ) > MILLIPI )
 			HeadingValF.iw1 = Heading;
 		
-		LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
+		LPFilter16(&Heading, &HeadingValF, YawFilterA);
 
 		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
 	}
@@ -73,7 +72,7 @@ void GetHeading(void)
 
 void InitHeading(void)
 {
-	HeadingFilterA = ( (int24) COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int16) COMPASS_FREQ ) + (int16) COMPASS_TIME_MS );
+
 	HeadingValF.i32 = 0;
 
 	MagHeading = GetCompass();
@@ -97,6 +96,7 @@ void InitHeading(void)
 int16 Mag[3];
 
 int16 GetCompass(void) {
+
     static char b[6];
     static i16u X, Y, Z;
     static uint8 r;

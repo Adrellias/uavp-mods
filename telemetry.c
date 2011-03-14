@@ -452,7 +452,7 @@ void SensorTrace(void)
 	{
 		F.TxToBuffer = false; // direct to USART
 
-		TxValH16(((int24)Heading * 180)/MILLIPI); TxChar(';');
+		TxValH16(Heading); TxChar(';');
 
 		TxValH16(BaroRelAltitude); TxChar(';');
 		TxValH16(RangefinderAltitude); TxChar(';');

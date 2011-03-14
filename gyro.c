@@ -22,6 +22,7 @@
 
 #include "uavx.h"
 
+void AdaptiveYawFilterA(void);
 void ShowGyroType(void);
 void CompensateRollPitchGyros(void);
 void GetGyroValues(void);
@@ -38,6 +39,21 @@ int8 	GyroType;
 #include "gyro_itg3200.h"
 #include "gyro_analog.h"
 
+void AdaptiveYawFilterA(void)
+{ // ~600uS @ 16MHz - use approximation 4.5uS
+
+	static int16 TwoPiF, r; // 2.0*Pi*F
+
+	/*
+	TwoPiF = ( Abs(DesiredYaw) * YAW_MAX_FREQ * 6L ) / RC_NEUTRAL;
+	TwoPiF = Limit(TwoPiF, 3, YAW_MAX_FREQ * 6L );
+
+	YawFilterA = ( (int24) PID_CYCLE_MS * 256L) / ( 1000L / TwoPiF + (int16) PID_CYCLE_MS );
+	*/
+	YawFilterA = 5 + Abs(DesiredYaw);
+
+} // AdaptiveYawFilterA
+
 #define AccFilter NoFilter
 
 void GetGyroValues(void)
@@ -46,6 +62,9 @@ void GetGyroValues(void)
 		BlockReadITG3200();
 	else
 		GetAnalogGyroValues();
+
+    LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
+
 } // GetGyroValues
 
 void CalculateGyroRates(void)
@@ -92,8 +111,6 @@ void CalculateGyroRates(void)
 		break;
 	default:;
 	} // GyroType
-
-//	LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
 
 } // CalculateGyroRates
 

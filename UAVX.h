@@ -28,7 +28,7 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -104,12 +104,7 @@
 #define	ADC_BATT_FREQ				5
 #define	ADC_ALT_FREQ				20		// x 0.1Hz baro sampled at 20Hz STEVE tune for baro noise
 
-#ifdef TRICOPTER
-	#define	ADC_YAW_FREQ			3		// Hz
-#else
-	#define	ADC_YAW_FREQ			10		// Hz
-#endif // TRICOPTER
-#define COMPASS_FREQ				10		// Hz must be less than 10Hz
+#define YAW_MAX_FREQ				10		// Hz must be less than 10Hz
 
 #define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
 
@@ -118,7 +113,7 @@
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
 #else
-	#define PID_CYCLE_MS			8 // 5		// mS 200Hz
+	#define PID_CYCLE_MS			5 		// mS 200Hz
 #endif // CLOCK_16MHZ
 
 // DISABLED AS UNSAFE ON BENCH 
@@ -745,7 +740,6 @@ extern void InitHeading(void);
 extern void InitCompass(void);
 
 extern i24u Compass;
-extern int16 HeadingFilterA;
 extern i32u HeadingValF;
 
 //______________________________________________________________________________________________
@@ -859,6 +853,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 
 // gyro.c
 
+extern void AdaptiveYawFilterA(void);
 extern void ShowGyroType(void);
 extern void CompensateRollPitchGyros(void);
 extern void GetGyroValues(void);

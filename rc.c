@@ -330,6 +330,8 @@ void UpdateControls(void)
 		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
 	#endif // ATTITUDE_NO_LIMITS
 	DesiredYaw = RC[YawC] - RC_NEUTRAL;
+
+	AdaptiveYawFilterA(); // increase cutoff frquency with increased yaw stick
 						
 	HoldRoll = DesiredRoll - Trim[Roll];
 	HoldRoll = Abs(HoldRoll);
