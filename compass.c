@@ -24,6 +24,7 @@
 
 int16 GetCompass(void);
 void GetHeading(void);
+int16 MinimumTurn(int16);
 void GetCompassParameters(void);
 void DoCompassTest(void);
 void CalibrateCompass(void);
@@ -36,21 +37,25 @@ int16 	MagHeading;
 
 void GetHeading(void)
 {
+	static int16 HeadingChange;
+
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
 		MagHeading = GetCompass();
 		Heading = Make2Pi(MagHeading - CompassOffset);
 
-		if ( Abs ( Heading - HeadingValF.iw1 ) > MILLIPI )
-			HeadingValF.iw1 = Heading;
-		
-		LPFilter16(&Heading, &HeadingValF, YawFilterA);
-
-		if ( F.CompassMissRead && (State == InFlight) ) Stats[CompassFailS]++;	
+		HeadingChange = Abs( Heading - HeadingValF.iw1 );
+	    if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
+	        HeadingValF.iw1 = Heading;
+	    else
+	        if ( HeadingChange > COMPASS_MAX_SLEW ) { // Sanity check - discard reading
+	            Heading = HeadingValF.iw1; // SlewLimit(Headingp, -CompassMaxSlew, CompassMaxSlew );    // use previous value
+	            Stats[CompassFailS]++;
+	        }
+			
+	    LPFilter16(&Heading, &HeadingValF, YawFilterA);
 	}
-	else
-		Heading = 0;
-
+	
 	#ifdef SIMULATE
 		#if ( defined AILERON | defined ELEVON )
 			if ( State == InFlight )
@@ -69,6 +74,21 @@ void GetHeading(void)
 	#endif // SIMULATE
 
 } // GetHeading
+
+int16 MinimumTurn(int16 A ) {
+
+    static int16 AbsA;
+
+    AbsA = Abs(A);
+    if ( AbsA > MILLIPI )
+        A = ( AbsA - TWOMILLIPI ) * Sign(A);
+
+    //DirectionSelected = fabs(A) > THIRDPI; // avoid dithering around reciprocal heading
+    //DirectionSense = Sign(A);
+
+    return ( A );
+
+} // MinimumTurn
 
 void InitHeading(void)
 {
@@ -203,6 +223,8 @@ void InitCompass(void) {
 int16 GetCompass(void)
 {
 	static i16u CompassVal;
+
+/// slew limit setting
 
 	I2CStart();
 	F.CompassMissRead = WriteI2CByte(HMC6352_ID+1) != I2C_ACK; 

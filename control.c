@@ -277,7 +277,7 @@ void LimitYawAngle(void)
 		}
 		else
 		{
-			HE = MakePi(DesiredHeading - Heading);
+			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit(HE, -SIXTHMILLIPI, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int32)HE * (int32)P[CompassKp], 12); 
 			Rate[Yaw] -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);

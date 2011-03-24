@@ -731,8 +731,11 @@ extern int24 FakeBaroRelAltitude;
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
 
+#define COMPASS_MAX_SLEW	(6L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/1000)
+
 extern int16 GetCompass(void);
 extern void GetHeading(void);
+extern int16 MinimumTurn(int16);
 extern void GetCompassParameters(void);
 extern void DoCompassTest(void);
 extern void CalibrateCompass(void);
