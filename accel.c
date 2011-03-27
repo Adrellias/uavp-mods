@@ -98,9 +98,9 @@ void GetNeutralAccelerations(void)
 		AccFB = SRS16(AccFB, 4);
 		AccDU = SRS16(AccDU, 4);
 	
-		AccNeutral[LR] = Limit(AccLR, -99, 99);
-		AccNeutral[FB] = Limit(AccFB, -99, 99);
-		AccNeutral[DU] = Limit(AccDU - 1024, -99, 99); // -1g
+		AccNeutral[LR] = Limit1(AccLR, 99);
+		AccNeutral[FB] = Limit1(AccFB, 99);
+		AccNeutral[DU] = Limit1(AccDU - 1024, 99); // -1g
 	}
 	else
 		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;

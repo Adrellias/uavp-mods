@@ -238,7 +238,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral
 		IntCorr[LR] = SRS16(Acc[LR] + Grav[LR] + Dyn[LR], 3); // / 10;
-		IntCorr[LR] = Limit(IntCorr[LR], -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		IntCorr[LR] = Limit1(IntCorr[LR], GYRO_COMP_STEP); 
 	
 		// Pitch
 
@@ -254,7 +254,7 @@ void CompensateRollPitchGyros(void)
 
 		// correct DC level of the integral	
 		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); // / 10;
-		IntCorr[FB] = Limit(IntCorr[FB], -GYRO_COMP_STEP, GYRO_COMP_STEP); 
+		IntCorr[FB] = Limit1(IntCorr[FB], GYRO_COMP_STEP); 
 	}	
 	else
 		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;

@@ -28,7 +28,7 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -398,6 +398,7 @@ typedef struct { // GPS
 #define Decay1(i) 			(((i) < 0) ? (i+1) : (((i) > 0) ? (i-1) : 0))
 
 #define Limit(i,l,u) 	(((i) < l) ? l : (((i) > u) ? u : (i)))
+#define Limit1(i,l) 	(((i) < -(l)) ? -(l) : (((i) > (l)) ? (l) : (i)))
 
 // To speed up NMEA sentence processing 
 // must have a positive argument
@@ -1025,9 +1026,9 @@ extern void ConfigureESCs(void);
 #define Beeper_OFF		LEDsOff(BeeperM)
 #define Beeper_ON		LEDsOn(BeeperM)
 
-#define BEEPER_IS_ON       ((LEDShadow&BeeperM)!=(uint8)0)
-#define BEEPER_IS_OFF      ((LEDShadow&BeeperM)==(uint8)0)
-#define Beeper_TOG		if( BEEPER_IS_ON ) LEDsOn(BeeperM); else LEDsOff(BeeperM)
+#define BEEPER_IS_ON    ((LEDShadow&BeeperM)!=(uint8)0)
+#define BEEPER_IS_OFF   ((LEDShadow&BeeperM)==(uint8)0)
+#define Beeper_TOG		if (BEEPER_IS_OFF) LEDsOn(BeeperM); else LEDsOff(BeeperM)
 
 extern void SaveLEDs(void);
 extern void RestoreLEDs(void);

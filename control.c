@@ -77,18 +77,18 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	#endif
 			
 	BE = DesiredAltitude - Altitude;
-	LimBE = Limit(BE, -ALT_BAND_DM, ALT_BAND_DM);
+	LimBE = Limit1(BE, ALT_BAND_DM);
 		
 	AltP = SRS16(LimBE * (int16)P[AltKp], 4);
-	AltP = Limit(AltP, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
+	AltP = Limit1(AltP, ALT_MAX_THR_COMP);
 		
 	AltDiffSum += LimBE;
-	AltDiffSum = Limit(AltDiffSum, -ALT_INT_WINDUP_LIMIT, ALT_INT_WINDUP_LIMIT);
+	AltDiffSum = Limit1(AltDiffSum, ALT_INT_WINDUP_LIMIT);
 	AltI = SRS16(AltDiffSum * (int16)P[AltKi], 3);
-	AltI = Limit(AltDiffSum, -(int16)P[AltIntLimit], (int16)P[AltIntLimit]);
+	AltI = Limit1(AltDiffSum, (int16)P[AltIntLimit]);
 				 
 	AltD = SRS16(ROC * (int16)P[AltKd], 2);
-	AltD = Limit(AltD, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP); 
+	AltD = Limit1(AltD, ALT_MAX_THR_COMP); 
 			 
 	if ( ROC < (int16)P[MaxDescentRateDmpS] )
 	{
@@ -99,7 +99,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		AltDSum = DecayX(AltDSum, 1);
 			
 	NewAltComp = AltP + AltI + AltD + AltDSum;
-	NewAltComp = Limit(NewAltComp, -ALT_MAX_THR_COMP, ALT_MAX_THR_COMP);
+	NewAltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
 	
 	Comp[Alt] = SlewLimit(Comp[Alt], NewAltComp, 1);
 		
@@ -185,7 +185,7 @@ void InertialDamping(void)
 		// Down - Up
 		// Empirical - acceleration changes at ~approx Sum/8 for small angles
 		Vel[DU] += Acc[DU] + SRS16( Abs(Angle[Roll]) + Abs(Angle[Pitch]), 3);		
-		Vel[DU] = Limit(Vel[DU] , -16384, 16383); 			
+		Vel[DU] = Limit1(Vel[DU] , 16383); 			
 		Temp = SRS32(SRS16(Vel[DU], 4) * (int32)P[VertDampKp], 13);
 		if( Temp > Comp[DU] ) 
 			Comp[DU]++;
@@ -202,26 +202,26 @@ void InertialDamping(void)
 			{
 				// Left - Right
 				Vel[LR] += Acc[LR];
-				Vel[LR] = Limit(Vel[LR] , -16384, 16383);  	
+				Vel[LR] = Limit1(Vel[LR] , 16383);  	
 				Temp = SRS32(SRS16(Vel[LR], 4) * (int32)P[HorizDampKp], 13);
 				if( Temp > Comp[LR] ) 
 					Comp[LR]++;
 				else
 					if( Temp < Comp[LR] )
 						Comp[LR]--;
-				Comp[LR] = Limit(Comp[LR], -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
+				Comp[LR] = Limit1(Comp[LR], DAMP_HORIZ_LIMIT);
 				Vel[LR] = DecayX(Vel[LR], (int16)P[HorizDampDecay]);
 		
 				// Front - Back
 				Vel[FB] += Acc[FB];
-				Vel[FB] = Limit(Vel[FB] , -16384, 16383);  
+				Vel[FB] = Limit1(Vel[FB] , 16383);  
 				Temp = SRS32(SRS16(Vel[FB], 4) * (int32)P[HorizDampKp], 13);
 				if( Temp > Comp[FB] ) 
 					Comp[FB]++;
 				else
 					if( Temp < Comp[FB] )
 						Comp[FB]--;
-				Comp[FB] = Limit(Comp[FB], -DAMP_HORIZ_LIMIT, DAMP_HORIZ_LIMIT);
+				Comp[FB] = Limit1(Comp[FB], DAMP_HORIZ_LIMIT);
 				Vel[FB] = DecayX(Vel[FB], (int16)P[HorizDampDecay]);
 			}
 			else
@@ -248,7 +248,7 @@ void LimitRollAngle(void)
 {
 	// Caution: Angle[Roll] is positive left which is the opposite sense to the roll angle
 	Angle[Roll] += Rate[Roll];
-	Angle[Roll] = Limit(Angle[Roll], -RollIntLimit256, RollIntLimit256);
+	Angle[Roll] = Limit1(Angle[Roll], RollIntLimit256);
 	Angle[Roll] = Decay1(Angle[Roll]);			// damps to zero even if still rolled
 	Angle[Roll] += IntCorr[LR];				// last for accelerometer compensation
 } // LimitRollAngle
@@ -257,7 +257,7 @@ void LimitPitchAngle(void)
 {
 	// Caution: Angle[Pitch] is positive down which is the opposite sense to the pitch angle
 	Angle[Pitch] += Rate[Pitch];
-	Angle[Pitch] = Limit(Angle[Pitch], -PitchIntLimit256, PitchIntLimit256);
+	Angle[Pitch] = Limit1(Angle[Pitch], PitchIntLimit256);
 	Angle[Pitch] = Decay1(Angle[Pitch]); 
 	Angle[Pitch] += IntCorr[FB];
 } // LimitPitchAngle
@@ -278,14 +278,14 @@ void LimitYawAngle(void)
 		else
 		{
 			HE = MinimumTurn(DesiredHeading - Heading);
-			HE = Limit(HE, -SIXTHMILLIPI, SIXTHMILLIPI); // 30 deg limit
+			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int32)HE * (int32)P[CompassKp], 12); 
-			Rate[Yaw] -= Limit(HE, -COMPASS_MAXDEV, COMPASS_MAXDEV);
+			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV);
 		}
 	}
 
 	Angle[Yaw] += Rate[Yaw];
-	Angle[Yaw] = Limit(Angle[Yaw], -YawIntLimit256, YawIntLimit256);
+	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
 
 	Angle[Yaw] = DecayX(Angle[Yaw], 2); 				// GKE added to kill gyro drift
 
@@ -429,9 +429,9 @@ void DoControl(void)
 	#ifdef TRICOPTER
 		Yl = SlewLimit(Ylp, Yl, 2);
 		Ylp = Yl;
-		Yl = Limit(Yl, -(int16)P[YawLimit]*4, (int16)P[YawLimit]*4);
+		Yl = Limit1(Yl,(int16)P[YawLimit]*4);
 	#else
-		Yl = Limit(Yl, -(int16)P[YawLimit], (int16)P[YawLimit]);
+		Yl = Limit1(Yl, (int16)P[YawLimit]);
 	#endif // TRICOPTER
 
 	CameraRollAngle = SRS32(Angle[Pitch] * OSO + Angle[Roll] * OCO, 8);
@@ -475,7 +475,7 @@ void LightsAndSirens(void)
 				OutSignals(); // synced to New RC signals
 				if( mSClock() > Ch5Timeout )
 				{
-					if ( F.Navigate || F.ReturnHome || !F.ParametersValid )
+					if ( F.Ch5Active || !F.ParametersValid )
 					{
 						Beeper_TOG;					
 						LEDRed_TOG;

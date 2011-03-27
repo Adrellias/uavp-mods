@@ -662,7 +662,7 @@ void GetBaroAltitude(void)
 				Stats[BaroFailS]++;
 			}
 
-			Temp = Limit( Temp , -BARO_SANITY_CHECK_DMPS, BARO_SANITY_CHECK_DMPS );
+			Temp = Limit1( Temp , BARO_SANITY_CHECK_DMPS );
 			BaroROC = SRS16( BaroROC * 31 + Temp, 5 );				
 			BaroRelAltitudeP = BaroRelAltitude;
 

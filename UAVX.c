@@ -203,8 +203,8 @@ void main(void)
 
 			while ( WaitingForSync ) {};
 
-		//	mS[UpdateTimeout] += PID_CYCLE_MS;
-PIDUpdate = mSClock() + PID_CYCLE_MS;
+			PIDUpdate = mSClock() + PID_CYCLE_MS;
+
 			GetGyroValues();
 			
 			DoControl();

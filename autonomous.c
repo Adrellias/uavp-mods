@@ -240,7 +240,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		if ( !F.WayPointAchieved )
 		{
 			NavCorr[Yaw] = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
-			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NAV_YAW_LIMIT, NAV_YAW_LIMIT); // gently!
+			NavCorr[Yaw] = Limit1(NavCorr[Yaw], NAV_YAW_LIMIT); // gently!
 		}
 
 		#else // MULTICOPTER
@@ -257,24 +257,24 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		
 		for ( a = 0; a < (uint8)2 ; a++ )
 		{
-			NavP = Limit(NavE[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+			NavP = Limit1(NavE[a], NAV_MAX_ROLL_PITCH);
 		
 			NavIntE[a] += NavE[a];
-			NavIntE[a] = Limit(NavIntE[a], -P[NavIntLimit], (int16)P[NavIntLimit]);
+			NavIntE[a] = Limit1(NavIntE[a], (int16)P[NavIntLimit]);
 			NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
 			NavIntE[a] = Decay1(NavIntE[a]);
 			
 			Diff = (NavEp[a] - NavE[a]);
-			Diff = Limit(Diff, -256, 256);
+			Diff = Limit1(Diff, 256);
 			NavD = SRS16(Diff * (int16)P[NavKd], 8);
-			NavD = Limit(NavD, -NAV_DIFF_LIMIT, NAV_DIFF_LIMIT);
+			NavD = Limit1(NavD, NAV_DIFF_LIMIT);
 			
 			NavEp[a] = NavE[a];
 			
 			NavCorr[a] = SRS16( (NavP + NavI + NavD ) * NavSensitivity, 8);
 
 		  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
-		  	NavCorr[a] = Limit(NavCorr[a], -NAV_MAX_ROLL_PITCH, NAV_MAX_ROLL_PITCH);
+		  	NavCorr[a] = Limit1(NavCorr[a], NAV_MAX_ROLL_PITCH);
 		 
 		  	NavCorrp[a] = NavCorr[a];
 		}
@@ -283,7 +283,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
 			NavCorr[Yaw] = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
-			NavCorr[Yaw] = Limit(NavCorr[Yaw], -NavYCorrLimit, NavYCorrLimit); // gently!
+			NavCorr[Yaw] = Limit1(NavCorr[Yaw], NavYCorrLimit); // gently!
 		}
 		else
 			NavCorr[Yaw] = 0;

@@ -189,7 +189,7 @@ void high_isr_handler(void)
 						SignalCount -= RC_GOOD_RATIO;
 					}
 
-					SignalCount = Limit(SignalCount, -RC_GOOD_BUCKET_MAX, RC_GOOD_BUCKET_MAX);
+					SignalCount = Limit1(SignalCount, RC_GOOD_BUCKET_MAX);
 					F.Signal = SignalCount > 0;
 
 					if ( F.Signal )
