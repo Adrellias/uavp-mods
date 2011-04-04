@@ -399,7 +399,7 @@ void DoControl(void)
 
 	Rl -= ControlRoll;
 	ControlRollP = ControlRoll;
-	Ratep[Roll] = Rate[Roll];
+//	Ratep[Roll] = Rate[Roll];
 
 	// Pitch
 
@@ -413,7 +413,7 @@ void DoControl(void)
 
 	Pl -= ControlPitch;
 	ControlPitchP = ControlPitch;
-	Ratep[Pitch] = Rate[Pitch];
+//	Ratep[Pitch] = Rate[Pitch];
 
 	// Yaw
 	
