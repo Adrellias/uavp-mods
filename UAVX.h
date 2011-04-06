@@ -28,7 +28,7 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
+//	#define TESTING						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -555,7 +555,7 @@ typedef union {
 		AltitudeValid:1,		
 		UsingSerialPPM:1,
 		UsingTxMode2:1,
-		Unused0:1,
+		FailsafesEnabled:1,
 
 		// outside telemetry flags
 
@@ -566,7 +566,8 @@ typedef union {
 		RFInInches:1,
 		FirstArmed:1,
 		HaveGPRMC:1,
-		UsingPolar:1;		
+		UsingPolar:1;
+	
 		};
 } Flags;
 
@@ -1126,7 +1127,7 @@ enum TxRxTypes {
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
-enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C };
+enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
 
@@ -1197,9 +1198,6 @@ enum Params { // MAX 64
 	// 60 - 64 unused currently
 	};
 
-#define FlyXMode 			0
-#define FlyAltOrientationMask 		0x01
-
 #define UsePositionHoldLock 0
 #define UsePositionHoldLockMask 	0x01
 
@@ -1217,8 +1215,8 @@ enum Params { // MAX 64
 
 // bit 4 is pulse polarity for 3.15
 
-#define UseGPSAlt 			5
-#define	UseGPSAltMask		0x20
+#define UseFailsafe 			5
+#define	UseFailsafeMask		0x20
 
 #define UsePolar 			6
 #define	UsePolarMask		0x40

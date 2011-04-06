@@ -175,86 +175,71 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 void CheckSticksHaveChanged(void)
 {
-
-// DISABLED AS UNSAFE ON THE BENCH
-#ifdef ENABLE_STICK_CHANGE_FAILSAFE
-
 	#ifndef TESTING
 
 	static boolean Change;
 	static uint8 c;
 
-	if ( F.ReturnHome || F.Navigate  )
+	if ( F.FailsafesEnabled )
 	{
-		if ( mSClock() > mS[StickChangeUpdate] )
+		if ( F.ReturnHome || F.Navigate  )
 		{
-			mS[StickChangeUpdate] = mSClock() + 500;
-			if ( !F.ForceFailsafe && ( State == InFlight ))
+			Change = true;
+			mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;			
+			F.ForceFailsafe = false;
+		}
+		else
+		{
+			if ( mSClock() > mS[StickChangeUpdate] )
 			{
-				Stats[RCFailsafesS]++;
-				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-				mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
-				DescentComp = 0; // for no Baro case
+				mS[StickChangeUpdate] = mSClock() + 500;
+		
+				Change = false;
+				for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
+				{
+					Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
+					RCp[c] = RC[c];
+				}
 			}
 		
-			F.ForceFailsafe = State == InFlight; // abort if not navigating
+			if ( Change )
+			{
+				mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
+				mS[NavStateTimeout] = mSClock();
+				F.ForceFailsafe = false;
+	
+				if ( FailState == MonitoringRx )
+				{
+					if ( F.LostModel )
+					{
+						Beeper_OFF;
+						F.LostModel = false;
+						DescentComp = 0;
+					}
+				}
+			}
+			else
+				if ( mSClock() > mS[RxFailsafeTimeout] )
+				{
+					if ( !F.ForceFailsafe && ( State == InFlight ) )
+					{
+						Stats[RCFailsafesS]++;
+						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
+						mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
+						DescentComp = 0; // for no Baro case
+						F.ForceFailsafe = true;
+					}
+				}
 		}
 	}
 	else
-	{
-		if ( mSClock() > mS[StickChangeUpdate] )
-		{
-			mS[StickChangeUpdate] = mSClock() + 500;
-	
-			Change = false;
-			for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
-			{
-				Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
-				RCp[c] = RC[c];
-			}
-		}
-	
-		if ( Change )
-		{
-			mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
-			mS[NavStateTimeout] = mSClock();
-			F.ForceFailsafe = false;
-
-			if ( FailState == MonitoringRx )
-			{
-				if ( F.LostModel )
-				{
-					Beeper_OFF;
-					F.LostModel = false;
-					DescentComp = 0;
-				}
-			}
-		}
-		else
-			if ( mSClock() > mS[RxFailsafeTimeout] )
-			{
-				if ( !F.ForceFailsafe && ( State == InFlight ) )
-				{
-					Stats[RCFailsafesS]++;
-					mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-					mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
-					DescentComp = 0; // for no Baro case
-					F.ForceFailsafe = true;
-				}
-			}
-	}
+		F.ForceFailsafe = false;
 
 	#else
 
 	F.ForceFailsafe = false;
 
-	#endif // !TESTING
-
-#else
-
-	F.ForceFailsafe = false;
-
-#endif // ENABLE_STICK_CHANGE_FAILSAFE
+	#endif // ENABLE_STICK_CHANGE_FAILSAFE
 
 } // CheckSticksHaveChanged
 

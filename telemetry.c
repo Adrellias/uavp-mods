@@ -233,7 +233,7 @@ void SendStatsPacket(void)
     TxESCu8(UAVXStatsPacketTag);
     TxESCu8(MAX_STATS * 2 + 2);
 
-    for ( i = 0; i < MAX_STATS ; i++)
+    for ( i = 0; i < (uint8)MAX_STATS ; i++)
         TxESCi16(Stats[i]);
 
     TxESCu8(UAVXAirframe | 0x80);

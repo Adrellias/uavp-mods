@@ -273,7 +273,7 @@ uint8 ScanI2CBus(void)
 
 	TxString("\r\nESC Bus\r\n");
 
-	if ( (P[ESCType] == ESCHolger)||(P[ESCType] == ESCX3D)||(P[ESCType] == ESCYGEI2C) )
+	if ( (P[ESCType] == ESCHolger)||(P[ESCType] == ESCX3D)||(P[ESCType] == ESCYGEI2C)||(P[ESCType] == ESCLRCI2C))
 		for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
 		{
 			ESCI2CStart();

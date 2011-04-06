@@ -196,7 +196,8 @@ void main(void)
 				FailState = MonitoringRx;
 			}
 			else
-				DoFailsafe();
+				if ( F.FailsafesEnabled )
+					DoFailsafe();
 
 			GetHeading();
 			AltitudeHold();

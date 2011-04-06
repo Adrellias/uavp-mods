@@ -133,6 +133,8 @@ void ReadParametersEE(void)
 
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
+		F.FailsafesEnabled = ((P[ConfigBits] & UseFailsafeMask) == 0);
+
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
 		F.UsingGPSAlt = false;
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
@@ -168,10 +170,10 @@ void UseDefaultParameters(void)
 { // loads a representative set of initial parameters as a base for tuning
 	uint16 p;
 
-	for ( p = 0; p < MAX_EEPROM; p++ )
+	for ( p = 0; p < (uint16)MAX_EEPROM; p++ )
 		WriteEE( p,  0xff);
 
-	for ( p = 0; p < MAX_PARAMETERS; p++ )
+	for ( p = 0; p < (uint16)MAX_PARAMETERS; p++ )
 		P[p] = DefaultParams[p][0];
 
 	WriteParametersEE(1);

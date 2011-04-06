@@ -248,6 +248,17 @@ OS006:
 					ESCI2CFail[0] += r;
 					ESCI2CStop();
 				}
+				else
+				if ( P[ESCType] == ESCLRCI2C )
+					for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+					{
+						ESCI2CStart();
+						r = WriteESCI2CByte(0xd0 + ( m*2 ));	// one cmd, one data byte per motor
+						r += WriteESCI2CByte(0xa2);
+						r += WriteESCI2CByte(PWM[m]);
+						ESCI2CFail[m] += r; 
+						ESCI2CStop();
+					}
 		#endif //  MULTICOPTER
 	}
 

@@ -245,6 +245,8 @@ void ShowSetup(boolean h)
 		TxString("\tManual Nav Alt Hold CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
+	if ( !F.FailsafesEnabled )
+		TxString("\tYOU have chosen to DISABLE Failsafes\r\n");
 	if ( P[TxRxType] == UnknownTxRx )
 		TxString("\tTx/Rx TYPE not set\r\n");
 	#ifdef TESTING
