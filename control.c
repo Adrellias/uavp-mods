@@ -419,9 +419,7 @@ void DoControl(void)
 	
 	LimitYawAngle();
 
-	Rate[Yaw] += DesiredYaw + NavCorr[Yaw];
-
-	Yl  = SRS16(Rate[Yaw] *(int16)P[YawKp] + (Ratep[Yaw]-Rate[Yaw]) * (int16)P[YawKd], 4);
+	Yl  = SRS16( ( Rate[Yaw] + DesiredYaw + NavCorr[Yaw] ) * (int16)P[YawKp] + (Ratep[Yaw]-Rate[Yaw]) * (int16)P[YawKd], 4);
 	Yl += SRS16(Angle[Yaw] * (int16)P[YawKi], 8);
 
 	Ratep[Yaw] = Rate[Yaw];
