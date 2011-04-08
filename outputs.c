@@ -256,7 +256,7 @@ void MixAndLimitCam(void)
 	#endif // TARRO_CAM
 
 	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
-	NewCamPitch = Temp.i2_1 + DesiredCamPitchTrim;
+	NewCamPitch = Temp.i2_1 + SRS16( DesiredCamPitchTrim * 3, 1 );
 	NewCamPitch = PWMSense[CamPitchC] * NewCamPitch + OUT_NEUTRAL; 
 	PWM[CamPitchC] = SlewLimit( PWM[CamPitchC], NewCamPitch, 2);
 	#endif // !Y6COPTER			
