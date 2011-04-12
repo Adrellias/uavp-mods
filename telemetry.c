@@ -159,11 +159,15 @@ void SendControlPacket(void)
 	SendPacketHeader();
 
 	TxESCu8(UAVXControlPacketTag);
-	TxESCu8(36);
+	TxESCu8(40);
 
 	TxESCi16(DesiredThrottle);
  			
 	ShowAttitude();
+
+    TxESCi16(Heading); 
+    TxESCi16(DesiredHeading);
+
 	TxESCu8(UAVXAirframe);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels

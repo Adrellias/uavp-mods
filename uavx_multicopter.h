@@ -19,8 +19,8 @@
 //    If not, see http://www.gnu.org/licenses/
 	
 	const rom int8 DefaultParams[MAX_PARAMETERS][2] = {
-	{-20,0},			// RollKp, 			01
-	{-12,0},	 		// RollKi,			02
+	{-12,0},			// RollKp, 			01
+	{-22,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
 	{-1,true},			// HorizDampKp,		04c 
 	{5,0},	 			// RollIntLimit,	05
@@ -33,6 +33,7 @@
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12
 	{0,0},	 			// YawKd,			13
+
 	{25,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
 	{2,true}, 			// ConfigBits,		16c

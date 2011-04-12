@@ -55,6 +55,9 @@ int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim
 int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 int16 CurrMaxRollPitch;
 
+int16 RollOuterInp, RollOuterInpP, RollOuter, RollInnerInp;
+int16 PitchOuterInp, PitchOuterInpP, PitchOuter, PitchInnerInp;
+
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
@@ -263,7 +266,7 @@ void LimitPitchAngle(void)
 } // LimitPitchAngle
 
 void LimitYawAngle(void)
-{ // Yaw rate compensation using compass
+{ 	// Yaw gyro compensation using compass
 	static int16 Temp, HE;
 
 	if ( F.CompassValid )
@@ -271,16 +274,13 @@ void LimitYawAngle(void)
 		// + CCW
 		Temp = DesiredYaw - Trim[Yaw];
 		if ( Abs(Temp) > COMPASS_MIDDLE ) // acquire new heading
-		{
 			DesiredHeading = Heading;
-			HE = 0; 
-		}
 		else
 		{
 			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int32)HE * (int32)P[CompassKp], 12); 
-			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV);
+			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
 		}
 	}
 
@@ -391,6 +391,22 @@ void DoControl(void)
 				
 	LimitRollAngle();
 
+	#ifdef ML_PID
+
+// set P = -32, I = -16, D = 0 as it is rescaled by /32
+
+	RollOuterInp = - ( Angle[Roll] + ControlRoll ); //+ NavCorr[Roll] + Comp[LR] );
+	RollOuter = SRS16(RollOuterInp * P[RollKi] + ( RollOuterInp - RollOuterInpP ) * P[RollKd], 5);
+
+	RollInnerInp = RollOuter - Rate[Roll];
+	Rl = SRS16(RollInnerInp * P[RollKp], 5);
+
+	//Rl = SRS32((int32)Rl * GS, 8);
+
+	RollOuterInpP = RollOuterInp;
+
+	#else
+
 	Rl  = SRS16(Rate[Roll] * P[RollKp] + (Ratep[Roll]-Rate[Roll]) * P[RollKd], 5);
 	Rl += SRS16(Angle[Roll] * (int16)P[RollKi], 9); 
 	Rl -= NavCorr[Roll] - Comp[LR];
@@ -398,24 +414,42 @@ void DoControl(void)
 	Rl = SRS32((int32)Rl * GS, 8);
 
 	Rl -= ControlRoll;
-	ControlRollP = ControlRoll;
+
 	Ratep[Roll] = Rate[Roll];
+
+	#endif // ML_PID
 
 	// Pitch
 
 	LimitPitchAngle();
 
+	#ifdef ML_PID
+
+	PitchOuterInp = -( Angle[Pitch] + ControlPitch ); //+ NavCorr[Pitch] + Comp[FB] );
+	PitchOuter = SRS16(PitchOuterInp * P[PitchKi] + ( PitchOuterInp - PitchOuterInpP ) * P[PitchKd], 5);
+
+	PitchInnerInp = PitchOuter - Rate[Pitch];
+	Pl = -SRS16(PitchInnerInp * P[PitchKp], 5);
+
+	//Pl = SRS32((int32)Pl * GS, 8);
+
+	RollOuterInpP = RollOuterInp;
+
+	#else
+
 	Pl  = SRS16(Rate[Pitch] * P[PitchKp] + (Ratep[Pitch]-Rate[Pitch]) * P[PitchKd], 5);
 	Pl += SRS16(Angle[Pitch] * (int16)P[PitchKi], 9);
 	Pl -= NavCorr[Pitch] - Comp[FB];
 
-	Pl = SRS32((int32)Pl * GS, 8);
+	Pl = -SRS32((int32)Pl * GS, 8);
 
 	Pl -= ControlPitch;
-	ControlPitchP = ControlPitch;
+
 	Ratep[Pitch] = Rate[Pitch];
 
-	// Yaw
+	#endif // ML_PID
+
+	// Yaw  - should be tuned to rate control
 	
 	LimitYawAngle();
 
@@ -518,8 +552,9 @@ void InitControl(void)
 	for ( g = 0; g <(uint8)3; g++ )
 		Rate[g] = Ratep[g] = Trim[g] = 0;
 
-	CameraRollAngle = CameraPitchAngle = 0;
+	CameraRollAngle = CameraPitchAngle = RollOuterInpP = PitchOuterInpP = 0;
 	ControlRollP = ControlPitchP = 0;
+
 	Ylp = 0;
 	Comp[Alt] = Comp[DU] = Comp[LR] = Comp[FB] = Vel[DU] = Vel[LR] = Vel[FB] = YawRateF.i32 = 0;	
 	AltSum = 0;

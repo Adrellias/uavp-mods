@@ -1,4 +1,5 @@
 
+
 //#define JIM_MPX_INVERT
 //#define THREE_DOF		// ITG3200 ONLY
 
@@ -28,8 +29,11 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-//	#define TESTING						
+	//#define TESTING						
 	//#define SIMULATE
+
+	//#define ML_PID  // DO NOT USE - NOT COMMISSIONED YET
+
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
