@@ -102,8 +102,8 @@ void ReadParametersEE(void)
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 
-		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
-		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
+		RollIntLimit2048 = (int16)P[RollIntLimit] * 2048L;
+		PitchIntLimit2048 = (int16)P[PitchIntLimit] * 2048L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);

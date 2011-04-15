@@ -74,6 +74,8 @@ void InitMisc(void)
 	State = Starting;				// For trace preconditions
 	ServoToggle = 0;
 	ServoInterval = 2;
+
+	x1 = x2 = x3 = x4 = x5 = x6 = 0; // misc trace values
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;

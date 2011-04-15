@@ -1,4 +1,4 @@
-
+#define NEW_YAW
 
 //#define JIM_MPX_INVERT
 //#define THREE_DOF		// ITG3200 ONLY
@@ -29,7 +29,8 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING						
+	//#define TESTING
+#define DEBUG_GYROS						
 	//#define SIMULATE
 
 	//#define ML_PID  // DO NOT USE - NOT COMMISSIONED YET
@@ -114,10 +115,14 @@
 
 // Timeouts and Update Intervals
 
+// Rescale angle to accelerometer units 
+// MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
+	#define RESCALE_TO_ACC 			36		// (256/7.16)	
 #else
 	#define PID_CYCLE_MS			5 		// mS 200Hz
+	#define RESCALE_TO_ACC 			22		// (256/11.46)
 #endif // CLOCK_16MHZ
 
 // DISABLED AS UNSAFE ON BENCH 
@@ -159,13 +164,6 @@
 #define DAMP_HORIZ_LIMIT 			3L		// equivalent stick units - no larger than 5
 #define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
 #define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
-
-// Gyros
-
-// Enable "Dynamic mass" compensation Roll and/or Pitch
-// Normally disabled for pitch only 
-//#define DISABLE_DYNAMIC_MASS_COMP_ROLL
-#define DISABLE_DYNAMIC_MASS_COMP_PITCH
 
 // Altitude Hold
 
@@ -499,6 +497,8 @@ typedef struct { // GPS
 
 // main.c
 
+extern int16 x1,x2,x3,x4,x5,x6;
+
 #define FLAG_BYTES 10
 #define TELEMETRY_FLAG_BYTES 6
 typedef union {
@@ -604,7 +604,7 @@ extern boolean LISLAccActive(void);
 extern void ReadLISLAcc(void);
 
 extern i16u Ax, Ay, Az;
-extern int8 IntCorr[3];
+extern int16 IntCorr[3];
 extern int8 AccNeutral[3];
 extern int16 Vel[3], Acc[3], Comp[4];
 extern int8 AccType;
@@ -774,15 +774,15 @@ extern void LightsAndSirens(void);
 extern void InitControl(void);
 
 extern int16 Ratep[4];
-extern int16 Rl, Pl, Yl, Ylp;							// PID output values
+extern int16 Rl, Pl, Yl, Ylp;						
 extern int24 OSO, OCO;
 extern int16 CameraRollAngle, CameraPitchAngle;
-extern int16 Angle[3];			// integral/angle	
+extern int16 Angle[3], RawAngle[3];		
 extern int16 Trim[3];
 extern int16 HoldYaw, YawSlewLimit;
 extern int16 YawFilterA;
 extern int32 GS;
-extern int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
+extern int16 RollIntLimit2048, PitchIntLimit2048, YawIntLimit256;
 extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
 extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;

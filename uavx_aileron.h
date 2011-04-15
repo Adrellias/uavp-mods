@@ -22,7 +22,7 @@
 	{-20,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
-	{-1,true},			// HorizDampKp,		04c 
+	{-1,true},			// was HorizDampKp,		04c 
 	{5,0},	 			// RollIntLimit,	05
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
@@ -32,7 +32,7 @@
 	
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12
-	{0,0},	 			// YawKd,			13
+	{0,0},	 			// was YawKd,			13
 	{25,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
 	{0,true}, 			// ConfigBits,		16c
@@ -52,25 +52,25 @@
 	{0,0}, 				// was NavRadius,	29
 	{8,0}, 				// NavKi,			30 
 
-	{0,0}, 				// Acro,	    	31
-	{0,0},				// Acro,	    	32
+	{0,0}, 				// GSThrottle,	    31
+	{0,0},				// GSAttitude,	    32
 	{0,0}, 				// NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
 	{LY530Gyro,true}, 	// GyroType, 		35c
 	{ESCPPM,true}, 		// ESCType,			36c
-	{DX7AR7000,true}, 	// TxRxType			37c
+	{UnknownTxRx,true}, 	// TxRxType			37c
 	{2,true},				// NeutralRadius	38
 	{30,true},				// PercentNavSens6Ch	39
 	{1,true},			// CamRollTrim,		40c
 
 	{-16,0},			// NavKd			41
 	{1,true},			// VertDampDecay    42c
-	{1,true},			// HorizDampDecay	43c
+	{1,true},			// was HorizDampDecay	43c
 	{56,true},			// BaroScale	    44c
 	{UAVXTelemetry,true}, // TelemetryType	45c
 	{-8,0},				// MaxDescentRateDmpS 	46
 	{30,true},			// DescentDelayS	47c
-	{1,0},				// NavIntLimit		48
+	{4,0},				// NavIntLimit		48
 	{2,0},				// AltIntLimit		49
 	{11,true},			// was GravComp		50c
 
@@ -81,9 +81,9 @@
 	{LY530Gyro,true},	// was GyroYawType	55c		
 	{-4,0},				// AltKd			56
 	#if (defined  TRICOPTER) | (defined VTCOPTER )
-	{24,0},				// Orient			57
+	{24,true},				// Orient			57
 	#else	
-	{0,0},				// Orient			57
+	{0,true},				// Orient			57
 	#endif // TRICOPTER | VTCOPTER				
 	
 	{12,true},				// NavYawLimit		58

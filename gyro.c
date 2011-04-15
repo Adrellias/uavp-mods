@@ -90,14 +90,14 @@ void CalculateGyroRates(void)
 		Rate[Yaw] = SRS16(Rate[Yaw], 2);
 		break;
 	case ADXRS300Gyro:// ADXRS610/300 300deg/S 5V
-		Rate[Roll] = SRS16(Rate[Roll], 1);	// scaling is not correct
-		Rate[Pitch] = SRS16(Rate[Pitch], 1);
-		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		Rate[Roll] = (Rate[Roll] * 2)/3;
+		Rate[Pitch] = (Rate[Pitch] * 2)/3;
+		Rate[Yaw] = SRS16(Rate[Yaw], 2); // should be 1/3
 		break;
 	case ITG3200Gyro:// ITG3200
-		Rate[Roll] = SRS16(Rate[Roll], 8);	
-		Rate[Pitch] = SRS16(Rate[Pitch], 8);
-		Rate[Yaw] = SRS16(Rate[Yaw], 9);
+		Rate[Roll] = SRS16(Rate[Roll], 3);//8	
+		Rate[Pitch] = SRS16(Rate[Pitch], 3);//8
+		Rate[Yaw] = SRS16(Rate[Yaw], 4);//9
 		break;
 	case IRSensors:// IR Sensors - NOT IMPLEMENTED IN PIC VERSION
 		Rate[Roll] = 0;	
@@ -137,7 +137,7 @@ void ErectGyros(void)
 	for ( g = 0; g < (int8)3; g++ )
 	{
 		GyroNeutral[g] = (int16)SRS32( Av[g], 5); // ITG3200 is signed
-		Rate[g] =  Ratep[g] = Angle[g] = 0;
+		Rate[g] =  Ratep[g] = Angle[g] = RawAngle[g] = 0;
 	}
  
 	LEDRed_OFF;
@@ -176,16 +176,15 @@ void ShowGyroType(void)
 
 void InitGyros(void)
 {
-	if ( ITG3200GyroActive() )
+
+	GyroType = P[DesGyroType];
+	if ( GyroType == ITG3200Gyro )
 	{
-		InitITG3200();
-		GyroType = ITG3200Gyro;
+		if ( ITG3200GyroActive() )
+			InitITG3200();	
 	}
 	else
-	{
-		GyroType = P[DesGyroType];
 		InitAnalogGyros();
-	}
 
 } // InitGyros
 
@@ -201,8 +200,11 @@ void GyroTest(void)
 
 void CompensateRollPitchGyros(void)
 {
-	#define GRAV_COMP 11L
-	#define GYRO_COMP_STEP 3
+	static i32u Temp;
+
+	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
+
+	#define ANGLE_COMP_STEP 25			// 3
 
 	static int16 Grav[2], Dyn[2];
 
@@ -221,40 +223,25 @@ void CompensateRollPitchGyros(void)
 		Acc[FB] -= (int16)P[MiddleFB];
 		Acc[DU] -= (int16)P[MiddleDU];
 
-		Acc[DU] -= 1024L;	// subtract 1g - not corrrect for other than level
-						// ??? could check for large negative Acc => upside down?	
+		Acc[DU] -= 1024L;	// subtract 1g - not corrrect for other than level	
 			
 		// Roll
 
-		// static compensation due to Gravity
-		Grav[LR] = -SRS16(Angle[Roll] * GRAV_COMP, 5); 
-	
-		// dynamic correction of moved mass
-		#ifdef DISABLE_DYNAMIC_MASS_COMP_ROLL
-		Dyn[LR] = 0;
-		#else
-		Dyn[LR] = Rate[Roll];	
-		#endif
+		Temp.i32 = -(int32)Angle[Roll] * RESCALE_TO_ACC; // avoid shift
+		Grav[LR] = Temp.i3_1;
+		Dyn[LR] = 0; //Rate[Roll];
 
-		// correct DC level of the integral
-		IntCorr[LR] = SRS16(Acc[LR] + Grav[LR] + Dyn[LR], 3); // / 10;
-		IntCorr[LR] = Limit1(IntCorr[LR], GYRO_COMP_STEP); 
+		IntCorr[LR] = SRS32(Acc[LR] + Grav[LR] + Dyn[LR], 3); 
+		IntCorr[LR] = Limit1(IntCorr[LR], ANGLE_COMP_STEP); 
 	
 		// Pitch
 
-		// static compensation due to Gravity
-		Grav[FB] = -SRS16(Angle[Pitch] * GRAV_COMP, 5); 
-	
-		// dynamic correction of moved mass		
-		#ifdef DISABLE_DYNAMIC_MASS_COMP_PITCH
-		Dyn[FB] = 0;
-		#else
-		Dyn[FB] = Rate[Pitch];
-		#endif
+		Temp.i32 = -(int32)Angle[Pitch] * RESCALE_TO_ACC; // avoid shift
+		Grav[FB] = Temp.i3_1;
+		Dyn[FB] = 0; // Rate[Pitch];
 
-		// correct DC level of the integral	
-		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); // / 10;
-		IntCorr[FB] = Limit1(IntCorr[FB], GYRO_COMP_STEP); 
+		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); 
+		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP); 
 	}	
 	else
 		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;

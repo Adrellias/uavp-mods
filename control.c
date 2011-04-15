@@ -37,18 +37,18 @@ void InitControl(void);
 
 int16 RC[CONTROLS], RCp[CONTROLS];
 
-int16 Ratep[4];					// gyro rate error	
+int16 Ratep[4];					
 
-int16 Angle[3];		// integral
+int16 Angle[3], RawAngle[3];		
 int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;
-int16 Rl, Pl, Yl, Ylp;					// PID output values 	
+int16 Rl, Pl, Yl, Ylp;				
 int24 OSO, OCO;
 int16 YawFilterA;
 int32 GS;
 
 int16 Trim[3];
 int16 HoldYaw;
-int16 RollIntLimit256, PitchIntLimit256, YawIntLimit256;
+int16 RollIntLimit2048, PitchIntLimit2048, YawIntLimit256;
 
 int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
@@ -57,6 +57,8 @@ int16 CurrMaxRollPitch;
 
 int16 RollOuterInp, RollOuterInpP, RollOuter, RollInnerInp;
 int16 PitchOuterInp, PitchOuterInpP, PitchOuter, PitchInnerInp;
+
+int16 YawRateIntE;
 
 int16 ThrLow, ThrHigh, ThrNeutral;
 
@@ -180,12 +182,11 @@ void AltitudeHold()
 } // AltitudeHold
 
 void InertialDamping(void)
-{ // Uses accelerometer to damp disturbances while holding altitude
+{   // Uses accelerometer to damp disturbances while holding altitude
 	static int16 Temp;
 
 	if ( F.AccelerationsValid ) 
 	{
-		// Down - Up
 		// Empirical - acceleration changes at ~approx Sum/8 for small angles
 		Vel[DU] += Acc[DU] + SRS16( Abs(Angle[Roll]) + Abs(Angle[Pitch]), 3);		
 		Vel[DU] = Limit1(Vel[DU] , 16383); 			
@@ -197,70 +198,33 @@ void InertialDamping(void)
 				Comp[DU]--;			
 		Comp[DU] = Limit(Comp[DU], DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
 		Vel[DU] = DecayX(Vel[DU], (int16)P[VertDampDecay]);
-	
-		// Lateral compensation only when holding altitude?	
-		if ( F.HoldingAlt && F.AttitudeHold ) 
-		{
-	 		if ( F.WayPointCentred )
-			{
-				// Left - Right
-				Vel[LR] += Acc[LR];
-				Vel[LR] = Limit1(Vel[LR] , 16383);  	
-				Temp = SRS32(SRS16(Vel[LR], 4) * (int32)P[HorizDampKp], 13);
-				if( Temp > Comp[LR] ) 
-					Comp[LR]++;
-				else
-					if( Temp < Comp[LR] )
-						Comp[LR]--;
-				Comp[LR] = Limit1(Comp[LR], DAMP_HORIZ_LIMIT);
-				Vel[LR] = DecayX(Vel[LR], (int16)P[HorizDampDecay]);
-		
-				// Front - Back
-				Vel[FB] += Acc[FB];
-				Vel[FB] = Limit1(Vel[FB] , 16383);  
-				Temp = SRS32(SRS16(Vel[FB], 4) * (int32)P[HorizDampKp], 13);
-				if( Temp > Comp[FB] ) 
-					Comp[FB]++;
-				else
-					if( Temp < Comp[FB] )
-						Comp[FB]--;
-				Comp[FB] = Limit1(Comp[FB], DAMP_HORIZ_LIMIT);
-				Vel[FB] = DecayX(Vel[FB], (int16)P[HorizDampDecay]);
-			}
-			else
-			{
-				Vel[LR] = Vel[FB] = 0;
-				Comp[LR] = Decay1(Comp[LR]);
-				Comp[FB] = Decay1(Comp[FB]);
-			}
-		}
-		else
-		{
-			Vel[LR] = Vel[FB] = 0;
-	
-			Comp[LR] = Decay1(Comp[LR]);
-			Comp[FB] = Decay1(Comp[FB]);
-		}
+
 	}
 	else
-		Comp[LR] = Comp[FB] = Comp[DU] = Vel[LR] = Vel[FB] = Vel[DU] = 0;
+		Comp[DU] = Vel[DU] = 0;
 
 } // InertialDamping	
 
 void LimitRollAngle(void)
 {
 	// Caution: Angle[Roll] is positive left which is the opposite sense to the roll angle
+	RawAngle[Roll] += Rate[Roll];
+	RawAngle[Roll] = Limit1(RawAngle[Roll], RollIntLimit2048);
+
 	Angle[Roll] += Rate[Roll];
-	Angle[Roll] = Limit1(Angle[Roll], RollIntLimit256);
-	Angle[Roll] = Decay1(Angle[Roll]);			// damps to zero even if still rolled
+    Angle[Roll] = Limit1(Angle[Roll], RollIntLimit2048);
+    Angle[Roll] = Decay1(Angle[Roll]);		// damps to zero even if still rolled
 	Angle[Roll] += IntCorr[LR];				// last for accelerometer compensation
 } // LimitRollAngle
 
 void LimitPitchAngle(void)
 {
 	// Caution: Angle[Pitch] is positive down which is the opposite sense to the pitch angle
+	RawAngle[Pitch] += Rate[Pitch];
+	RawAngle[Pitch] = Limit1(RawAngle[Pitch], RollIntLimit2048);
+
 	Angle[Pitch] += Rate[Pitch];
-	Angle[Pitch] = Limit1(Angle[Pitch], PitchIntLimit256);
+	Angle[Pitch] = Limit1(Angle[Pitch], RollIntLimit2048);
 	Angle[Pitch] = Decay1(Angle[Pitch]); 
 	Angle[Pitch] += IntCorr[FB];
 } // LimitPitchAngle
@@ -284,10 +248,18 @@ void LimitYawAngle(void)
 		}
 	}
 
+	#ifdef NEW_YAW
+
+	Angle[Yaw] = Heading;
+
+	#else
+
 	Angle[Yaw] += Rate[Yaw];
 	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
 
 	Angle[Yaw] = DecayX(Angle[Yaw], 2); 				// GKE added to kill gyro drift
+
+	#endif // NEW_YAW
 
 } // LimitYawAngle
 
@@ -361,6 +333,7 @@ void GainSchedule(void)
 void DoControl(void)
 {
 	static i24u Temp;
+	static int16 RateE;
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
@@ -395,7 +368,7 @@ void DoControl(void)
 
 // set P = -32, I = -16, D = 0 as it is rescaled by /32
 
-	RollOuterInp = - ( Angle[Roll] + ControlRoll ); //+ NavCorr[Roll] + Comp[LR] );
+	RollOuterInp = - ( Angle[Roll] + ControlRoll ); //+ NavCorr[Roll] );
 	RollOuter = SRS16(RollOuterInp * P[RollKi] + ( RollOuterInp - RollOuterInpP ) * P[RollKd], 5);
 
 	RollInnerInp = RollOuter - Rate[Roll];
@@ -407,13 +380,12 @@ void DoControl(void)
 
 	#else
 
-	Rl  = SRS16(Rate[Roll] * P[RollKp] + (Ratep[Roll]-Rate[Roll]) * P[RollKd], 5);
+	Rl  = SRS16(Rate[Roll] * P[RollKp] - (Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
 	Rl += SRS16(Angle[Roll] * (int16)P[RollKi], 9); 
-	Rl -= NavCorr[Roll] - Comp[LR];
 
 	Rl = SRS32((int32)Rl * GS, 8);
 
-	Rl -= ControlRoll;
+	Rl -= ControlRoll + NavCorr[Roll];
 
 	Ratep[Roll] = Rate[Roll];
 
@@ -425,7 +397,7 @@ void DoControl(void)
 
 	#ifdef ML_PID
 
-	PitchOuterInp = -( Angle[Pitch] + ControlPitch ); //+ NavCorr[Pitch] + Comp[FB] );
+	PitchOuterInp = -( Angle[Pitch] + ControlPitch ); //+ NavCorr[Pitch] );
 	PitchOuter = SRS16(PitchOuterInp * P[PitchKi] + ( PitchOuterInp - PitchOuterInpP ) * P[PitchKd], 5);
 
 	PitchInnerInp = PitchOuter - Rate[Pitch];
@@ -437,13 +409,12 @@ void DoControl(void)
 
 	#else
 
-	Pl  = SRS16(Rate[Pitch] * P[PitchKp] + (Ratep[Pitch]-Rate[Pitch]) * P[PitchKd], 5);
+	Pl  = SRS16(Rate[Pitch] * P[PitchKp] - (Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
 	Pl += SRS16(Angle[Pitch] * (int16)P[PitchKi], 9);
-	Pl -= NavCorr[Pitch] - Comp[FB];
 
 	Pl = -SRS32((int32)Pl * GS, 8);
 
-	Pl -= ControlPitch;
+	Pl -= ControlPitch + NavCorr[Pitch];
 
 	Ratep[Pitch] = Rate[Pitch];
 
@@ -453,8 +424,21 @@ void DoControl(void)
 	
 	LimitYawAngle();
 
+	#ifdef NEW_YAW
+
+	RateE = Rate[Yaw] + DesiredYaw + NavCorr[Yaw];
+
+	YawRateIntE += RateE;
+	YawRateIntE = Limit1(YawRateIntE, YawIntLimit256);
+
+	Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * (int16)P[YawKi], 4), 4);
+
+	#else
+
 	Yl  = SRS16( ( Rate[Yaw] + DesiredYaw + NavCorr[Yaw] ) * (int16)P[YawKp] + (Ratep[Yaw]-Rate[Yaw]) * (int16)P[YawKd], 4);
 	Yl += SRS16(Angle[Yaw] * (int16)P[YawKi], 8);
+
+	#endif // NEW_YAW
 
 	Ratep[Yaw] = Rate[Yaw];
 
@@ -556,7 +540,7 @@ void InitControl(void)
 	ControlRollP = ControlPitchP = 0;
 
 	Ylp = 0;
-	Comp[Alt] = Comp[DU] = Comp[LR] = Comp[FB] = Vel[DU] = Vel[LR] = Vel[FB] = YawRateF.i32 = 0;	
+	Comp[Alt] = Comp[DU] =  Vel[DU] = YawRateF.i32 = 0;	
 	AltSum = 0;
 } // InitControl
 

@@ -42,7 +42,7 @@ void ReadLISLAcc(void);
 
 #pragma udata accs
 i16u	Ax, Ay, Az;
-int8	IntCorr[3];
+int16	IntCorr[3];
 int8	AccNeutral[3];
 int16	Vel[3], Acc[3], Comp[4];
 int8 	AccType;
@@ -352,7 +352,7 @@ uint8 ReadLISL(uint8 c)
 {
 	static uint8 d;
 
-	//SPI_SDA = 1;	// very important!! really!! LIS3L likes it
+	SPI_SDA = 1;	//zzz // very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
 	d=ReadLISLNext();

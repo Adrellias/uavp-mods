@@ -20,6 +20,8 @@
 
 #include "uavx.h"
 
+int16 x1, x2,x3,x4,x5,x6;
+
 void SendPacketHeader(void);
 void SendPacketTrailer(void);
 void SendTelemetry(void);
@@ -104,8 +106,14 @@ void ShowAttitude(void)
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
 
+#ifdef DEBUG_GYROS
+	TxESCi16(RawAngle[Roll]);
+	TxESCi16(RawAngle[Pitch]);
+#else
 	TxESCi16(Rate[Roll]);
 	TxESCi16(Rate[Pitch]);
+#endif // DEBUG_GYROS
+
 	TxESCi16(Rate[Yaw]);
 
 	TxESCi16(Angle[Roll]);
@@ -113,8 +121,9 @@ void ShowAttitude(void)
 	TxESCi16(Angle[Yaw]);
 
 	TxESCi16(Acc[LR]);
-	TxESCi16(Acc[FB]);
+    TxESCi16(Acc[FB]);
 	TxESCi16(Acc[DU]);
+
 } // ShowAttitude
 
 void SendFlightPacket(void)
@@ -139,8 +148,8 @@ void SendFlightPacket(void)
 
 	ShowAttitude();
 
-	TxESCi8((int8)Comp[LR]);
-	TxESCi8((int8)Comp[FB]);
+	TxESCi8((int8)IntCorr[LR]);
+	TxESCi8((int8)IntCorr[FB]);
 	TxESCi8((int8)Comp[DU]);
 	TxESCi8((int8)Comp[Alt]);
 
@@ -457,8 +466,8 @@ void SensorTrace(void)
 		TxValH16(Acc[FB]); TxChar(';');
 		TxValH16(Acc[DU]); TxChar(';');
 
-		TxValH16(Comp[LR]); TxChar(';');
-		TxValH16(Comp[FB]); TxChar(';');
+		TxValH16(RawAngle[Roll]); TxChar(';');
+		TxValH16(RawAngle[Pitch]); TxChar(';');
 		TxValH16(Comp[DU]); TxChar(';');
 		TxValH16(Comp[Alt]); TxChar(';');
 		TxNextLine();

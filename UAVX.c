@@ -93,7 +93,6 @@ void main(void)
 
 					LEDYellow_OFF;
 
-
 					if ( !F.FirstArmed )
 					{
 						mS[StartTime] = mSClock();

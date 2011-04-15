@@ -22,7 +22,7 @@
 	{-20,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
-	{-1,true},			// HorizDampKp,		04c 
+	{-1,true},			// was HorizDampKp,		04c 
 	{5,0},	 			// RollIntLimit,	05
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
@@ -32,7 +32,7 @@
 	
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12
-	{0,0},	 			// YawKd,			13
+	{0,0},	 			// was YawKd,			13
 	{25,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
 	{0,true}, 			// ConfigBits,		16c
@@ -65,7 +65,7 @@
 
 	{-16,0},			// NavKd			41
 	{1,true},			// VertDampDecay    42c
-	{1,true},			// HorizDampDecay	43c
+	{1,true},			// was HorizDampDecay	43c
 	{56,true},			// BaroScale	    44c
 	{UAVXTelemetry,true}, // TelemetryType	45c
 	{-8,0},				// MaxDescentRateDmpS 	46
