@@ -42,14 +42,15 @@ int8 	GyroType;
 void AdaptiveYawFilterA(void)
 { // ~600uS @ 16MHz - use approximation 4.5uS
 
+/*
 	static int16 TwoPiF, r; // 2.0*Pi*F
 
-	/*
 	TwoPiF = ( Abs(DesiredYaw) * YAW_MAX_FREQ * 6L ) / RC_NEUTRAL;
 	TwoPiF = Limit(TwoPiF, 3, YAW_MAX_FREQ * 6L );
 
 	YawFilterA = ( (int24) PID_CYCLE_MS * 256L) / ( 1000L / TwoPiF + (int16) PID_CYCLE_MS );
-	*/
+*/
+
 	YawFilterA = 5 + Abs(DesiredYaw);
 
 } // AdaptiveYawFilterA
@@ -69,7 +70,7 @@ void GetGyroValues(void)
 
 void CalculateGyroRates(void)
 {
-	static i24u Temp;
+	static i24u RollT, PitchT, YawT;
 
 	Rate[Roll] = GyroADC[Roll] - GyroNeutral[Roll];
 	Rate[Pitch] = GyroADC[Pitch] - GyroNeutral[Pitch];
@@ -77,40 +78,44 @@ void CalculateGyroRates(void)
 
 	switch ( GyroType ) {
 	case IDG300Gyro:// 500 Deg/Sec 
-		Rate[Roll] = -Rate[Roll] * 2; // adjust for reversed roll gyro sense
-		Rate[Pitch] *= 2;
-		Rate[Yaw] = SRS16(Rate[Yaw], 1); // ADXRS150 assumed
+		RollT.i24 = -(int24)Rate[Roll] * 422; // reversed roll gyro sense
+		PitchT.i24 = (int24)Rate[Pitch] * 422;
+		YawT.i24 = (int24)Rate[Yaw] * 34; // ADXRS150 assumed
 		break;
- 	case LY530Gyro:// generically 300deg/S 3.3V
-		Rate[Yaw] = SRS16(Rate[Yaw], 1);
+ 	case LY530Gyro:// REFERENCE generically 300deg/S 3.3V
+		RollT.i24 = (int24)Rate[Roll] * 256;
+		PitchT.i24 = (int24)Rate[Pitch] * 256;
+		YawT.i24 = (int24)Rate[Yaw] * 128;
 		break;
 	case MLX90609Gyro:// generically 300deg/S 5V
-		Rate[Roll] = SRS16(Rate[Roll], 1);	
-		Rate[Pitch] = SRS16(Rate[Pitch], 1);
-		Rate[Yaw] = SRS16(Rate[Yaw], 2);
+		RollT.i24 = (int24)Rate[Roll] * 127;
+		PitchT.i24 = (int24)Rate[Pitch] * 127;
+		YawT.i24 = (int24)Rate[Yaw] * 63;
 		break;
 	case ADXRS300Gyro:// ADXRS610/300 300deg/S 5V
-		Rate[Roll] = (Rate[Roll] * 2)/3;
-		Rate[Pitch] = (Rate[Pitch] * 2)/3;
-		Rate[Yaw] = SRS16(Rate[Yaw], 2); // should be 1/3
+		RollT.i24 = (int24)Rate[Roll] * 168;
+		PitchT.i24 = (int24)Rate[Pitch] * 168;
+		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
 	case ITG3200Gyro:// ITG3200
-		Rate[Roll] = SRS16(Rate[Roll], 3);//8	
-		Rate[Pitch] = SRS16(Rate[Pitch], 3);//8
-		Rate[Yaw] = SRS16(Rate[Yaw], 4);//9
+		RollT.i24 = (int24)Rate[Roll] * 19;
+		PitchT.i24 = (int24)Rate[Pitch] * 19;
+		YawT.i24 = (int24)Rate[Yaw] * 8;
 		break;
 	case IRSensors:// IR Sensors - NOT IMPLEMENTED IN PIC VERSION
-		Rate[Roll] = 0;	
-		Rate[Pitch] = 0;
-		Rate[Yaw] = 0;
+		RollT.i24 = PitchT.i24 = YawT.i24 = 0;
 		break;
-	case ADXRS150Gyro:	 // ADXRS613/150 or generically 150deg/S 5V
-		Rate[Roll] = SRS16(Rate[Roll], 2); 
-		Rate[Pitch] = SRS16(Rate[Pitch], 2);
-		Rate[Yaw] = SRS16(Rate[Yaw], 3);
+	case ADXRS150Gyro:// ADXRS613/150 or generically 150deg/S 5V
+		RollT.i24 = (int24)Rate[Roll] * 68;
+		PitchT.i24 = (int24)Rate[Pitch] * 68;
+		YawT.i24 = (int24)Rate[Yaw] * 34;
 		break;
 	default:;
 	} // GyroType
+
+	Rate[Roll] = RollT.i2_1;
+	Rate[Pitch] = PitchT.i2_1;
+	Rate[Yaw] = YawT.i2_1;
 
 } // CalculateGyroRates
 

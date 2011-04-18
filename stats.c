@@ -35,7 +35,7 @@ void ZeroStats(void)
 {
 	int8 s;
 
-	for (s = 0 ; s < MAX_STATS ; s++ )
+	for (s = 0 ; s < MAX_STATS; s++ )
 		Stats[s] = 0;
 
 	Stats[MinHDiluteS] = INIT_MIN;

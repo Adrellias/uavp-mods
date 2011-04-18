@@ -44,7 +44,7 @@ void ReadLISLAcc(void);
 i16u	Ax, Ay, Az;
 int16	IntCorr[3];
 int8	AccNeutral[3];
-int16	Vel[3], Acc[3], Comp[4];
+int16	Acc[3];
 int8 	AccType;
 #pragma udata
 

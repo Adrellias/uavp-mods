@@ -22,8 +22,8 @@
 
 void DoAltitudeHold(int24, int16);
 void UpdateAltitudeSource(void);
+int16 AltitudeCF(int16);
 void AltitudeHold(void);
-void InertialDamping(void);
 void LimitRollAngle(void);
 void LimitPitchAngle(void);
 void LimitYawAngle(void);
@@ -63,12 +63,41 @@ int16 YawRateIntE;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
-int16 AltDiffSum, AltD, AltDSum;
+int16 VertVel, VertDisp, AccAltComp, AltComp, AltDiffSum, AltD, AltDSum;
 int24 DesiredAltitude, Altitude;
 int16 ROC;
 
 boolean	FirstPass;
 int8 BeepTick = 0;
+
+int16 AltCF = 0;
+int16 AltF[3] = { 0, 0, 0};
+
+int16 AltitudeCF( int16 AltE ) 
+{	// Complementary Filter originally authored by RoyLB
+	// http://www.rcgroups.com/forums/showpost.php?p=12082524&postcount=1286
+
+	const int16 dT = 1;
+	const int16 AltTauCF = 5;
+
+    if ( F.AccelerationsValid && F.NearLevel ) {
+
+        VertVel += Acc[DU] * dT;
+        VertDisp += VertVel * dT;
+
+        AltF[0] = (AltE - AltCF) * Sqr(AltTauCF);
+    	AltF[2] += AltF[0] * dT;
+  		AltF[1] =  AltF[2] + (AltE - AltCF) * 2 * AltTauCF + VertDisp;
+ 		AltCF = ( AltF[1] * dT) + AltCF;
+
+		AccAltComp = VertDisp; //AltE - AltCF; // debugging tracking
+
+        return( AltE ); //AltCF );
+
+    } else
+        return( AltE ); // no correction
+
+} // AltitudeCF
 
 void DoAltitudeHold(int24 Altitude, int16 ROC)
 { // Syncronised to baro intervals independant of active altitude source
@@ -81,7 +110,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 		Beeper_TOG;
 	#endif
 			
-	BE = DesiredAltitude - Altitude;
+	BE = AltitudeCF( DesiredAltitude - Altitude );
 	LimBE = Limit1(BE, ALT_BAND_DM);
 		
 	AltP = SRS16(LimBE * (int16)P[AltKp], 4);
@@ -106,7 +135,7 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 	NewAltComp = AltP + AltI + AltD + AltDSum;
 	NewAltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
 	
-	Comp[Alt] = SlewLimit(Comp[Alt], NewAltComp, 1);
+	AltComp = SlewLimit(AltComp, NewAltComp, 1);
 		
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (BeepTick <= 0) && !F.BeeperInUse) 
@@ -158,14 +187,15 @@ void AltitudeHold()
 				{
 					F.HoldingAlt = false;
 					DesiredAltitude = Altitude;
-					Comp[Alt] = Decay1(Comp[Alt]);
+					AltComp = Decay1(AltComp);
+// zero acc vel/disp
 				}
 				else
 				{
 					F.HoldingAlt = true;
 					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_DMPS  ) 
 					{
-						NewCruiseThrottle = DesiredThrottle + Comp[Alt];
+						NewCruiseThrottle = DesiredThrottle + AltComp;
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
 						CruiseThrottle = Limit(CruiseThrottle , IdleThrottle, THROTTLE_MAX_CRUISE );
 					}
@@ -174,36 +204,12 @@ void AltitudeHold()
 		}
 		else
 		{
-			Comp[Alt] = Decay1(Comp[Alt]);
+			AltComp = Decay1(AltComp);
 			F.HoldingAlt = false;
 		}	
 	}
 
 } // AltitudeHold
-
-void InertialDamping(void)
-{   // Uses accelerometer to damp disturbances while holding altitude
-	static int16 Temp;
-
-	if ( F.AccelerationsValid ) 
-	{
-		// Empirical - acceleration changes at ~approx Sum/8 for small angles
-		Vel[DU] += Acc[DU] + SRS16( Abs(Angle[Roll]) + Abs(Angle[Pitch]), 3);		
-		Vel[DU] = Limit1(Vel[DU] , 16383); 			
-		Temp = SRS32(SRS16(Vel[DU], 4) * (int32)P[VertDampKp], 13);
-		if( Temp > Comp[DU] ) 
-			Comp[DU]++;
-		else
-			if( Temp < Comp[DU] )
-				Comp[DU]--;			
-		Comp[DU] = Limit(Comp[DU], DAMP_VERT_LIMIT_LOW, DAMP_VERT_LIMIT_HIGH); 
-		Vel[DU] = DecayX(Vel[DU], (int16)P[VertDampDecay]);
-
-	}
-	else
-		Comp[DU] = Vel[DU] = 0;
-
-} // InertialDamping	
 
 void LimitRollAngle(void)
 {
@@ -337,7 +343,6 @@ void DoControl(void)
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
-    InertialDamping();
 
 	DoOrientationTransform();
 
@@ -540,7 +545,7 @@ void InitControl(void)
 	ControlRollP = ControlPitchP = 0;
 
 	Ylp = 0;
-	Comp[Alt] = Comp[DU] =  Vel[DU] = YawRateF.i32 = 0;	
+	AltComp = YawRateF.i32 = 0;	
 	AltSum = 0;
 } // InitControl
 

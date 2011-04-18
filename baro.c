@@ -457,7 +457,8 @@ void GetBoschBaroAltitude(void)
 				BaroRelAltitude = -SRS32(Temp * (int32)P[BaroScale], 7);
 				F.NewBaroValue = F.BaroAltitudeValid;			
 			}
-			else
+		else
+			if ( State == InFlight )
 			{
 				AcquiringPressure = true;
 				Stats[BaroFailS]++;
@@ -688,7 +689,7 @@ void InitBarometer(void)
 	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = SimulateCycles = 0;
 	BaroType = BaroUnknown;
 
-	Comp[Alt] = AltDiffSum = AltDSum = 0;
+	AltComp = AltDiffSum = AltDSum = 0;
 	F.BaroAltitudeValid= true; // optimistic
 
 	if ( IsFreescaleBaroActive() )	

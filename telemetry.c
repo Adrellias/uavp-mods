@@ -150,8 +150,8 @@ void SendFlightPacket(void)
 
 	TxESCi8((int8)IntCorr[LR]);
 	TxESCi8((int8)IntCorr[FB]);
-	TxESCi8((int8)Comp[DU]);
-	TxESCi8((int8)Comp[Alt]);
+	TxESCi8((int8)AccAltComp);
+	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)PWM[b]);
@@ -249,7 +249,7 @@ void SendStatsPacket(void)
     for ( i = 0; i < (uint8)MAX_STATS ; i++)
         TxESCi16(Stats[i]);
 
-    TxESCu8(UAVXAirframe | 0x80);
+    TxESCu8(UAVXAirframe);
     TxESCu8(Orientation);
 
 	SendPacketTrailer();
@@ -468,8 +468,8 @@ void SensorTrace(void)
 
 		TxValH16(RawAngle[Roll]); TxChar(';');
 		TxValH16(RawAngle[Pitch]); TxChar(';');
-		TxValH16(Comp[DU]); TxChar(';');
-		TxValH16(Comp[Alt]); TxChar(';');
+		TxValH16(AccAltComp); TxChar(';');
+		TxValH16(AltComp); TxChar(';');
 		TxNextLine();
 	} 
 	#endif // TESTING

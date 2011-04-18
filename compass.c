@@ -48,8 +48,8 @@ void GetHeading(void)
 	    if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
 	        HeadingValF.iw1 = Heading;
 	    else
-	        if ( HeadingChange > COMPASS_MAX_SLEW ) { // Sanity check - discard reading
-	            Heading = HeadingValF.iw1; // SlewLimit(Headingp, -CompassMaxSlew, CompassMaxSlew );    // use previous value
+	        if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) { // Sanity check - discard reading
+	     		Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
 	            Stats[CompassFailS]++;
 	        }
 			
@@ -93,10 +93,9 @@ int16 MinimumTurn(int16 A ) {
 void InitHeading(void)
 {
 
-	HeadingValF.i32 = 0;
-
 	MagHeading = GetCompass();
-	HeadingValF.iw1 = Heading = Make2Pi( MagHeading - CompassOffset );
+	Heading = Make2Pi( MagHeading - CompassOffset );
+	HeadingValF.iw1 = Heading; 
 
 	#ifdef SIMULATE
 		FakeHeading = Heading = 0;

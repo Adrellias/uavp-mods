@@ -1,7 +1,7 @@
 #define NEW_YAW
 
 //#define JIM_MPX_INVERT
-//#define THREE_DOF		// ITG3200 ONLY
+#define THREE_DOF		// ITG3200 ONLY
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -29,7 +29,7 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING
+//#define TESTING
 #define DEBUG_GYROS						
 	//#define SIMULATE
 
@@ -475,7 +475,7 @@ typedef struct { // GPS
 #define MAX_PARAMETERS		64		// parameters in EEPROM start at zero
 
 #define STATS_ADDR_EE	 	( PARAMS_ADDR_EE + (MAX_PARAMETERS *2) )
-#define MAX_STATS			64
+#define MAX_STATS			32 //64
 
 // uses second Page of EEPROM
 #define NAV_ADDR_EE			256L
@@ -606,7 +606,7 @@ extern void ReadLISLAcc(void);
 extern i16u Ax, Ay, Az;
 extern int16 IntCorr[3];
 extern int8 AccNeutral[3];
-extern int16 Vel[3], Acc[3], Comp[4];
+extern int16 Acc[3];
 extern int8 AccType;
 
 //______________________________________________________________________________________________
@@ -737,7 +737,7 @@ extern int24 FakeBaroRelAltitude;
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
 
-#define COMPASS_MAX_SLEW	(6L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/1000)
+#define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
 
 extern int16 GetCompass(void);
 extern void GetHeading(void);
@@ -758,6 +758,7 @@ extern i32u HeadingValF;
 enum Attitudes { Roll, Pitch, Yaw, Heading };
 enum Directions { FB, LR, DU, Alt };
 
+extern int16 AltitudeCF(int16);
 extern void DoAltitudeHold(int24, int16);
 extern void UpdateAltitudeSource(void);
 extern void AltitudeHold(void);
@@ -765,7 +766,6 @@ extern void AltitudeHold(void);
 extern void LimitRollSum(void);
 extern void LimitPitchSum(void);
 extern void LimitYawSum(void);
-extern void InertialDamping(void);
 extern void DoOrientationTransform(void);
 extern void GainSchedule(void);
 extern void DoControl(void);
@@ -788,7 +788,7 @@ extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPi
 extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
 extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
-extern int16 AltComp, AltDiffSum, AltD, AltDSum;
+extern int16 VertVel, VertDisp, AccAltComp, AltComp, AltDiffSum, AltD, AltDSum;
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude;
 extern int16 ROC;
