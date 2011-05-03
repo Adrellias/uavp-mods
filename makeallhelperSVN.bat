@@ -81,14 +81,14 @@ for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX%L%-V1.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo compiled - UAVX%L%-V1.$WCREV$gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX%L%-V2.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo compiled - UAVX%L%-V2.$WCREV$gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX%L%-V1.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo failed - UAVX%L%-V1.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX%L%-V2.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo failed - UAVX%L%-V2.$WCREV$gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH
