@@ -698,6 +698,8 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 // baro.c
 
+#define MPX4115_BARO_SANITY_CHECK_CM	((BARO_MAX_CHANGE_CMPS*PID_CYCLE_MS)/1000L)
+#define BOSCH_BARO_SANITY_CHECK_CM		((BARO_MAX_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
 #define BARO_INIT_RETRIES	10	// max number of initialisation retries
 
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
@@ -718,6 +720,7 @@ extern void GetBoschBaroAltitude(void);
 extern boolean IsBoschBaroActive(void);
 extern void InitBoschBarometer(void);
 
+extern int24 AltitudeCF(int24);
 extern void GetBaroAltitude(void);
 extern void InitBarometer(void);
 
@@ -732,7 +735,9 @@ extern i16u	BaroVal;
 extern int8 BaroType;
 extern int16 AltitudeUpdateRate;
 extern int8	BaroRetries;
-extern i32u BaroValF;
+extern int24 AltCF;
+extern int8 TauCF;
+extern int24 AltF[];
 
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;
@@ -767,7 +772,6 @@ extern i32u HeadingValF;
 enum Attitudes { Roll, Pitch, Yaw, Heading };
 enum Directions { FB, LR, DU, Alt };
 
-extern int24 AltitudeCF(int24);
 extern void DoAltitudeHold(void);
 extern void UpdateAltitudeSource(void);
 extern void AltitudeHold(void);
@@ -799,8 +803,6 @@ extern int16 ThrLow, ThrHigh, ThrNeutral;
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep, AltCF; 
 extern int16 AccAltComp, AltComp, ROC, ROCIntE, MinROCCmpS;
-extern int24 AltCF;
-extern int24 AltF[];
 extern boolean FirstPass;
 
 //______________________________________________________________________________________________

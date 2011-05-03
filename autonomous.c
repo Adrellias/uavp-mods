@@ -111,7 +111,6 @@ void SetDesiredAltitude(int24 NewDesiredAltitude) // cm
 {
 	ROCIntE = 0;
 	DesiredAltitude = NewDesiredAltitude;
-	AltCF = DesiredAltitude - Altitude;
 } // SetDesiredAltitude
 
 void DoFailsafeLanding(void)

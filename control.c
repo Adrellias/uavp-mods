@@ -64,39 +64,6 @@ int16 AccAltComp, AltComp, ROC, ROCIntE, MinROCCmpS;
 boolean	FirstPass;
 int8 BeepTick = 0;
 
-int24 AltCF;
-int24 AltF[3] = { 0, 0, 0};
-
-int24 AltitudeCF(int24 Alt) 
-{	// Complementary Filter originally authored by RoyLB for attitude estimation
-	// http://www.rcgroups.com/forums/showpost.php?p=12082524&postcount=1286
-	// adapted for baro compensation by G.K. Egan 2011 using acceleration as an alias 
-	// for diplacement to avoid integration windup of vertical displacement estimate
-
-	static i32u Temp;
-	static int24 TauCF;
-
-    if ( F.AccelerationsValid && F.NearLevel ) {
-
-		TauCF = (int24)P[VertDamp]; // ~10
-
-        AltF[0] = (Alt - AltCF) * Sqr(TauCF);
-    	Temp.i32 = AltF[2] * 256 + AltF[0];
-		AltF[2] = Temp.i3_1;
-
-  		AltF[1] =  AltF[2] + (Alt - AltCF) * 2 * TauCF + SRS16( Acc[DU], 6); // should ba at^2
- 		Temp.i32 = AltCF * 256 + AltF[1];
-		AltCF = Temp.i3_1;
-
-    } else
-		AltCF = Alt;
-
-	AccAltComp = AltCF - Alt; // for debugging
-
-	return( AltCF ); 
-
-} // AltitudeCF
-
 void DoAltitudeHold(void)
 { 	// Syncronised to baro intervals independant of active altitude source
 	
@@ -502,7 +469,7 @@ void InitControl(void)
 		Rate[g] = Ratep[g] = Trim[g] = 0;
 
 	CameraRollAngle = CameraPitchAngle = 
-	Ylp = AltSum = AltComp = ROCIntE = AltCF = AltF[0] = AltF[1] = AltF[2] = 0;
+	Ylp = AltSum = AltComp = ROCIntE = 0;
 
 	YawRateF.i32 = 0;
 
