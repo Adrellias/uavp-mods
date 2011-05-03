@@ -40,8 +40,8 @@ void ZeroStats(void)
 
 	Stats[MinHDiluteS] = INIT_MIN;
 	Stats[MaxHDiluteS] = 0;
-	Stats[MinBaroROCS] = INIT_MIN;
-	Stats[MaxBaroROCS] = 0;
+	Stats[MinROCS] = INIT_MIN;
+	Stats[MaxROCS] = 0;
 	Stats[GPSMinSatsS] = INIT_MIN;
 	Stats[GPSMaxSatsS] = 0;
 	Stats[MinTempS] = INIT_MIN;
@@ -97,12 +97,12 @@ void ShowStats(void)
 	TxString("Rx:       \t");TxVal32((int32)Stats[RCGlitchesS],0,' '); TxNextLine(); 
 	TxString("Failsafes:\t");TxVal32((int32)Stats[RCFailsafesS],0,' '); TxNextLine();
 	
-	TxString("\r\nBaro\r\n"); // can only display to 3276M
-	TxString("Alt:      \t");TxVal32((int32)Stats[BaroRelAltitudeS], 1, ' '); TxString("M \r\n");
-	if ( Stats[MinBaroROCS] < INIT_MIN )
+	TxString("\r\nBaro\r\n"); 
+	TxString("Alt:      \t");TxVal32((int32)Stats[BaroRelAltitudeS], 2, ' '); TxString("M \r\n");
+	if ( Stats[MinROCS] < INIT_MIN )
 	{
-		TxString("ROC:      \t");TxVal32((int32)Stats[MinBaroROCS], 1, ' '); 
-							TxVal32((int32)Stats[MaxBaroROCS], 1, ' '); TxString("M/S\r\n");
+		TxString("ROC:      \t");TxVal32((int32)Stats[MinROCS], 2, ' '); 
+							TxVal32((int32)Stats[MaxROCS], 2, ' '); TxString("M/S\r\n");
 	}
 	
 	if ( Stats[MinTempS] < INIT_MIN )
@@ -112,7 +112,7 @@ void ShowStats(void)
 	}
 
 	TxString("\r\nGPS\r\n");
-	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 1, ' '); TxString("M\r\n");
+	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 2, ' '); TxString("M\r\n");
 	#ifdef GPS_INC_GROUNDSPEED 
 	TxString("Vel:      \t");TxVal32(ConvertGPSToM((int32)Stats[GPSVelS]), 1, ' '); TxString("M/S\r\n"); 
 	#endif // GPS_INC_GROUNDSPEED

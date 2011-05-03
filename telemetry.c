@@ -118,7 +118,7 @@ void ShowAttitude(void)
 
 	TxESCi16(Angle[Roll]);
 	TxESCi16(Angle[Pitch]);
-	TxESCi16(Angle[Yaw]);
+	TxESCi16(Angle[Yaw]); // heading error
 
 	TxESCi16(Acc[LR]);
     TxESCi16(Acc[FB]);
@@ -168,14 +168,11 @@ void SendControlPacket(void)
 	SendPacketHeader();
 
 	TxESCu8(UAVXControlPacketTag);
-	TxESCu8(40);
+	TxESCu8(36);
 
 	TxESCi16(DesiredThrottle);
  			
 	ShowAttitude();
-
-    TxESCi16(Heading); 
-    TxESCi16(DesiredHeading);
 
 	TxESCu8(UAVXAirframe);
 
@@ -202,11 +199,11 @@ void SendNavPacket(void)
 	
 	TxESCu8(CurrWP);	
 	
-	TxESCi16(BaroROC); 							// dm/S
+	TxESCi16(ROC); 							// cm/S
 	TxESCi24(BaroRelAltitude);
 	
-	TxESCi16(0); 								// dm/S was RF ROC
-	TxESCi16(RangefinderAltitude); 				// dm
+	TxESCi16(0); 								// cm/S was RF ROC
+	TxESCi16(RangefinderAltitude); 				// cm
 	
 	TxESCi16(GPSHDilute);
 	TxESCi16(Heading);
@@ -215,7 +212,7 @@ void SendNavPacket(void)
 	TxESCi16(GPSVel);
 	TxESCi16(0); 							    // dm/S
 	
-	TxESCi24(GPSRelAltitude); 					// dm
+	TxESCi24(GPSRelAltitude); 					// cm
 	TxESCi32(GPSLatitude); 						// 5 decimal minute units
 	TxESCi32(GPSLongitude); 
 	

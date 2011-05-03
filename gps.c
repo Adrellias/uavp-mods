@@ -56,7 +56,7 @@ NMEAStruct NMEA;
 #pragma udata gpsvars
 uint8 	GPSPacketTag;
 int32 	GPSMissionTime, GPSStartTime;
-int32 	GPSLatitude, GPSLongitude;
+int32 	GPSLatitude, GPSLongitude, GPSLatitudeP, GPSLongitudeP;
 int32 	OriginLatitude, OriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int32 	DesiredLatitude, DesiredLongitude;
@@ -67,7 +67,8 @@ int16 	GPSVel, GPSVelP;
 int8 	GPSNoOfSats;
 int8 	GPSFix;
 int16 	GPSHDilute;
-int32x4Q	GPSQ;
+int16 	NavGPSSlew;
+
 #pragma udata
 
 int32 FakeGPSLongitude, FakeGPSLatitude;
@@ -186,7 +187,8 @@ void ParseGPGGASentence(void)
 	GPSHDilute = ConvertInt(lo, hi-3) * 100 + ConvertInt(hi-1, hi); 
 
     UpdateField();   	// Alt
-	GPSAltitude = ConvertInt(lo, hi-2) * 10L + ConvertInt(hi, hi) ; // Decimetres
+
+	GPSAltitude = ConvertInt(lo, hi-2) * 10L + ConvertInt(hi, hi) * 10; // Decimetres
 
     //UpdateField();   // AltUnit - assume Metres!
 
@@ -376,7 +378,16 @@ void ParseGPSSentence(void)
 		#else
 
 		if (F.NavValid )
-			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;				
+			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
+
+		if ( F.NearLevel ) // got to filtered GPS
+		{
+			GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
+			GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+		}
+
+		GPSLatitudeP = GPSLatitude;
+		GPSLongitudeP = GPSLongitude;				
 
 		#endif // SIMULATE
 

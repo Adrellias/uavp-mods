@@ -70,7 +70,10 @@ void ReadParametersEE(void)
 
 		ESCMax = ESCLimits[P[ESCType]];
 		if ( P[ESCType] == ESCPPM )
+		{
+			TRISB = 0b00000000; // make outputs
 			ESCMin = 1;
+		}
 		else
 		{
 			ESCMin = 0;
@@ -102,17 +105,20 @@ void ReadParametersEE(void)
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 
-		RollIntLimit2048 = (int16)P[RollIntLimit] * 2048L;
-		PitchIntLimit2048 = (int16)P[PitchIntLimit] * 2048L;
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
 		NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
 
+		NavGPSSlew = P[NavGPSSlewdM]; // close enough  * 539 / 500; // assumes 5 GPS updates/sec
+		NavGPSSlew = Limit(NavGPSSlew, 1, 1000);
+
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
 
-		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L + (int16)P[NavMagVar])*MILLIPI)/180L);
+		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
+
+		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L); // changed sign of MagVar AGAIN!
 
 		#ifdef MULTICOPTER
 			Orientation = P[Orient];
@@ -136,11 +142,10 @@ void ReadParametersEE(void)
 		F.FailsafesEnabled = ((P[ConfigBits] & UseFailsafeMask) == 0);
 
 		F.UsingTxMode2 = ((P[ConfigBits] & TxMode2Mask) != 0);
-		F.UsingGPSAlt = false;
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 
-		YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) YAW_MAX_FREQ ) + PID_CYCLE_MS );
+		YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
 
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
@@ -314,7 +319,7 @@ void InitParameters(void)
 	ReadParametersEE();
 	ParametersChanged = true;
 
-	YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) YAW_MAX_FREQ ) + PID_CYCLE_MS );
+	YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
 
 	ALL_LEDS_OFF;  
 } // InitParameters

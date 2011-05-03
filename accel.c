@@ -46,7 +46,10 @@ int16	IntCorr[3];
 int8	AccNeutral[3];
 int16	Acc[3];
 int8 	AccType;
+int32	AccDUF;
 #pragma udata
+
+const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
 
 void ShowAccType(void)
 {
@@ -233,6 +236,7 @@ void ReadADXL345Acc(void) {
 
 	#endif // NINE_DOF
   
+	// rescale to 1024 = 1G
   	Ax.i16 *= 4; // LR
   	Ay.i16 *= 4; // DU
   	Az.i16 *= 4; // FB

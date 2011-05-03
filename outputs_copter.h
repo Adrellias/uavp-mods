@@ -18,6 +18,9 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
+void WriteT580ESC(uint8, uint8, uint8);
+void WriteT580ESCs(uint8,  uint8, uint8, uint8, uint8);
+void T580ESCs(uint8, uint8, uint8, uint8);
 
 void OutSignals(void)
 {	// The PWM pulses are in two parts these being a 1mS preamble followed by a 0-1mS part. 
@@ -47,6 +50,7 @@ void OutSignals(void)
 	#else
 		PWM[BackC] = TC(PWM[BackC]);
 	#endif
+
 	PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
 	PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 
@@ -99,7 +103,8 @@ void OutSignals(void)
 		_endasm
 
 		SyncToTimer0AndDisableInterrupts();
-	
+
+		#ifndef KEN_SPECIAL	
 		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
 		{
 			PORTB |= 0x3f;
@@ -110,6 +115,7 @@ void OutSignals(void)
 			_endasm	
 		}
 		else
+		#endif // !KEN_SPECIAL	
 		{
 			Delay1TCY(); 
 			Delay1TCY(); 
@@ -180,10 +186,14 @@ OS006:
 		
 		EnableInterrupts;
 		SyncToTimer0AndDisableInterrupts();	
+
 	} 
 	else
 	{ // I2C ESCs
-			if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
+
+		#ifndef KEN_SPECIAL
+
+		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
 		{
 			#ifdef TRICOPTER
 				PORTB |= 0x38;
@@ -211,6 +221,8 @@ OS006:
 			Delay1TCY();
 		}
 
+		#endif // !KEN_SPECIAL
+
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible. 
@@ -227,43 +239,48 @@ OS006:
 				ESCI2CStop();
 			}
 		else
-			if ( P[ESCType] == ESCYGEI2C )
-				for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
-				{
-					ESCI2CStart();
-					r = WriteESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
-					r += WriteESCI2CByte( PWM[m]>>1 );
-					ESCI2CFail[m] += r;
-					ESCI2CStop();
-				}
+			if ( P[ESCType] ==  ESCLRCI2C )
+				T580ESCs(PWM[FrontC], PWM[BackC], PWM[RightC], PWM[LeftC]);
 			else
-				if ( P[ESCType] == ESCX3D )
-				{
-					ESCI2CStart();
-					r = WriteESCI2CByte(0x10);				// one command, 4 data bytes
-					r += WriteESCI2CByte( PWM[FrontC] ); 
-					r += WriteESCI2CByte( PWM[BackC] );
-					r += WriteESCI2CByte( PWM[LeftC] );
-					r += WriteESCI2CByte( PWM[RightC] );
-					ESCI2CFail[0] += r;
-					ESCI2CStop();
-				}
-				else
-				if ( P[ESCType] == ESCLRCI2C )
-					for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+				if ( P[ESCType] == ESCYGEI2C )
+					for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 					{
 						ESCI2CStart();
-						r = WriteESCI2CByte(0xd0 + ( m*2 ));	// one cmd, one data byte per motor
-						r += WriteESCI2CByte(0xa2);
-						r += WriteESCI2CByte(PWM[m]);
-						ESCI2CFail[m] += r; 
+						r = WriteESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
+						r += WriteESCI2CByte( PWM[m]>>1 );
+						ESCI2CFail[m] += r;
 						ESCI2CStop();
 					}
+				else
+					if ( P[ESCType] == ESCX3D )
+					{
+						ESCI2CStart();
+						r = WriteESCI2CByte(0x10);				// one command, 4 data bytes
+						r += WriteESCI2CByte( PWM[FrontC] ); 
+						r += WriteESCI2CByte( PWM[BackC] );
+						r += WriteESCI2CByte( PWM[LeftC] );
+						r += WriteESCI2CByte( PWM[RightC] );
+						ESCI2CFail[0] += r;
+						ESCI2CStop();
+					}
+					else
+					if ( P[ESCType] == ESCLRCI2C )
+						for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+						{
+							ESCI2CStart();
+							r = WriteESCI2CByte(0xd0 + ( m*2 ));	// one cmd, one data byte per motor
+							r += WriteESCI2CByte(0xa2);
+							r += WriteESCI2CByte(PWM[m]);
+							ESCI2CFail[m] += r; 
+							ESCI2CStop();
+						}
 		#endif //  MULTICOPTER
 	}
 
+	#ifndef KEN_SPECIAL	
+
 	if ( ServoToggle == 0 )
-	{	
+	{
 		_asm
 		MOVLB	0
 OS001:
@@ -303,10 +320,9 @@ OS0011:
 			Delay1TCY(); 
 		#endif // !TRICOPTER
  
+		Delay1TCY();	
 		Delay1TCY();
-		Delay1TCY(); 
-		Delay1TCY();
-	
+
 		#ifdef CLOCK_40MHZ
 			Delay10TCYx(2); 
 			Delay1TCY(); 
@@ -330,7 +346,7 @@ OS002:
 
 	FastWriteTimer0(SaveTimer0.u16);
 
-	// add in period mS Clock was disabled
+	// add in period mS Clock was disabled - this is tending to advance the clock too far!
 	if ( P[ESCType] == ESCPPM )
 		if ( ServoToggle == 0 )
 			Clock[mS] = SaveClockmS + 3;
@@ -344,6 +360,9 @@ OS002:
 
 	if ( ++ServoToggle == ServoInterval )
 		ServoToggle = 0;
+
+	#endif // !KEN_SPECIAL
+
 	INTCONbits.TMR0IE = true;
 	EnableInterrupts;
 
@@ -363,6 +382,88 @@ OS002:
 	#endif // !(SIMULATE | TESTING)
 
 } // OutSignals
+
+//________________________________________________________________
+
+// LotusRC T580 I2C ESCs
+
+enum T580States { T580Starting = 0, T580Stopping = 1, T580Constant = 2 };
+
+boolean T580Running = false;
+uint32 T580Available = 0;
+
+void WriteT580ESC(uint8 a, uint8 s, uint8 d2) {
+
+	ESCI2CStart();
+	WriteESCI2CByte(a);
+	WriteESCI2CByte(0xa0 | s );
+	WriteESCI2CByte(d2);
+	ESCI2CStop();
+
+} // WriteT580ESC
+
+void WriteT580ESCs(uint8 s,  uint8 f, uint8 b, uint8 r, uint8 l) {
+
+//   static uint32 Timeout;
+
+// 	Timeout = mSClock() + 2;
+    if ( ( s == T580Starting ) || ( s == T580Stopping ) ) {
+ //       if ( s == T580Starting )
+ //           Timeout = timer.read_us() + 2000;//436000;
+ //       else
+ //           Timeout = timer.read_us() + 2000;//403000;
+        WriteT580ESC(0xd0, s, 0);
+        WriteT580ESC(0xd2, s, 0);
+        WriteT580ESC(0xd4, s, 0);
+        WriteT580ESC(0xd6, s, 0);
+    } else {
+//        Timeout = mSClock() + 2;
+        WriteT580ESC(0xd2, s, f);
+        WriteT580ESC(0xd4, s, b);
+        WriteT580ESC(0xd6, s, r);
+        WriteT580ESC(0xd0, s, l);
+    }
+//	while ( mSClock() < Timeout);
+
+} // WriteT580ESCs
+
+void T580ESCs(uint8 f, uint8 b, uint8 r, uint8 l) {
+
+    static boolean Run;
+    static uint8 i;
+
+    Run = ( f > 0 ) || ( b > 0 ) || ( r > 0 ) || ( l > 0 );
+
+    if ( T580Running )
+        if ( Run )
+            WriteT580ESCs(T580Constant, f, r, b, l);
+        else 
+		{
+            WriteT580ESCs(T580Stopping, 0, 0, 0, 0);
+			Delay1mS(2);
+            for ( i = 0; i < 50; i++ ) 
+			{
+				WriteT580ESCs(T580Constant, 0, 0, 0, 0);
+				Delay1mS(2);
+			}
+        }
+    else
+        if ( Run ) 
+		{
+        	for ( i = 0; i < 50; i++ )
+			{ 
+				WriteT580ESCs(T580Constant, 0, 0, 0, 0);
+				Delay1mS(2);
+			}
+            WriteT580ESCs(T580Starting, 0, 0, 0, 0);
+        }
+        else
+            WriteT580ESCs(T580Constant, f, r, b, l);
+
+    T580Running = Run;
+
+} // T580ESCs
+
 
 
 

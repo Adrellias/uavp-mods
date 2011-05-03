@@ -132,7 +132,6 @@ void InitRC(void)
 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;
 	Rate[Roll] = Rate[Pitch] = Rate[Yaw] = 0;
-	ControlRollP = ControlPitchP = 0;
 	Trim[Roll] = Trim[Pitch] = Trim[Yaw] = 0;
 
 	PPM_Index = PrevEdge = RCGlitches = 0;
@@ -300,7 +299,7 @@ void UpdateControls(void)
 			StickThrottle = CruiseThrottle;
 
 	if ( (! F.HoldingAlt) && (!(F.Navigate || F.ReturnHome )) ) // cancel any current altitude hold setting 
-		DesiredAltitude = Altitude;	
+		SetDesiredAltitude(Altitude);	
 
 	//_________________________________________________________________________________________
 			

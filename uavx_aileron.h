@@ -22,26 +22,27 @@
 	{-20,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
-	{-1,true},			// was HorizDampKp,		04c 
-	{5,0},	 			// RollIntLimit,	05
+	{0,0},				// was HorizDampKp,	04
+	{25,0},	 			// RollIntLimit,	05
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
 	{8,0},	 			// AltKp,			09
-	{5,0},	 			// PitchIntLimit,	10
+	{25,0},	 			// PitchIntLimit,	10
 	
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12
-	{0,0},	 			// was YawKd,			13
+	{0,0},	 			// was YawKd,		13
+
 	{25,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
-	{0,true}, 			// ConfigBits,		16c
-	{0,true},			// was TimeSlots,	17c
+	{2,true}, 			// ConfigBits,		16c
+	{0,0},				// was TimeSlots,	17
 	{48,true}, 			// LowVoltThres,	18c
 	{20,true}, 			// CamRollKp,		19c
 	{45,true}, 			// PercentCruiseThr,20c 
 	
-	{-1,true}, 			// VertDampKp,		21c
+	{10,true}, 			// VertDamp,		21c
 	{0,true}, 			// MiddleDU,		22c
 	{20,true}, 			// PercentIdleThr,	23c
 	{0,true}, 			// MiddleLR,		24c
@@ -49,44 +50,44 @@
 	{20,true}, 			// CamPitchKp,		26c
 	{10,0}, 			// CompassKp,		27
 	{8,0},				// AltKi,			28
-	{0,0}, 				// was NavRadius,	29
+	{10,0}, 			// NavGPSSlewdM was NavRadius,	29
 	{8,0}, 				// NavKi,			30 
 
 	{0,0}, 				// GSThrottle,	    31
-	{0,0},				// GSAttitude,	    32
-	{0,0}, 				// NavRTHAlt,		33
+	{0,0},				// Acro,	    	32
+	{10,0}, 		    // NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
-	{LY530Gyro,true}, 	// GyroType, 		35c
+	{LY530Gyro,true}, 	// DesGyroType,     35c
 	{ESCPPM,true}, 		// ESCType,			36c
-	{UnknownTxRx,true}, 	// TxRxType			37c
-	{2,true},				// NeutralRadius	38
-	{30,true},				// PercentNavSens6Ch	39
+	{UnknownTxRx,true}, // TxRxType			37c
+	{2,0},				// NeutralRadius	38
+	{30,true},			// PercentNavSens6Ch	39c
 	{1,true},			// CamRollTrim,		40c
 
 	{-16,0},			// NavKd			41
-	{1,true},			// VertDampDecay    42c
-	{1,true},			// was HorizDampDecay	43c
+	{0,0},				// was VertDampDecay    42
+	{0,0},				// was HorizDampDecay	43
 	{56,true},			// BaroScale	    44c
 	{UAVXTelemetry,true}, // TelemetryType	45c
-	{-8,0},				// MaxDescentRateDmpS 	46
-	{30,true},			// DescentDelayS	47c
+	{-8,0},			    // MaxDescentRateDmpS 	46
+	{30,0},				// DescentDelayS	47
 	{4,0},				// NavIntLimit		48
 	{2,0},				// AltIntLimit		49
 	{11,true},			// was GravComp		50c
 
-	{1,true},			// was CompSteps	51c
+	{0,0},				// was CompSteps	51
 	{0,true},			// ServoSense		52c	
 	{3,true},			// CompassOffsetQtr 53c
 	{49,true},			// BatteryCapacity	54c	
-	{LY530Gyro,true},	// was GyroYawType	55c		
-	{-4,0},				// AltKd			56
-	#if (defined  TRICOPTER) | (defined VTCOPTER )
-	{24,true},				// Orient			57
+	{0,0},				// was GyroYawType	55c		
+	{0,0},				// was AltKd		56
+	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
+	{24,true},			// Orient			57
 	#else	
-	{0,true},				// Orient			57
-	#endif // TRICOPTER | VTCOPTER				
+	{0,true},			// Orient			57
+	#endif // TRICOPTER | VTCOPTER | Y6COPTER			
 	
-	{12,true},				// NavYawLimit		58
+	{12,0},				// NavYawLimit		58
 	{50,0},				// Balance			59
 	{0,0},				// 60 - 64 unused currently	
 	{0,0},	
@@ -95,5 +96,4 @@
 	{0,0},	
 	{0,0}						
 	};
-
 

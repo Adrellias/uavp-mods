@@ -93,14 +93,14 @@ void CalculateGyroRates(void)
 		YawT.i24 = (int24)Rate[Yaw] * 63;
 		break;
 	case ADXRS300Gyro:// ADXRS610/300 300deg/S 5V
-		RollT.i24 = (int24)Rate[Roll] * 168;
-		PitchT.i24 = (int24)Rate[Pitch] * 168;
+		RollT.i24 = (int24)Rate[Roll] * 169;
+		PitchT.i24 = (int24)Rate[Pitch] * 169;
 		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
 	case ITG3200Gyro:// ITG3200
-		RollT.i24 = (int24)Rate[Roll] * 19;
-		PitchT.i24 = (int24)Rate[Pitch] * 19;
-		YawT.i24 = (int24)Rate[Yaw] * 8;
+		RollT.i24 = (int24)Rate[Roll] * 18;
+		PitchT.i24 = (int24)Rate[Pitch] * 18;
+		YawT.i24 = (int24)Rate[Yaw] * 9;
 		break;
 	case IRSensors:// IR Sensors - NOT IMPLEMENTED IN PIC VERSION
 		RollT.i24 = PitchT.i24 = YawT.i24 = 0;
@@ -209,11 +209,12 @@ void CompensateRollPitchGyros(void)
 
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
 
-	#define ANGLE_COMP_STEP 25			// 3
+	#define ANGLE_COMP_STEP 25
 
 	static int16 Grav[2], Dyn[2];
+	static int16 AccMag;
 
-	if( F.AccelerationsValid )
+	if( F.AccelerationsValid ) // zzz check falling/climbing
 	{
 		ReadAccelerations();
 	
@@ -224,32 +225,38 @@ void CompensateRollPitchGyros(void)
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
+		AccMag = int32sqrt( Sqr(Acc[LR]) + Sqr(Acc[FB]) + Sqr(Acc[DU]) );
+		F.UsingAccComp = AccMag > 850;
+
 		Acc[LR] -= (int16)P[MiddleLR];
 		Acc[FB] -= (int16)P[MiddleFB];
 		Acc[DU] -= (int16)P[MiddleDU];
 
-		Acc[DU] -= 1024L;	// subtract 1g - not corrrect for other than level	
-			
+		LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
+		
 		// Roll
-
+	
 		Temp.i32 = -(int32)Angle[Roll] * RESCALE_TO_ACC; // avoid shift
 		Grav[LR] = Temp.i3_1;
 		Dyn[LR] = 0; //Rate[Roll];
-
+	
 		IntCorr[LR] = SRS32(Acc[LR] + Grav[LR] + Dyn[LR], 3); 
 		IntCorr[LR] = Limit1(IntCorr[LR], ANGLE_COMP_STEP); 
-	
+		
 		// Pitch
-
+	
 		Temp.i32 = -(int32)Angle[Pitch] * RESCALE_TO_ACC; // avoid shift
 		Grav[FB] = Temp.i3_1;
 		Dyn[FB] = 0; // Rate[Pitch];
-
+	
 		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); 
-		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP); 
+		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP);
 	}	
 	else
-		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
+	{
+		ROC = IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
+		F.UsingAccComp = false;
+	}
 
 } // CompensateRollPitchGyros
 

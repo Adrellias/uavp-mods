@@ -29,6 +29,14 @@
 Flags 	F;
 uint8 p;
 
+#ifdef KEN_SPECIAL
+
+boolean IncThrottle;
+int16 ThrCount;
+int16 Throttle;
+
+#endif // KEN_SPECIAL
+
 void main(void)
 {
 	static int16	Temp;
@@ -39,6 +47,7 @@ void main(void)
 	InitMisc();
 	ReadStatsEE();
 	InitPortsAndUSART();
+
 	InitADC();
 	InitI2C(MASTER, SLEW_ON);
 	InitParameters();		
@@ -47,6 +56,73 @@ void main(void)
 	InitMotors();
 
 	EnableInterrupts;
+
+	#ifdef KEN_SPECIAL
+
+	F.HoldingAlt = true; // for light chaser
+
+	while ( true) {
+
+		ProcessCommand();
+		ParamSet = 1;
+		ParametersChanged = true;
+		ReadParametersEE();
+
+		LEDChaser();
+
+		IncThrottle = true;
+		ThrCount = 0;
+		Throttle = 0;
+
+		PWM[FrontC] = 0;
+
+		if ( Armed ) 
+		{
+			ALL_LEDS_OFF;
+			LEDRed_ON;
+			F.MotorsArmed = true;
+			DoStartingBeepsWithOutput(3);
+		}
+
+		while ( Armed ) 
+		{
+			if ( IncThrottle )
+			{
+				Throttle = ++ThrCount >> 3;
+				IncThrottle = Throttle <= OUT_MAXIMUM;
+			}
+			else
+			{
+				Throttle = --ThrCount >> 3;
+				IncThrottle = Throttle <= 0;
+				if ( IncThrottle )
+				{
+					ThrCount = Throttle = 0;
+					Beeper_ON;
+					Delay1mS(200);
+					Beeper_OFF;
+				}
+			}	
+
+			PWM[FrontC] = Throttle;
+
+			OutSignals();
+
+			if ( P[ESCType] == ESCPPM )
+			{
+
+			//	Delay10TCYx(32);	// 450Hz
+			//	Delay10TCYx(137);   // 400Hz
+				Delay100TCYx(111);  // 200Hz
+			}
+			else
+				Delay1mS(1);		
+		}
+		
+		StopMotors();
+	}
+
+	#else
 
 	LEDYellow_ON;
 	Delay100mSWithOutput(5);	// let all the sensors startup
@@ -221,5 +297,8 @@ void main(void)
 		
 		} // flight while armed
 	}
+
+	#endif // KEN_SPECIAL
+
 } // main
 

@@ -44,7 +44,7 @@ void GetRangefinderAltitude(void)
 			F.UsingRangefinderAlt = true;
 		else
 			if (( RangefinderAltitude > ALT_RF_DISABLE_CM ) && F.UsingRangefinderAlt)
-				F.UsingRangefinderAlt = false;
+				F.UsingRangefinderAlt = false;		
 	}
 	else
 	{

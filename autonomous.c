@@ -25,7 +25,7 @@
 void DoShutdown(void);
 void DoPolarOrientation(void);
 void Navigate(int32, int32);
-void SetDesiredAltitude(int16);
+void SetDesiredAltitude(int24);
 void DoFailsafeLanding(void);
 void AcquireHoldPosition(void);
 void NavGainSchedule(int16);
@@ -107,22 +107,20 @@ void FailsafeHoldPosition(void)
 		Navigate(HoldLatitude, HoldLongitude);
 } // FailsafeHoldPosition
 
-void SetDesiredAltitude(int16 NewDesiredAltitude) // Metres
+void SetDesiredAltitude(int24 NewDesiredAltitude) // cm
 {
-	if ( F.AllowNavAltitudeHold && F.AltHoldEnabled )
-	{
-		AltSum = 0;	
-		DesiredAltitude = NewDesiredAltitude * 10L; // Decimetres
-	}
+	ROCIntE = 0;
+	DesiredAltitude = NewDesiredAltitude;
+	AltCF = DesiredAltitude - Altitude;
 } // SetDesiredAltitude
 
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
 
-	DesiredAltitude = -200;
+	SetDesiredAltitude(-200);
 	if ( F.BaroAltitudeValid )
 	{
-		if ( Altitude > LAND_DM )
+		if ( Altitude > LAND_CM )
 			mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 
 		if ( !InTheAir || (( mSClock() > mS[NavStateTimeout] ) 
@@ -164,13 +162,15 @@ void DoPolarOrientation(void)
 	static int32 EastDiff, NorthDiff, Radius;
 	static int16 DesiredRelativeHeading;
 	static int16 P;
+	static i32u Temp32;
 
 	#ifndef TESTING
 	F.UsingPolar = F.UsingPolarCoordinates && F.NavValid && ( NavState == HoldingStation );
 	
 	if ( F.UsingPolar ) // needs rethink - probably arm using RTH switch
 	{
-		EastDiff = SRS32( (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
+		Temp32.i32 = (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection;
+		EastDiff = Temp32.i3_1;
 		NorthDiff = OriginLatitude - GPSLatitude;
 	
 		Radius = Max(Abs(EastDiff), Abs(NorthDiff));
@@ -212,13 +212,15 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static uint8 a;
 	static int16 Diff, NavP, NavI, NavD;
 	static int16 NavERoll, NavEPitch;
+	static i32u Temp32;
 
 	DoPolarOrientation();
 
 	DesiredLatitude = NavLatitude;
 	DesiredLongitude = NavLongitude;
 	
-	EastDiff = SRS32((DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection, 8);
+	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
+	EastDiff = Temp32.i3_1;
 	NorthDiff = DesiredLatitude - GPSLatitude;
 
 	Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
@@ -250,8 +252,10 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		SinHeading = int16sin(RelHeading);
 		CosHeading = int16cos(RelHeading);
 		
-		NavE[Roll] = SRS32( Radius * SinHeading, 8);
-		NavE[Pitch] = -SRS32( Radius * CosHeading, 8);
+		Temp32.i32 = Radius * SinHeading;
+		NavE[Roll] = Temp32.i3_1;
+		Temp32.i32 = Radius * CosHeading;
+		NavE[Pitch] = Temp32.i3_1;
 		
 		// Roll & Pitch
 		
@@ -271,7 +275,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			
 			NavEp[a] = NavE[a];
 			
-			NavCorr[a] = SRS16( (NavP + NavI + NavD ) * NavSensitivity, 8);
+			Temp32.i32 = ( NavP + NavI + NavD ) * NavSensitivity;
+			NavCorr[a] = Temp32.i3_1;
 
 		  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
 		  	NavCorr[a] = Limit1(NavCorr[a], NAV_MAX_ROLL_PITCH);
@@ -330,7 +335,7 @@ void DoNavigation(void)
 				}
 				#else
 				{
-					if ( Altitude < LAND_DM )
+					if ( Altitude < LAND_CM )
 						NavState = Touchdown;
 					DoFailsafeLanding();
 				}
@@ -340,7 +345,7 @@ void DoNavigation(void)
 				break;
 			case AtHome:
 				Navigate(OriginLatitude, OriginLongitude);
-				SetDesiredAltitude((int16)P[NavRTHAlt]);
+
 				if ( F.ReturnHome || F.Navigate )
 					if ( F.WayPointAchieved ) // check still @ Home
 					{
@@ -356,13 +361,13 @@ void DoNavigation(void)
 					AcquireHoldPosition();
 				break;
 			case ReturningHome:		
-				Navigate(OriginLatitude, OriginLongitude);
-				SetDesiredAltitude((int16)P[NavRTHAlt]);
+				Navigate(OriginLatitude, OriginLongitude);				
 				if ( F.ReturnHome || F.Navigate )
 				{
 					if ( F.WayPointAchieved )
 					{
-						mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;			
+						mS[NavStateTimeout] = mSClock() + NavRTHTimeoutmS;
+						SetDesiredAltitude((int16)P[NavRTHAlt]*100);			
 						NavState = AtHome;
 					}	
 				}
@@ -371,18 +376,19 @@ void DoNavigation(void)
 				break;
 			case Loitering:
 				Navigate(WPLatitude, WPLongitude);
-				SetDesiredAltitude(WPAltitude);
 				if ( F.Navigate )
 				{
 					if ( F.WayPointAchieved && (mSClock() > mS[NavStateTimeout]) )
 						if ( CurrWP == NoOfWayPoints )
 						{
 							CurrWP = 1;
+							SetDesiredAltitude((int16)P[NavRTHAlt]*100);
 							NavState = ReturningHome;	
 						}
 						else
 						{
 							GetWayPointEE(++CurrWP); 
+							SetDesiredAltitude(WPAltitude*100);	
 							NavState = Navigating;
 						}
 				}
@@ -390,13 +396,13 @@ void DoNavigation(void)
 					AcquireHoldPosition();
 				break;
 			case Navigating:
-				Navigate(WPLatitude, WPLongitude);
-				SetDesiredAltitude(WPAltitude);		
+				Navigate(WPLatitude, WPLongitude);	
 				if ( F.Navigate )
 				{
 					if ( F.WayPointAchieved )
 					{
 						mS[NavStateTimeout] = mSClock() + WPLoiter;
+						SetDesiredAltitude(WPAltitude*100);
 						NavState = Loitering;
 					}		
 				}
@@ -428,12 +434,15 @@ void DoNavigation(void)
 					if ( F.Navigate )
 					{
 						GetWayPointEE(CurrWP); // resume from previous WP
-						SetDesiredAltitude(WPAltitude);
+						SetDesiredAltitude(WPAltitude*100);
 						NavState = Navigating;
 					}
 					else
 						if ( F.ReturnHome )
-							NavState = ReturningHome;														
+						{
+							SetDesiredAltitude((int16)P[NavRTHAlt]*100);
+							NavState = ReturningHome;
+						}														
 				break;
 			} // switch NavState
 	}
@@ -490,14 +499,14 @@ void DoFailsafe(void)
 			break;
 		case Terminating:
 			FailsafeHoldPosition();
-			if ( Altitude < LAND_DM )
+			if ( Altitude < LAND_CM )
 				FailState = Terminated;
 			DoFailsafeLanding();
 			break;
 		case Aborting:
 			FailsafeHoldPosition();
 			F.AltHoldEnabled = true;
-			SetDesiredAltitude((int16)P[NavRTHAlt]);
+			SetDesiredAltitude((int16)P[NavRTHAlt]*100);
 			if( mSClock() > mS[NavStateTimeout] )
 			{
 				F.LostModel = true;

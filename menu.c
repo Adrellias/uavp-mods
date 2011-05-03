@@ -62,8 +62,10 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"T..All LEDs and buzzer test\r\n"
 	#endif // TESTING
+	#ifndef KEN_SPECIAL
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
+	#endif // !KEN_SPECIAL
 	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
 	#endif // TESTING
@@ -97,6 +99,13 @@ void ShowSetup(boolean h)
 		ParamSet = 1;	
 
 	TxString(SerHello);
+
+	#ifdef KEN_SPECIAL
+
+	TxString("\r\nDANGER - FAST ESC TESTER (PPM 400Hz/450Hz, I2C ~1300Hz)\r\n");
+	TxString("MOTORS WILL START IMMEDIATELY ON ARMING\r\n");
+	
+	#else
 
 	#ifdef EXPERIMENTAL
 		TxString("WARNING - EXPERIMENTAL\r\n");
@@ -283,6 +292,8 @@ void ShowSetup(boolean h)
 
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - CLOSE!\r\n");
+
+	#endif // KEN_SPECIAL
 	
 	ShowPrompt();
 } // ShowSetup

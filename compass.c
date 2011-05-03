@@ -367,7 +367,9 @@ void DoCompassTest(void)
 
 	Delay1mS(COMPASS_TIME_MS);
 
-    GetHeading();
+	for ( i = 0; i < 200; i++) 
+    	GetHeading();
+
 	if ( F.CompassMissRead ) goto CTerror;
 
     TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);

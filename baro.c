@@ -23,7 +23,8 @@
 
 #include "uavx.h"
 
-#define BARO_SANITY_CHECK_DMPS	200L		// dm/S 20,40,60,80 or 100
+#define MPX4115_BARO_SANITY_CHECK_CM	((BARO_MAX_CHANGE_CMPS*PID_CYCLE_MS)/1000L)
+#define BOSCH_BARO_SANITY_CHECK_CM		((BARO_MAX_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
 
 void GetBaroAltitude(void);
 void InitBarometer(void);
@@ -31,7 +32,7 @@ void InitBarometer(void);
 void ShowBaroType(void);
 void BaroTest(void);
 
-#define BaroROCFilter HardFilter
+#define ROCFilter HardFilter
 
 uint16	BaroPressure, BaroTemperature;
 boolean AcquiringPressure;
@@ -40,24 +41,13 @@ int16	BaroOffsetDAC;
 #define BARO_MIN_CLIMB			1500	// dM minimum available barometer climb from origin
 #define BARO_MIN_DESCENT		-500	// dM minimum available barometer descent from origin
 
-#define BARO_BUFF_SIZE 4
-#pragma udata baroq
-struct {
-	uint8 Head, Tail;
-	int24 B[BARO_BUFF_SIZE];
-	} BaroQ;
-#pragma udata
-
 int32	OriginBaroPressure, CompBaroPressure;
 int24	BaroRelAltitude, BaroRelAltitudeP;
-int16	BaroROC;
 i16u	BaroVal;
 int8	BaroType;
 int16 	BaroClimbAvailable, BaroDescentAvailable;
-int16	AltitudeUpdateRate;
 int8	BaroRetries;
 i32u	BaroValF;
-int16	BaroFilterA;
 
 int24	FakeBaroRelAltitude;
 int8 	SimulateCycles;
@@ -69,7 +59,7 @@ int8 	SimulateCycles;
 void SetFreescaleMCP4725(int16);
 void SetFreescaleOffset(void);
 void ReadFreescaleBaro(void);
-int16 FreescaleToDM(int24);
+int24 FreescaleToCm(int24);
 void GetFreescaleBaroAltitude(void);
 boolean IsFreescaleBaroActive(void);
 void InitFreescaleBarometer(void);
@@ -88,6 +78,9 @@ void InitFreescaleBarometer(void);
 #define FS_DAC_MCP_CMD		0x40 	// write to DAC registor in next 2 bytes
 #define FS_DAC_MCP_EPROM	0x60    // write to DAC registor and eprom
 
+// MPX4115 is read at full PID rate
+const int16 BaroMPX4115FilterA = ( (int24) PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int16) FILT_ALT_HZ ) + (int16) PID_CYCLE_MS );
+
 void SetFreescaleMCP4725(int16 d)
 {	
 	static int8 r;
@@ -103,41 +96,6 @@ void SetFreescaleMCP4725(int16 d)
 } // SetFreescaleMCP4725
 
 //#define GKEOFFSET
-#ifdef GKEOFFSET
-
-void SetFreescaleOffset(void)
-{
-	static int16 Hop;
-	static int8 i;
-
-	BaroOffsetDAC = 0;
-	Hop = FS_DAC_MAX >> 1;
-
-	SetFreescaleMCP4725(BaroOffsetDAC);
-	Delay1mS(2);
-
-	ReadFreescaleBaro();
-	if ( BaroVal.u16 < 16380 ) // sum of 4 samples - aiming for 25% of FS on Baro ADC
-	{
-		for (i = 0; i < 12; i++) // 8 should be OK
-		{
-			BaroOffsetDAC += Hop;
-			Hop >>= 2 + 1; // avoid zero hop
-			SetFreescaleMCP4725(BaroOffsetDAC);
-			Delay1mS(2);
-			ReadFreescaleBaro();
-			if ( BaroVal.u16 > (uint16)(((uint24)FS_ADC_MAX*4L*3L)/4L) )
-				BaroOffsetDAC -= Hop;
-			else
-				BaroOffsetDAC += Hop;
-		}
-	}
-	else
-		F.BaroAltitudeValid = false;
-
-} // SetFreescaleOffset
-
-#else
 
 void SetFreescaleOffset(void)
 { 	// Steve Westerfeld
@@ -177,14 +135,10 @@ void SetFreescaleOffset(void)
 	
 } // SetFreescaleOffset
 
-#endif // GKEOFFSET
-
 void ReadFreescaleBaro(void)
 {
 	static uint8 B[8], r;
 	static i16u B0, B1, B2, B3;
-
-	mS[BaroUpdate] = mSClock() + FS_ADC_TIME_MS;
 
 	I2CStart();  // start conversion
 	if( WriteI2CByte(FS_ADC_I2C_WR) != I2C_ACK ) goto FSError;
@@ -220,27 +174,37 @@ FSError:
 	return;
 } // ReadFreescaleBaro
 
-int16 FreescaleToDM(int24 p)
-{ // decreasing pressure is increase in altitude negate and rescale to decimetre altitude
-	return(-(p * (int24)8 )/ (int16)P[BaroScale] );
-}  // FreescaleToDM
+int24 FreescaleToCm (int24 p)
+{ // decreasing pressure is increase in altitude negate and rescale to cm altitude
+	return(-(p * 80 )/ (int16)P[BaroScale] );
+}  // FreescaleToCm
 
 void GetFreescaleBaroAltitude(void)
 {
 	static int24 BaroPressure;
 
-	if ( mSClock() >= mS[BaroUpdate] )
+	ReadFreescaleBaro();
+	if ( F.BaroAltitudeValid )
 	{
-		ReadFreescaleBaro();
-		if ( F.BaroAltitudeValid )
+		BaroPressure = (int24)BaroVal.u16; // sum of 4 samples		
+		BaroRelAltitude = FreescaleToCm(BaroPressure - OriginBaroPressure);
+
+		if ( Abs( BaroRelAltitude - BaroRelAltitudeP ) > MPX4115_BARO_SANITY_CHECK_CM )
+			Stats[BaroFailS]++;
+
+		BaroRelAltitude = SlewLimit(BaroRelAltitudeP, BaroRelAltitude, MPX4115_BARO_SANITY_CHECK_CM);
+
+		BaroRelAltitude = AltitudeCF(BaroRelAltitude);
+
+		BaroRelAltitudeP = BaroRelAltitude;		
+		
+		if ( mSClock() >= mS[BaroUpdate] )
 		{
-			BaroPressure = (int24)BaroVal.u16; // sum of 4 samples
-			LPFilter24(&BaroPressure, &BaroValF, BaroFilterA); 		
-			BaroRelAltitude = FreescaleToDM(BaroPressure - OriginBaroPressure);
-			F.NewBaroValue = F.BaroAltitudeValid;
+			mS[BaroUpdate] += BARO_UPDATE_MS;
+			F.NewBaroValue = true;
 		}
-	}	
-			
+	}
+				
 } // GetFreescaleBaroAltitude
 
 boolean IsFreescaleBaroActive(void)
@@ -262,15 +226,10 @@ FreescaleInactive:
 
 void InitFreescaleBarometer(void)
 {
-	static int16 BaroOriginAltitude, MinAltitude, Error;
+	static int16 BaroOriginAltitude, MinAltitude;
 	static int24 BaroPressureP;
 
-	AltitudeUpdateRate = 1000L/FS_ADC_TIME_MS;
-
-	BaroFilterA = ( (int24) FS_ADC_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) FS_ADC_TIME_MS );
-
 	BaroTemperature = 0;
-	Error = ( (int16)P[BaroScale] * 2)/16;  // 0.2M
 	BaroPressure =  0;
 
 	BaroRetries = 0;
@@ -279,12 +238,12 @@ void InitFreescaleBarometer(void)
 	
 		SetFreescaleOffset();
 	
-		while ( mSClock() < mS[BaroUpdate] ) {};
+		Delay1mS(50);
 		ReadFreescaleBaro();
 		BaroPressure = (int24)BaroVal.u16;
 
 	} while ( ( ++BaroRetries < BARO_INIT_RETRIES ) 
-			&& ( Abs(BaroPressure - BaroPressureP) > Error ) );
+			&& ( Abs( FreescaleToCm(BaroPressure - BaroPressureP ) ) > 20 ) );
 
 	F.BaroAltitudeValid = BaroRetries < BARO_INIT_RETRIES;
 
@@ -294,8 +253,8 @@ void InitFreescaleBarometer(void)
 
 	BaroRelAltitudeP = BaroRelAltitude = 0;
 	
-	MinAltitude = FreescaleToDM((int24)FS_ADC_MAX*4);
-	BaroOriginAltitude = FreescaleToDM(OriginBaroPressure);
+	MinAltitude = FreescaleToCm((int24)FS_ADC_MAX*4);
+	BaroOriginAltitude = FreescaleToCm(OriginBaroPressure);
 	BaroDescentAvailable = MinAltitude - BaroOriginAltitude;
 	BaroClimbAvailable = -BaroOriginAltitude;
 
@@ -313,6 +272,7 @@ void InitFreescaleBarometer(void)
 // Bosch SMD500 and BMP085 Barometers
 
 void StartBoschBaroADC(boolean);
+int24 BoschToCm(int24);
 int24 CompensatedBoschPressure(uint16, uint16);
 
 void GetBoschBaroAltitude(void);
@@ -336,7 +296,9 @@ void InitBoschBarometer(void);
 //#define BMP085_PRESS_TIME_MS 		26
 //#define SMD500_PRESS_TIME_MS 		34
 #define BOSCH_PRESS_TIME_MS			38
-#define BOSCH_PRESS_TEMP_TIME_MS	50	// pressure and temp time + overheads 	
+#define BOSCH_PRESS_TEMP_TIME_MS	BARO_UPDATE_MS	// MUST BE 20Hz pressure and temp time + overheads 	
+
+const int16 BaroBoschFilterA = ((int24)BOSCH_PRESS_TEMP_TIME_MS*256L)/(1000L/(6L*(int16) FILT_ALT_HZ)+(int16)BOSCH_PRESS_TEMP_TIME_MS); 
 
 void StartBoschBaroADC(boolean ReadPressure)
 {
@@ -409,6 +371,10 @@ RVerror:
 	return;
 } // ReadBoschBaro
 
+int24 BoschToCm(int24 CP) {
+	return(-((int24)CP * 245) / (int32)P[BaroScale]);
+} // BoschToCm
+
 #define BOSCH_BMP085_TEMP_COEFF		62L 	
 #define BOSCH_SMD500_TEMP_COEFF		50L
 
@@ -429,6 +395,8 @@ void GetBoschBaroAltitude(void)
 {
 	static int24 Temp;
 
+	F.NewBaroValue = false;
+
 	if ( mSClock() >= mS[BaroUpdate] )
 	{
 		ReadBoschBaro();
@@ -441,21 +409,20 @@ void GetBoschBaroAltitude(void)
 			else
 			{
 				BaroTemperature = (int24)BaroVal.u16;
-				AcquiringPressure = true;
-		
-				Temp = CompensatedBoschPressure(BaroPressure, BaroTemperature);			
-				CompBaroPressure -= BaroQ.B[BaroQ.Head];		
-				BaroQ.B[BaroQ.Head] = Temp;
-				CompBaroPressure += Temp;
-				BaroQ.Head = (BaroQ.Head + 1) & (BARO_BUFF_SIZE -1);
+				CompBaroPressure = CompensatedBoschPressure(BaroPressure, BaroTemperature);
 
-				// Pressure queue has 4 entries corresponding to an average delay at 20Hz of 0.1Sec
 				// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
+				BaroRelAltitude = BoschToCm(CompBaroPressure);
 
-				Temp = (int24)CompBaroPressure;
-				LPFilter24(&Temp, &BaroValF, BaroFilterA);
-				BaroRelAltitude = -SRS32(Temp * (int32)P[BaroScale], 7);
-				F.NewBaroValue = F.BaroAltitudeValid;			
+				if ( Abs( BaroRelAltitude - BaroRelAltitudeP ) > BOSCH_BARO_SANITY_CHECK_CM )
+					Stats[BaroFailS]++;
+
+				BaroRelAltitude = SlewLimit(BaroRelAltitudeP, BaroRelAltitude, BOSCH_BARO_SANITY_CHECK_CM);
+				BaroRelAltitude = AltitudeCF(BaroRelAltitude);	
+				BaroRelAltitudeP = BaroRelAltitude;
+
+				F.NewBaroValue = true;
+				AcquiringPressure = true;			
 			}
 		else
 			if ( State == InFlight )
@@ -465,7 +432,8 @@ void GetBoschBaroAltitude(void)
 			}	
 
 		StartBoschBaroADC(AcquiringPressure);
-	}			
+	}
+			
 } // GetBoschBaroAltitude
 
 boolean IsBoschBaroActive(void)
@@ -494,18 +462,13 @@ BoschInactive:
 
 void InitBoschBarometer(void)
 {
-	int8 s;
-	int24 Temp, Diff, CompBaroPressureP;
+	int24 Diff, CompBaroPressureP;
 	int16 BaroStable;
 
 	if ( BaroType == BaroBMP085 )
-		BaroStable = 12;
+		BaroStable = 50;
 	else
-		BaroStable = 24;
-
-	AltitudeUpdateRate = 1000L / BOSCH_PRESS_TEMP_TIME_MS;
-
-	BaroFilterA = ( (int24) BOSCH_PRESS_TEMP_TIME_MS * 256L) / ( 10000L / ( 6L * (int16) ADC_ALT_FREQ ) + (int16) BOSCH_PRESS_TEMP_TIME_MS ); 
+		BaroStable = 100;
 
 	F.NewBaroValue = false;
 	CompBaroPressure = 0;
@@ -514,34 +477,29 @@ void InitBoschBarometer(void)
 	do // occasional I2C misread of Temperature so keep doing it until the Origin is stable!!
 	{	
 		CompBaroPressureP = CompBaroPressure;
-		CompBaroPressure = BaroQ.Head = 0;
+		CompBaroPressure = 0;
 		
 		AcquiringPressure = true;
 		StartBoschBaroADC(AcquiringPressure); // Pressure
 	
-		for ( s = 0; s < 4; s++ )
-		{
-			while ( mSClock() < mS[BaroUpdate] );
-			ReadBoschBaro(); // Pressure	
-			BaroPressure = BaroVal.u16;
+		while ( mSClock() < mS[BaroUpdate] );
+		ReadBoschBaro(); // Pressure	
+		BaroPressure = BaroVal.u16;
 			
-			AcquiringPressure = !AcquiringPressure;
-			StartBoschBaroADC(AcquiringPressure); // Temperature
-			while ( mSClock() < mS[BaroUpdate] );
-			ReadBoschBaro();
-			BaroTemperature = BaroVal.u16;
-			
-			Temp = CompensatedBoschPressure(BaroPressure, BaroTemperature);
-			BaroQ.B[s] = Temp;
-			CompBaroPressure += Temp;
+		AcquiringPressure = !AcquiringPressure;
+		StartBoschBaroADC(AcquiringPressure); // Temperature
+		while ( mSClock() < mS[BaroUpdate] );
+		ReadBoschBaro();
+		BaroTemperature = BaroVal.u16;
+		
+		CompBaroPressure = CompensatedBoschPressure(BaroPressure, BaroTemperature);
 	
-			AcquiringPressure = !AcquiringPressure;
-			StartBoschBaroADC(AcquiringPressure); 	
-		}
+		AcquiringPressure = !AcquiringPressure;
+		StartBoschBaroADC(AcquiringPressure); 	
 
-	} while ( ( ++BaroRetries < BARO_INIT_RETRIES ) && ( Abs(CompBaroPressure - CompBaroPressureP) > BaroStable ) ); // stable within ~0.5M
+	} while ( ( ++BaroRetries < BARO_INIT_RETRIES ) && ( Abs(BoschToCm(CompBaroPressure - CompBaroPressureP)) > BaroStable ) ); // stable within ~0.5M
 	
-	OriginBaroPressure = SRS32(CompBaroPressure, 2);
+	OriginBaroPressure = CompBaroPressure;
 
 	BaroValF.i32 = 0;
 
@@ -583,10 +541,11 @@ void BaroTest(void)
 
 	if ( BaroType == BaroMPX4115 )
 	{
-		TxString("Range   :\t");			
-		TxVal32((int32) BaroDescentAvailable,1, ' ');
+		TxString("Range   :\t");		
+		TxVal32((int32) BaroDescentAvailable, 2, ' ');
 		TxString("-> ");
-		TxVal32((int32) BaroClimbAvailable,1, 'M');
+		TxVal32((int32) BaroClimbAvailable, 2, 'M');
+
 		TxString(" {Offset ");TxVal32((int32)BaroOffsetDAC, 0,'}'); 
 		if (( BaroClimbAvailable < BARO_MIN_CLIMB ) || (BaroDescentAvailable > BARO_MIN_DESCENT))
 			TxString(" Bad climb or descent range - offset adjustment?");
@@ -595,12 +554,13 @@ void BaroTest(void)
 
 	if ( !F.BaroAltitudeValid ) goto BAerror;	
 
+	F.NewBaroValue = false;
 	while ( !F.NewBaroValue )
 		GetBaroAltitude();	
 	F.NewBaroValue = false;
 
-	TxString("Alt.:     \t");	
-	TxVal32((int32)BaroRelAltitude, 1, ' ');
+	TxString("Alt.:     \t");
+	TxVal32((int32)BaroRelAltitude, 2, ' ');
 	TxString("M\r\n");
 
 	TxString("\r\nR.Finder: \t");
@@ -626,7 +586,7 @@ BAerror:
 
 void GetBaroAltitude(void)
 {
-	static int16 Temp, AltChange;
+	static int24 Temp, AltChange;
 
 	if ( BaroType == BaroMPX4115 )
 		GetFreescaleBaroAltitude();
@@ -640,56 +600,31 @@ void GetBaroAltitude(void)
 		{
 			if ( ++SimulateCycles >= AltitudeUpdateRate )
 			{
-				FakeBaroRelAltitude += ( DesiredThrottle - CruiseThrottle ) + Comp[Alt];
-				if ( FakeBaroRelAltitude < -50 ) 
+				FakeBaroRelAltitude += ( ( DesiredThrottle - CruiseThrottle ) + Comp[Alt]) * 10;
+				if ( FakeBaroRelAltitude < -500 ) 
 					FakeBaroRelAltitude = 0;
-			
+	
 				SimulateCycles = 0;
 			
-				BaroROC = FakeBaroRelAltitude - BaroRelAltitudeP;
 				BaroRelAltitudeP = FakeBaroRelAltitude;	
 			}
 			BaroRelAltitude = FakeBaroRelAltitude;
 		}					
 		#else 
-
-			AltChange = BaroRelAltitude - BaroRelAltitudeP;
-			Temp = AltChange * AltitudeUpdateRate;
 	
-			if ( Abs( Temp ) > BARO_SANITY_CHECK_DMPS )
-			{
-				BaroRelAltitude = BaroRelAltitudeP;	// use previous value
-				Temp = 0;
-				Stats[BaroFailS]++;
-			}
-
-			Temp = Limit1( Temp , BARO_SANITY_CHECK_DMPS );
-			BaroROC = SRS16( BaroROC * 31 + Temp, 5 );				
-			BaroRelAltitudeP = BaroRelAltitude;
-
 		#endif // SIMULATE
 
-		if ( State == InFlight )
-		{
-			if ( BaroROC > Stats[MaxBaroROCS] )
-				Stats[MaxBaroROCS] = BaroROC;
-			else
-				if ( BaroROC < Stats[MinBaroROCS] )
-					Stats[MinBaroROCS] = BaroROC;
-		
-			if ( BaroRelAltitude > Stats[BaroRelAltitudeS] ) 
-				Stats[BaroRelAltitudeS] = BaroRelAltitude;
-		}
+		if (( State == InFlight ) && ( BaroRelAltitude > Stats[BaroRelAltitudeS] ))
+			Stats[BaroRelAltitudeS] = BaroRelAltitude;
 	}
 	
 } // GetBaroAltitude
 
 void InitBarometer(void)
 {
-	BaroRelAltitude = BaroRelAltitudeP = BaroROC = CompBaroPressure = OriginBaroPressure = SimulateCycles = 0;
+	BaroRelAltitude = BaroRelAltitudeP = CompBaroPressure = OriginBaroPressure = SimulateCycles = 0;
 	BaroType = BaroUnknown;
 
-	AltComp = AltDiffSum = AltDSum = 0;
 	F.BaroAltitudeValid= true; // optimistic
 
 	if ( IsFreescaleBaroActive() )	

@@ -20,13 +20,11 @@
 
 #include "uavx.h"
 
-void DoAltitudeHold(int24, int16);
-void UpdateAltitudeSource(void);
-int16 AltitudeCF(int16);
+void DoAltitudeHold(void);
+int24 AltitudeCF(int24);
 void AltitudeHold(void);
-void LimitRollAngle(void);
-void LimitPitchAngle(void);
-void LimitYawAngle(void);
+void DoAttitudeAngle(uint8, uint8);
+void DoYawRate(void);
 void DoOrientationTransform(void);
 void GainSchedule(void);
 void DoControl(void);
@@ -48,95 +46,84 @@ int32 GS;
 
 int16 Trim[3];
 int16 HoldYaw;
-int16 RollIntLimit2048, PitchIntLimit2048, YawIntLimit256;
+int16 YawIntLimit256;
 
 int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
+int16 ControlRoll, ControlPitch;
 int16 CurrMaxRollPitch;
-
-int16 RollOuterInp, RollOuterInpP, RollOuter, RollInnerInp;
-int16 PitchOuterInp, PitchOuterInpP, PitchOuter, PitchInnerInp;
 
 int16 YawRateIntE;
 
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
-int16 VertVel, VertDisp, AccAltComp, AltComp, AltDiffSum, AltD, AltDSum;
-int24 DesiredAltitude, Altitude;
-int16 ROC;
+int24 DesiredAltitude, Altitude, Altitudep; 
+int16 AccAltComp, AltComp, ROC, ROCIntE, MinROCCmpS;
 
 boolean	FirstPass;
 int8 BeepTick = 0;
 
-int16 AltCF = 0;
-int16 AltF[3] = { 0, 0, 0};
+int24 AltCF;
+int24 AltF[3] = { 0, 0, 0};
 
-int16 AltitudeCF( int16 AltE ) 
-{	// Complementary Filter originally authored by RoyLB
+int24 AltitudeCF(int24 Alt) 
+{	// Complementary Filter originally authored by RoyLB for attitude estimation
 	// http://www.rcgroups.com/forums/showpost.php?p=12082524&postcount=1286
+	// adapted for baro compensation by G.K. Egan 2011 using acceleration as an alias 
+	// for diplacement to avoid integration windup of vertical displacement estimate
 
-	const int16 dT = 1;
-	const int16 AltTauCF = 5;
+	static i32u Temp;
+	static int24 TauCF;
 
     if ( F.AccelerationsValid && F.NearLevel ) {
 
-        VertVel += Acc[DU] * dT;
-        VertDisp += VertVel * dT;
+		TauCF = (int24)P[VertDamp]; // ~10
 
-        AltF[0] = (AltE - AltCF) * Sqr(AltTauCF);
-    	AltF[2] += AltF[0] * dT;
-  		AltF[1] =  AltF[2] + (AltE - AltCF) * 2 * AltTauCF + VertDisp;
- 		AltCF = ( AltF[1] * dT) + AltCF;
+        AltF[0] = (Alt - AltCF) * Sqr(TauCF);
+    	Temp.i32 = AltF[2] * 256 + AltF[0];
+		AltF[2] = Temp.i3_1;
 
-		AccAltComp = VertDisp; //AltE - AltCF; // debugging tracking
-
-        return( AltE ); //AltCF );
+  		AltF[1] =  AltF[2] + (Alt - AltCF) * 2 * TauCF + SRS16( Acc[DU], 6); // should ba at^2
+ 		Temp.i32 = AltCF * 256 + AltF[1];
+		AltCF = Temp.i3_1;
 
     } else
-        return( AltE ); // no correction
+		AltCF = Alt;
+
+	AccAltComp = AltCF - Alt; // for debugging
+
+	return( AltCF ); 
 
 } // AltitudeCF
 
-void DoAltitudeHold(int24 Altitude, int16 ROC)
-{ // Syncronised to baro intervals independant of active altitude source
+void DoAltitudeHold(void)
+{ 	// Syncronised to baro intervals independant of active altitude source
 	
-	static int16 NewAltComp, LimBE, AltP, AltI, AltD;
-	static int24 Temp, BE;
+	static int24 AltE;
+	static int16 ROCE, pROC, iROC, DesiredROC;
+	static int16 NewAltComp;
+	static i24u Temp;
 
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (--BeepTick <= 0) && !F.BeeperInUse ) 
 		Beeper_TOG;
 	#endif
-			
-	BE = AltitudeCF( DesiredAltitude - Altitude );
-	LimBE = Limit1(BE, ALT_BAND_DM);
-		
-	AltP = SRS16(LimBE * (int16)P[AltKp], 4);
-	AltP = Limit1(AltP, ALT_MAX_THR_COMP);
-		
-	AltDiffSum += LimBE;
-	AltDiffSum = Limit1(AltDiffSum, ALT_INT_WINDUP_LIMIT);
-	AltI = SRS16(AltDiffSum * (int16)P[AltKi], 3);
-	AltI = Limit1(AltDiffSum, (int16)P[AltIntLimit]);
-				 
-	AltD = SRS16(ROC * (int16)P[AltKd], 2);
-	AltD = Limit1(AltD, ALT_MAX_THR_COMP); 
-			 
-	if ( ROC < (int16)P[MaxDescentRateDmpS] )
-	{
-		AltDSum += 1;
-		AltDSum = Limit(AltDSum, 0, ALT_MAX_THR_COMP * 2); 
-	}
-	else
-		AltDSum = DecayX(AltDSum, 1);
-			
-	NewAltComp = AltP + AltI + AltD + AltDSum;
-	NewAltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
+					
+	AltE = DesiredAltitude - Altitude;
 	
-	AltComp = SlewLimit(AltComp, NewAltComp, 1);
-		
+	DesiredROC = Limit(AltE, MinROCCmpS, ALT_MAX_ROC_CMPS);
+	
+	ROCE = DesiredROC - ROC;		
+	pROC = ROCE * (int16)P[AltKp]; 
+	
+	ROCIntE += ROCE  * (int16)P[AltKi];
+	ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
+    iROC = ROCIntE;
+			
+	NewAltComp = SRS16(pROC + iROC, 5);
+	AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
+					
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (BeepTick <= 0) && !F.BeeperInUse) 
 	{
@@ -147,95 +134,89 @@ void DoAltitudeHold(int24 Altitude, int16 ROC)
 
 } // DoAltitudeHold	
 
-void UpdateAltitudeSource(void)
-{
-	if ( F.UsingRangefinderAlt )
-	{
-		Altitude = RangefinderAltitude / 10; 	// Decimetres for now
-		ROC = 0;
-	}
-	else
-	{
-		Altitude = BaroRelAltitude;
-		ROC = BaroROC;
-	}
-} // UpdateAltitudeSource
-
 void AltitudeHold()
 {  // relies upon good cross calibration of baro and rangefinder!!!!!!
+
 	static int16 NewCruiseThrottle;
 
 	GetBaroAltitude();
 	GetRangefinderAltitude();
 	CheckThrottleMoved();
 
-	if ( F.NewBaroValue  ) // sync on Baro which MUST be working
-	{		
-		F.NewBaroValue = false;
-
-		UpdateAltitudeSource();
-
-		if ( F.AltHoldEnabled )
+	if ( F.UsingRangefinderAlt )
+		Altitude = RangefinderAltitude;	 
+	else
+		if ( F.NewBaroValue )
+			Altitude = BaroRelAltitude;
+			
+	if ( F.AltHoldEnabled )
+	{
+		if ( F.NewBaroValue || F.UsingRangefinderAlt )
 		{
+			ROC = ( Altitude - Altitudep) * ALT_UPDATE_HZ; // +/- 20 steps - needs filtering perhaps
+			Altitudep = Altitude;
+			if ( State == InFlight )
+				if ( ROC > Stats[MaxROCS] )
+					Stats[MaxROCS] = ROC;
+				else
+					if ( ROC < Stats[MinROCS] )
+						Stats[MinROCS] = ROC;
+
 			if ( F.ForceFailsafe || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
-				DoAltitudeHold(Altitude, ROC);
+				DoAltitudeHold();
 			}	
 			else
 				if ( F.ThrottleMoving )
 				{
-					F.HoldingAlt = false;
-					DesiredAltitude = Altitude;
-					AltComp = Decay1(AltComp);
-// zero acc vel/disp
-				}
-				else
-				{
-					F.HoldingAlt = true;
-					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_DMPS  ) 
+					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) 
 					{
 						NewCruiseThrottle = DesiredThrottle + AltComp;
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
 						CruiseThrottle = Limit(CruiseThrottle , IdleThrottle, THROTTLE_MAX_CRUISE );
 					}
-					DoAltitudeHold(Altitude, ROC); // not using cruise throttle
-				}	
-		}
-		else
-		{
-			AltComp = Decay1(AltComp);
-			F.HoldingAlt = false;
+					ROCIntE = 0;
+					F.HoldingAlt = false;
+					SetDesiredAltitude(Altitude);
+					AltComp = Decay1(AltComp);
+				}
+				else
+				{ // throttle is not moving therefore we are hovering!
+					F.HoldingAlt = true;
+					DoAltitudeHold(); // not using cruise throttle
+				}
+			F.NewBaroValue = false;
 		}	
+	}
+	else
+	{
+		ROCIntE = 0;
+		AltComp = Decay1(AltComp);
+		F.HoldingAlt = false;
 	}
 
 } // AltitudeHold
 
-void LimitRollAngle(void)
-{
-	// Caution: Angle[Roll] is positive left which is the opposite sense to the roll angle
-	RawAngle[Roll] += Rate[Roll];
-	RawAngle[Roll] = Limit1(RawAngle[Roll], RollIntLimit2048);
+void DoAttitudeAngle(uint8 a, uint8 c)
+{	// Caution: Angles are the opposite to the normal aircraft coordinate conventions
 
-	Angle[Roll] += Rate[Roll];
-    Angle[Roll] = Limit1(Angle[Roll], RollIntLimit2048);
-    Angle[Roll] = Decay1(Angle[Roll]);		// damps to zero even if still rolled
-	Angle[Roll] += IntCorr[LR];				// last for accelerometer compensation
-} // LimitRollAngle
+	static int16 Temp;
 
-void LimitPitchAngle(void)
-{
-	// Caution: Angle[Pitch] is positive down which is the opposite sense to the pitch angle
-	RawAngle[Pitch] += Rate[Pitch];
-	RawAngle[Pitch] = Limit1(RawAngle[Pitch], RollIntLimit2048);
+	#ifdef DEBUG_GYROS
+	Temp = RawAngle[a] + Rate[a];
+	RawAngle[a] = Limit1(Temp, ANGLE_LIMIT);
+	#endif // DEBUG_GYROS
 
-	Angle[Pitch] += Rate[Pitch];
-	Angle[Pitch] = Limit1(Angle[Pitch], RollIntLimit2048);
-	Angle[Pitch] = Decay1(Angle[Pitch]); 
-	Angle[Pitch] += IntCorr[FB];
-} // LimitPitchAngle
+	Temp = Angle[a] + Rate[a];
+    Temp = Limit1(Temp, ANGLE_LIMIT);
+    Temp = Decay1(Temp);
+	Temp += IntCorr[c];			// last for accelerometer compensation
+	Angle[a] = Temp;
 
-void LimitYawAngle(void)
+} // DoAttitudeAngle
+
+void DoYawRate(void)
 { 	// Yaw gyro compensation using compass
 	static int16 Temp, HE;
 
@@ -244,19 +225,24 @@ void LimitYawAngle(void)
 		// + CCW
 		Temp = DesiredYaw - Trim[Yaw];
 		if ( Abs(Temp) > COMPASS_MIDDLE ) // acquire new heading
+		{
 			DesiredHeading = Heading;
+			HE = 0;
+		}
 		else
 		{
 			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
-			HE = SRS32((int32)HE * (int32)P[CompassKp], 12); 
+			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
 			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
 		}
 	}
+	else
+		HE = 0;
 
 	#ifdef NEW_YAW
 
-	Angle[Yaw] = Heading;
+	Angle[Yaw] = HE;
 
 	#else
 
@@ -267,7 +253,7 @@ void LimitYawAngle(void)
 
 	#endif // NEW_YAW
 
-} // LimitYawAngle
+} // DoYawRate
 
 void DoOrientationTransform(void)
 {
@@ -338,7 +324,9 @@ void GainSchedule(void)
 
 void DoControl(void)
 {
-	static i24u Temp;
+	static int16 Temp;
+	static i32u Temp32;
+	static i24u Temp24;
 	static int16 RateE;
 
 	CalculateGyroRates();
@@ -367,81 +355,50 @@ void DoControl(void)
 
 	// Roll
 				
-	LimitRollAngle();
+	DoAttitudeAngle(Roll, LR);
 
-	#ifdef ML_PID
+	Rl  = SRS16((int24)Rate[Roll] * P[RollKp] - (int24)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
+	Temp = SRS32((int24)Angle[Roll] * P[RollKi], 9);
+	Rl += Limit1(Temp, P[RollIntLimit]); 
 
-// set P = -32, I = -16, D = 0 as it is rescaled by /32
+	Temp24.i24 = (int24)Rl * GS;
+	Rl = Temp24.i2_1;
 
-	RollOuterInp = - ( Angle[Roll] + ControlRoll ); //+ NavCorr[Roll] );
-	RollOuter = SRS16(RollOuterInp * P[RollKi] + ( RollOuterInp - RollOuterInpP ) * P[RollKd], 5);
-
-	RollInnerInp = RollOuter - Rate[Roll];
-	Rl = SRS16(RollInnerInp * P[RollKp], 5);
-
-	//Rl = SRS32((int32)Rl * GS, 8);
-
-	RollOuterInpP = RollOuterInp;
-
-	#else
-
-	Rl  = SRS16(Rate[Roll] * P[RollKp] - (Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
-	Rl += SRS16(Angle[Roll] * (int16)P[RollKi], 9); 
-
-	Rl = SRS32((int32)Rl * GS, 8);
-
-	Rl -= ControlRoll + NavCorr[Roll];
+	Rl -= (ControlRoll + NavCorr[Roll]);
 
 	Ratep[Roll] = Rate[Roll];
 
-	#endif // ML_PID
-
 	// Pitch
 
-	LimitPitchAngle();
+	DoAttitudeAngle(Pitch, FB);
 
-	#ifdef ML_PID
+	Pl  = SRS16((int24)Rate[Pitch] * P[PitchKp] - (int24)(Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
+	Temp = SRS32((int24)Angle[Pitch] * P[PitchKi], 9);
+	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
 
-	PitchOuterInp = -( Angle[Pitch] + ControlPitch ); //+ NavCorr[Pitch] );
-	PitchOuter = SRS16(PitchOuterInp * P[PitchKi] + ( PitchOuterInp - PitchOuterInpP ) * P[PitchKd], 5);
+	Temp24.i24 = -(int24)Pl * GS;
+	Pl = Temp24.i2_1;
 
-	PitchInnerInp = PitchOuter - Rate[Pitch];
-	Pl = -SRS16(PitchInnerInp * P[PitchKp], 5);
-
-	//Pl = SRS32((int32)Pl * GS, 8);
-
-	RollOuterInpP = RollOuterInp;
-
-	#else
-
-	Pl  = SRS16(Rate[Pitch] * P[PitchKp] - (Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
-	Pl += SRS16(Angle[Pitch] * (int16)P[PitchKi], 9);
-
-	Pl = -SRS32((int32)Pl * GS, 8);
-
-	Pl -= ControlPitch + NavCorr[Pitch];
+	Pl -= ( ControlPitch + NavCorr[Pitch]);
 
 	Ratep[Pitch] = Rate[Pitch];
 
-	#endif // ML_PID
-
-	// Yaw  - should be tuned to rate control
+	// Yaw - rate control
 	
-	LimitYawAngle();
-
-	#ifdef NEW_YAW
+	DoYawRate();
 
 	RateE = Rate[Yaw] + DesiredYaw + NavCorr[Yaw];
+
+	#ifdef NEW_YAW
 
 	YawRateIntE += RateE;
 	YawRateIntE = Limit1(YawRateIntE, YawIntLimit256);
 
-	Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * (int16)P[YawKi], 4), 4);
+	Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
 
 	#else
 
-	Yl  = SRS16( ( Rate[Yaw] + DesiredYaw + NavCorr[Yaw] ) * (int16)P[YawKp] + (Ratep[Yaw]-Rate[Yaw]) * (int16)P[YawKd], 4);
-	Yl += SRS16(Angle[Yaw] * (int16)P[YawKi], 8);
+	Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
 
 	#endif // NEW_YAW
 
@@ -450,13 +407,16 @@ void DoControl(void)
 	#ifdef TRICOPTER
 		Yl = SlewLimit(Ylp, Yl, 2);
 		Ylp = Yl;
-		Yl = Limit1(Yl,(int16)P[YawLimit]*4);
+		Temp = (int16)P[YawIntLimit];
+		Yl = Limit1(Yl,Temp);
 	#else
 		Yl = Limit1(Yl, (int16)P[YawLimit]);
 	#endif // TRICOPTER
 
-	CameraRollAngle = SRS32(Angle[Pitch] * OSO + Angle[Roll] * OCO, 8);
-	CameraPitchAngle = SRS32(Angle[Pitch] * OCO - Angle[Roll] * OSO, 8);
+	Temp24.i24 = Angle[Pitch] * OSO + Angle[Roll] * OCO;
+	CameraRollAngle = Temp24.i2_1;
+	Temp24.i24 = Angle[Pitch] * OCO - Angle[Roll] * OSO;
+	CameraPitchAngle = Temp24.i2_1;
 
 	#endif // SIMULATE	
 
@@ -541,12 +501,11 @@ void InitControl(void)
 	for ( g = 0; g <(uint8)3; g++ )
 		Rate[g] = Ratep[g] = Trim[g] = 0;
 
-	CameraRollAngle = CameraPitchAngle = RollOuterInpP = PitchOuterInpP = 0;
-	ControlRollP = ControlPitchP = 0;
+	CameraRollAngle = CameraPitchAngle = 
+	Ylp = AltSum = AltComp = ROCIntE = AltCF = AltF[0] = AltF[1] = AltF[2] = 0;
 
-	Ylp = 0;
-	AltComp = YawRateF.i32 = 0;	
-	AltSum = 0;
+	YawRateF.i32 = 0;
+
 } // InitControl
 
 

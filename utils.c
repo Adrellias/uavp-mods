@@ -141,9 +141,6 @@ void DoStartingBeepsWithOutput(uint8 b)
 	DoBeep100mSWithOutput(8,0);
 } // DoStartingBeeps
 
-#define NEW_ALARMS_BROKEN
-#ifdef NEW_ALARMS_BROKEN
-
 static int16 BeeperOffTime = 100;
 static int16 BeeperOnTime = 100;
 
@@ -212,85 +209,6 @@ void CheckAlarms(void)
 	}
 
 } // CheckAlarms
-
-#else
-
-void CheckAlarms(void)
-{
-	static int16 Temp;
-
-	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
-	BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
-
-	BatteryChargeADC += BatteryCurrentADC * (mSClock() - mS[LastBattery]);
-	mS[LastBattery] = mSClock();
-	BatteryChargeUsedmAH = CURRENT_SENSOR_MAX * (BatteryChargeADC/3686400L); // 1024*1000*3600
-
-	Temp = ADC(ADCBattVoltsChan);
-	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
-	F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
-
-	F.BeeperInUse = F.LowBatt || F.LostModel || ( State == Shutdown );
-
-	if ( F.BeeperInUse )
-	{
-		if( F.LowBatt ) // repeating beep
-			if( ( mSClock() & 0x000200) == 0 )
-			{
-				Beeper_ON;
-				LEDRed_ON;
-			}
-			else
-			{
-				Beeper_OFF;
-				LEDRed_OFF;
-			}	
-		else
-			if ( State == Shutdown )
-				if( ( mSClock() & 0x001000) == 0 )
-				{
-					Beeper_ON;
-					LEDRed_ON;
-				}
-				else
-				{
-					Beeper_OFF;
-					LEDRed_OFF;
-				}	
-			else
-				if ( F.LostModel ) // 2 beeps with interval
-					if( ( mSClock() & 0x000400) == 0 )
-					{
-						Beeper_ON;
-						LEDRed_ON;
-					}
-					else
-					{
-						Beeper_OFF;
-						LEDRed_OFF;
-					}	
-				else
-					{
-						Beeper_OFF;
-						LEDRed_OFF;
-					}
-	}	
-	#ifdef NAV_ACQUIRE_BEEPER
-	else
-		if ( (State == InFlight) && (!F.AcquireNewPosition) && (mSClock() > mS[BeeperTimeout]) )
-			Beeper_OFF;
-	#endif // NAV_ACQUIRE_BEEPER 
-
-	if ( !F.AccelerationsValid && ( mSClock() > mS[AccTimeout] ) )
-	{
-		InitAccelerometers();
-		LEDYellow_TOG;
-		mS[AccTimeout] += 500;
-	}
-
-} // CheckAlarms
-
-#endif // NEW_ALARMS_BROKEN
 
 #ifndef USE_LIMIT_MACRO
 int32 ProcLimit(int32 i, int32 l, int32 u)
