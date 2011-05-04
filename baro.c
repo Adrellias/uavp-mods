@@ -48,8 +48,8 @@ int24	FakeBaroRelAltitude;
 int8 	SimulateCycles;
 
 int24 AltCF;
-int8 TauCF;
-int24 AltF[3] = { 0, 0, 0};
+int16 TauCF;
+int32 AltF[3] = { 0, 0, 0};
 
 // -----------------------------------------------------------
 
@@ -76,9 +76,6 @@ void InitFreescaleBarometer(void);
 #define FS_DAC_MCP_RD		0xC9
 #define FS_DAC_MCP_CMD		0x40 	// write to DAC registor in next 2 bytes
 #define FS_DAC_MCP_EPROM	0x60    // write to DAC registor and eprom
-
-// MPX4115 is read at full PID rate
-const int16 BaroMPX4115FilterA = ( (int24) PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int16) FILT_ALT_HZ ) + (int16) PID_CYCLE_MS );
 
 void SetFreescaleMCP4725(int16 d)
 {	
@@ -290,8 +287,6 @@ void InitBoschBarometer(void);
 #define BOSCH_PRESS_TIME_MS			38
 #define BOSCH_PRESS_TEMP_TIME_MS	BARO_UPDATE_MS	// MUST BE 20Hz pressure and temp time + overheads 	
 
-const int16 BaroBoschFilterA = ((int24)BOSCH_PRESS_TEMP_TIME_MS*256L)/(1000L/(6L*(int16) FILT_ALT_HZ)+(int16)BOSCH_PRESS_TEMP_TIME_MS); 
-
 void StartBoschBaroADC(boolean ReadPressure)
 {
 	static uint8 TempOrPress;
@@ -364,7 +359,7 @@ RVerror:
 } // ReadBoschBaro
 
 int24 BoschToCm(int24 CP) {
-	return(-((int24)CP * 245) / (int32)P[BaroScale]);
+	return(-((int24)CP * 980) / (int32)P[BaroScale]);
 } // BoschToCm
 
 #define BOSCH_BMP085_TEMP_COEFF		62L 	
@@ -509,14 +504,17 @@ int24 AltitudeCF(int24 Alt)
 	// adapted for baro compensation by G.K. Egan 2011 
 
 	static i32u Temp;
+	static int32 AltD;
 
     if ( F.AccelerationsValid && F.NearLevel ) {
 
-        AltF[0] = (Alt - AltCF) * Sqr(TauCF);
+		AltD = Alt - AltCF;
+
+        AltF[0] = AltD * Sqr(TauCF);
     	Temp.i32 = AltF[2] * 256 + AltF[0];
 		AltF[2] = Temp.i3_1;
 
-  		AltF[1] =  AltF[2] + (Alt - AltCF) * 2 * TauCF; // + SRS16( Acc[DU], 6); // should ba at^2
+  		AltF[1] =  AltF[2] + AltD * 2 * TauCF; // + SRS16( Acc[DU], 6); // should ba at^2
  		Temp.i32 = AltCF * 256 + AltF[1];
 		AltCF = Temp.i3_1;
 

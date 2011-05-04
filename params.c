@@ -117,7 +117,8 @@ void ReadParametersEE(void)
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
 
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
-		TauCF = (int24)P[VertDamp];
+		TauCF = 50 -(int24)P[BaroFilt];
+		TauCF = Limit(TauCF, 10, 40);
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L); // changed sign of MagVar AGAIN!
 

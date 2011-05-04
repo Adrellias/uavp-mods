@@ -166,17 +166,11 @@
 
 // Altitude Hold
 
-// the range within which throttle adjustment is proportional to altitude error
-//#define ALT_BAND_CM					500L	// centimetres
+#define LAND_CM						300L	// centimetres deemed to have landed when below this height
 
-#define LAND_CM						3000L	// centimetres deemed to have landed when below this height
-
-//#define ALT_MIN_ROC_CMPS 			-750	// cm/S maximum descent rate
-#define ALT_MAX_ROC_CMPS			1000	// cm/S maximum climb rate
+#define ALT_MAX_ROC_CMPS			100		// cm/S maximum climb rate
 
 #define ALT_MAX_THR_COMP			80L		// Stick units was 40
-
-#define ALT_INT_WINDUP_LIMIT_CM		160L
 
 #define ALT_RF_ENABLE_CM			500L	// altitude below which the rangefiner is selected as the altitude source
 #define ALT_RF_DISABLE_CM			600L	// altitude above which the rangefiner is deselected as the altitude source
@@ -184,7 +178,7 @@
 #define	ALT_UPDATE_HZ				20L		// Hz
 #define FILT_ALT_HZ					(ALT_UPDATE_HZ/2)
 
-#define BARO_MAX_CHANGE_CMPS		5000L	// centimetres/Sec maximum sensor change later scaled to read rate 
+#define BARO_MAX_CHANGE_CMPS		500L	// centimetres/Sec maximum sensor change later scaled to read rate 
 #define BARO_UPDATE_MS				(1000/ALT_UPDATE_HZ)	
 
 // Navigation
@@ -736,8 +730,8 @@ extern int8 BaroType;
 extern int16 AltitudeUpdateRate;
 extern int8	BaroRetries;
 extern int24 AltCF;
-extern int8 TauCF;
-extern int24 AltF[];
+extern int16 TauCF;
+extern int32 AltF[];
 
 #ifdef SIMULATE
 extern int24 FakeBaroRelAltitude;
@@ -1170,7 +1164,7 @@ enum Params { // MAX 64
 	CamRollKp,			// 19
 	PercentCruiseThr,	// 20 
 	
-	VertDamp,			// 21
+	BaroFilt,			// 21
 	MiddleDU,			// 22
 	PercentIdleThr,		// 23
 	MiddleLR,			// 24
@@ -1192,7 +1186,7 @@ enum Params { // MAX 64
 	PercentNavSens6Ch,	// 39
 	CamRollTrim,		// 40
 	NavKd,				// 41
-	VertDampDecay,		// 42
+	unused42,			// 42
 	HorizDampDecay,		// 43
 	BaroScale,			// 44
 	TelemetryType,		// 45

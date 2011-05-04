@@ -42,7 +42,7 @@
 	{20,true}, 			// CamRollKp,		19c
 	{45,true}, 			// PercentCruiseThr,20c 
 	
-	{10,true}, 			// VertDamp,		21c
+	{35,true}, 			// BaroFilt,		21c
 	{0,true}, 			// MiddleDU,		22c
 	{20,true}, 			// PercentIdleThr,	23c
 	{0,true}, 			// MiddleLR,		24c

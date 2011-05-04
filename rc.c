@@ -261,7 +261,7 @@ void UpdateControls(void)
 	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
 
 	if ( F.UsingPositionHoldLock )
-		if ( NewCh5Active & !F.Ch5Active )
+		if ( NewCh5Active && !F.Ch5Active )
 			F.AllowTurnToWP = true;
 		else
 			F.AllowTurnToWP = SaveAllowTurnToWP;
