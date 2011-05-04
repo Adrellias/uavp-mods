@@ -610,9 +610,9 @@ void GetBaroAltitude(void)
 		#ifdef SIMULATE
 		if ( State == InFlight )
 		{
-			if ( ++SimulateCycles >= AltitudeUpdateRate )
+			if ( ++SimulateCycles >= ALT_UPDATE_HZ )
 			{
-				FakeBaroRelAltitude += ( ( DesiredThrottle - CruiseThrottle ) + Comp[Alt]) * 10;
+				FakeBaroRelAltitude += ( ( DesiredThrottle - CruiseThrottle ) + AltComp) * 10;
 				if ( FakeBaroRelAltitude < -500 ) 
 					FakeBaroRelAltitude = 0;
 	
