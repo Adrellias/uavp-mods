@@ -32,7 +32,7 @@ void ErectGyros(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16	Rate[3], GyroNeutral[3], GyroADC[3];
+int16	Rate[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 i32u 	YawRateF;
 int8 	GyroType;
 
@@ -63,8 +63,6 @@ void GetGyroValues(void)
 		BlockReadITG3200();
 	else
 		GetAnalogGyroValues();
-
-    LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
 
 } // GetGyroValues
 
@@ -116,6 +114,8 @@ void CalculateGyroRates(void)
 	Rate[Roll] = RollT.i2_1;
 	Rate[Pitch] = PitchT.i2_1;
 	Rate[Yaw] = YawT.i2_1;
+
+    LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
 
 } // CalculateGyroRates
 

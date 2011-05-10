@@ -51,45 +51,6 @@ uint8 WriteI2CByte(uint8);
 uint8 ScanI2CBus(void);
 uint8 ReadI2CString(uint8 *, uint8);
 
-#ifdef I2C_HW
-
-void InitI2C(uint8 sync, uint8 slew)
-{
-	OpenI2C(sync, slew);
-} // InitI2C
-
-void I2CStop()
-{
-	StopI2C();
-}  // I2CStop
-
-void I2CStart()
-{
-	StartI2C();
-}  // I2CStop
-
-uint8 ReadI2CByte(uint8 r)
-{
-	static uint8 s;
-
-	s = 0;
-	while ( !DataRdyI2C())
-		if( ++s == 0 ) // timeout wraparound through 255 to 0 0.5mS @ 40MHz
-		{
-			Stats[I2CFailS]++;
-			return ( false);
-		}
- use r to continue series of byte reads
-	return( ReadI2C());
-}  // ReadI2CByte
-
-uint8 WriteI2CByte(uint8 d)
-{
-	return( WriteI2C(d));
-}  // WriteI2CByte
-
-#else // I2C SW
-
 #ifdef UAVX_HW
 	#define I2C_SDA_SW			PORTCbits.RC4
 	#define I2C_DIO_SW			TRISCbits.TRISC4
@@ -227,8 +188,6 @@ uint8 WriteI2CByte(uint8 d)
 
 	return(s);
 } // WriteI2CByte
-
-#endif // I2C_HW
 
 uint8 ReadI2CString(uint8 *S, uint8 l)
 {

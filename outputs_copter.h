@@ -21,6 +21,7 @@
 void WriteT580ESC(uint8, uint8, uint8);
 void WriteT580ESCs(uint8,  uint8, uint8, uint8, uint8);
 void T580ESCs(uint8, uint8, uint8, uint8);
+void OutSignals(void);
 
 void OutSignals(void)
 {	// The PWM pulses are in two parts these being a 1mS preamble followed by a 0-1mS part. 
@@ -29,7 +30,7 @@ void OutSignals(void)
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interrupt. 
 	static int8 m;
-	static uint8 r, d;
+	static uint8 s, r, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
@@ -37,29 +38,17 @@ void OutSignals(void)
 		ServoToggle = 1;
 	#endif // UAVX_HW
 
-	#if !( defined SIMULATE | defined TESTING )
-
 	if ( !F.MotorsArmed )
 		StopMotors();
 
-	PWM[FrontC] = TC(PWM[FrontC]);
-	PWM[LeftC] = TC(PWM[LeftC]);
-	PWM[RightC] = TC(PWM[RightC]);
-	#ifdef TRICOPTER
-		PWM[BackC] = Limit(PWM[BackC], 1, OUT_MAXIMUM);
-	#else
-		PWM[BackC] = TC(PWM[BackC]);
-	#endif
+	#if !( defined SIMULATE | defined TESTING )
 
-	PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
-	PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
-
-	PWM0 = PWM[FrontC];
-	PWM1 = PWM[LeftC];
-	PWM2 = PWM[RightC];
-	PWM3 = PWM[BackC];
-	PWM4 = PWM[CamRollC];
-	PWM5 = PWM[CamPitchC];
+	PWM0 = PWMLimit(PWM[FrontC]);
+	PWM1 = PWMLimit(PWM[LeftC]);
+	PWM2 = PWMLimit(PWM[RightC]);
+	PWM3 = PWMLimit(PWM[BackC]);
+	PWM4 = PWMLimit(PWM[CamRollC]);
+	PWM5 = PWMLimit(PWM[CamPitchC]);
 
 	// Save TMR0 and reset
 	DisableInterrupts;
@@ -104,7 +93,6 @@ void OutSignals(void)
 
 		SyncToTimer0AndDisableInterrupts();
 
-		#ifndef KEN_SPECIAL	
 		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
 		{
 			PORTB |= 0x3f;
@@ -114,8 +102,7 @@ void OutSignals(void)
 			MOVWF	SHADOWB,1
 			_endasm	
 		}
-		else
-		#endif // !KEN_SPECIAL	
+		else	
 		{
 			Delay1TCY(); 
 			Delay1TCY(); 
@@ -191,8 +178,6 @@ OS006:
 	else
 	{ // I2C ESCs
 
-		#ifndef KEN_SPECIAL
-
 		if( ServoToggle == 0 )	// driver cam servos only every 2nd pulse
 		{
 			#ifdef TRICOPTER
@@ -204,9 +189,9 @@ OS006:
 			_asm
 			MOVLB	0					// select Bank0
 			#ifdef TRICOPTER
-				MOVLW	0x38				// turn on 3 servoes
+				MOVLW	0x38			// turn on 3 servoes
 			#else
-				MOVLW	0x30				// turn on 2 servoes
+				MOVLW	0x30			// turn on 2 servoes
 			#endif // TRICOPTER
 			MOVWF	SHADOWB,1
 			_endasm	
@@ -221,63 +206,51 @@ OS006:
 			Delay1TCY();
 		}
 
-		#endif // !KEN_SPECIAL
-
 		#ifdef MULTICOPTER
 		// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
 		// ACK (r) not checked as no recovery is possible. 
 		// Octocopters may have ESCs paired with common address so ACK is meaningless.
 		// All motors driven with fourth motor ignored for Tricopter.
 	
-		if ( P[ESCType] ==  ESCHolger )
+		switch ( P[ESCType] ) {
+		case ESCX3D:
+			ESCI2CStart();
+			r = WriteESCI2CByte(0x10); // one command, 4 data bytes
+			r += WriteESCI2CByte( I2CESCLimit(PWM[FrontC]) ); 
+			r += WriteESCI2CByte( I2CESCLimit(PWM[BackC]) );
+			r += WriteESCI2CByte( I2CESCLimit(PWM[LeftC]) );
+			r += WriteESCI2CByte( I2CESCLimit(PWM[RightC]) );
+			ESCI2CFail[0] += r;
+			ESCI2CStop();
+			break;
+		case ESCLRCI2C:
+			T580ESCs(I2CESCLimit(PWM[FrontC]), I2CESCLimit(PWM[BackC]), I2CESCLimit(PWM[RightC]), I2CESCLimit(PWM[LeftC]));
+			break;
+		case ESCYGEI2C:
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = WriteESCI2CByte(0x52 + ( m*2 ));		// one command, one data byte per motor
-				r += WriteESCI2CByte( PWM[m] );
+				r = WriteESCI2CByte(0x62 + ( m*2) ); // one cmd, one data byte per motor
+				r += WriteESCI2CByte( I2CESCLimit(PWM[m])>>1 );
 				ESCI2CFail[m] += r;
 				ESCI2CStop();
 			}
-		else
-			if ( P[ESCType] ==  ESCLRCI2C )
-				T580ESCs(PWM[FrontC], PWM[BackC], PWM[RightC], PWM[LeftC]);
-			else
-				if ( P[ESCType] == ESCYGEI2C )
-					for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
-					{
-						ESCI2CStart();
-						r = WriteESCI2CByte(0x62 + ( m*2) );	// one cmd, one data byte per motor
-						r += WriteESCI2CByte( PWM[m]>>1 );
-						ESCI2CFail[m] += r;
-						ESCI2CStop();
-					}
-				else
-					if ( P[ESCType] == ESCX3D )
-					{
-						ESCI2CStart();
-						r = WriteESCI2CByte(0x10);				// one command, 4 data bytes
-						r += WriteESCI2CByte( PWM[FrontC] ); 
-						r += WriteESCI2CByte( PWM[BackC] );
-						r += WriteESCI2CByte( PWM[LeftC] );
-						r += WriteESCI2CByte( PWM[RightC] );
-						ESCI2CFail[0] += r;
-						ESCI2CStop();
-					}
-					else
-					if ( P[ESCType] == ESCLRCI2C )
-						for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
-						{
-							ESCI2CStart();
-							r = WriteESCI2CByte(0xd0 + ( m*2 ));	// one cmd, one data byte per motor
-							r += WriteESCI2CByte(0xa2);
-							r += WriteESCI2CByte(PWM[m]);
-							ESCI2CFail[m] += r; 
-							ESCI2CStop();
-						}
+			break;
+ 		case ESCHolger:
+			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
+			{
+				ESCI2CStart();
+				r = WriteESCI2CByte(0x52 + ( m*2 )); // one command, one data byte per motor
+				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) );
+				ESCI2CFail[m] += r;
+				ESCI2CStop();
+			}
+			break;
+		default:
+			break;
+		}
 		#endif //  MULTICOPTER
 	}
-
-	#ifndef KEN_SPECIAL	
 
 	if ( ServoToggle == 0 )
 	{
@@ -361,23 +334,8 @@ OS002:
 	if ( ++ServoToggle == ServoInterval )
 		ServoToggle = 0;
 
-	#endif // !KEN_SPECIAL
-
 	INTCONbits.TMR0IE = true;
 	EnableInterrupts;
-
-	#else
-
-		PWM[FrontC] = TC(PWM[FrontC]);
-		PWM[LeftC] = TC(PWM[LeftC]);
-		PWM[RightC] = TC(PWM[RightC]);
-		#ifdef TRICOPTER
-			PWM[BackC] = Limit(PWM[BackC], 1, OUT_MAXIMUM);
-		#else
-			PWM[BackC] = TC(PWM[BackC]);
-		#endif
-		PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
-		PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 	
 	#endif // !(SIMULATE | TESTING)
 
@@ -402,28 +360,19 @@ void WriteT580ESC(uint8 a, uint8 s, uint8 d2) {
 
 } // WriteT580ESC
 
-void WriteT580ESCs(uint8 s,  uint8 f, uint8 b, uint8 r, uint8 l) {
+void WriteT580ESCs(uint8 s, uint8 f, uint8 b, uint8 r, uint8 l) {
 
-//   static uint32 Timeout;
-
-// 	Timeout = mSClock() + 2;
     if ( ( s == T580Starting ) || ( s == T580Stopping ) ) {
- //       if ( s == T580Starting )
- //           Timeout = timer.read_us() + 2000;//436000;
- //       else
- //           Timeout = timer.read_us() + 2000;//403000;
         WriteT580ESC(0xd0, s, 0);
         WriteT580ESC(0xd2, s, 0);
         WriteT580ESC(0xd4, s, 0);
         WriteT580ESC(0xd6, s, 0);
     } else {
-//        Timeout = mSClock() + 2;
         WriteT580ESC(0xd2, s, f);
         WriteT580ESC(0xd4, s, b);
         WriteT580ESC(0xd6, s, r);
         WriteT580ESC(0xd0, s, l);
     }
-//	while ( mSClock() < Timeout);
 
 } // WriteT580ESCs
 

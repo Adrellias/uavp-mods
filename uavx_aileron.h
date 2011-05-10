@@ -19,14 +19,14 @@
 //    If not, see http://www.gnu.org/licenses/
 	
 	const rom int8 DefaultParams[MAX_PARAMETERS][2] = {
-	{-20,0},			// RollKp, 			01
+	{-50,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
-	{50, 0},			// RollKd,			03
+	{0, 0},				// RollKd,			03
 	{0,0},				// was HorizDampKp,	04
 	{25,0},	 			// RollIntLimit,	05
-	{-20,0},	 		// PitchKp,			06
+	{-50,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
-	{50,0},	 			// PitchKd,			08
+	{0,0},	 			// PitchKd,			08
 	{8,0},	 			// AltKp,			09
 	{25,0},	 			// PitchIntLimit,	10
 	

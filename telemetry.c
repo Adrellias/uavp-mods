@@ -154,7 +154,7 @@ void SendFlightPacket(void)
 	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 	TxESCu8((uint8)PWM[b]);
+	 	TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 
@@ -177,7 +177,7 @@ void SendControlPacket(void)
 	TxESCu8(UAVXAirframe);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 	TxESCu8((uint8)PWM[b]);
+	 	TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 

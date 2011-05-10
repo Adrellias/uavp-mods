@@ -34,7 +34,7 @@
 	{-25,0},	 		// YawKi,			12
 	{0,0},	 			// was YawKd,		13
 
-	{25,0},	 			// YawLimit,		14
+	{50,0},	 			// YawLimit,		14
 	{2,0},	 			// YawIntLimit,		15
 	{2,true}, 			// ConfigBits,		16c
 	{0,0},				// was TimeSlots,	17

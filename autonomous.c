@@ -92,7 +92,6 @@ int24 	NavRTHTimeoutmS;
 
 int8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
-int16 	AltSum;
 
 void DoShutdown(void)
 {

@@ -23,7 +23,7 @@
 #include "uavx.h"
 
 #ifdef CLOCK_16MHZ
-#define MIN_PPM_SYNC_PAUSE 1200  	// 1200 *2us = 2.4ms // 2500 was 5ms reduced for Futaba composite
+#define MIN_PPM_SYNC_PAUSE 1200  	// 1200 *2us = 2.4ms // was 5ms reduced for Futaba composite
 #else // CLOCK_40MHZ
 #define MIN_PPM_SYNC_PAUSE 3750  	// 3000 *0.8us = 2.4ms // was 6250 5mS
 #endif //  CLOCK_16MHZ

@@ -20,7 +20,8 @@
 
 #include "uavx.h"
 
-uint8 TC(int16);
+uint8 PWMLimit(int16);
+uint8 I2CESCLimit(int16);
 void DoMulticopterMix(int16);
 void CheckDemand(int16);
 void MixAndLimitMotors(void);
@@ -44,12 +45,21 @@ near int8 ServoToggle;
 
 int16 ESCMin, ESCMax;
 
-#ifdef MULTICOPTER
-
-uint8 TC(int16 T)
+uint8 PWMLimit(int16 T)
 {
-	return ( Limit(T, ESCMin, ESCMax));
-} // TC
+
+	return((uint8)Limit(T,1,OUT_MAXIMUM));
+
+} // PWMLimit
+
+uint8 I2CESCLimit(int16 T)
+{
+
+	return((uint8)Limit(T,0,ESCMax));
+
+} // I2CESCLimit
+
+#ifdef MULTICOPTER
 
 void DoMulticopterMix(int16 CurrThrottle)
 {
@@ -132,6 +142,7 @@ boolean 	MotorDemandRescale;
 void CheckDemand(int16 CurrThrottle)
 {
 	static int24 Scale, ScaleHigh, ScaleLow, MaxMotor, DemandSwing;
+	static i24u Temp;
 
 	#ifdef Y6COPTER
 		MaxMotor = Max(PWM[FrontTC], PWM[LeftTC]);
@@ -158,10 +169,13 @@ void CheckDemand(int16 CurrThrottle)
 		if ( Scale < 256 )
 		{
 			MotorDemandRescale = true;
-			Rl = (Rl * Scale)/256;  // could get rid of the divides
-			Pl = (Pl * Scale)/256;
+			Temp.i24 = Rl * Scale; 
+			Rl = Temp.i2_1;
+			Temp.i24 = Pl * Scale;
+			Pl = Temp.i2_1;
 			#ifndef TRICOPTER 
-				Yl = (Yl * Scale)/256;
+				Temp.i24 = Yl * Scale;
+				Yl = Temp.i2_1;
 			#endif // TRICOPTER 
 		}
 		else
@@ -215,7 +229,7 @@ void MixAndLimitMotors(void)
 			#endif // Y6COPTER
 		}
 	#else
-		CurrThrottle += Comp[Alt]; // simple - faster to climb with no elevator yet
+		CurrThrottle += AltComp; // simple - faster to climb with no elevator yet
 		
 		PWM[ThrottleC] = CurrThrottle;
 		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
@@ -238,24 +252,14 @@ void MixAndLimitCam(void)
 	static i24u Temp;
 	static int32 NewCamRoll, NewCamPitch;
 
-	#define TARRO_CAM
-	#ifdef TARRO_CAM
-	// use only roll/pitch angle estimates
-	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
-	NewCamRoll =  SRS32((int32)Temp.i2_1 * Limit(DesiredCamPitchTrim, 0, 128 ), 7);
-	NewCamRoll += (int16)P[CamRollTrim]; 
-	NewCamRoll *= PWMSense[CamRollC];
-	NewCamRoll += OUT_NEUTRAL;
-	PWM[CamRollC] = SlewLimit( PWM[CamRollC], NewCamRoll, 2);
-	#else
 	// use only roll/pitch angle estimates
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
 	NewCamRoll = Temp.i2_1 + (int16)P[CamRollTrim];
 	NewCamRoll = PWMSense[CamRollC] * NewCamRoll + OUT_NEUTRAL;
 	PWM[CamRollC] = SlewLimit( PWM[CamRollC], NewCamRoll, 2);
-	#endif // TARRO_CAM
+
 	Temp.i24 = (int24)CameraPitchAngle * P[CamPitchKp];
-	NewCamPitch = Temp.i2_1 + DesiredCamPitchTrim * 2;
+	NewCamPitch = Temp.i2_1 + SRS16(DesiredCamPitchTrim * 3, 1);
 	NewCamPitch = PWMSense[CamPitchC] * NewCamPitch + OUT_NEUTRAL; 
 	PWM[CamPitchC] = SlewLimit( PWM[CamPitchC], NewCamPitch, 2);
 
@@ -275,6 +279,8 @@ void MixAndLimitCam(void)
 
 void InitI2CESCs(void)
 {
+	#ifndef SUPPRESS_I2C_ESC_INIT
+
 	static int8 m;
 	static uint8 r;
 	
@@ -282,52 +288,50 @@ void InitI2CESCs(void)
 
 	#ifndef Y6COPTER
 
-	if ( P[ESCType] ==  ESCHolger )
+	switch ( P[ESCType] ) {
+ 	case ESCHolger:
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 		{
 			ESCI2CStart();
-			r = WriteESCI2CByte(0x52 + ( m*2 ));		// one cmd, one data byte per motor
+			r = WriteESCI2CByte(0x52 + ( m*2 ));	// one cmd, one data byte per motor
 			r += WriteESCI2CByte(0);
 			ESCI2CFail[m] += r;  
 			ESCI2CStop();
 		}
-	else
-		if ( P[ESCType] == ESCYGEI2C )
-			for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
-			{
-				ESCI2CStart();
-				r = WriteESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
-				r += WriteESCI2CByte(0);
-				ESCI2CFail[m] += r; 
-				ESCI2CStop();
-			}
-			else
-				if ( P[ESCType] == ESCLRCI2C )
-					for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
-					{
-						ESCI2CStart();
-						r = WriteESCI2CByte(0xd0 + ( m*2 ));	// one cmd, one data byte per motor
-						r += WriteESCI2CByte(0xa1);
-						r += WriteESCI2CByte(0);
-						ESCI2CFail[m] += r; 
-						ESCI2CStop();
-					}
-					else
-						if ( P[ESCType] == ESCX3D )
-						{
-							ESCI2CStart();
-							r = WriteESCI2CByte(0x10);			// one command, 4 data bytes
-							r += WriteESCI2CByte(0); 
-							r += WriteESCI2CByte(0);
-							r += WriteESCI2CByte(0);
-							r += WriteESCI2CByte(0);
-							ESCI2CFail[0] += r;
-							ESCI2CStop();
-						}		
+		break;
+	case ESCYGEI2C:
+		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
+		{
+			ESCI2CStart();
+			r = WriteESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
+			r += WriteESCI2CByte(0);
+			ESCI2CFail[m] += r; 
+			ESCI2CStop();
+		}
+		break;
+	case ESCLRCI2C:
+		// no action required
+		break;
+	case ESCX3D:
+		ESCI2CStart();
+		r = WriteESCI2CByte(0x10);			// one command, 4 data bytes
+		r += WriteESCI2CByte(0); 
+		r += WriteESCI2CByte(0);
+		r += WriteESCI2CByte(0);
+		r += WriteESCI2CByte(0);
+		ESCI2CFail[0] += r;
+		ESCI2CStop();
+		break;
+	default:
+		break;
+	} // switch		
 
 	#endif // !Y6COPTER
 
 	#endif // MULTICOPTER
+
+	#endif // !SUPPRESS_I2C_ESC_INIT
+
 } // InitI2CESCs
 
 void StopMotors(void)
@@ -350,11 +354,8 @@ void StopMotors(void)
 	F.MotorsArmed = false;
 } // StopMotors
 
-
-
 void InitMotors(void)
 {
-
 	StopMotors();
 
 	#ifndef Y6COPTER

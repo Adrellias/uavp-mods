@@ -5,6 +5,7 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
+#define SUPPRESS_I2C_ESC_INIT	// should be redundant?
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -31,7 +32,7 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define DEBUG_GYROS						
-	#define SIMULATE
+	//#define SIMULATE
 	//#define KEN_SPECIAL // ESC Tester version
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -41,7 +42,6 @@
 	//#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
-	//#define I2C_HW
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
@@ -50,12 +50,8 @@
 	//#define HMC5843 // not commissioned
 #endif // EXPERIMENTAL
 
-#ifdef I2C_HW
-	#include "i2c.h"
-#else
-	#define MASTER 		0
-	#define SLEW_ON 	0
-#endif // I2C_HW
+#define MASTER 		0
+#define SLEW_ON 	0
 
 //________________________________________________________________________________________________
 
@@ -678,7 +674,6 @@ extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
 extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
-extern int16 AltSum;
 extern int16 DescentComp;
 
 extern int16 NavCorr[3], NavCorrp[3];
@@ -1084,14 +1079,17 @@ extern const rom uint8 RxChMnem[];
 
 // outputs.c
 
-#define OUT_MINIMUM			1			// Required for PPM timing loops
-#define OUT_MAXIMUM			222			// to reduce Rx capture and servo pulse output interaction
-#define OUT_NEUTRAL			111			// 1.503mS @ 105 16MHz
+// The minimum value for PWM width is 1 for the pulse generators
+#define OUT_MAXIMUM			210	//222	//  to reduce Rx capture and servo pulse output interaction
+#define OUT_NEUTRAL			111			//  1.503mS @ 105 16MHz
+
 #define OUT_HOLGER_MAXIMUM	225
 #define OUT_YGEI2C_MAXIMUM	240
 #define OUT_X3D_MAXIMUM		200
+#define OUT_LRC_MAXIMUM		200
 
-extern uint8 TC(int16);
+extern uint8 PWMLimit(int16);
+extern uint8 I2CESCLimit(int16);
 extern void DoMulticopterMix(int16 CurrThrottle);
 extern void CheckDemand(int16 CurrThrottle);
 extern void MixAndLimitMotors(void);
@@ -1234,9 +1232,7 @@ enum Params { // MAX 64
 // bit 7 unusable in UAVPSet
 
 extern const rom int8 DefaultParams[MAX_PARAMETERS][2];
-
 extern const rom uint8 ESCLimits [];
-
 
 extern int16 OSin[], OCos[];
 extern int8 Orientation, PolarOrientation;
@@ -1271,10 +1267,6 @@ extern void CheckThrottleMoved(void);
 extern const rom boolean PPMPosPolarity[];
 extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
 extern int8 RMap[];
-
-#define PPMQMASK 3
-extern int16 PPMQSum[];
-extern int16x8x4Q PPMQ;
 
 //__________________________________________________________________________________________
 
@@ -1402,14 +1394,6 @@ extern void BatteryTest(void);
 //______________________________________________________________________________________________
 
 // Sanity checks
-
-// check the Rx and PPM ranges
-#if ( OUT_MINIMUM >= OUT_MAXIMUM )
-#error OUT_MINIMUM < OUT_MAXIMUM!
-#endif
-#if (OUT_MAXIMUM < OUT_NEUTRAL)
-#error OUT_MAXIMUM < OUT_NEUTRAL !
-#endif
 
 #if RC_MINIMUM >= RC_MAXIMUM
 #error RC_MINIMUM < RC_MAXIMUM!

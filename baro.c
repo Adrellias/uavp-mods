@@ -503,6 +503,8 @@ int24 AltitudeCF(int24 Alt)
 	// http://www.rcgroups.com/forums/showpost.php?p=12082524&postcount=1286
 	// adapted for baro compensation by G.K. Egan 2011 
 
+#define BARO_ACC_SCALE 2
+
 	static i32u Temp;
 	static int32 AltD;
 
@@ -514,7 +516,7 @@ int24 AltitudeCF(int24 Alt)
     	Temp.i32 = AltF[2] * 256 + AltF[0];
 		AltF[2] = Temp.i3_1;
 
-  		AltF[1] =  AltF[2] + AltD * 2 * TauCF; // + SRS16( Acc[DU], 6); // should ba at^2
+  		AltF[1] =  AltF[2] + AltD * 2 * TauCF; // -(Acc[DU] - 1024) * BARO_COMP_SCALE; // should ba at^2
  		Temp.i32 = AltCF * 256 + AltF[1];
 		AltCF = Temp.i3_1;
 

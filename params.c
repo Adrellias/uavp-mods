@@ -27,7 +27,7 @@ void UpdateWhichParamSet(void);
 boolean ParameterSanityCheck(void);
 void InitParameters(void);
 
-const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM };
+const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM, OUT_LRC_MAXIMUM };
 
 #ifdef MULTICOPTER
 	#include "uavx_multicopter.h"
@@ -70,16 +70,12 @@ void ReadParametersEE(void)
 
 		ESCMax = ESCLimits[P[ESCType]];
 		if ( P[ESCType] == ESCPPM )
-		{
 			TRISB = 0b00000000; // make outputs
-			ESCMin = 1;
-		}
 		else
 		{
-			ESCMin = 0;
 			for ( i = 0; i < NoOfPWMOutputs; i++ )
 				ESCI2CFail[i] = 0;
-			InitI2CESCs();
+	 		InitI2CESCs();
 		}
 
 		InitGyros();

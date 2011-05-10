@@ -26,7 +26,7 @@ void OutSignals(void)
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interupt. 
 	static int8 m;
-	static uint8 r;
+	static uint8 s, r, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
@@ -34,23 +34,49 @@ void OutSignals(void)
 		ServoToggle = 1;
 	#endif // UAVX_HW
 
+	if ( !F.MotorsArmed )
+		StopMotors();	
+
 	#if !( defined SIMULATE | defined TESTING )
 
 	if ( ServoToggle == 0 )
-	{		
-		for ( m = 0; m < 8; m++ )
-			PWM[m] = Limit(PWM[m], ESCMin, ESCMax);
-		
-		if ( !F.MotorsArmed )
-			StopMotors();		
+	{				
+		#ifdef ELEVON
+			PWM0 = PWMLimit(PWM[ThrottleC]);
+			PWM1 = PWMLimit(PWM[RightElevonC]);
+			PWM2 = PWMLimit(PWM[LeftElevonC]);
+			PWM3 = PWMLimit(PWM[RudderC]);
+		#else
+			PWM0 = PWMLimit(PWM[ThrottleC]);
+			PWM1 = PWMLimit(PWM[AileronC]);
+			PWM2 = PWMLimit(PWM[ElevatorC]);
+			PWM3 = PWMLimit(PWM[RudderC]);
+		#endif
+
+		PWM4 = PWM[CamRollC]+1;
+		PWM5 = PWM[CamPitchC]+1;	
 		
 		// Save TMR0 and reset
 		DisableInterrupts;
+		INTCONbits.TMR0IE = false;
 		SaveClockmS = mS[Clock];
 		GetTimer0;
 		SaveTimer0.u16 = Timer0.u16;
 		FastWriteTimer0(TMR0_1MS);
 		INTCONbits.TMR0IF = false;
+	
+		// dead timing code - caution
+		#ifdef  CLOCK_16MHZ
+			d = 7;
+			do
+				Delay10TCY(); 
+			while ( --d > 0 );
+		#else
+			d = 16;
+			while ( --d > 0 ) 
+				Delay10TCY();
+		#endif // CLOCK_16MHZ
+	
 		EnableInterrupts;
 		
 		PORTB |= 0x0f;
@@ -60,34 +86,7 @@ void OutSignals(void)
 		MOVLW	0x0f					
 		MOVWF	SHADOWB,1
 		_endasm
-		
-		#ifdef ELEVON
-			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
-			PWM[RightElevonC] = Limit(PWM[RightElevonC], 1, OUT_MAXIMUM);
-			PWM[LeftElevonC] = Limit(PWM[LeftElevonC], 1, OUT_MAXIMUM);
-			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
-		#else
-			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
-			PWM[AileronC] = Limit(PWM[AileronC], 1, OUT_MAXIMUM);
-			PWM[ElevatorC] = Limit(PWM[ElevatorC], 1, OUT_MAXIMUM);
-			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
-		#endif
-
-		#ifdef ELEVON
-			PWM0 = PWM[ThrottleC];
-			PWM1 = PWM[RightElevonC];
-			PWM2 = PWM[LeftElevonC];
-			PWM3 = PWM[RudderC];
-		#else
-			PWM0 = PWM[ThrottleC];
-			PWM1 = PWM[AileronC];
-			PWM2 = PWM[ElevatorC];
-			PWM3 = PWM[RudderC];
-		#endif
-
-		PWM4 = PWM[CamRollC];
-		PWM5 = PWM[CamPitchC];
-		
+			
 		SyncToTimer0AndDisableInterrupts();
 		
 		PORTB |= 0x3f;
@@ -96,7 +95,7 @@ void OutSignals(void)
 		MOVLW	0x3f					// turn on all motors
 		MOVWF	SHADOWB,1
 			
-		MOVLB	0							// select Bank0
+		MOVLB	0						// select Bank0
 	OS005:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
@@ -166,7 +165,7 @@ void OutSignals(void)
 		BCF		SHADOWB,5,1
 		
 	OS004:
-			_endasm
+		_endasm
 			
 		Delay1TCY(); 
 		Delay1TCY(); 
@@ -201,28 +200,12 @@ void OutSignals(void)
 		
 		Clock[mS] = SaveClockmS + 3;
 		
+		INTCONbits.TMR0IE = true;
 		EnableInterrupts;
 	}
 
 	if ( ++ServoToggle >= ServoInterval )
 		ServoToggle = 0;
-
-	#else
-
-		#ifdef ELEVON
-			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
-			PWM[RightElevonC] = Limit(PWM[RightElevonC], 1, OUT_MAXIMUM);
-			PWM[LeftElevonC] = Limit(PWM[LeftElevonC], 1, OUT_MAXIMUM);
-			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
-		#else
-			PWM[ThrottleC] = Limit(PWM[ThrottleC], 1, OUT_MAXIMUM);
-			PWM[AileronC] = Limit(PWM[AileronC], 1, OUT_MAXIMUM);
-			PWM[ElevatorC] = Limit(PWM[ElevatorC], 1, OUT_MAXIMUM);
-			PWM[RudderC] = Limit(PWM[RudderC], 1, OUT_MAXIMUM);
-		#endif
-
-		PWM[CamRollC] = Limit(PWM[CamRollC], 1, OUT_MAXIMUM);
-		PWM[CamPitchC] = Limit(PWM[CamPitchC], 1, OUT_MAXIMUM);
 		
 	#endif // !(SIMULATE | TESTING)
 	

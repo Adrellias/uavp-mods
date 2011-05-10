@@ -374,8 +374,7 @@ void DoControl(void)
 	#ifdef TRICOPTER
 		Yl = SlewLimit(Ylp, Yl, 2);
 		Ylp = Yl;
-		Temp = (int16)P[YawIntLimit];
-		Yl = Limit1(Yl,Temp);
+		Yl = Limit1(Yl,(int16)P[YawLimit]);
 	#else
 		Yl = Limit1(Yl, (int16)P[YawLimit]);
 	#endif // TRICOPTER
@@ -463,15 +462,8 @@ void LightsAndSirens(void)
 
 void InitControl(void)
 {
-	static uint8 g;
-
-	for ( g = 0; g <(uint8)3; g++ )
-		Rate[g] = Ratep[g] = Trim[g] = 0;
-
-	CameraRollAngle = CameraPitchAngle = 
-	Ylp = AltSum = AltComp = ROCIntE = 0;
-
-	YawRateF.i32 = 0;
+	CameraRollAngle = CameraPitchAngle = 0;
+	Ylp = AltComp = ROCIntE = 0;
 
 } // InitControl
 

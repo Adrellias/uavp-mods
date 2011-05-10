@@ -26,14 +26,21 @@ void OutSignals(void)
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interupt. 
 	static int8 m;
-	static uint8 r, s;
+	static uint8 r, s, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
-	#if !( defined SIMULATE | defined TESTING )
-
 	if ( !F.MotorsArmed )
 		StopMotors();
+
+	#if !( defined SIMULATE | defined TESTING )
+
+	PWM0 = PWMLimit(PWM[FrontTC]);
+	PWM1 = PWMLimit(PWM[LeftTC]);
+	PWM2 = PWMLimit(PWM[RightTC]);
+	PWM3 = PWMLimit(PWM[FrontBC]);
+	PWM4 = PWMLimit(PWM[LeftBC]);
+	PWM5 = PWMLimit(PWM[RightBC]);
 
 	// Save TMR0 and reset
 	DisableInterrupts;
@@ -42,6 +49,18 @@ void OutSignals(void)
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
 	INTCONbits.TMR0IF = false;
+
+	// dead timing code - caution
+	#ifdef  CLOCK_16MHZ
+		d = 7;
+		do
+			Delay10TCY(); 
+		while ( --d > 0 );
+	#else
+		d = 16;
+		while ( --d > 0 ) 
+			Delay10TCY();
+	#endif // CLOCK_16MHZ
 	EnableInterrupts;
 
 	PORTB |= 0x07; 
@@ -50,16 +69,6 @@ void OutSignals(void)
 	MOVLW	0x07					// turn on 3 motors
 	MOVWF	SHADOWB,1
 	_endasm
-
-	for ( s = 0; s < (uint8)6; s++ )
-		PWM[s] = TC(PWM[s]);
-
-	PWM0 = PWM[FrontTC];
-	PWM1 = PWM[LeftTC];
-	PWM2 = PWM[RightTC];
-	PWM3 = PWM[FrontBC];
-	PWM4 = PWM[LeftBC];
-	PWM5 = PWM[RightBC];
 
 	SyncToTimer0AndDisableInterrupts();
 
@@ -182,16 +191,8 @@ OS010:
 	else
 		Clock[mS] = SaveClockmS + 2;
 	
+	INTCONbits.TMR0IE = true;
 	EnableInterrupts;
-
-	#else
-
-		PWM[FrontTC] = TC(PWM[FrontTC]);
-		PWM[LeftTC] = TC(PWM[LeftTC]);
-		PWM[RightTC] = TC(PWM[RightTC]);
-		PWM[FrontBC] = TC(PWM[FrontBC]);
-		PWM[LeftBC] = TC(PWM[LeftBC]);
-		PWM[RightBC] = TC(PWM[RightBC]);
 
 	#endif // !(SIMULATE | TESTING)
 

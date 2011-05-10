@@ -87,11 +87,6 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 
 int8 RMap[CONTROLS];
 
-#pragma udata ppmq
-int16x8x4Q PPMQ;
-int16 PPMQSum[CONTROLS];
-#pragma udata
-
 void DoRxPolarity(void)
 {
 	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
@@ -117,23 +112,10 @@ void InitRC(void)
 	{
 		PPM[c].i16 = 0;
 		RC[c] = RCp[c] = RC_NEUTRAL;
-
-		#ifdef CLOCK_16MHZ
-		for (q = 0; q <= PPMQMASK; q++)
-			PPMQ.B[q][c] = RC_NEUTRAL;
-		PPMQSum[c] = RC_NEUTRAL * 4;
-		#else
-		for (q = 0; q <= PPMQMASK; q++)
-			PPMQ.B[q][c] = 625;
-		PPMQSum[c] = 2500;
-		#endif // CLOCK_16MHZ
 	}
-	PPMQ.Head = 0;
-
+	RC[ThrottleC] = RCp[ThrottleC] = 0; 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;
-	Rate[Roll] = Rate[Pitch] = Rate[Yaw] = 0;
-	Trim[Roll] = Trim[Pitch] = Trim[Yaw] = 0;
-
+	Trim[Roll] = Trim[Pitch] = Trim[Yaw] = 0; 
 	PPM_Index = PrevEdge = RCGlitches = 0;
 } // InitRC
 
@@ -141,30 +123,22 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 {  // re-maps captured PPM to Rx channel sequence
 	static int8 c;
 	static int16 LastThrottle, Temp, i;
-	static uint16 Sum;
-	static i32u Temp2; 
+	static i32u Temp2;
 
 	LastThrottle = RC[ThrottleC];
 
 	for (c = 0 ; c < RC_CONTROLS ; c++) 
 	{
-		Sum = PPM[c].u16;
-		PPMQSum[c] -= PPMQ.B[PPMQ.Head][c];
-		PPMQ.B[PPMQ.Head][c] = Sum;
-		PPMQSum[c] += Sum;
-		PPMQ.Head = (PPMQ.Head + 1) & PPMQMASK;
-	}
-
-	for (c = 0 ; c < RC_CONTROLS ; c++) 
-	{
 		i = Map[P[TxRxType]][c];
 		#ifdef CLOCK_16MHZ
-			RC[c] = SRS16(PPMQSum[i], 2) & 0xff; // clip to bottom byte 0..255
-		#else // CLOCK_40MHZ	
-			//RC[c] = ( (int32)PPMQSum[i] * RC_MAXIMUM + 2500L )/5000L; // scale to 4uS res. for now	
-			Temp2.i32 = (int32)PPMQSum[i] * (RC_MAXIMUM * 13L) + 32768L; 
-			RC[c] = Temp2.iw1;
-		#endif // CLOCK_16MHZ		
+			Temp = PPM[i].b0; // clip to bottom byte 0..255
+		#else // CLOCK_40MHZ
+			//Temp = ((int32)PPM[i].i16 * RC_MAXIMUM + 625L)/1250L; // scale to 4uS res. for now
+			Temp2.i32 = ((int32)PPM[i].i16 * (RC_MAXIMUM*53L)  );
+			Temp = Temp2.iw1;
+		#endif // CLOCK_16MHZ
+
+		RC[c] = RxFilter(RC[c], Temp);			
 	}
 
 	if ( THROTTLE_SLEW_LIMIT > 0 )
