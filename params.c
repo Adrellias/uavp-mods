@@ -112,6 +112,11 @@ void ReadParametersEE(void)
 
 		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
 
+		#ifdef RX6CH
+			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;
+			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
+		#endif // RX6CH
+
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
 		TauCF = 50 -(int24)P[BaroFilt];
 		TauCF = Limit(TauCF, 10, 40);
