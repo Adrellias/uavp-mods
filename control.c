@@ -157,7 +157,6 @@ void AltitudeHold()
 					F.HoldingAlt = true;
 					DoAltitudeHold(); // not using cruise throttle
 				}
-			F.NewBaroValue = false;
 		}	
 	}
 	else
@@ -166,6 +165,8 @@ void AltitudeHold()
 		AltComp = Decay1(AltComp);
 		F.HoldingAlt = false;
 	}
+
+	F.NewBaroValue = false;
 
 } // AltitudeHold
 

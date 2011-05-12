@@ -654,10 +654,12 @@ void GetBaroAltitude(void)
 					FakeBaroRelAltitude = 0;
 	
 				SimulateCycles = 0;
-			
-				BaroRelAltitudeP = FakeBaroRelAltitude;	
+
 			}
 			BaroRelAltitude = FakeBaroRelAltitude;
+			Temp = BaroRelAltitude;
+			Temp = ( BaroRelAltitude - Temp) * ALT_UPDATE_HZ;
+			BaroROC = MediumFilter(BaroROC, Temp);
 		}					
 		#else 
 	

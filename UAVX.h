@@ -5,7 +5,7 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
-#define DEBUG_PRINT			// direct printing of baro values
+//#define DEBUG_PRINT			// direct printing of baro values
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -33,7 +33,7 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define DEBUG_GYROS						
-	//#define SIMULATE
+#define SIMULATE
 	//#define KEN_SPECIAL // ESC Tester version
 	#define QUADROCOPTER
 	//#define TRICOPTER
