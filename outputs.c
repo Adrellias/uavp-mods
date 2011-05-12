@@ -27,7 +27,6 @@ void CheckDemand(int16);
 void MixAndLimitMotors(void);
 void MixAndLimitCam(void);
 void OutSignals(void);
-void InitI2CESCs(void);
 void StopMotors(void);
 void InitMotors(void);
 
@@ -43,7 +42,7 @@ near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
 near int8 ServoToggle;
 #pragma udata
 
-int16 ESCMin, ESCMax;
+int16 ESCMax;
 
 uint8 PWMLimit(int16 T)
 {
@@ -196,21 +195,21 @@ void MixAndLimitMotors(void)
 	if ( DesiredThrottle < IdleThrottle )
 		CurrThrottle = 0;
 	else
+	{
 		CurrThrottle = DesiredThrottle;
+		if ( State == InFlight )
+		{
+			CurrThrottle += AltComp; 
+			CurrThrottle = Limit(CurrThrottle, IdleThrottle, (OUT_MAXIMUM * 9)/10 );
+		}
+	}
 
 	#ifdef MULTICOPTER
-		if ( State == InFlight )
-			 CurrThrottle += AltComp; 
-			
-		Temp = (int16)(OUT_MAXIMUM * 90 + 50) / 100; // 10% headroom for control
-		CurrThrottle = Limit(CurrThrottle, 0, Temp ); 
 			
 		if ( CurrThrottle > IdleThrottle )
 		{
-			DoMulticopterMix(CurrThrottle);
-			
-			CheckDemand(CurrThrottle);
-			
+			DoMulticopterMix(CurrThrottle);			
+			CheckDemand(CurrThrottle);			
 			if ( MotorDemandRescale )
 				DoMulticopterMix(CurrThrottle);
 		}
@@ -229,7 +228,6 @@ void MixAndLimitMotors(void)
 			#endif // Y6COPTER
 		}
 	#else
-		CurrThrottle += AltComp; // simple - faster to climb with no elevator yet
 		
 		PWM[ThrottleC] = CurrThrottle;
 		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
@@ -277,77 +275,20 @@ void MixAndLimitCam(void)
 	#endif // Y6COPTER
 #endif // TRICOPTER | MULTICOPTER
 
-void InitI2CESCs(void)
-{
-	#ifndef SUPPRESS_I2C_ESC_INIT
-
-	static int8 m;
-	static uint8 r;
-	
-	#ifdef MULTICOPTER
-
-	#ifndef Y6COPTER
-
-	switch ( P[ESCType] ) {
- 	case ESCHolger:
-		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
-		{
-			ESCI2CStart();
-			r = WriteESCI2CByte(0x52 + ( m*2 ));	// one cmd, one data byte per motor
-			r += WriteESCI2CByte(0);
-			ESCI2CFail[m] += r;  
-			ESCI2CStop();
-		}
-		break;
-	case ESCYGEI2C:
-		for ( m = 0 ; m < NoOfPWMOutputs ; m++ )
-		{
-			ESCI2CStart();
-			r = WriteESCI2CByte(0x62 + ( m*2 ));	// one cmd, one data byte per motor
-			r += WriteESCI2CByte(0);
-			ESCI2CFail[m] += r; 
-			ESCI2CStop();
-		}
-		break;
-	case ESCLRCI2C:
-		// no action required
-		break;
-	case ESCX3D:
-		ESCI2CStart();
-		r = WriteESCI2CByte(0x10);			// one command, 4 data bytes
-		r += WriteESCI2CByte(0); 
-		r += WriteESCI2CByte(0);
-		r += WriteESCI2CByte(0);
-		r += WriteESCI2CByte(0);
-		ESCI2CFail[0] += r;
-		ESCI2CStop();
-		break;
-	default:
-		break;
-	} // switch		
-
-	#endif // !Y6COPTER
-
-	#endif // MULTICOPTER
-
-	#endif // !SUPPRESS_I2C_ESC_INIT
-
-} // InitI2CESCs
-
 void StopMotors(void)
 {
 	#ifdef MULTICOPTER
 		#ifdef Y6COPTER
 			PWM[FrontTC] = PWM[LeftTC] = PWM[RightTC] = 
-			PWM[FrontBC] = PWM[LeftBC] = PWM[RightBC] = ESCMin;
+			PWM[FrontBC] = PWM[LeftBC] = PWM[RightBC] = 0;
 		#else
-			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = ESCMin;
+			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = 0;
 			#ifndef TRICOPTER
-				PWM[BackC] = ESCMin;
+				PWM[BackC] = 0;
 			#endif // !TRICOPTER
 		#endif // Y6COPTER	
 	#else
-		PWM[ThrottleC] = ESCMin;
+		PWM[ThrottleC] = 0;
 	#endif // MULTICOPTER
 
 	DesiredThrottle = 0;

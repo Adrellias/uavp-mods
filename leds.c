@@ -117,7 +117,7 @@ void LEDChaser(void)
 
 	if ( mSClock() > mS[LEDChaserUpdate] )
 	{
-		if ( F.HoldingAlt )
+		if ( F.HoldingAlt && F.NearLevel )
 		{
 			LEDShadow ^= LEDChase[LEDPattern];
 			if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;

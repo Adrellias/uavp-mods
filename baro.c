@@ -498,34 +498,50 @@ void InitBoschBarometer(void)
 
 // -----------------------------------------------------------
 
+
 int24 AltitudeCF(int24 Alt) 
 {	// Complementary Filter originally authored by RoyLB for attitude estimation
 	// http://www.rcgroups.com/forums/showpost.php?p=12082524&postcount=1286
 	// adapted for baro compensation by G.K. Egan 2011 
 
-#define BARO_ACC_SCALE 2
+	#define BARO_ACC_SCALE 2
+
+	const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
 
 	static i32u Temp;
 	static int32 AltD;
+	static int32 Temp2;
 
-    if ( F.AccelerationsValid && F.NearLevel ) {
+	/*
+	const real32 kvz = -0.0001*4096;
+	const real32 khest = -0.008*4096;
 
-		AltD = Alt - AltCF;
+	vzest = vzest + accz*dT;
+	hest = hest + vzest*dT;
 
-        AltF[0] = AltD * Sqr(TauCF);
-    	Temp.i32 = AltF[2] * 256 + AltF[0];
-		AltF[2] = Temp.i3_1;
+	vzest = (vzest*4096 + kvz*(hest-baralt))/4096;
+	hest = (hest*4096 + khest*(hest-baralt))/4096;
+	*/
 
-  		AltF[1] =  AltF[2] + AltD * 2 * TauCF; // -(Acc[DU] - 1024) * BARO_COMP_SCALE; // should ba at^2
- 		Temp.i32 = AltCF * 256 + AltF[1];
-		AltCF = Temp.i3_1;
+	LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
 
-    } else
-		AltCF = Alt;
+	AltD = Alt - AltCF;
+
+    AltF[0] = AltD * Sqr(TauCF);
+   	Temp.i32 = AltF[2] * 256 + AltF[0];
+	AltF[2] = Temp.i3_1;
+
+  	AltF[1] =  AltF[2] + AltD * 2 * TauCF; // -(Acc[DU] - 1024) * BARO_ACC_SCALE; // should ba at^2
+ 	Temp.i32 = AltCF * 256 + AltF[1];
+	AltCF = Temp.i3_1;
+
+	Temp2 = ( Alt - Altitudep) * ALT_UPDATE_HZ; 
+	BaroROC = MediumFilter(BaroROC, Temp2);
+	Altitudep = AltCF;
 
 	AccAltComp = AltCF - Alt; // for debugging
 
-	return( AltCF ); 
+	return( Alt);//AltCF ); 
 } // AltitudeCF
 
 void ShowBaroType(void)
@@ -628,8 +644,17 @@ void GetBaroAltitude(void)
 	
 		#endif // SIMULATE
 
-		if (( State == InFlight ) && ( BaroRelAltitude > Stats[BaroRelAltitudeS] ))
-			Stats[BaroRelAltitudeS] = BaroRelAltitude;
+		if ( State == InFlight ) 
+		{
+			if ( BaroRelAltitude > Stats[BaroRelAltitudeS] )
+				Stats[BaroRelAltitudeS] = BaroRelAltitude;
+
+			if ( BaroROC > Stats[MaxROCS] )
+					Stats[MaxROCS] = BaroROC;
+			else
+				if ( BaroROC < Stats[MinROCS] )
+					Stats[MinROCS] = BaroROC;
+		}
 	}
 	
 } // GetBaroAltitude

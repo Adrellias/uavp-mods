@@ -49,8 +49,6 @@ int8 	AccType;
 int32	AccDUF;
 #pragma udata
 
-const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
-
 void ShowAccType(void)
 {
     switch ( AccType ) {

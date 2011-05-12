@@ -5,7 +5,6 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
-#define SUPPRESS_I2C_ESC_INIT	// should be redundant?
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -791,7 +790,7 @@ extern int16 CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep, AltCF; 
-extern int16 AccAltComp, AltComp, ROC, ROCIntE, MinROCCmpS;
+extern int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROCIntE, MinROCCmpS;
 extern boolean FirstPass;
 
 //______________________________________________________________________________________________
@@ -1095,7 +1094,6 @@ extern void CheckDemand(int16 CurrThrottle);
 extern void MixAndLimitMotors(void);
 extern void MixAndLimitCam(void);
 extern void OutSignals(void);
-extern void InitI2CESCs(void);
 extern void StopMotors(void);
 extern void InitMotors(void);
 
@@ -1117,7 +1115,7 @@ extern int8 ServoInterval;
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near int8 ServoToggle;
 
-extern int16 ESCMin, ESCMax;
+extern int16 ESCMax;
 
 //______________________________________________________________________________________________
 

@@ -59,7 +59,7 @@ int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 
-int16 AccAltComp, AltComp, ROC, ROCIntE, MinROCCmpS;
+int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
 
 boolean	FirstPass;
 int8 BeepTick = 0;
@@ -76,20 +76,27 @@ void DoAltitudeHold(void)
 	if ( (--BeepTick <= 0) && !F.BeeperInUse ) 
 		Beeper_TOG;
 	#endif
+
+	if ( F.NearLevel )
+	{
 					
-	AltE = DesiredAltitude - Altitude;
-	
-	DesiredROC = Limit(AltE, MinROCCmpS, ALT_MAX_ROC_CMPS);
-	
-	ROCE = DesiredROC - ROC;		
-	pROC = ROCE * (int16)P[AltKp]; 
-	
-	ROCIntE += ROCE  * (int16)P[AltKi];
-	ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
-    iROC = ROCIntE;
-			
-	NewAltComp = SRS16(pROC + iROC, 5);
-	AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
+		AltE = DesiredAltitude - Altitude;
+		
+		DesiredROC = Limit(AltE, MinROCCmpS, ALT_MAX_ROC_CMPS);
+		
+		ROCE = DesiredROC - ROC;		
+		pROC = ROCE * (int16)P[AltKp]; 
+		
+		ROCIntE += ROCE  * (int16)P[AltKi];
+		ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
+	    iROC = ROCIntE;
+				
+		NewAltComp = SRS16(pROC + iROC, 5);
+		AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
+
+	}
+	else
+		AltComp = DecayX(AltComp, 1);
 					
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (BeepTick <= 0) && !F.BeeperInUse) 
@@ -111,24 +118,21 @@ void AltitudeHold()
 	CheckThrottleMoved();
 
 	if ( F.UsingRangefinderAlt )
+	{
 		Altitude = RangefinderAltitude;	 
+		ROC = RangefinderROC;
+	}
 	else
 		if ( F.NewBaroValue )
+		{
 			Altitude = BaroRelAltitude;
+			ROC = BaroROC;
+		}
 			
 	if ( F.AltHoldEnabled )
 	{
 		if ( F.NewBaroValue || F.UsingRangefinderAlt )
-		{
-			ROC = ( Altitude - Altitudep) * ALT_UPDATE_HZ; // +/- 20 steps - needs filtering perhaps
-			Altitudep = Altitude;
-			if ( State == InFlight )
-				if ( ROC > Stats[MaxROCS] )
-					Stats[MaxROCS] = ROC;
-				else
-					if ( ROC < Stats[MinROCS] )
-						Stats[MinROCS] = ROC;
-
+		{		
 			if ( F.ForceFailsafe || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
@@ -326,7 +330,7 @@ void DoControl(void)
 
 	Rl  = SRS16((int24)Rate[Roll] * P[RollKp] - (int24)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
 	Temp = SRS32((int24)Angle[Roll] * P[RollKi], 9);
-	Rl += Limit1(Temp, P[RollIntLimit]); 
+	Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
 
 	Temp24.i24 = (int24)Rl * GS;
 	Rl = Temp24.i2_1;
@@ -354,12 +358,12 @@ void DoControl(void)
 	
 	DoYawRate();
 
-	RateE = Rate[Yaw] + DesiredYaw + NavCorr[Yaw];
+	RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
 
 	#ifdef NEW_YAW
 
 	YawRateIntE += RateE;
-	YawRateIntE = Limit1(YawRateIntE, YawIntLimit256);
+	YawRateIntE = Limit1(YawRateIntE, P[YawIntLimit]);
 
 	Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
 

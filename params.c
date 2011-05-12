@@ -74,8 +74,7 @@ void ReadParametersEE(void)
 		else
 		{
 			for ( i = 0; i < NoOfPWMOutputs; i++ )
-				ESCI2CFail[i] = 0;
-	 		InitI2CESCs();
+				ESCI2CFail[i] = 0;;
 		}
 
 		InitGyros();
@@ -119,7 +118,7 @@ void ReadParametersEE(void)
 
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
 		TauCF = 50 -(int24)P[BaroFilt];
-		TauCF = Limit(TauCF, 10, 40);
+		TauCF = 5; //zzzLimit(TauCF, 10, 40);
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L); // changed sign of MagVar AGAIN!
 

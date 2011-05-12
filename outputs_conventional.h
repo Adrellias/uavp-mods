@@ -53,8 +53,8 @@ void OutSignals(void)
 			PWM3 = PWMLimit(PWM[RudderC]);
 		#endif
 
-		PWM4 = PWM[CamRollC]+1;
-		PWM5 = PWM[CamPitchC]+1;	
+		PWM4 = PWMLimit(PWM[CamRollC]);
+		PWM5 = PWMLimit(PWM[CamPitchC]);	
 		
 		// Save TMR0 and reset
 		DisableInterrupts;

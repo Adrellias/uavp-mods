@@ -32,24 +32,15 @@ void ErectGyros(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16	Rate[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
-i32u 	YawRateF;
-int8 	GyroType;
+int16 Rate[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
+i32u YawRateF;
+int8 GyroType;
 
 #include "gyro_itg3200.h"
 #include "gyro_analog.h"
 
 void AdaptiveYawFilterA(void)
-{ // ~600uS @ 16MHz - use approximation 4.5uS
-
-/*
-	static int16 TwoPiF, r; // 2.0*Pi*F
-
-	TwoPiF = ( Abs(DesiredYaw) * YAW_MAX_FREQ * 6L ) / RC_NEUTRAL;
-	TwoPiF = Limit(TwoPiF, 3, YAW_MAX_FREQ * 6L );
-
-	YawFilterA = ( (int24) PID_CYCLE_MS * 256L) / ( 1000L / TwoPiF + (int16) PID_CYCLE_MS );
-*/
+{ 
 
 	YawFilterA = 5 + Abs(DesiredYaw);
 
@@ -212,9 +203,8 @@ void CompensateRollPitchGyros(void)
 	#define ANGLE_COMP_STEP 25
 
 	static int16 Grav[2], Dyn[2];
-	static int16 AccMag;
 
-	if( F.AccelerationsValid ) // zzz check falling/climbing
+	if( F.AccelerationsValid ) 
 	{
 		ReadAccelerations();
 	
@@ -225,14 +215,9 @@ void CompensateRollPitchGyros(void)
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
-		AccMag = int32sqrt( Sqr(Acc[LR]) + Sqr(Acc[FB]) + Sqr(Acc[DU]) );
-		F.UsingAccComp = AccMag > 850;
-
 		Acc[LR] -= (int16)P[MiddleLR];
 		Acc[FB] -= (int16)P[MiddleFB];
 		Acc[DU] -= (int16)P[MiddleDU];
-
-		LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
 		
 		// Roll
 	
@@ -254,7 +239,7 @@ void CompensateRollPitchGyros(void)
 	}	
 	else
 	{
-		ROC = IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
+		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
 		F.UsingAccComp = false;
 	}
 

@@ -57,9 +57,8 @@ void CheckTelemetry(void)
 			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TEL_INTERVAL_MS; 
 			SendControlPacket(); 	
 			break;
-		case ArduStationTelemetry:
-			mS[TelemetryUpdate] = mSClock() + ARDU_TEL_INTERVAL_MS; 
-			SendArduStation(); 			
+		case ArduStationTelemetry:	
+			// abandoned	
 			break;
 		case CustomTelemetry: 
 			mS[TelemetryUpdate] = mSClock() + CUSTOM_TEL_INTERVAL_MS;
@@ -199,7 +198,7 @@ void SendNavPacket(void)
 	
 	TxESCu8(CurrWP);	
 	
-	TxESCi16(ROC); 							// cm/S
+	TxESCi16(BaroROC); 							// cm/S
 	TxESCi24(BaroRelAltitude);
 	
 	TxESCi16(0); 								// cm/S was RF ROC
@@ -342,75 +341,6 @@ void SendCycle(void) // 800uS at 40MHz?
 	}
 			
 } // SendCycle
-
-void SendArduStation(void)
-{
-
-	#ifdef USE_ARDU	// ArdStation required scaling etc. too slow for 16MHz
-
-	// This form of telemetry using the flight controller to convert 
-	// to readable text is FAR to EXPENSIVE in computation time.
-
-	static int8 Count = 0;
-	/*      
-	Definitions of the low rate telemetry (1Hz):
-    LAT: Latitude
-    LON: Longitude
-    SPD: Speed over ground from GPS
-    CRT: Climb Rate in M/S
-    ALT: Altitude in meters
-    ALH: The altitude is trying to hold
-    CRS: Course over ground in degrees.
-    BER: Bearing is the heading you want to go
-    WPN: Waypoint number, where WP0 is home.
-    DST: Distance from Waypoint
-    BTV: Battery Voltage.
-    RSP: Roll setpoint used to debug, (not displayed here).
-    
-    Definitions of the high rate telemetry (~4Hz):
-    ASP: Airspeed, right now is the raw data.
-    TTH: Throttle in 100% the autopilot is applying.
-    RLL: Roll in degrees + is right - is left
-    PCH: Pitch in degrees
-    SST: Switch Status, used for debugging, but is disabled in the current version.
-	*/
-
-	F.TxToBuffer = true;
-
-	if ( ++Count == 4 ) // ~2.5mS @ 40MHz?
-	{
-		TxString("!!!");
-		TxString("LAT:"); TxVal32(GPSLatitude / 6000, 3, 0);
-		TxString(",LON:"); TxVal32(GPSLongitude / 6000, 3, 0);
-		TxString(",ALT:"); TxVal32(Altitude / 10,0,0);
-		TxString(",ALH:"); TxVal32(DesiredAltitude / 10, 0, 0);
-		TxString(",CRT:"); TxVal32(ROC / 100, 0, 0);
-		TxString(",CRS:"); TxVal32(((int24)Heading * 180) / MILLIPI, 0, 0); // scaling to degrees?
-		TxString(",BER:"); TxVal32(((int24)WayHeading * 180) / MILLIPI, 0, 0);
-		TxString(",SPD:"); TxVal32(GPSVel, 0, 0);
-		TxString(",WPN:"); TxVal32(CurrWP,0,0);
-		TxString(",DST:"); TxVal32(0, 0, 0); // distance to WP
-		TxString(",BTV:"); TxVal32((BatteryVoltsADC * 61)/205, 1, 0);
-		TxString(",RSP:"); TxVal32(DesiredRoll, 0, 0);
-
-		Count = 0;
-	}
-	else // ~1.1mS @ 40MHz
-	{
-	   	TxString("+++");
-		TxString("ASP:"); TxVal32(GPSVel / 100, 0, 0);
-		TxString(",RLL:"); TxVal32(Angle[Roll]/ 35, 0, 0); // scale to degrees?
-		TxString(",PCH:"); TxVal32(Angle[Pitch]/ 35, 0, 0);
-		TxString(",THH:"); TxVal32( ((int24)DesiredThrottle * 100L) / RC_MAXIMUM, 0, 0);
-	}
-
-	TxString(",***\r\n");
-
-	F.TxToBuffer = false;
-
-	#endif // USE_ARDU
-
-} // SendArduStation
 
 void SendCustom(void) // 1.2mS @ 40MHz
 { // user defined telemetry human readable OK for small amounts of data < 1mS
