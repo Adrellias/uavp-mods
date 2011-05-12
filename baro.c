@@ -510,7 +510,7 @@ int24 AltitudeCF(int24 Alt)
 	const int16 BaroAccScale = 2;
 	const int16 TauCF = 7; // 5 FOR BMP085 increasing value reduces filtering
 
-	const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
+//	const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
 
 	static i32u Temp;
 	static int32 AltD;
@@ -528,7 +528,7 @@ int24 AltitudeCF(int24 Alt)
 	hest = (hest*4096 + khest*(hest-baralt))/4096;
 	*/
 
-	LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
+	//LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
 
 	AltD = Alt - AltCF;
 	AltCFp = AltCF;
@@ -537,7 +537,7 @@ int24 AltitudeCF(int24 Alt)
    	Temp.i32 = AltF[2] * 256 + AltF[0];
 	AltF[2] = Temp.i3_1;
 
-  	AltF[1] =  AltF[2] + AltD * 2 * TauCF; // ABANDON ACC TOO NOISY  -(Acc[DU] - 1024) * BaroAccScale; // should ba at^2
+  	AltF[1] =  AltF[2] + AltD * 2 * TauCF; // ABANDON ACC TOO NOISY  -(Acc[DU] - 1024) * BaroAccScale; 
  	Temp.i32 = AltCF * 256 + AltF[1];
 	AltCF = Temp.i3_1;
 
@@ -551,9 +551,11 @@ int24 AltitudeCF(int24 Alt)
 	if (Armed){
 		F.TxToBuffer = true;
 		TxVal32(mSClock(),0,','); 
+		TxVal32(AmbientTemperature.i16,0,',');
 		TxVal32(Acc[DU],0,','); 
 		TxVal32(Alt,0,','); 
-		TxVal32(AltCF,0,' ');
+		TxVal32(AltCF,0,',');
+		TxVal32(BaroROC,0,',');
 		TxNextLine();
 	}
 	#endif // DEBUG_PRINT

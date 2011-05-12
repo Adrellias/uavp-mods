@@ -5,7 +5,7 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
-//#define DEBUG_PRINT			// direct printing of baro values
+#define DEBUG_PRINT			// direct printing of baro values
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -147,8 +147,6 @@
 #define CUSTOM_TEL_INTERVAL_MS		250L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
-
-#define	ALT_UPDATE_HZ				20L		// Hz based on 50mS update time for Baro 
 
 // Altitude Hold
 
