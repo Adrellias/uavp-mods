@@ -117,8 +117,9 @@ void ReadParametersEE(void)
 		#endif // RX6CH
 
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
-		TauCF = 50 -(int24)P[BaroFilt];
-		TauCF = 5; //zzzLimit(TauCF, 10, 40);
+
+		TauCF = (int16)P[BaroFilt];
+		TauCF = Limit(TauCF, 3, 40);
 
 		CompassOffset = ((((int16)P[CompassOffsetQtr] * 90L - (int16)P[NavMagVar])*MILLIPI)/180L); // changed sign of MagVar AGAIN!
 

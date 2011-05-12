@@ -5,6 +5,8 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
+//#define DEBUG_PRINT			// direct printing of baro values
+
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -718,7 +720,7 @@ extern void BaroTest(void);
 extern int32 OriginBaroPressure, CompBaroPressure;
 extern uint16 BaroPressure, BaroTemperature;
 extern boolean AcquiringPressure;
-extern int24 BaroRelAltitude, BaroRelAltitudeP;
+extern int24 BaroRelAltitude;
 extern i16u	BaroVal;
 extern int8 BaroType;
 extern int16 AltitudeUpdateRate;

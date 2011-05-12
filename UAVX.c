@@ -310,8 +310,10 @@ void main(void)
 
 			GetTemperature(); 
 			CheckAlarms();
-			CheckTelemetry();
 
+			#ifndef DEBUG_PRINT
+				CheckTelemetry();
+			#endif // ! DEBUG_PRINT
 			SensorTrace();
 		
 		} // flight while armed
