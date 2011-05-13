@@ -33,7 +33,7 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define DEBUG_GYROS						
-#define SIMULATE
+//#define SIMULATE
 	//#define KEN_SPECIAL // ESC Tester version
 	#define QUADROCOPTER
 	//#define TRICOPTER

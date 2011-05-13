@@ -348,7 +348,7 @@ void DoControl(void)
 	Temp = SRS32((int24)Angle[Pitch] * P[PitchKi], 9);
 	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
 
-	Temp24.i24 = -(int24)Pl * GS;
+	Temp24.i24 = (int24)Pl * GS;
 	Pl = Temp24.i2_1;
 
 	Pl -= ( ControlPitch + NavCorr[Pitch]);
