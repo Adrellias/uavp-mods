@@ -44,7 +44,7 @@ void OutSignals(void)
 
 	// Save TMR0 and reset
 	DisableInterrupts;
-	SaveClockmS = mSClock;
+	SaveClockmS = MilliSec;
 	GetTimer0;
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
