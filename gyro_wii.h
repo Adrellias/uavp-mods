@@ -183,7 +183,7 @@ void ErectGyros(void)
 	GyroMidPitch = SRS32(PitchAv, 5);
 	GyroMidYaw = SRS32(YawAv, 5);
 	
-	RollRate = PitchRate = YawRate = Angle[Roll = Angle[Pitch] = Angle[Yaw] = REp = PEp = YEp = 0;
+	RollRate = PitchRate = YawRate = Angle[Roll] = Angle[Pitch] = Angle[Yaw] = REp = PEp = YEp = 0;
 
 	LEDRed_OFF;
 

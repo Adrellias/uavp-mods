@@ -20,8 +20,6 @@
 
 #include "uavx.h"
 
-int16 x1, x2,x3,x4,x5,x6;
-
 void SendPacketHeader(void);
 void SendPacketTrailer(void);
 void SendTelemetry(void);
@@ -40,8 +38,8 @@ void SensorTrace(void);
 
 uint8 UAVXCurrPacketTag;
 
-void CheckTelemetry(void)
-{
+void CheckTelemetry(void) {
+
 	#ifndef TESTING // not used for testing - make space!
 	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
@@ -72,8 +70,8 @@ void CheckTelemetry(void)
 #define NAV_STATS_INTERLEAVE	10
 static int8 StatsNavAlternate = 0; 
 
-void SendPacketHeader(void)
-{
+void SendPacketHeader(void) {
+
 	static int8 b;
 
 	F.TxToBuffer = true;
@@ -88,8 +86,8 @@ void SendPacketHeader(void)
 	TxCheckSum = 0;
 } // SendPacketHeader
 
-void SendPacketTrailer(void)
-{
+void SendPacketTrailer(void) {
+
 	TxESCu8(TxCheckSum);	
 	TxChar(EOT);
 	
@@ -99,8 +97,8 @@ void SendPacketTrailer(void)
 	F.TxToBuffer = false; 
 } // SendPacketTrailer
 
-void ShowAttitude(void)
-{
+void ShowAttitude(void) {
+
 	TxESCi16(DesiredRoll);
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
@@ -125,8 +123,7 @@ void ShowAttitude(void)
 
 } // ShowAttitude
 
-void SendFlightPacket(void)
-{
+void SendFlightPacket(void) {
 	static int8 b;
 
 	SendPacketHeader();
@@ -160,8 +157,7 @@ void SendFlightPacket(void)
 	SendPacketTrailer();
 } // SendFlightPacket
 
-void SendControlPacket(void)
-{
+void SendControlPacket(void){
 	static int8 b;
 
 	SendPacketHeader();
@@ -184,8 +180,8 @@ void SendControlPacket(void)
 
 } // SendControlPacket
 
-void SendNavPacket(void)
-{
+void SendNavPacket(void){
+
 	SendPacketHeader();
 
 	TxESCu8(UAVXNavPacketTag);
@@ -313,16 +309,14 @@ void SendParameters(uint8 s) {
 	SendParamPacket(0, MAX_PARAMETERS);
 } // SendParameters
 
-void SendCycle(void) // 800uS at 40MHz?
-{
+void SendCycle(void) {// 800uS at 40MHz?
 	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
 		SendFlightPacket();
 
 		UAVXCurrPacketTag = UAVXNavPacketTag;
-		break;
-	
+		break;	
 	case UAVXNavPacketTag:
 		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE)
 			SendNavPacket();		
@@ -331,19 +325,17 @@ void SendCycle(void) // 800uS at 40MHz?
 			SendStatsPacket();
 			StatsNavAlternate = 0;
 		}
-
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
-		break;
-	
+		break;	
 	default:
 		UAVXCurrPacketTag = UAVXFlightPacketTag;
 		break;		
-	}
+	} // switch
 			
 } // SendCycle
 
-void SendCustom(void) // 1.2mS @ 40MHz
-{ // user defined telemetry human readable OK for small amounts of data < 1mS
+void SendCustom(void) {
+ 	// user defined telemetry human readable OK for small amounts of data < 1mS
 
 	F.TxToBuffer = true;
 	
@@ -362,8 +354,8 @@ void SendCustom(void) // 1.2mS @ 40MHz
 	F.TxToBuffer = false;
 } // SendCustom
 
-void SensorTrace(void)
-{
+void SensorTrace(void) {
+
 	#ifdef TESTING
 
 	if ( DesiredThrottle > 20 ) 

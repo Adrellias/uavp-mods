@@ -33,33 +33,28 @@ void CheckThrottleMoved(void);
 void LightsAndSirens(void);
 void InitControl(void);
 
-int16 RC[CONTROLS], RCp[CONTROLS];
-
-int16 Ratep[4];					
-
+#pragma udata access motorvars	
+near int16 Rl, Pl, Yl;
+#pragma udata
+			
 int16 Angle[3], RawAngle[3];		
 int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;
-int16 Rl, Pl, Yl, Ylp;				
-int24 OSO, OCO;
-int16 YawFilterA;
-int32 GS;
 
-int16 Trim[3];
+int16 Ylp;				
+int24 OSO, OCO;
+
+int16 YawRateIntE;
 int16 HoldYaw;
 int16 YawIntLimit256;
 
-int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
-int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-int16 ControlRoll, ControlPitch;
-int16 CurrMaxRollPitch;
-
-int16 YawRateIntE;
-
+int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 
 int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
+
+int32 GS;
 
 boolean	FirstPass;
 int8 BeepTick = 0;
@@ -91,7 +86,7 @@ void DoAltitudeHold(void)
 		ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
 	    iROC = ROCIntE;
 				
-		NewAltComp = SRS16(pROC + iROC, 5);
+		NewAltComp = SRS16(pROC + iROC, 6);
 		AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
 
 	}

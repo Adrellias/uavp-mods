@@ -27,7 +27,7 @@ void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
 
-const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
+const uint8 Map[CustomTxRx+1][CONTROLS] = {
 	{ 2,0,1,3,4,5,6 }, 	// Futaba Thr 3 Throttle
 	{ 1,0,3,2,4,5,6 },	// Futaba Thr 2 Throttle
 	{ 4,2,1,0,5,3,6 },	// Futaba 9C Spektrum DM8/AR7000
@@ -53,7 +53,7 @@ const rom uint8 Map[CustomTxRx+1][CONTROLS] = {
 
 // Rx signalling polarity used only for serial PPM frames usually
 // by tapping internal Rx circuitry.
-const rom boolean PPMPosPolarity[CustomTxRx+1] =
+const boolean PPMPosPolarity[CustomTxRx+1] =
 	{
 		false, 	// Futaba Ch3 Throttle
 		false,	// Futaba Ch2 Throttle
@@ -85,7 +85,11 @@ const rom boolean PPMPosPolarity[CustomTxRx+1] =
 // 5 Aux1
 // 6 Aux2
 
-int8 RMap[CONTROLS];
+
+uint8 RMap[];
+int16 RC[], RCp[], Trim[];
+int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 
 void DoRxPolarity(void)
 {
@@ -113,7 +117,7 @@ void InitRC(void)
 		PPM[c].i16 = 0;
 		RC[c] = RCp[c] = RC_NEUTRAL;
 	}
-	RC[ThrottleC] = RCp[ThrottleC] = 0; 
+	RC[ThrottleRC] = RCp[ThrottleRC] = 0; 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;
 	Trim[Roll] = Trim[Pitch] = Trim[Yaw] = 0; 
 	PPM_Index = PrevEdge = RCGlitches = 0;
@@ -125,7 +129,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 	static int16 LastThrottle, Temp, i;
 	static i32u Temp2;
 
-	LastThrottle = RC[ThrottleC];
+	LastThrottle = RC[ThrottleRC];
 
 	for (c = 0 ; c < RC_CONTROLS ; c++) 
 	{
@@ -142,7 +146,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 	}
 
 	if ( THROTTLE_SLEW_LIMIT > 0 )
-		RC[ThrottleC] = SlewLimit(LastThrottle, RC[ThrottleC], THROTTLE_SLEW_LIMIT);
+		RC[ThrottleRC] = SlewLimit(LastThrottle, RC[ThrottleRC], THROTTLE_SLEW_LIMIT);
 
 } // MapRC
 
@@ -168,7 +172,7 @@ void CheckSticksHaveChanged(void)
 				mS[StickChangeUpdate] = mSClock() + 500;
 		
 				Change = false;
-				for ( c = ThrottleC; c <= (uint8)RTHC; c++ )
+				for ( c = ThrottleC; c <= (uint8)RTHRC; c++ )
 				{
 					Change |= Abs( RC[c] - RCp[c]) > RC_STICK_MOVEMENT;
 					RCp[c] = RC[c];
@@ -225,14 +229,14 @@ void UpdateControls(void)
 
 	MapRC();								// remap channel order for specific Tx/Rx
 
-	StickThrottle = RC[ThrottleC];
+	StickThrottle = RC[ThrottleRC];
 
 	//_________________________________________________________________________________________
 
 	// Navigation
 
 	F.ReturnHome = F.Navigate = false;
-	NewCh5Active = RC[RTHC] > RC_NEUTRAL;
+	NewCh5Active = RC[RTHRC] > RC_NEUTRAL;
 
 	if ( F.UsingPositionHoldLock )
 		if ( NewCh5Active && !F.Ch5Active )
@@ -240,10 +244,10 @@ void UpdateControls(void)
 		else
 			F.AllowTurnToWP = SaveAllowTurnToWP;
 	else
-		if ( RC[RTHC] > ((2L*RC_MAXIMUM)/3L) )
+		if ( RC[RTHRC] > ((2L*RC_MAXIMUM)/3L) )
 			F.ReturnHome = true;
 		else
-			if ( RC[RTHC] > (RC_NEUTRAL/3L) )
+			if ( RC[RTHRC] > (RC_NEUTRAL/3L) )
 				F.Navigate = true;
 	
 	F.Ch5Active = NewCh5Active;
@@ -252,8 +256,8 @@ void UpdateControls(void)
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE
 	#else
-		DesiredCamPitchTrim = RC[CamPitchC] - RC_NEUTRAL;
-		NavSensitivity = RC[NavGainC];
+		DesiredCamPitchTrim = RC[CamPitchRC] - RC_NEUTRAL;
+		NavSensitivity = RC[NavGainRC];
 		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 	#endif // !RX6CH
 
@@ -280,14 +284,14 @@ void UpdateControls(void)
 	// Attitude
 		
 	#ifdef ATTITUDE_NO_LIMITS
-		DesiredRoll = RC[RollC] - RC_NEUTRAL;
-		DesiredPitch = RC[PitchC] - RC_NEUTRAL;		
+		DesiredRoll = RC[RollRC] - RC_NEUTRAL;
+		DesiredPitch = RC[PitchRC] - RC_NEUTRAL;		
 	#else
 		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
-		DesiredRoll = SRS16((RC[RollC] - RC_NEUTRAL) * RollPitchScale, 7);
-		DesiredPitch = SRS16((RC[PitchC] - RC_NEUTRAL) * RollPitchScale, 7);
+		DesiredRoll = SRS16((RC[RollRC] - RC_NEUTRAL) * RollPitchScale, 7);
+		DesiredPitch = SRS16((RC[PitchRC] - RC_NEUTRAL) * RollPitchScale, 7);
 	#endif // ATTITUDE_NO_LIMITS
-	DesiredYaw = RC[YawC] - RC_NEUTRAL;
+	DesiredYaw = RC[YawRC] - RC_NEUTRAL;
 
 	AdaptiveYawFilterA(); // increase cutoff frquency with increased yaw stick
 						

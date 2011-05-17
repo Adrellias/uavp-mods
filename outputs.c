@@ -37,11 +37,11 @@ int16 ESCI2CFail[4];
 int16 CurrThrottle;
 int8 ServoInterval;
 
-#pragma udata access outputvars
+#pragma udata access motorvars
 near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
-near int8 ServoToggle;
 #pragma udata
 
+int8 ServoToggle;
 int16 ESCMax;
 
 uint8 PWMLimit(int16 T)

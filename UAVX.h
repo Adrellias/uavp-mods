@@ -344,12 +344,12 @@ typedef union {
 		uint16 w1;
 	};
 	struct {
-		int16 pad;
+		int16 pad1;
 		int16 iw1;
 	};
 	
 	struct {
-		uint8 pad;
+		uint8 pad2;
 		int24 i3_1;
 	};
 } i32u;
@@ -494,8 +494,6 @@ typedef struct { // GPS
 
 // main.c
 
-extern int16 x1,x2,x3,x4,x5,x6;
-
 #define FLAG_BYTES 10
 #define TELEMETRY_FLAG_BYTES 6
 typedef union {
@@ -574,7 +572,7 @@ typedef union {
 
 enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
-extern near int8 State;
+extern int8 near State, NavState, FailState;
 
 //______________________________________________________________________________________________
 
@@ -655,13 +653,10 @@ typedef struct { int32 E, N; int16 A; uint8 L; } WayPoint;
 enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, Navigating, Loitering};
 enum FailStates { MonitoringRx, Aborting, Terminating, Terminated, RxTerminate };
 
-enum Attitudes { Roll, Pitch, Yaw };
-
 #ifdef SIMULATE
 extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeHeading;
 #endif // SIMULATE
 
-extern near int8 FailState;
 extern WayPoint WP;
 extern int8 CurrWP;
 extern int8 NoOfWayPoints;
@@ -669,9 +664,7 @@ extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude; 
-extern int16 CompassOffset;
 extern int24 NavRTHTimeoutmS;
-extern int8 NavState;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
 
@@ -752,12 +745,13 @@ extern void InitCompass(void);
 
 extern i24u Compass;
 extern i32u HeadingValF;
+extern int16 MagHeading, Heading, DesiredHeading, CompassOffset;
 
 //______________________________________________________________________________________________
 
 // control.c
 
-enum Attitudes { Roll, Pitch, Yaw, Heading };
+enum Attitudes { Roll, Pitch, Yaw };
 enum Directions { FB, LR, DU, Alt };
 
 extern void DoAltitudeHold(void);
@@ -773,24 +767,26 @@ extern void DoControl(void);
 extern void LightsAndSirens(void);
 extern void InitControl(void);
 
-extern int16 Ratep[4];
-extern int16 Rl, Pl, Yl, Ylp;						
-extern int24 OSO, OCO;
-extern int16 CameraRollAngle, CameraPitchAngle;
+extern near int16 Rl, Pl, Yl;
+
 extern int16 Angle[3], RawAngle[3];		
-extern int16 Trim[3];
-extern int16 HoldYaw, YawSlewLimit;
-extern int16 YawFilterA;
-extern int32 GS;
+extern int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;				
+extern int24 OSO, OCO;
+extern int16 Ylp;
+
+extern int16 YawRateIntE;
+extern int16 HoldYaw;
 extern int16 YawIntLimit256;
-extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
-extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredHeading, DesiredCamPitchTrim, Heading;
-extern int16 ControlRoll, ControlPitch, ControlRollP, ControlPitchP;
-extern int16 CurrMaxRollPitch;
+
+extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
+
 extern int16 AttitudeHoldResetCount;
-extern int24 DesiredAltitude, Altitude, Altitudep, AltCF; 
-extern int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROCIntE, MinROCCmpS;
+extern int24 DesiredAltitude, Altitude, Altitudep; 
+extern int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
+
+extern int32 GS;
+
 extern boolean FirstPass;
 
 //______________________________________________________________________________________________
@@ -879,8 +875,9 @@ extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 extern boolean ITG3200GyroActive(void);
 
-extern int16 Rate[3], GyroNeutral[3], GyroADC[3];
+extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern i32u YawRateF;
+extern int16 YawFilterA;
 extern int8 GyroType;
 
 //______________________________________________________________________________________________
@@ -932,28 +929,30 @@ extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern int24 mSClock(void);
 
-enum { Clock, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
-	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, StartTime, AccTimeout, 
+enum { StartTime, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
+	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, AccTimeout, 
 	GPSTimeout, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
   	TelemetryUpdate, NavActiveTime, BeeperUpdate, ArmedTimeout,
-	ThrottleUpdate, VerticalDampingUpdate, BaroUpdate, CompassUpdate};
+	ThrottleUpdate, BaroUpdate, CompassUpdate};
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
 
 extern volatile int24 mS[];
 extern volatile int24 PIDUpdate;
-extern int16 RC[], RCp[];
 
-extern near i16u PPM[];
-extern near int8 PPM_Index;
-extern near int24 PrevEdge, CurrEdge;
-extern near uint8 Intersection, PrevPattern, CurrPattern;
-extern near i16u Width, Timer0;
-extern near int24 PauseTime; // for tests
-extern near uint8 RxState;
-extern near uint8 ll, ss, tt, gps_ch;
-extern near uint8 RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
+extern volatile near int24 	MilliSec;
+extern near i16u 	PPM[MAX_CONTROLS];
+extern near int8 	PPM_Index;
+extern near int24 	PrevEdge, CurrEdge;
+extern near i16u 	Width, Timer0;
+extern near int24 	PauseTime;
+extern near uint8 	RxState;
+
+extern near uint8 	ll, ss, tt, RxCh;
+extern near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 extern near boolean WaitingForSync;
+
+extern near i24u 	ADCValue, Temp;
 
 extern int8	SignalCount;
 extern uint16 RCGlitches;
@@ -1068,11 +1067,11 @@ extern void ShowRxSetup(void);
 extern void ShowSetup(boolean);
 extern void ProcessCommand(void);
 
-extern const rom uint8 SerHello[];
-extern const rom uint8 SerSetup[];
-extern const rom uint8 SerPrompt[];
+extern const char SerHello[];
+extern const char SerSetup[];
+extern const char SerPrompt[];
 
-extern const rom uint8 RxChMnem[];
+extern const char RxChMnem[];
 
 //______________________________________________________________________________________________
 
@@ -1113,7 +1112,7 @@ extern int16 CurrThrottle;
 extern int8 ServoInterval;
 
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
-extern near int8 ServoToggle;
+extern int8 ServoToggle;
 
 extern int16 ESCMax;
 
@@ -1132,7 +1131,7 @@ enum TxRxTypes {
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
-enum RCControls {ThrottleC, RollC, PitchC, YawC, RTHC, CamPitchC, NavGainC}; 
+enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
@@ -1229,8 +1228,8 @@ enum Params { // MAX 64
 
 // bit 7 unusable in UAVPSet
 
-extern const rom int8 DefaultParams[MAX_PARAMETERS][2];
-extern const rom uint8 ESCLimits [];
+extern const int8 DefaultParams[MAX_PARAMETERS][2];
+extern const uint8 ESCLimits [];
 
 extern int16 OSin[], OCos[];
 extern int8 Orientation, PolarOrientation;
@@ -1262,15 +1261,18 @@ extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void CheckThrottleMoved(void);
 
-extern const rom boolean PPMPosPolarity[];
-extern const rom uint8 Map[CustomTxRx+1][CONTROLS];
-extern int8 RMap[];
+extern const boolean PPMPosPolarity[];
+extern uint8 RMap[];
+extern const uint8 Map[CustomTxRx+1][CONTROLS];
+extern int16 RC[], RCp[], Trim[];
+extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 
 //__________________________________________________________________________________________
 
 // serial.c
 
-extern void TxString(const rom uint8*);
+extern void TxString(const uint8*);
 extern void TxChar(uint8);
 extern void TxValU(uint8);
 extern void TxValS(int8);

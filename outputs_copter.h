@@ -53,7 +53,7 @@ void OutSignals(void)
 	// Save TMR0 and reset
 	DisableInterrupts;
 	INTCONbits.TMR0IE = false;
-	SaveClockmS = mS[Clock];
+	SaveClockmS = MilliSec;
 	GetTimer0;
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
@@ -322,14 +322,14 @@ OS002:
 	// add in period mS Clock was disabled - this is tending to advance the clock too far!
 	if ( P[ESCType] == ESCPPM )
 		if ( ServoToggle == 0 )
-			Clock[mS] = SaveClockmS + 3;
+			MilliSec = SaveClockmS + 3;
 		else
-			Clock[mS] = SaveClockmS + 2;
+			MilliSec = SaveClockmS + 2;
 	else
 		if ( ServoToggle == 0 )
-			Clock[mS] = SaveClockmS + 2;
+			MilliSec = SaveClockmS + 2;
 		else
-			Clock[mS] = SaveClockmS;
+			MilliSec = SaveClockmS;
 
 	if ( ++ServoToggle == ServoInterval )
 		ServoToggle = 0;
@@ -381,7 +381,7 @@ void T580ESCs(uint8 f, uint8 b, uint8 r, uint8 l) {
     static boolean Run;
     static uint8 i;
 
-    Run = ( f > 0 ) || ( b > 0 ) || ( r > 0 ) || ( l > 0 );
+    Run = ((int16)f+b+r+l) > 0;
 
     if ( T580Running )
         if ( Run )
@@ -390,7 +390,7 @@ void T580ESCs(uint8 f, uint8 b, uint8 r, uint8 l) {
 		{
             WriteT580ESCs(T580Stopping, 0, 0, 0, 0);
 			Delay1mS(2);
-            for ( i = 0; i < 50; i++ ) 
+            for ( i = 0; i < (uint8)50; i++ ) 
 			{
 				WriteT580ESCs(T580Constant, 0, 0, 0, 0);
 				Delay1mS(2);
@@ -399,7 +399,7 @@ void T580ESCs(uint8 f, uint8 b, uint8 r, uint8 l) {
     else
         if ( Run ) 
 		{
-        	for ( i = 0; i < 50; i++ )
+        	for ( i = 0; i < (uint8)50; i++ )
 			{ 
 				WriteT580ESCs(T580Constant, 0, 0, 0, 0);
 				Delay1mS(2);

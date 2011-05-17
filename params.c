@@ -27,7 +27,7 @@ void UpdateWhichParamSet(void);
 boolean ParameterSanityCheck(void);
 void InitParameters(void);
 
-const rom uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM, OUT_LRC_MAXIMUM };
+const uint8 ESCLimits [] = { OUT_MAXIMUM, OUT_HOLGER_MAXIMUM, OUT_X3D_MAXIMUM, OUT_YGEI2C_MAXIMUM, OUT_LRC_MAXIMUM };
 
 #ifdef MULTICOPTER
 	#include "uavx_multicopter.h"
@@ -263,7 +263,7 @@ void UpdateParamSetChoice(void)
 	else
 		Selector = DesiredRoll;
 
-	if ( (Abs(RC[ThrottleC]) < STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW ) )
+	if ( (Abs(RC[ThrottleRC]) < STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW ) )
 	{
 		if ( Selector < -STICK_WINDOW ) // left
 			NewAllowTurnToWP = false;

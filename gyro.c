@@ -32,8 +32,9 @@ void ErectGyros(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16 Rate[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
+int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 i32u YawRateF;
+int16 YawFilterA;
 int8 GyroType;
 
 #include "gyro_itg3200.h"
@@ -41,9 +42,7 @@ int8 GyroType;
 
 void AdaptiveYawFilterA(void)
 { 
-
 	YawFilterA = 5 + Abs(DesiredYaw);
-
 } // AdaptiveYawFilterA
 
 #define AccFilter NoFilter
@@ -112,8 +111,8 @@ void CalculateGyroRates(void)
 
 void ErectGyros(void)
 {
-	static int8 i, g;
-	static int32 Av[3];
+	int8 i, g;
+	int32 Av[3];
 
 	for ( g = 0; g < (int8)3; g++ )	
 		Av[g] = 0;

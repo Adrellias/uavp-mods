@@ -29,9 +29,9 @@ void ProcessCommand(void);
 
 
 #ifdef TESTING
-const rom uint8 SerHello[] = "UAVX TEST " Version 
+const char SerHello[] = "UAVX TEST " Version 
 #else
-const rom uint8 SerHello[] = "UAVX " Version 							 
+const char SerHello[] = "UAVX " Version 							 
 #endif // TESTING
 
  							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
@@ -41,7 +41,7 @@ const rom uint8 SerHello[] = "UAVX " Version
 #pragma idata
 
 #pragma idata menuhelp
-const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
+const char SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"A..Accelerometer test\r\n"
 	#endif // TESTING
@@ -72,7 +72,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
-const rom uint8 RxChMnem[] = "TAERG12";
+const char RxChMnem[] = "TAERG12";
 
 void ShowPrompt(void)
 {
@@ -163,6 +163,7 @@ void ShowSetup(boolean h)
 	case ESCHolger:TxString("Holger I2C {"); break;
 	case ESCX3D:TxString("X-3D I2C {"); break;
 	case ESCYGEI2C:TxString("YGE I2C {"); break;
+	case ESCLRCI2C:TxString("LRC I2C {"); break;
 	}
 
 	if ( P[ESCType] != ESCPPM )
@@ -396,13 +397,13 @@ void ProcessCommand(void)
 				//ShowPrompt();
 				break;
 			case 'R':	// receiver values
-				TxString("\r\nT:");TxValU(ToPercent(RC[ThrottleC], RC_MAXIMUM));
-				TxString(",R:");TxValS(ToPercent(((RC[RollC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",P:");TxValS(ToPercent(((RC[PitchC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",Y:");TxValS(ToPercent(((RC[YawC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",5:");TxValU(ToPercent(RC[RTHC], RC_MAXIMUM));
-				TxString(",6:");TxValS(ToPercent(((RC[CamPitchC] - RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",7:");TxValU(ToPercent(RC[NavGainC], RC_MAXIMUM));
+				TxString("\r\nT:");TxValU(ToPercent(RC[ThrottleRC], RC_MAXIMUM));
+				TxString(",R:");TxValS(ToPercent(((RC[RollRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
+				TxString(",P:");TxValS(ToPercent(((RC[PitchRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
+				TxString(",Y:");TxValS(ToPercent(((RC[YawRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
+				TxString(",5:");TxValU(ToPercent(RC[RTHRC], RC_MAXIMUM));
+				TxString(",6:");TxValS(ToPercent(((RC[CamPitchRC] - RC_NEUTRAL) * 2L), RC_MAXIMUM));
+				TxString(",7:");TxValU(ToPercent(RC[NavGainRC], RC_MAXIMUM));
 				ShowPrompt();
 				break;
 			case 'S' :	// show status

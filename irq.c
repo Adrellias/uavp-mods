@@ -42,17 +42,18 @@ volatile int24 PIDUpdate;
 #pragma udata
 
 #pragma udata access isrvars
-near int24 	PrevEdge, CurrEdge;
-near uint8 	Intersection, PrevPattern, CurrPattern;
-near i16u 	Width, Timer0;
+near volatile int24 MilliSec;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
+near int24 	PrevEdge, CurrEdge;
+near i16u 	Width, Timer0;
 near int24 	PauseTime;
 near uint8 	RxState;
+
 near uint8 	ll, ss, tt, RxCh;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
-near int8	State, FailState;
 near boolean WaitingForSync;
+
 near i24u 	ADCValue, Temp;
 #pragma udata
 
@@ -111,7 +112,7 @@ void InitTimersAndInterrupts(void)
 
 	TxQ.Head = TxQ.Tail = RxCheckSum = 0;
 
-	for (i = Clock; i<= CompassUpdate; i++)
+	for (i = StartTime; i<= CompassUpdate; i++)
 		mS[i] = 0;
 
 	INTCONbits.PEIE = true;	
@@ -125,7 +126,7 @@ int24 mSClock(void)
 	static int24 m;
 
 	DisableInterrupts;
-	m = mS[Clock];
+	m = MilliSec;
 	EnableInterrupts;
 	return(m);
 } // mSClock
@@ -193,8 +194,8 @@ void high_isr_handler(void)
 					F.Signal = SignalCount > 0;
 
 					if ( F.Signal )
-						mS[LastValidRx] = mS[Clock];
-					mS[RCSignalTimeout] = mS[Clock] + RC_SIGNAL_TIMEOUT_MS;
+						mS[LastValidRx] = MilliSec;
+					mS[RCSignalTimeout] = MilliSec + RC_SIGNAL_TIMEOUT_MS;
 				}
 			}
 
@@ -296,10 +297,10 @@ void high_isr_handler(void)
 			TMR0L = Timer0.b0;
 		#endif // CLOCK_40MHZ
 
-		mS[Clock]++;
-		WaitingForSync = mS[Clock] < PIDUpdate;
+		MilliSec++;
+		WaitingForSync = MilliSec < PIDUpdate;
 
-		if ( F.Signal && (mS[Clock] > mS[RCSignalTimeout]) ) 
+		if ( F.Signal && (MilliSec > mS[RCSignalTimeout]) ) 
 		{
 			F.Signal = false;
 			SignalCount = -RC_GOOD_BUCKET_MAX;

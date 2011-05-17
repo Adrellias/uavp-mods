@@ -87,10 +87,8 @@ int24 	WPLoiter;
 int16	WayHeading;
 
 int16 	NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude;
-int16	CompassOffset;
 int24 	NavRTHTimeoutmS;
 
-int8 	NavState;
 int16 	NavSensitivity, RollPitchMax;
 
 void DoShutdown(void)

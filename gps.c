@@ -440,8 +440,6 @@ void UpdateGPS(void)
 
 void InitGPS(void)
 {
-	uint8 n;
-
 	cc = 0;
 
 	GPSLongitudeCorrection = 256; // 1.0

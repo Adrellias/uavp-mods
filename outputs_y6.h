@@ -44,7 +44,7 @@ void OutSignals(void)
 
 	// Save TMR0 and reset
 	DisableInterrupts;
-	SaveClockmS = mS[Clock];
+	SaveClockmS = mSClock;
 	GetTimer0;
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
@@ -187,9 +187,9 @@ OS010:
 	// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?
 
 	if ( ServoToggle == 0 )
-		Clock[mS] = SaveClockmS + 3;
+		MilliSec = SaveClockmS + 3;
 	else
-		Clock[mS] = SaveClockmS + 2;
+		MilliSec = SaveClockmS + 2;
 	
 	INTCONbits.TMR0IE = true;
 	EnableInterrupts;

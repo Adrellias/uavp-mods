@@ -33,7 +33,7 @@ void InitCompass(void);
 
 i24u 	Compass;
 i32u 	HeadingValF;
-int16 	MagHeading;
+int16 	MagHeading, Heading, DesiredHeading, CompassOffset;
 
 void GetHeading(void)
 {

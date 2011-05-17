@@ -59,7 +59,7 @@ void OutSignals(void)
 		// Save TMR0 and reset
 		DisableInterrupts;
 		INTCONbits.TMR0IE = false;
-		SaveClockmS = mS[Clock];
+		SaveClockmS = MilliSec;
 		GetTimer0;
 		SaveTimer0.u16 = Timer0.u16;
 		FastWriteTimer0(TMR0_1MS);
@@ -198,7 +198,7 @@ void OutSignals(void)
 		FastWriteTimer0(SaveTimer0.u16);
 		// the 1mS clock seems to get in for 40MHz but not 16MHz so like this for now?
 		
-		Clock[mS] = SaveClockmS + 3;
+		MilliSec = SaveClockmS + 3;
 		
 		INTCONbits.TMR0IE = true;
 		EnableInterrupts;

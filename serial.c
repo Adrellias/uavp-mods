@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void TxString(const rom uint8*);
+void TxString(const uint8*);
 void TxChar(uint8);
 void TxValU(uint8);
 void TxValS(int8);
@@ -50,7 +50,7 @@ uint8 TxCheckSum;
 uint8x128Q TxQ;
 #pragma udata
 
-void TxString(const rom uint8 *pch)
+void TxString(const uint8 *pch)
 {
 	while( *pch != '\0' )
 		TxChar(*pch++);
@@ -128,7 +128,7 @@ void TxValH16(uint16 v)
 
 uint8 PollRxChar(void)
 {
-	uint8	ch;	
+	static uint8	ch;	
 
 	if( PIR1bits.RCIF )	// a character is waiting in the buffer
 	{
@@ -151,7 +151,7 @@ uint8 PollRxChar(void)
 
 uint8 RxChar(void)
 {
-	uint8	ch;	
+	static uint8 ch;	
 
 	while ( !PIR1bits.RCIF );
 
@@ -171,8 +171,7 @@ uint8 RxChar(void)
 uint8 RxNumU(void)
 {
 	// UAVPSet sends 2 digits
-	uint8 ch;
-	uint8 n;
+	static uint8 ch, n;
 
 	n = 0;
 	do
@@ -190,9 +189,9 @@ uint8 RxNumU(void)
 int8 RxNumS(void)
 {
 	// UAVPSet sends sign and 2 digits
-	uint8 ch;
-	int8 n;
-	boolean Neg;
+	static uint8 ch;
+	static int8 n;
+	static boolean Neg;
 	n = 0;
 
 	Neg = false;
@@ -220,9 +219,9 @@ int8 RxNumS(void)
 
 void TxVal32(int32 V, int8 dp, uint8 Separator)
 {
-	uint8 S[16];
-	int8 c, Rem, zeros, i;
-	int32 NewV;
+	static uint8 S[16];
+	static int8 c, Rem, zeros, i;
+	static int32 NewV;
 	 
 	if (V<0)
 	{
@@ -282,7 +281,7 @@ void TxESCi8(int8 b)
 
 void Sendi16(int16 v)
 {
-	i16u Temp;
+	static i16u Temp;
 
 	Temp.i16 = v;
 	TxChar(Temp.b0);
@@ -291,7 +290,7 @@ void Sendi16(int16 v)
 
 void TxESCi16(int16 v)
 {
-	i16u Temp;
+	static i16u Temp;
 
 	Temp.i16 = v;
 	TxESCu8(Temp.b0);
@@ -300,7 +299,7 @@ void TxESCi16(int16 v)
 
 void TxESCi24(int24 v)
 {
-	i24u Temp;
+	static i24u Temp;
 
 	Temp.i24 = v;
 	TxESCu8(Temp.b0);
@@ -310,7 +309,7 @@ void TxESCi24(int24 v)
 
 void TxESCi32(int32 v)
 {
-	i32u Temp;
+	static i32u Temp;
 
 	Temp.i32 = v;
 	TxESCi16(Temp.w0);

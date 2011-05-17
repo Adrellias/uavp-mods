@@ -28,6 +28,9 @@
 
 Flags 	F;
 uint8 p;
+#pragma udata access statevars
+int8 near State, NavState, FailState;
+#pragma udata
 
 #ifdef KEN_SPECIAL
 
