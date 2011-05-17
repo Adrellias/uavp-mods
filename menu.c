@@ -39,30 +39,30 @@ const char SerHello[] = "UAVX " Version
 #pragma idata menuhelp
 const char SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
-	"A..Accelerometer test\r\n"
+	"A..Acc. test\r\n"
 //	"B..Load UAVX hex file\r\n"
 	"C..Compass test\r\n"
-	"D..Load default parameters\r\n"
+	"D..Load default params\r\n"
 	"G..Gyro test\r\n"
 	"H..Baro/RF test\r\n"
 	"I..I2C bus scan\r\n"
-	"K..Calibrate Compass\r\n"
+	"K..Cal. Compass\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
-//	"T..All LEDs/beeper test\r\n"
+	"T..LEDs/beeper test\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
-	"Y..Program YGE I2C ESC\r\n"
+	"Y..Prog. YGE ESC\r\n"
 	#else
-	"D..Load default parameters\r\n"
+	"D..Load default params\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
 
 	#endif // TESTING
-	"1-8..LED/beeper test\r\n"; // last line must be in this form for UAVPSet
+	"1-8..LED test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
 const char RxChMnem[] = "TAERG12";
