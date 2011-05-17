@@ -31,7 +31,7 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define DEBUG_GYROS						
 //#define SIMULATE
 	//#define KEN_SPECIAL // ESC Tester version

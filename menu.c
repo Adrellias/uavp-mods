@@ -26,50 +26,43 @@ void ShowSetup(boolean);
 void ProcessCommand(void);
 
 #pragma idata menu1
-
-
 #ifdef TESTING
 const char SerHello[] = "UAVX TEST " Version 
 #else
 const char SerHello[] = "UAVX " Version 							 
 #endif // TESTING
-
- 							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
-							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY "
-							  "see http://www.gnu.org/licenses/!\r\n";
-
+" Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+"This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n "
+"see http://www.gnu.org/licenses/!\r\n";
 #pragma idata
 
 #pragma idata menuhelp
 const char SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 	"A..Accelerometer test\r\n"
-	#endif // TESTING
-	"B..Load UAVX hex file\r\n"
-	#ifdef TESTING
+//	"B..Load UAVX hex file\r\n"
 	"C..Compass test\r\n"
-	#endif // TESTING
-	"D..Load default parameter set\r\n"
-	#ifdef TESTING
+	"D..Load default parameters\r\n"
 	"G..Gyro test\r\n"
-	"H..Barometer/Rangefinder test\r\n"
+	"H..Baro/RF test\r\n"
 	"I..I2C bus scan\r\n"
 	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
-	#endif // TESTING
 	"S..Setup\r\n"
-	#ifdef TESTING
-	"T..All LEDs and buzzer test\r\n"
-	#endif // TESTING
-	#ifndef KEN_SPECIAL
+//	"T..All LEDs/beeper test\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
-	#endif // !KEN_SPECIAL
-	#ifdef TESTING
 	"Y..Program YGE I2C ESC\r\n"
+	#else
+	"D..Load default parameters\r\n"
+	"P..Rx test\r\n"
+	"S..Setup\r\n"
+	"V..Battery test\r\n"
+	"X..Flight stats\r\n"
+
 	#endif // TESTING
-	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
+	"1-8..LED/beeper test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
 const char RxChMnem[] = "TAERG12";
@@ -83,9 +76,9 @@ void ShowRxSetup(void)
 {
 	if ( F.UsingSerialPPM )
 		if ( PPMPosPolarity[P[TxRxType]] )
-			TxString("Serial PPM frame (Positive Polarity)");
+			TxString("Serial PPM frame (Pos. Polarity)");
 		else
-			TxString("Serial PPM frame (Negative Polarity)");
+			TxString("Serial PPM frame (Neg. Polarity)");
 	else
 		TxString("Odd Rx Channels PPM");
 } // ShowRxSetup
@@ -164,7 +157,7 @@ void ShowSetup(boolean h)
 	case ESCX3D:TxString("X-3D I2C {"); break;
 	case ESCYGEI2C:TxString("YGE I2C {"); break;
 	case ESCLRCI2C:TxString("LRC I2C {"); break;
-	}
+	} // switch
 
 	if ( P[ESCType] != ESCPPM )
 	{
