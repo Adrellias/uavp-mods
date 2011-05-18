@@ -22,7 +22,7 @@
 
 #include "uavx.h"
 
-void TxString(const uint8*);
+void TxString(const rom uint8*);
 void TxChar(uint8);
 void TxValU(uint8);
 void TxValS(int8);
@@ -50,7 +50,7 @@ uint8 TxCheckSum;
 uint8x128Q TxQ;
 #pragma udata
 
-void TxString(const uint8 *pch)
+void TxString(const rom uint8 *pch)
 {
 	while( *pch != '\0' )
 		TxChar(*pch++);

@@ -31,10 +31,9 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define DEBUG_GYROS						
 //#define SIMULATE
-	//#define KEN_SPECIAL // ESC Tester version
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -779,7 +778,6 @@ extern int16 HoldYaw;
 extern int16 YawIntLimit256;
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
-extern int16 ThrLow, ThrHigh, ThrNeutral;
 
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep; 
@@ -1041,7 +1039,9 @@ extern void LEDsOn(uint8);
 extern void LEDsOff(uint8);
 extern void LEDChaser(void);
 
-extern uint8 LEDShadow, LEDShadowp, SavedLEDs, LEDPattern;
+extern near uint8 LEDShadow, LEDShadowp;
+
+extern uint8 SavedLEDs, LEDPattern;
 
 //______________________________________________________________________________________________
 
@@ -1067,11 +1067,11 @@ extern void ShowRxSetup(void);
 extern void ShowSetup(boolean);
 extern void ProcessCommand(void);
 
-extern const char SerHello[];
-extern const char SerSetup[];
-extern const char SerPrompt[];
+extern const rom uint8 SerHello[];
+extern const rom uint8 SerSetup[];
+extern const rom uint8 SerPrompt[];
 
-extern const char RxChMnem[];
+extern const rom uint8 RxChMnem[];
 
 //______________________________________________________________________________________________
 
@@ -1095,6 +1095,10 @@ extern void MixAndLimitCam(void);
 extern void OutSignals(void);
 extern void StopMotors(void);
 extern void InitMotors(void);
+
+extern void WriteT580ESC(uint8, uint8, uint8);
+extern void WriteT580ESCs(int8,  uint8, uint8, uint8, uint8);
+extern void T580ESCs(uint8, uint8, uint8, uint8);
 
 enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags5 {FrontLeftC=0, FrontRightC}; // VTCopter
@@ -1267,12 +1271,13 @@ extern const uint8 Map[CustomTxRx+1][CONTROLS];
 extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
+extern int16 ThrLow, ThrHigh, ThrNeutral;
 
 //__________________________________________________________________________________________
 
 // serial.c
 
-extern void TxString(const uint8*);
+extern void TxString(const rom uint8*);
 extern void TxChar(uint8);
 extern void TxValU(uint8);
 extern void TxValS(int8);

@@ -86,10 +86,11 @@ const boolean PPMPosPolarity[CustomTxRx+1] =
 // 6 Aux2
 
 
-uint8 RMap[];
-int16 RC[], RCp[], Trim[];
+uint8 RMap[CONTROLS];
+int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
 int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
+int16 ThrLow, ThrHigh, ThrNeutral;
 
 void DoRxPolarity(void)
 {
@@ -115,7 +116,7 @@ void InitRC(void)
 	for (c = 0; c < RC_CONTROLS; c++)
 	{
 		PPM[c].i16 = 0;
-		RC[c] = RCp[c] = RC_NEUTRAL;
+		RC[c] = RCp[c] = 0;
 	}
 	RC[ThrottleRC] = RCp[ThrottleRC] = 0; 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;

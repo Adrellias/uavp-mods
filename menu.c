@@ -25,47 +25,51 @@ void ShowRxSetup(void);
 void ShowSetup(boolean);
 void ProcessCommand(void);
 
-#pragma idata menu1
 #ifdef TESTING
-const char SerHello[] = "UAVX TEST " Version 
+const rom uint8 SerHello[] = "UAVX TEST " Version 
 #else
-const char SerHello[] = "UAVX " Version 							 
+const rom uint8 SerHello[] = "UAVX " Version 							 
 #endif // TESTING
-" Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
-"This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY\r\n "
-"see http://www.gnu.org/licenses/!\r\n";
+
+ 							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
+							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY "
+							  "see http://www.gnu.org/licenses/!\r\n";
+
 #pragma idata
 
 #pragma idata menuhelp
-const char SerHelp[] = "\r\nCommands:\r\n"
+const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
-	"A..Acc. test\r\n"
+
+	"A..Accelerometer test\r\n"
 //	"B..Load UAVX hex file\r\n"
 	"C..Compass test\r\n"
-	"D..Load default params\r\n"
+	"D..Load default parameter set\r\n"
 	"G..Gyro test\r\n"
-	"H..Baro/RF test\r\n"
+	"H..Barometer/Rangefinder test\r\n"
 	"I..I2C bus scan\r\n"
-	"K..Cal. Compass\r\n"
+	"K..Calibrate Compass\r\n"
 //	"M..Modify parameters\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
-	"T..LEDs/beeper test\r\n"
+	"T..All LEDs and buzzer test\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
-	"Y..Prog. YGE ESC\r\n"
+	"Y..Program YGE I2C ESC\r\n"
+
 	#else
-	"D..Load default params\r\n"
-	"P..Rx test\r\n"
+
+//	"B..Load UAVX hex file\r\n"
+	"D..Load default parameter set\r\n"
 	"S..Setup\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
 
 	#endif // TESTING
-	"1-8..LED test\r\n"; // last line must be in this form for UAVPSet
+	"1-8..Individual LED/buzzer test\r\n"; // last line must be in this form for UAVPSet
 #pragma idata
 
-const char RxChMnem[] = "TAERG12";
+const rom uint8 RxChMnem[] = "TAERG12";
 
 void ShowPrompt(void)
 {
@@ -92,13 +96,6 @@ void ShowSetup(boolean h)
 		ParamSet = 1;	
 
 	TxString(SerHello);
-
-	#ifdef KEN_SPECIAL
-
-	TxString("\r\nDANGER - FAST ESC TESTER (PPM 400Hz/450Hz, I2C ~1300Hz)\r\n");
-	TxString("MOTORS WILL START IMMEDIATELY ON ARMING\r\n");
-	
-	#else
 
 	#ifdef EXPERIMENTAL
 		TxString("WARNING - EXPERIMENTAL\r\n");
@@ -198,7 +195,7 @@ void ShowSetup(boolean h)
 		case ExternalDecoder: TxString("External Decoder {"); break;
 		case UnknownTxRx: TxString("UNKNOWN {"); break;
 		default: ;
-	}
+	} // switch
 
 	#endif // CLOCK_40MHZ
 	
@@ -286,8 +283,6 @@ void ShowSetup(boolean h)
 
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - CLOSE!\r\n");
-
-	#endif // KEN_SPECIAL
 	
 	ShowPrompt();
 } // ShowSetup
@@ -486,7 +481,7 @@ void ProcessCommand(void)
 				ShowPrompt();
 				break;
 			default: break;
-			}
+			} // switch
 		}
 	}
 } // ProcessCommand

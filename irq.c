@@ -112,6 +112,7 @@ void InitTimersAndInterrupts(void)
 
 	TxQ.Head = TxQ.Tail = RxCheckSum = 0;
 
+	MilliSec = 0;
 	for (i = StartTime; i<= CompassUpdate; i++)
 		mS[i] = 0;
 

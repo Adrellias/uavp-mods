@@ -30,10 +30,6 @@ void OutSignals(void)
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 
-	#ifdef UAVX_HW
-		ServoToggle = 1;
-	#endif // UAVX_HW
-
 	if ( !F.MotorsArmed )
 		StopMotors();	
 

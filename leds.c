@@ -25,7 +25,11 @@ void LEDsOn(uint8);
 void LEDsOff(uint8);
 void LEDChaser(void);
 
-uint8 LEDShadow, LEDShadowp, SavedLEDs, LEDPattern = 0;
+#pragma udata access LEDvars
+near uint8 LEDShadow, LEDShadowp;
+#pragma udata
+
+uint8 SavedLEDs, LEDPattern = 0;
 boolean PrevHolding = false;
 const uint8 LEDChase[7] = {
 		AUX1M,	

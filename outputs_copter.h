@@ -19,7 +19,7 @@
 //    If not, see http://www.gnu.org/licenses/
 
 void WriteT580ESC(uint8, uint8, uint8);
-void WriteT580ESCs(uint8,  uint8, uint8, uint8, uint8);
+void WriteT580ESCs(int8,  uint8, uint8, uint8, uint8);
 void T580ESCs(uint8, uint8, uint8, uint8);
 void OutSignals(void);
 
@@ -33,10 +33,6 @@ void OutSignals(void)
 	static uint8 s, r, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
-
-	#ifdef UAVX_HW
-		ServoToggle = 1;
-	#endif // UAVX_HW
 
 	if ( !F.MotorsArmed )
 		StopMotors();
@@ -64,10 +60,10 @@ void OutSignals(void)
 		d = 7;
 		do
 			Delay10TCY(); 
-		while ( --d > 0 );
+		while ( --d > (uint8)0 );
 	#else
 		d = 16;
-		while ( --d > 0 ) 
+		while ( --d > (uint8)0 ) 
 			Delay10TCY();
 	#endif // CLOCK_16MHZ
 
@@ -248,7 +244,8 @@ OS006:
 			break;
 		default:
 			break;
-		}
+		} // switch
+
 		#endif //  MULTICOPTER
 	}
 
@@ -360,7 +357,7 @@ void WriteT580ESC(uint8 a, uint8 s, uint8 d2) {
 
 } // WriteT580ESC
 
-void WriteT580ESCs(uint8 s, uint8 f, uint8 b, uint8 r, uint8 l) {
+void WriteT580ESCs(int8 s, uint8 f, uint8 b, uint8 r, uint8 l) {
 
     if ( ( s == T580Starting ) || ( s == T580Stopping ) ) {
         WriteT580ESC(0xd0, s, 0);

@@ -48,7 +48,6 @@ int16 HoldYaw;
 int16 YawIntLimit256;
 
 int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
-int16 ThrLow, ThrHigh, ThrNeutral;
 
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 

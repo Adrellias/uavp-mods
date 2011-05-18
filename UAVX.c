@@ -32,18 +32,6 @@ uint8 p;
 int8 near State, NavState, FailState;
 #pragma udata
 
-#ifdef KEN_SPECIAL
-
-boolean Running = false;
-int16 Range;
-int16 i, Mark, Space;
-int16 Cycle, TestCycles;
-int16 ThrCount;
-int16 Throttle;
-int16 TestSequence[8] = {0,100,50,25,0,75,100,0};
-int16 Sequence[8];
-
-#endif // KEN_SPECIAL
 
 void main(void)
 {
@@ -64,87 +52,6 @@ void main(void)
 	InitMotors();
 
     EnableInterrupts;
-
-	#ifdef KEN_SPECIAL
-
-	P[ESCType] = ESCPPM;
-	F.HoldingAlt = true; // for light chaser
-	Running = false;
-
-	while ( true) {
-
-		ProcessCommand();
-		ParamSet = 1;
-		ParametersChanged = true;
-		ReadParametersEE();
-
-		Range = 100 - P[PercentIdleThr];
-
-	    for ( b = 0; b < 8; b++ )
-		{
-			Sequence[b] = P[PercentIdleThr] + ((int32)TestSequence[b] * Range)/100;
-			Sequence[b] = ((int24)Sequence[b] * 350) / 100;
-		}
-
-		LEDChaser();
-
-		if ( Armed ) 
-		{
-			ALL_LEDS_OFF;
-			LEDRed_ON;
-			DoStartingBeepsWithOutput(3);
-			Cycle = 0;
-			ThrCount = 0;
-
-			Delay1mS(5);
-			Running = true;
-
-			DisableInterrupts;
-		}
-
-		while ( Armed ) 
-		{
-			if ( ++ThrCount > 6 ) // only 7 steps
-				ThrCount = 0;
-
-			Mark = Sequence[ThrCount];
-			Space = 350 - Mark;			
-
-			PORTB = 0x01;
-			for ( i = 363; i; i-- )
-				Delay1TCY();
-
-			for ( i = Mark; i; i-- )
-				Delay1TCY();
-
-			PORTB = 0x00;
-			for ( i = Space; i; i-- )
-				Delay1TCY();
-
-			//  Delay10TCYx(97);	// 450Hz
-			//	Delay10TCYx(205);   // 400Hz
-		 Delay100TCYx(378);  // 200Hz	
-		}
-		
-		if ( Running )
-		{
-			Running = false;
-			for ( b = 0; b < 40; b++)
-			{	
-				PORTB = 0x01;
-				for ( i = 363; i; i-- )
-					Delay1TCY();
-				PORTB = 0x00;
-				Delay1mS(6);
-			}
-		}
-
-
-		EnableInterrupts;
-		StopMotors();
-	}
-
-	#else
 
 	LEDYellow_ON;
 	Delay100mSWithOutput(5);	// let all the sensors startup
@@ -321,8 +228,6 @@ void main(void)
 		
 		} // flight while armed
 	}
-
-	#endif // KEN_SPECIAL
 
 } // main
 

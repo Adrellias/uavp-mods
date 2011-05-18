@@ -430,7 +430,7 @@ boolean LISLAccActive(void)
 	SPI_CS = DSEL_LISL;
 	WriteLISL(0b01001010, LISL_CTRLREG_2); // enable 3-wire, BDU=1, +/-2g
 
-	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == 0x3a;
+	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a;
 
 	return ( F.AccelerationsValid );
 } // LISLAccActive
