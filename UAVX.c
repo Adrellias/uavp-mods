@@ -216,7 +216,7 @@ void main(void)
 
 			MixAndLimitMotors();
 			MixAndLimitCam();
-			OutSignals();							// some jitter because sync precedes this
+			OutSignals();
 
 			GetTemperature(); 
 			CheckAlarms();
@@ -224,7 +224,6 @@ void main(void)
 			#ifndef DEBUG_PRINT
 				CheckTelemetry();
 			#endif // ! DEBUG_PRINT
-			SensorTrace();
 		
 		} // flight while armed
 	}

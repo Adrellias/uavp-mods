@@ -32,17 +32,17 @@
 void SyncToTimer0AndDisableInterrupts(void);
 void ReceivingGPSOnly(uint8);
 void InitTimersAndInterrupts(void);
-int24 mSClock(void);
+uint24 mSClock(void);
 void low_isr_handler(void);
 void high_isr_handler(void);
 
 #pragma udata clocks
-volatile int24	mS[CompassUpdate+1];
-volatile int24 PIDUpdate;
+volatile uint24	mS[CompassUpdate+1];
+volatile uint24 PIDUpdate;
 #pragma udata
 
 #pragma udata access isrvars
-near volatile int24 MilliSec;
+near volatile uint24 MilliSec;
 near i16u 	PPM[MAX_CONTROLS];
 near int8 	PPM_Index;
 near int24 	PrevEdge, CurrEdge;
@@ -78,7 +78,6 @@ void ReceivingGPSOnly(boolean r)
 		PIE1bits.RCIE = false;
 		F.ReceivingGPS = r;
 
-		#ifndef TESTING // not used for testing - make space!
 		if ( F.ReceivingGPS )			
 			#ifdef CLOCK_16MHZ
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
@@ -88,7 +87,6 @@ void ReceivingGPSOnly(boolean r)
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
 			#endif // CLOCK_16MHZ
 		else
-		#endif // !TESTING
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
    		PIE1bits.RCIE = r;
@@ -122,7 +120,7 @@ void InitTimersAndInterrupts(void)
    	ReceivingGPSOnly(false);
 } // InitTimersAndInterrupts
 
-int24 mSClock(void)
+uint24 mSClock(void)
 { // MUST make locked accesses to the millisecond clock
 	static int24 m;
 
@@ -307,14 +305,12 @@ void high_isr_handler(void)
 			SignalCount = -RC_GOOD_BUCKET_MAX;
 		}
 
-		#ifndef TESTING // not used for testing - make space!
 		if ( Armed  && ( P[TelemetryType] !=  GPSTelemetry ) )
 			if (( TxQ.Head != TxQ.Tail) && PIR1bits.TXIF )
 			{
 				TXREG = TxQ.B[TxQ.Head];
 				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
 			}
-		#endif // TESTING
  
 		// Scan ADC ports even if using ITG-3200
 		if ( !ADCON0bits.GO)

@@ -99,7 +99,7 @@ void InitMisc(void)
 
 void Delay1mS(int16 d)
 { 
-	static int24 Timeout;
+	static uint24 Timeout;
 
 	Timeout = mSClock() + d + 1;
 	while ( mSClock() < Timeout ) {};
@@ -109,7 +109,7 @@ void Delay1mS(int16 d)
 void Delay100mSWithOutput(int16 dur)
 {  // Motor and servo pulses are still output
 
-	static int24 Timeout;
+	static uint24 Timeout;
 
 	Timeout = mSClock() + dur * 100;
 	while ( mSClock() < Timeout )

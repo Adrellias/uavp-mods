@@ -20,6 +20,9 @@
 
 // ITG3200 3-axis I2C Gyro
 
+#define ITG_ID_3DOF 	0xD2
+#define ITG_ID_6DOF 	0xD0
+
 // ITG3200 Register Defines
 #define ITG_WHO		0x00
 #define	ITG_SMPL	0x15
@@ -36,14 +39,6 @@
 #define ITG_GZ_L	0x22
 #define ITG_PWR_M	0x3E
 
-#ifdef THREE_DOF
-	#define ITG_ID 	0xD2
-#else
-	#define ITG_ID 	0xD0
-#endif // THREE_DOF
-#define ITG_R 		(ITG_ID+1)	
-#define ITG_W 		ITG_ID
-
 // depending on orientation of chip
 #define ITG_ROLL_H	ITG_GX_H
 #define ITG_ROLL_L	ITG_GX_L
@@ -53,6 +48,8 @@
 
 #define ITG_YAW_H	ITG_GZ_H
 #define ITG_YAW_L	ITG_GZ_L
+
+uint8 ITG_ID, ITG_R, ITG_W;
 
 void ITG3200ViewRegisters(void);
 void BlockReadITG3200(void);
@@ -78,7 +75,8 @@ void BlockReadITG3200(void)
 
 	// Roll Right +, Pitch Up +, Yaw ACW +
 
-	#ifdef NINE_DOF
+	if ( P[DesGyroType] == ITG3200DOF9 )
+	{
 
 		// Roll
 		GX.b0 = G[1]; GX.b1 = G[0]; GX.i16 = -GX.i16;
@@ -90,7 +88,9 @@ void BlockReadITG3200(void)
 		GZ.b0 = G[5]; GZ.b1 = G[4];
 		GZ.i16 = - GZ.i16;
 
-	#else
+	}
+	else
+	{
 
 		// Roll
 		GX.b0 = G[1]; GX.b1 = G[0];
@@ -103,7 +103,7 @@ void BlockReadITG3200(void)
 		GZ.b0 = G[5]; GZ.b1 = G[4]; 
 		GZ.i16 = - GZ.i16;
 
-	#endif // NINE_DOF
+	}
 
 	GyroADC[Roll] = GX.i16;
 	GyroADC[Pitch] = GY.i16;
@@ -175,9 +175,23 @@ void InitITG3200(void)
 
 boolean ITG3200GyroActive(void) 
 {
+	F.GyroFailure = true;
+	ITG_ID = ITG_ID_3DOF;
+
     I2CStart();
     F.GyroFailure = WriteI2CByte(ITG_ID) != I2C_ACK;
     I2CStop();
+
+	if ( F.GyroFailure )
+	{
+		ITG_ID = ITG_ID_6DOF;
+	    I2CStart();
+	    F.GyroFailure = WriteI2CByte(ITG_ID) != I2C_ACK;
+	    I2CStop();
+	}
+
+	ITG_R = ITG_ID+1;	
+	ITG_W =	ITG_ID;	
 
     return ( !F.GyroFailure );
 } // ITG3200GyroActive

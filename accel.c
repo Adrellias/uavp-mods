@@ -47,6 +47,7 @@ int8	AccNeutral[3];
 int16	Acc[3];
 int8 	AccType;
 int32	AccDUF;
+int16   ADXL345Mag;
 #pragma udata
 
 void ShowAccType(void)
@@ -70,7 +71,19 @@ void ReadAccelerations(void)
 	if ( AccType == LISLAcc )
 		ReadLISLAcc();
 	else
+	{
 		ReadADXL345Acc();
+		#ifdef FULL_MONTY
+		// rescale to 1024 = 1G
+		  	Ax.i16 = ((int24)Ax.i16*1024)/ADXL345Mag; // LR
+		  	Ay.i16 = ((int24)Ay.i16*1024)/ADXL345Mag; // DU
+		  	Az.i16 = ((int24)Ay.i16*1024)/ADXL345Mag; // FB
+		#else
+		  	Ax.i16 *= 5; // LR
+		  	Ay.i16 *= 5; // DU
+		  	Az.i16 *= 5; // FB
+		#endif // FULL_MONTY
+	}
 
 } // ReadAccelerations
 
@@ -112,8 +125,10 @@ void GetNeutralAccelerations(void)
 
 void AccelerometerTest(void)
 {
+	int16 Mag;
+
 	TxString("\r\nAccelerometer test:\r\n");
-	TxString("Read once - no averaging\r\n");
+	TxString("Read once - no averaging (1024 = 1G)\r\n");
 
 	InitAccelerometers();
 	if( F.AccelerationsValid )
@@ -121,28 +136,27 @@ void AccelerometerTest(void)
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
-		TxVal32(((int32)Ax.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Ax.i16, 0 , ')');
+		TxVal32((int32)Ax.i16, 0, 0);
 		if ( Abs((Ax.i16)) > 128 )
 			TxString(" fault?");
 		TxNextLine();
 
 		TxString("\tF->B: \t");	
-		TxVal32(((int32)Az.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Az.i16, 0 , ')');
+		TxVal32((int32)Az.i16, 0, 0);
 		if ( Abs((Az.i16)) > 128 )
 			TxString(" fault?");	
 		TxNextLine();
 
 		TxString("\tD->U:    \t");
 	
-		TxVal32(((int32)Ay.i16*1000L)/1024, 3, 'G');
-		TxString(" (");
-		TxVal32((int32)Ay.i16 - 1024, 0 , ')');
+		TxVal32((int32)Ay.i16, 0, 0);
 		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
 			TxString(" fault?");	
+		TxNextLine();
+
+		TxString("\tMag:    \t");
+		Mag = int32sqrt(Sqr((int24)Ax.i16)+Sqr((int24)Ay.i16)+Sqr((int24)Az.i16));
+		TxVal32((int32)Mag, 0, 0);
 		TxNextLine();
 	}
 	else
@@ -208,19 +222,22 @@ void ReadADXL345Acc(void) {
 
 	// Ax LR, Ay DU, Az FB
 
-	#ifdef NINE_DOF
+	if ( P[DesGyroType] == ITG3200DOF9)
+	{
 		// SparkFun 9DOF breakouts pins forward components up
 
 		// Ax LR
-		Ax.b1 = b[1]; Ax.b0 = b[0]; Ax.i16 = -Ax.i16;	
+		Ax.b1 = b[1]; Ax.b0 = b[0]; 
+		Ax.i16 = -Ax.i16;	
 	    
 		// Ay DU	
 	    Ay.b1 = b[5]; Ay.b0 = b[4];
 
 		// Az FB	
 	    Az.b1 = b[3]; Az.b0 = b[2];
-	
-	#else 
+	}
+	else
+	{
 		// SparkFun 6DOF & ITG3200 breakouts pins forward components up
 
 		// Ax LR	    	
@@ -232,12 +249,7 @@ void ReadADXL345Acc(void) {
 		// Az FB
 		Az.b1 = b[1]; Az.b0 = b[0];	
 
-	#endif // NINE_DOF
-  
-	// rescale to 1024 = 1G
-  	Ax.i16 *= 4; // LR
-  	Ay.i16 *= 4; // DU
-  	Az.i16 *= 4; // FB
+	}
 
 	return;
 
@@ -253,6 +265,10 @@ SGerror:
 } // ReadADXL345Acc
 
 void InitADXL345Acc() {
+
+	uint8 i;
+	int16 AccLR, AccDU, AccFB;
+
     I2CStart();
     WriteI2CByte(ADXL345_W);
     WriteI2CByte(0x2D);  // power register
@@ -276,6 +292,23 @@ void InitADXL345Acc() {
     I2CStop();
 
     Delay1mS(5);
+
+	#ifdef FULL_MONTY
+	ReadADXL345Acc();
+	for ( i = 16; i; i--)
+	{
+		ReadAccelerations();
+
+		AccLR += Ax.i16;
+		AccDU += Ay.i16;
+		AccFB += Az.i16;
+
+		Delay1mS(5);
+	}
+
+	ADXL345Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)),4);
+
+	#endif // FULL_MONTY
 
 } // InitADXL345Acc
 

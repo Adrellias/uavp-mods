@@ -86,6 +86,7 @@ void CalculateGyroRates(void)
 		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
 	case ITG3200Gyro:// ITG3200
+	case ITG3200DOF9: // 9DOF Sensor Stick
 		RollT.i24 = (int24)Rate[Roll] * 18;
 		PitchT.i24 = (int24)Rate[Pitch] * 18;
 		YawT.i24 = (int24)Rate[Yaw] * 9;
@@ -158,7 +159,10 @@ void ShowGyroType(void)
             TxString("ADXRS610/300");
             break;
         case ITG3200Gyro:
-            TxString("ITG3200");
+            TxString("ITG3200/SF-6DOF");
+            break;
+		case ITG3200DOF9:
+            TxString("SF-9DOF & ITG3200");
             break;
         case IRSensors:
             TxString("IR Sensors");

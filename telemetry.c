@@ -34,13 +34,11 @@ void SendParamPacket(uint8, uint8);
 void SendParameters(uint8);
 void SendArduStation(void);
 void SendCustom(void);
-void SensorTrace(void);
 
 uint8 UAVXCurrPacketTag;
 
 void CheckTelemetry(void) {
 
-	#ifndef TESTING // not used for testing - make space!
 	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry:
@@ -56,7 +54,8 @@ void CheckTelemetry(void) {
 			SendControlPacket(); 	
 			break;
 		case ArduStationTelemetry:	
-			// abandoned	
+			// abandoned
+			mS[TelemetryUpdate] = mSClock() + 0x7fffff;	
 			break;
 		case CustomTelemetry: 
 			mS[TelemetryUpdate] = mSClock() + CUSTOM_TEL_INTERVAL_MS;
@@ -64,7 +63,6 @@ void CheckTelemetry(void) {
 			break;
 		case GPSTelemetry: break;
 		} 
-	#endif // TESTING
 } // CheckTelemetry
 
 #define NAV_STATS_INTERLEAVE	10
@@ -353,46 +351,4 @@ void SendCustom(void) {
 
 	F.TxToBuffer = false;
 } // SendCustom
-
-void SensorTrace(void) {
-
-	#ifdef TESTING
-
-	if ( DesiredThrottle > 20 ) 
-	{
-		F.TxToBuffer = false; // direct to USART
-
-		TxValH16(Heading); TxChar(';');
-
-		TxValH16(BaroRelAltitude); TxChar(';');
-		TxValH16(RangefinderAltitude); TxChar(';');
-		TxValH16(0); TxChar(';');
-			
-		TxValH16(DesiredThrottle); TxChar(';');
-		TxValH16(DesiredRoll); TxChar(';');
-		TxValH16(DesiredPitch); TxChar(';');
-		TxValH16(DesiredYaw); TxChar(';');
-
-		TxValH16(Rate[Roll]); TxChar(';');
-		TxValH16(Rate[Pitch]); TxChar(';');
-		TxValH16(Rate[Yaw]); TxChar(';');
-
-		TxValH16(Angle[Roll]); TxChar(';');
-		TxValH16(Angle[Pitch]); TxChar(';');
-		TxValH16(Angle[Yaw]); TxChar(';');
-
-		TxValH16(Acc[LR]); TxChar(';');
-		TxValH16(Acc[FB]); TxChar(';');
-		TxValH16(Acc[DU]); TxChar(';');
-
-		TxValH16(RawAngle[Roll]); TxChar(';');
-		TxValH16(RawAngle[Pitch]); TxChar(';');
-		TxValH16(AccAltComp); TxChar(';');
-		TxValH16(AltComp); TxChar(';');
-		TxNextLine();
-	} 
-	#endif // TESTING
-} // SensorTrace
-
-
 

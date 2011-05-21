@@ -1,7 +1,7 @@
 #define NEW_YAW
 
 //#define JIM_MPX_INVERT
-#define THREE_DOF		// ITG3200 ONLY
+//#define THREE_DOF		// ITG3200 ONLY
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -31,9 +31,9 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define DEBUG_GYROS						
-//#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -46,7 +46,6 @@
 
 #ifdef EXPERIMENTAL
 //	#define UAVXBOARD
-	#define NINE_DOF
 	//#define HMC5843 // not commissioned
 #endif // EXPERIMENTAL
 
@@ -663,7 +662,7 @@ extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
 extern int16 NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude; 
-extern int24 NavRTHTimeoutmS;
+extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
 
@@ -733,6 +732,8 @@ extern int24 FakeBaroRelAltitude;
 
 #define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
 
+enum CompassTypes { HMC5843Magnetometer, HMC6352Compass, UnknownCompass };
+
 extern int16 GetCompass(void);
 extern void GetHeading(void);
 extern int16 MinimumTurn(int16);
@@ -741,10 +742,27 @@ extern void DoCompassTest(void);
 extern void CalibrateCompass(void);
 extern void InitHeading(void);
 extern void InitCompass(void);
+extern void DoCompassTest(void);
+extern void CalibrateCompass(void);
+
+// HMC5843 Bosch Magnetometer
+
+extern int16 GetHMC5843(void);
+extern void DoTestHMC5843(void);
+extern void CalibrateHMC5843(void);
+extern boolean HMC5843MagnetometerActive(void);
+
+// HMC6352 Bosch Compass
+
+extern int16 GetHMC6352(void);
+extern void DoTestHMC6352(void);
+extern void CalibrateHMC6352(void);
+extern boolean HMC6352CompassActive(void);
 
 extern i24u Compass;
 extern i32u HeadingValF;
 extern int16 MagHeading, Heading, DesiredHeading, CompassOffset;
+extern int8 CompassType;
 
 //______________________________________________________________________________________________
 
@@ -873,6 +891,8 @@ extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 extern boolean ITG3200GyroActive(void);
 
+extern uint8 ITG_ID, ITG_R, ITG_W;
+
 extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern i32u YawRateF;
 extern int16 YawFilterA;
@@ -925,7 +945,7 @@ extern void SyncToTimer0AndDisableInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
-extern int24 mSClock(void);
+extern uint24 mSClock(void);
 
 enum { StartTime, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, AccTimeout, 
@@ -935,10 +955,10 @@ enum { StartTime, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeou
 
 enum WaitStates { WaitSentinel, WaitTag, WaitBody, WaitCheckSum};
 
-extern volatile int24 mS[];
-extern volatile int24 PIDUpdate;
+extern volatile uint24 mS[];
+extern volatile uint24 PIDUpdate;
 
-extern volatile near int24 	MilliSec;
+extern volatile near uint24 	MilliSec;
 extern near i16u 	PPM[MAX_CONTROLS];
 extern near int8 	PPM_Index;
 extern near int24 	PrevEdge, CurrEdge;
@@ -1137,7 +1157,7 @@ enum TxRxTypes {
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
-enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, IRSensors, UnknownGyro };
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64
@@ -1336,7 +1356,6 @@ extern void SendParameters(uint8);
 extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
-extern void SensorTrace(void);
 extern void CheckTelemetry(void);
 
 extern uint8 UAVXCurrPacketTag;

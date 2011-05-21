@@ -419,7 +419,7 @@ void LightsAndSirens(void)
 				InitialThrottle = StickThrottle;
 				StickThrottle = DesiredThrottle = 0; 
 				OutSignals(); // synced to New RC signals
-				if( mSClock() > Ch5Timeout )
+				if( mSClock() > (uint24)Ch5Timeout )
 				{
 					if ( F.Ch5Active || !F.ParametersValid )
 					{
@@ -463,6 +463,7 @@ void InitControl(void)
 {
 	CameraRollAngle = CameraPitchAngle = 0;
 	Ylp = AltComp = ROCIntE = 0;
+	YawRateIntE = 0;
 
 } // InitControl
 

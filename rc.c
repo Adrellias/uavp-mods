@@ -126,8 +126,8 @@ void InitRC(void)
 
 void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 {  // re-maps captured PPM to Rx channel sequence
-	static int8 c;
-	static int16 LastThrottle, Temp, i;
+	static int8 c, i;
+	static int16 LastThrottle, Temp;
 	static i32u Temp2;
 
 	LastThrottle = RC[ThrottleRC];
