@@ -136,6 +136,8 @@ void InitCompass(void)
 
 } // InitCompass
 
+#ifdef TESTING 
+
 void DoCompassTest(void)
 {
 	if ( CompassType == HMC6352Compass )
@@ -155,6 +157,7 @@ void CalibrateCompass(void)
 
 } // CalibrateCompass
 
+#endif // TESTING
 //________________________________________________________________________________________
 
 // HMC5843 3 Axis Magnetometer

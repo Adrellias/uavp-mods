@@ -29,11 +29,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -128,28 +128,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -181,11 +180,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -280,28 +279,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -333,11 +331,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -432,28 +430,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -485,11 +482,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -584,29 +581,28 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\outputs_y6.h:58:Message [3004] comparison of a signed integer to an unsigned integer detected
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -638,11 +634,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -738,28 +734,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -791,11 +786,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -891,28 +886,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -944,11 +938,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1044,28 +1038,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1097,11 +1090,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1197,29 +1190,28 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\outputs_y6.h:58:Message [3004] comparison of a signed integer to an unsigned integer detected
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1251,11 +1243,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1331,28 +1323,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1384,11 +1375,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1464,28 +1455,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1517,11 +1507,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1597,28 +1587,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1650,11 +1639,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1730,29 +1719,28 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\outputs_y6.h:61:Message [3004] comparison of a signed integer to an unsigned integer detected
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1784,11 +1772,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1865,28 +1853,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -1918,11 +1905,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -1999,28 +1986,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -2052,11 +2038,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -2133,28 +2119,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -2186,11 +2171,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -2267,29 +2252,28 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\outputs_y6.h:61:Message [3004] comparison of a signed integer to an unsigned integer detected
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -2321,23 +2305,21 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:115:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:123:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:125:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:128:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:130:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\accel.c:131:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:133:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:136:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:139:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:142:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:145:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:138:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:141:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:144:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:154:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:157:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:163:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -2444,36 +2426,39 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:458:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:459:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:460:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:461:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:284:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:295:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:317:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:318:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:319:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:321:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:325:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:330:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:334:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:338:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:341:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:342:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:345:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:347:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:348:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:349:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:350:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:353:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:245:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:250:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:258:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:260:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\compass.c:356:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:357:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:358:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:359:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:370:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google UAVX\compass.c:376:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:378:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:383:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:388:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:404:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:413:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:368:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:390:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:391:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:392:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:398:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:403:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:407:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:411:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:414:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:415:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:418:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:420:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:421:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\compass.c:422:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:423:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:426:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:429:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:430:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:431:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:432:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:444:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:446:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:454:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:470:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:479:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:488:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
@@ -2494,19 +2479,19 @@ C:\Users\gke\Desktop\Google UAVX\baro.c:623:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\baro.c:625:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:627:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:631:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:192:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:193:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:195:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:196:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:197:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:198:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:199:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:200:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:203:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:204:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:206:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:207:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:208:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:209:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:210:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:211:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:212:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:213:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:214:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:218:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:220:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:56:Warning [2054] suspicious pointer conversion
@@ -2516,14 +2501,15 @@ C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:71:Warning [2054] suspicious poin
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:92:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -2610,23 +2596,21 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:115:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:123:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:125:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:128:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:130:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\accel.c:131:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:133:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:136:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:139:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:142:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:145:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:138:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:141:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:144:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:154:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:157:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:163:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -2734,36 +2718,39 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:458:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:459:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:460:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:461:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:284:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:295:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:317:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:318:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:319:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:321:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:325:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:330:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:334:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:338:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:341:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:342:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:345:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:347:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:348:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:349:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:350:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:353:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:245:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:250:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:258:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:260:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\compass.c:356:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:357:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:358:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:359:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:370:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google UAVX\compass.c:376:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:378:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:383:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:388:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:404:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:413:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:368:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:390:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:391:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:392:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:398:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:403:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:407:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:411:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:414:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:415:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:418:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:420:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:421:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\compass.c:422:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:423:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:426:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:429:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:430:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:431:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:432:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:444:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:446:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:454:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:470:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:479:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:488:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
@@ -2784,19 +2771,19 @@ C:\Users\gke\Desktop\Google UAVX\baro.c:623:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\baro.c:625:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:627:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:631:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:192:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:193:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:195:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:196:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:197:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:198:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:199:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:200:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:203:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:204:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:206:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:207:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:208:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:209:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:210:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:211:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:212:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:213:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:214:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:218:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:220:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:56:Warning [2054] suspicious pointer conversion
@@ -2806,14 +2793,15 @@ C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:71:Warning [2054] suspicious poin
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:92:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -2900,11 +2888,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -2999,28 +2987,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -3052,11 +3039,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -3152,28 +3139,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -3205,23 +3191,21 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:115:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:123:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:125:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:128:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:130:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\accel.c:131:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:133:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:136:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:139:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:142:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:145:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:138:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:141:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:144:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:154:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:157:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:163:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -3302,15 +3286,18 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:423:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:425:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:449:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:466:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:295:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:370:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google UAVX\compass.c:376:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:378:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:383:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:388:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:404:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:413:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:422:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:245:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:250:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:258:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:260:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:368:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:444:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:446:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:454:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:470:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:479:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:488:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
@@ -3331,19 +3318,19 @@ C:\Users\gke\Desktop\Google UAVX\baro.c:623:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\baro.c:625:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:627:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:631:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:192:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:193:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:195:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:196:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:197:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:198:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:199:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:200:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:203:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:204:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:206:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:207:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:208:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:209:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:210:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:211:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:212:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:213:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:214:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:218:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:220:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:56:Warning [2054] suspicious pointer conversion
@@ -3353,14 +3340,15 @@ C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:71:Warning [2054] suspicious poin
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:92:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -3436,23 +3424,21 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:115:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:123:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:125:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:128:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:130:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\accel.c:131:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:133:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:136:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:139:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:142:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:145:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:138:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:141:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:144:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:154:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:157:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:163:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -3534,15 +3520,18 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:423:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:425:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:449:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:466:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:295:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:370:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google UAVX\compass.c:376:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:378:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:383:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:388:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:404:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:413:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\compass.c:422:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:245:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:250:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:258:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:260:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:368:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:444:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:446:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:454:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:470:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:479:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:488:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
@@ -3563,19 +3552,19 @@ C:\Users\gke\Desktop\Google UAVX\baro.c:623:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\baro.c:625:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:627:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:631:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:192:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:193:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:195:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:196:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:197:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:198:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:199:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:200:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:203:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:204:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:206:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:207:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:208:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:209:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:210:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:211:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:212:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:213:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:214:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:218:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro_itg3200.h:220:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:56:Warning [2054] suspicious pointer conversion
@@ -3585,14 +3574,15 @@ C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:71:Warning [2054] suspicious poin
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:92:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:54:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:56:Warning [2054] suspicious pointer conversion
@@ -3668,11 +3658,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -3748,28 +3738,27 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
 C:\Users\gke\Desktop\Google UAVX\stats.c:79:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\stats.c:83:Warning [2054] suspicious pointer conversion
@@ -3801,11 +3790,11 @@ C:\Users\gke\Desktop\Google UAVX\stats.c:133:Warning [2054] suspicious pointer c
 C:\Users\gke\Desktop\Google UAVX\stats.c:135:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:193:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\params.c:194:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:56:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:59:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:62:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\accel.c:206:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\irq.c:262:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google UAVX\accel.c:57:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:60:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:63:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\accel.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\irq.c:260:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
@@ -3882,26 +3871,25 @@ C:\Users\gke\Desktop\Google UAVX\menu.c:391:Warning [2054] suspicious pointer co
 C:\Users\gke\Desktop\Google UAVX\menu.c:392:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:393:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\menu.c:394:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\compass.c:182:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:569:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:570:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:571:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\baro.c:572:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:155:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:161:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:164:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google UAVX\gyro.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:150:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:156:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:159:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:162:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:165:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:168:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google UAVX\gyro.c:171:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:187:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:191:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google UAVX\tests.c:193:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
+Error - could not find definition of symbol 'DoHMC5843Test' in file './compass.o'.
+Errors    : 1
 
