@@ -23,12 +23,12 @@
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
 	{0,0},				// was HorizDampKp,	04
-	{25,0},	 			// RollIntLimit,	05
+	{15,0},	 			// RollIntLimit,	05
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
 	{8,0},	 			// AltKp,			09
-	{25,0},	 			// PitchIntLimit,	10
+	{15,0},	 			// PitchIntLimit,	10
 	
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12

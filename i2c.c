@@ -42,7 +42,7 @@
 	//#define I2C_DELAY2	
 #endif // CLOCK_16MHZ
 
-void InitI2C(uint8, uint8);
+void InitI2C(void);
 void I2CStart(void);
 void I2CStop(void);
 boolean I2CWaitClkHi(void); // has timeout
@@ -68,7 +68,7 @@ uint8 ReadI2CString(uint8 *, uint8);
 #define I2C_CLK_LOW		{I2C_SCL_SW=0;I2C_DELAY2;I2C_CIO_SW=I2C_OUT;I2C_DELAY2;}
 #define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;I2C_DELAY2;} 
 
-void InitI2C(uint8 sync, uint8 slew)
+void InitI2C(void)
 {
 	// null for SW I2C
 } // InitI2C

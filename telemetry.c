@@ -195,7 +195,7 @@ void SendNavPacket(void){
 	TxESCi16(BaroROC); 							// cm/S
 	TxESCi24(BaroRelAltitude);
 	
-	TxESCi16(0); 								// cm/S was RF ROC
+	TxESCi16(GPSHeading); 				
 	TxESCi16(RangefinderAltitude); 				// cm
 	
 	TxESCi16(GPSHDilute);
@@ -203,7 +203,7 @@ void SendNavPacket(void){
 	TxESCi16(WayHeading);
 	
 	TxESCi16(GPSVel);
-	TxESCi16(0); 							    // dm/S
+	TxESCi16(0); 							    // GPS ROC dm/S
 	
 	TxESCi24(GPSRelAltitude); 					// cm
 	TxESCi32(GPSLatitude); 						// 5 decimal minute units
@@ -316,7 +316,7 @@ void SendCycle(void) {// 800uS at 40MHz?
 		UAVXCurrPacketTag = UAVXNavPacketTag;
 		break;	
 	case UAVXNavPacketTag:
-		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE)
+		if ( ++StatsNavAlternate < NAV_STATS_INTERLEAVE )
 			SendNavPacket();		
 		else
 		{

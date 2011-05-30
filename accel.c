@@ -288,7 +288,10 @@ void InitADXL345Acc() {
     I2CStart();
     WriteI2CByte(ADXL345_W);
     WriteI2CByte(0x2C);  // Rate
-    WriteI2CByte(0x0C);  // 400Hz
+    //WriteI2CByte(0x0C);  	// 400Hz
+	//WriteI2CByte(0x0b);	// 200Hz 
+  	WriteI2CByte(0x0a); 	// 100Hz 
+  	//WriteI2CByte(0x09); 	// 50Hz
     I2CStop();
 
     Delay1mS(5);

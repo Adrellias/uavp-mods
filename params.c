@@ -101,15 +101,9 @@ void ReadParametersEE(void)
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
-	
-		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, NAV_MAX_NEUTRAL_RADIUS);
-		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius); 
-		NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
-
-		NavGPSSlew = P[NavGPSSlewdM]; // close enough  * 539 / 500; // assumes 5 GPS updates/sec
-		NavGPSSlew = Limit(NavGPSSlew, 1, 1000);
-
-		NavYCorrLimit = Limit((int16)P[NavYawLimit], 5, 50);
+	 
+		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 100); 
+		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(5*10); // assumes 5 GPS updates/sec
 
 		#ifdef RX6CH
 			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;

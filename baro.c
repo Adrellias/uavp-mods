@@ -544,6 +544,7 @@ int24 AltitudeCF(int24 Alt)
 	BaroROCp = BaroROC;
 	BaroROC = ( AltCF - AltCFp) * ALT_UPDATE_HZ; 
 	BaroROC = MediumFilter(BaroROCp, BaroROC);
+	// BaroROC = HardFilter(BaroROCp, BaroROC);
 
 	AccAltComp = AltCF - Alt; // for debugging
 

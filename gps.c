@@ -276,8 +276,10 @@ void SetGPSOrigin(void)
 	if ( ( ValidGPSSentences == GPS_ORIGIN_SENTENCES ) && F.GPSValid )
 	{
 		GPSStartTime = GPSMissionTime;
-		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude;
-		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude;
+		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitudeP = GPSLatitude;
+		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitudeP = GPSLongitude;
+
+
 		GPSVel = 0;
 		
 		#ifdef SIMULATE
@@ -356,17 +358,29 @@ void ParseGPSSentence(void)
 
 		if ( State == InFlight )
 		{  // don't bother with GPS longitude correction for now?
+
 			CosH = int16cos(Heading);
 			SinH = int16sin(Heading);
-			GPSLongitude = FakeGPSLongitude + ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
-			GPSLatitude = FakeGPSLatitude + ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
-								
-			A = Make2Pi(Heading + HALFMILLIPI);
-			CosH = int16cos(A);
-			SinH = int16sin(A);
-			GPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
+
+			#ifdef NAV_WING
+
+				GPSLongitude = FakeGPSLongitude + ConvertMToGPS(SIM_CRUISE_MPS*SinH)/(GPS_UPDATE_HZ*256);
+				GPSLatitude = FakeGPSLatitude + ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
+
+			#else
+	
+				GPSLongitude = FakeGPSLongitude + ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
+				GPSLatitude = FakeGPSLatitude + ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
+									
+				A = Make2Pi(Heading + HALFMILLIPI);
+				CosH = int16cos(A);
+				SinH = int16sin(A);
+				GPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
+				GPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
+
+			#endif // NAV_WING
+
 			GPSLongitude += FAKE_EAST_WIND; // wind	
-			GPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
 			GPSLatitude += FAKE_NORTH_WIND; // wind
 		
 			FakeGPSLongitude = GPSLongitude;
@@ -378,12 +392,18 @@ void ParseGPSSentence(void)
 		#else
 
 		if (F.NavValid )
+		{
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
-		if ( F.NearLevel ) // got to filtered GPS
-		{
-			GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
-			GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+			if (( Abs(GPSLatitudeP - GPSLatitude) > NavGPSSlew ) ||
+				 ( Abs(GPSLongitudeP - GPSLongitude) > NavGPSSlew ))
+				Stats[BadS]++;
+
+			if ( F.NearLevel ) // got to filtered GPS
+			{
+				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
+				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+			}
 		}
 
 		GPSLatitudeP = GPSLatitude;

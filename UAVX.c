@@ -35,20 +35,18 @@ int8 near State, NavState, FailState;
 
 void main(void)
 {
-	static int16	Temp;
-	static uint8	b;
 
 	DisableInterrupts;
 
-	InitMisc();
-	ReadStatsEE();
 	InitPortsAndUSART();
-
-	InitADC();
-	InitI2C(MASTER, SLEW_ON);
-	InitParameters();		
-	InitRC();
 	InitTimersAndInterrupts();
+
+	InitMisc();
+	InitADC();
+	InitI2C();
+	InitParameters();
+	ReadStatsEE();		
+	InitRC();
 	InitMotors();
 
     EnableInterrupts;

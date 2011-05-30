@@ -80,19 +80,18 @@ void GetHeading(void)
 	}
 	
 	#ifdef SIMULATE
-		#if ( defined AILERON | defined ELEVON )
+		#ifdef  NAV_WING
 			if ( State == InFlight )
-				FakeHeading -= FakeDesiredRoll/5 + FakeDesiredYaw/5;
+				FakeHeading -= FakeDesiredRoll/5 + FakeDesiredYaw/2; // was 5
 		#else
 			if ( State == InFlight )
 			{
 				if ( Abs(FakeDesiredYaw) > 5 )
 					FakeHeading -= FakeDesiredYaw/5;
 			}
-	
+		#endif // NAV_WING
 		FakeHeading = Make2Pi((int16)FakeHeading);
 		Heading = FakeHeading;
-		#endif // AILERON | ELEVON
 
 	#endif // SIMULATE
 

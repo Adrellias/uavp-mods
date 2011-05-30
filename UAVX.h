@@ -33,13 +33,13 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define DEBUG_GYROS						
-	//#define SIMULATE
-	#define QUADROCOPTER
+	#define SIMULATE
+	//#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
-	//#define AILERON
+	#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
@@ -192,6 +192,7 @@
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
 #define NAV_POLAR_RADIUS			10L		// Polar coordinates arm outside this distance from origin
+#define NAV_NEUTRAL_RADIUS			1L		// Metres shows as WP centred
 
 #ifdef NAV_WING
 	#define NAV_PROXIMITY_RADIUS	20L		// Metres if there are no WPs
@@ -204,6 +205,9 @@
 // reads $GPGGA sentence - all others discarded
 
 #ifdef SIMULATE
+
+#define SIM_CRUISE_MPS				8		// M/S
+#define	GPS_UPDATE_HZ				5		// Hz - can obtain from GPS updates
 
 #define	GPS_MIN_SATELLITES			4		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
@@ -218,6 +222,7 @@
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
 
 #endif // SIMULATE
+
 
 #define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
 #define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
@@ -401,6 +406,9 @@ typedef struct { // GPS
 // must have a positive argument
 #define ConvertDDegToMPi(d) (((int32)d * 3574L)>>11)
 #define ConvertMPiToDDeg(d) (((int32)d * 2048L)/3574L)
+
+//#define ConvertGPSToM(c) (((int32)c*(int32)1855)/((int32)100000))
+//#define ConvertMToGPS(c) (((int32)c*(int32)100000)/((int32)1855))
 
 #define ToPercent(n, m) (((n)*100L)/m)
 
@@ -661,14 +669,13 @@ extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
-extern int16 NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude; 
+extern int16 NavPolarRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude; 
 extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
 
 extern int16 NavCorr[3], NavCorrp[3];
 extern int16 NavE[2], NavEp[2], NavIntE[2];
-extern int8 NavYCorrLimit;
 extern int16 EffNavSensitivity;
 extern int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
@@ -992,7 +999,7 @@ extern uint16 RCGlitches;
 #define DSEL_LISL  		1
 #define SEL_LISL  		0
 
-extern void InitI2C(uint8, uint8);
+extern void InitI2C(void);
 extern boolean I2CWaitClkHi(void);
 extern void I2CStart(void);
 extern void I2CStop(void);

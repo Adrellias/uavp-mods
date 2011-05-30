@@ -302,8 +302,8 @@ void DoControl(void)
 
 	#ifdef SIMULATE
 
-	FakeDesiredRoll = ControlRoll;
-	FakeDesiredPitch = ControlPitch;
+	FakeDesiredRoll = ControlRoll + NavCorr[Roll];
+	FakeDesiredPitch = ControlPitch + NavCorr[Pitch];
 	FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
 	Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 16, 4);
 	Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 16, 4);
@@ -323,8 +323,8 @@ void DoControl(void)
 				
 	DoAttitudeAngle(Roll, LR);
 
-	Rl  = SRS16((int24)Rate[Roll] * P[RollKp] - (int24)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
-	Temp = SRS32((int24)Angle[Roll] * P[RollKi], 9);
+	Rl  = SRS32((int32)Rate[Roll] * P[RollKp] - (int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
+	Temp = SRS32((int32)Angle[Roll] * P[RollKi], 9);
 	Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
 
 	Temp24.i24 = (int24)Rl * GS;
@@ -338,8 +338,8 @@ void DoControl(void)
 
 	DoAttitudeAngle(Pitch, FB);
 
-	Pl  = SRS16((int24)Rate[Pitch] * P[PitchKp] - (int24)(Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
-	Temp = SRS32((int24)Angle[Pitch] * P[PitchKi], 9);
+	Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp] - (int32)(Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
+	Temp = SRS32((int32)Angle[Pitch] * P[PitchKi], 9);
 	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
 
 	Temp24.i24 = (int24)Pl * GS;

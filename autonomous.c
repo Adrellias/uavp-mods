@@ -38,7 +38,6 @@ void InitNavigation(void);
 int16 NavCorr[3], NavCorrp[3];
 int16 NavE[2], NavEp[2], NavIntE[2];
 
-int8 NavYCorrLimit;
 int16 EffNavSensitivity;
 int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
 int24 EastD, EastDiffP, NorthD, NorthDiffP;
@@ -86,7 +85,7 @@ int32 	WPLatitude, WPLongitude;
 int24 	WPLoiter;
 int16	WayHeading;
 
-int16 	NavPolarRadius, NavNeutralRadius, NavProximityRadius, NavProximityAltitude;
+int16 	NavPolarRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude;
 uint24 	NavRTHTimeoutmS;
 
 int16 	NavSensitivity, RollPitchMax;
@@ -221,24 +220,24 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
 
-	F.WayPointCentred =  Radius < NavNeutralRadius;
+	F.WayPointCentred =  Radius < NAV_NEUTRAL_RADIUS;
 	AltE = DesiredAltitude - Altitude;
 	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(AltE) < NavProximityAltitude );
 
 	WayHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff));
 	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 
-	if ( ( NavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
+	if ( NavSensitivity > NAV_SENS_THRESHOLD ) 
 	{	
 		#ifdef NAV_WING
 		
 		// no Nav for conventional aircraft - yet!
-		NavCorr[Pitch] = -5; // always moving forward
+		NavCorr[Pitch] = 0; 
 		// Just use simple rudder only for now.
 		if ( !F.WayPointAchieved )
 		{
-			NavCorr[Yaw] = -(RelHeading * NAV_YAW_LIMIT) / HALFMILLIPI;
-			NavCorr[Yaw] = Limit1(NavCorr[Yaw], NAV_YAW_LIMIT); // gently!
+			NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
+			NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
 		}
 
 		#else // MULTICOPTER
@@ -283,8 +282,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		// Yaw
 		if ( F.AllowTurnToWP && !F.WayPointAchieved )
 		{
-			NavCorr[Yaw] = -(RelHeading * NavYCorrLimit) / HALFMILLIPI;
-			NavCorr[Yaw] = Limit1(NavCorr[Yaw], NavYCorrLimit); // gently!
+			NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
+			NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
 		}
 		else
 			NavCorr[Yaw] = 0;
@@ -671,6 +670,8 @@ void InitNavigation(void)
 	else
 		CurrWP = 1;
 	GetWayPointEE(0);
+
+	NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
 
 } // InitNavigation
 
