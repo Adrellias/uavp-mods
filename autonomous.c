@@ -231,62 +231,62 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	{	
 		#ifdef NAV_WING
 		
-		// no Nav for conventional aircraft - yet!
-		NavCorr[Pitch] = 0; 
-		// Just use simple rudder only for now.
-		if ( !F.WayPointAchieved )
-		{
-			NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
-			NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
-		}
+			// no Nav for conventional aircraft - yet!
+			NavCorr[Pitch] = 0; 
+			// Just use simple rudder only for now.
+			if ( !F.WayPointAchieved )
+			{
+				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
+				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
+			}
 
 		#else // MULTICOPTER
 
-		// revert to original simpler version from UAVP->UAVX transition
-
-		SinHeading = int16sin(RelHeading);
-		CosHeading = int16cos(RelHeading);
-		
-		Temp32.i32 = Radius * SinHeading;
-		NavE[Roll] = Temp32.i3_1;
-		Temp32.i32 = Radius * CosHeading;
-		NavE[Pitch] = Temp32.i3_1;
-		
-		// Roll & Pitch
-		
-		for ( a = 0; a < (uint8)2 ; a++ )
-		{
-			NavP = Limit1(NavE[a], NAV_MAX_ROLL_PITCH);
-		
-			NavIntE[a] += NavE[a];
-			NavIntE[a] = Limit1(NavIntE[a], (int16)P[NavIntLimit]);
-			NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
-			NavIntE[a] = Decay1(NavIntE[a]);
+			// revert to original simpler version from UAVP->UAVX transition
+	
+			SinHeading = int16sin(RelHeading);
+			CosHeading = int16cos(RelHeading);
 			
-			Diff = (NavEp[a] - NavE[a]);
-			Diff = Limit1(Diff, 256);
-			NavD = SRS16(Diff * (int16)P[NavKd], 8);
-			NavD = Limit1(NavD, NAV_DIFF_LIMIT);
+			Temp32.i32 = SinHeading * NAV_MAX_ROLL_PITCH; 
+			NavE[Roll] = Temp32.i3_1;
+			Temp32.i32 = CosHeading * NAV_MAX_ROLL_PITCH;
+			NavE[Pitch] = -Temp32.i3_1;
 			
-			NavEp[a] = NavE[a];
+			// Roll & Pitch
 			
-			Temp32.i32 = ( NavP + NavI + NavD ) * NavSensitivity;
-			NavCorr[a] = Temp32.i3_1;
-
-		  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
-		  	NavCorr[a] = Limit1(NavCorr[a], NAV_MAX_ROLL_PITCH);
-		 
-		  	NavCorrp[a] = NavCorr[a];
-		}
-
-		// Yaw
-		if ( F.AllowTurnToWP && !F.WayPointAchieved )
-		{
-			NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
-			NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
-		}
-		else
-			NavCorr[Yaw] = 0;
+			for ( a = 0; a < (uint8)2 ; a++ )
+			{
+				NavP = NavE[a];
+			
+				NavIntE[a] += NavE[a];
+				NavIntE[a] = Limit1(NavIntE[a], (int16)P[NavIntLimit]);
+				NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
+				NavIntE[a] = Decay1(NavIntE[a]);
+				
+				Diff = (NavEp[a] - NavE[a]);
+				Diff = Limit1(Diff, 256);
+				NavD = SRS16(Diff * (int16)P[NavKd], 8);
+				NavD = Limit1(NavD, NAV_DIFF_LIMIT);
+				
+				NavEp[a] = NavE[a];
+				
+				Temp32.i32 = ( NavP + NavI + NavD ) * NavSensitivity;
+				NavCorr[a] = Temp32.i3_1;
+	
+			  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
+			  	NavCorr[a] = Limit1(NavCorr[a], NAV_MAX_ROLL_PITCH);
+			 
+			  	NavCorrp[a] = NavCorr[a];
+			}
+	
+			// Yaw
+			if ( F.AllowTurnToWP && !F.WayPointAchieved )
+			{
+				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
+				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
+			}
+			else
+				NavCorr[Yaw] = 0;
 
 		#endif // NAV_WING
 	}	

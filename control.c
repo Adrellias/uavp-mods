@@ -350,33 +350,41 @@ void DoControl(void)
 	Ratep[Pitch] = Rate[Pitch];
 
 	// Yaw - rate control
+
+	#ifdef NAV_WING
+
+		Yl = DesiredYaw + NavCorr[Yaw];
+
+	#else
 	
-	DoYawRate();
+		DoYawRate();
+	
+		RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
+	
+		#ifdef NEW_YAW
+	
+		YawRateIntE += RateE;
+		YawRateIntE = Limit1(YawRateIntE, P[YawIntLimit]);
+	
+		Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
+	
+		#else
+	
+		Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
+	
+		#endif // NEW_YAW
+	
+		Ratep[Yaw] = Rate[Yaw];
+	
+		#ifdef TRICOPTER
+			Yl = SlewLimit(Ylp, Yl, 2);
+			Ylp = Yl;
+			Yl = Limit1(Yl,(int16)P[YawLimit]);
+		#else
+			Yl = Limit1(Yl, (int16)P[YawLimit]);
+		#endif // TRICOPTER
 
-	RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
-
-	#ifdef NEW_YAW
-
-	YawRateIntE += RateE;
-	YawRateIntE = Limit1(YawRateIntE, P[YawIntLimit]);
-
-	Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
-
-	#else
-
-	Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
-
-	#endif // NEW_YAW
-
-	Ratep[Yaw] = Rate[Yaw];
-
-	#ifdef TRICOPTER
-		Yl = SlewLimit(Ylp, Yl, 2);
-		Ylp = Yl;
-		Yl = Limit1(Yl,(int16)P[YawLimit]);
-	#else
-		Yl = Limit1(Yl, (int16)P[YawLimit]);
-	#endif // TRICOPTER
+	#endif // NAV_WING
 
 	Temp24.i24 = Angle[Pitch] * OSO + Angle[Roll] * OCO;
 	CameraRollAngle = Temp24.i2_1;

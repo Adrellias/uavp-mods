@@ -364,27 +364,27 @@ void ParseGPSSentence(void)
 
 			#ifdef NAV_WING
 
-				GPSLongitude = FakeGPSLongitude + ConvertMToGPS(SIM_CRUISE_MPS*SinH)/(GPS_UPDATE_HZ*256);
-				GPSLatitude = FakeGPSLatitude + ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
+				FakeGPSLongitude += ConvertMToGPS(SIM_CRUISE_MPS*SinH)/(GPS_UPDATE_HZ*256);
+				FakeGPSLatitude += ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
 
 			#else
 	
-				GPSLongitude = FakeGPSLongitude + ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
-				GPSLatitude = FakeGPSLatitude + ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
+				FakeGPSLongitude += ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
+				FakeGPSLatitude += ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
 									
 				A = Make2Pi(Heading + HALFMILLIPI);
 				CosH = int16cos(A);
 				SinH = int16sin(A);
-				GPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
-				GPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
+				FakeGPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
+				FakeGPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
 
 			#endif // NAV_WING
 
-			GPSLongitude += FAKE_EAST_WIND; // wind	
-			GPSLatitude += FAKE_NORTH_WIND; // wind
+			FakeGPSLongitude += FAKE_EAST_WIND; 
+			FakeGPSLatitude += FAKE_NORTH_WIND; 
 		
-			FakeGPSLongitude = GPSLongitude;
-			FakeGPSLatitude = GPSLatitude;
+			GPSLongitude = FakeGPSLongitude;
+			GPSLatitude = FakeGPSLatitude;
 
 			GPSRelAltitude = BaroRelAltitude;
 		}

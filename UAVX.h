@@ -34,7 +34,7 @@
 	//#define TESTING
 	//#define DEBUG_GYROS						
 	#define SIMULATE
-	//#define QUADROCOPTER
+//	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define VTCOPTER

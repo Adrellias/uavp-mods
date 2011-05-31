@@ -203,7 +203,7 @@ void CompensateRollPitchGyros(void)
 
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
 
-	#define ANGLE_COMP_STEP 25
+	#define ANGLE_COMP_STEP 6 //25
 
 	static int16 Grav[2], Dyn[2];
 
