@@ -60,7 +60,7 @@ int16 GetCompass()
 
 void GetHeading(void)
 {
-	static int16 HeadingChange;
+	static int16 HeadingChange, Temp;
 
 	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 	{
@@ -80,19 +80,30 @@ void GetHeading(void)
 	}
 	
 	#ifdef SIMULATE
-		#ifdef  NAV_WING
-			if ( State == InFlight )
-				FakeHeading -= FakeDesiredRoll/5 + FakeDesiredYaw/2; // was 5
-		#else
-			if ( State == InFlight )
-			{
-				if ( Abs(FakeDesiredYaw) > 5 )
-					FakeHeading -= FakeDesiredYaw/5;
-			}
-		#endif // NAV_WING
-		FakeHeading = Make2Pi((int16)FakeHeading);
-		Heading = FakeHeading;
+	if ( mSClock() > mS[CompassUpdate] )
+	{
+		mS[CompassUpdate] += COMPASS_TIME_MS;
+		if ( State == InFlight )
+		{
+			#ifdef  NAV_WING
+				Temp = ( (int24)( FakeDesiredYaw - FakeDesiredRoll ) * SIM_WING_YAW_RATE_DPS * MILLIRAD )/
+						( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );
 
+				if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
+					FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
+			#else
+				Temp = ( (int24)FakeDesiredYaw * SIM_MULTI_YAW_RATE_DPS * MILLIRAD )/
+						( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );	
+
+				if ( Abs(FakeDesiredYaw) > 5 )
+					FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
+			#endif // NAV_WING
+			
+			FakeHeading = Make2Pi((int16)FakeHeading);
+		}
+	}
+
+	Heading = FakeHeading;
 	#endif // SIMULATE
 
 } // GetHeading

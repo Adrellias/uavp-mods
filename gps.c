@@ -200,10 +200,7 @@ void ParseGPGGASentence(void)
 	if ( State == InFlight )
 	{
 		if ( GPSHDilute > Stats[MaxHDiluteS] )
-		{ 
 			Stats[MaxHDiluteS] = GPSHDilute;
-			F.GPSFailure = GPSHDilute > 150; 
-		}
 		else 
 			if ( GPSHDilute < Stats[MinHDiluteS] ) 
 				Stats[MinHDiluteS] = GPSHDilute;
@@ -213,6 +210,8 @@ void ParseGPGGASentence(void)
 		else
 			if ( GPSNoOfSats < Stats[GPSMinSatsS] )
 				Stats[GPSMinSatsS] = GPSNoOfSats; 
+
+		F.GPSFailure = GPSHDilute > 150; 
 	}
 } // ParseGPGGASentence
 

@@ -33,13 +33,13 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define DEBUG_GYROS						
-	#define SIMULATE
-//	#define QUADROCOPTER
+	//#define SIMULATE
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
-	#define AILERON
+	//#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
@@ -180,7 +180,7 @@
 
 //#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
 
-#define NAV_RTH_LOCKOUT				350L	// ~35 units per degree - at least that is for IDG300
+#define NAV_RTH_LOCKOUT				1000L	// ~100 ~ angle units per degree
 
 #define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
 #define NAV_CONTROL_HEADROOM		10L		// at least this much stick control headroom above Nav control	
@@ -208,6 +208,8 @@
 
 #define SIM_CRUISE_MPS				8		// M/S
 #define	GPS_UPDATE_HZ				5		// Hz - can obtain from GPS updates
+#define	SIM_WING_YAW_RATE_DPS		10		// Deg/S
+#define	SIM_MULTI_YAW_RATE_DPS		45		// Deg/S	
 
 #define	GPS_MIN_SATELLITES			4		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
@@ -222,7 +224,6 @@
 #define GPS_MIN_HDILUTE				130L	// HDilute * 100
 
 #endif // SIMULATE
-
 
 #define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
 #define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
@@ -736,6 +737,7 @@ extern int24 FakeBaroRelAltitude;
 #define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
+#define COMPASS_UPDATE_HZ	(1000/COMPASS_TIME_MS)
 
 #define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
 
