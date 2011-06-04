@@ -32,7 +32,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING
-	//#define DEBUG_GYROS						
+	#define DEBUG_GYROS						
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER

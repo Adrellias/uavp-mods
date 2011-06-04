@@ -45,8 +45,6 @@ void AdaptiveYawFilterA(void)
 	YawFilterA = 5 + Abs(DesiredYaw);
 } // AdaptiveYawFilterA
 
-#define AccFilter NoFilter
-
 void GetGyroValues(void)
 {
 	if ( GyroType == ITG3200Gyro )
@@ -101,6 +99,10 @@ void CalculateGyroRates(void)
 		break;
 	default:;
 	} // GyroType
+
+	Rate[Roll] += 128;
+	Rate[Pitch] += 128;
+	Rate[Yaw] += 128;
 
 	Rate[Roll] = RollT.i2_1;
 	Rate[Pitch] = PitchT.i2_1;
@@ -199,6 +201,9 @@ void GyroTest(void)
 
 void CompensateRollPitchGyros(void)
 {
+
+	#define AccFilter HardFilter // NoFilter
+
 	static i32u Temp;
 
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
@@ -206,21 +211,26 @@ void CompensateRollPitchGyros(void)
 	#define ANGLE_COMP_STEP 6 //25
 
 	static int16 Grav[2], Dyn[2];
+	static int16 NewAcc[3];
 
 	if( F.AccelerationsValid ) 
 	{
 		ReadAccelerations();
 	
-		Acc[LR] = Ax.i16;
-		Acc[DU] = Ay.i16;
-		Acc[FB] = Az.i16;
+		NewAcc[LR] = Ax.i16;
+		NewAcc[FB] = Az.i16;
+		NewAcc[DU] = Ay.i16;
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
 
-		Acc[LR] -= (int16)P[MiddleLR];
-		Acc[FB] -= (int16)P[MiddleFB];
-		Acc[DU] -= (int16)P[MiddleDU];
+		NewAcc[LR] -= (int16)P[MiddleLR];
+		NewAcc[FB] -= (int16)P[MiddleFB];
+		NewAcc[DU] -= (int16)P[MiddleDU];
+
+		Acc[LR] = AccFilter(Acc[LR], NewAcc[LR]);
+		Acc[FB] = AccFilter(Acc[FB], NewAcc[FB]);
+		Acc[DU] = AccFilter(Acc[DU], NewAcc[DU]);
 		
 		// Roll
 	

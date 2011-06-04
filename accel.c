@@ -133,7 +133,7 @@ void AccelerometerTest(void)
 	InitAccelerometers();
 	if( F.AccelerationsValid )
 	{
-		ReadAccelerations();
+		ReadAccelerations(false);
 	
 		TxString("\tL->R: \t");
 		TxVal32((int32)Ax.i16, 0, 0);
