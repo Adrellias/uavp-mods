@@ -49,6 +49,11 @@ int16 YawIntLimit256;
 
 int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
+#ifdef OLD_CONTROL
+int16 ControlRollP, ControlPitchP;
+int16 RollIntLimit256, PitchIntLimit256;
+#endif // OLD_CONTROL
+
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 
 int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
@@ -164,6 +169,28 @@ void AltitudeHold()
 
 } // AltitudeHold
 
+#ifdef OLD_CONTROL
+
+void LimitRollAngle(void)
+{
+	// Caution: Angle[Roll] is positive left which is the opposite sense to the roll angle
+	Angle[Roll] += Rate[Roll];
+	Angle[Roll] = Limit1(Angle[Roll], RollIntLimit256);
+	Angle[Roll] = Decay1(Angle[Roll]);			// damps to zero even if still rolled
+	Angle[Roll] += IntCorr[LR];				// last for accelerometer compensation
+} // LimitRollAngle
+
+void LimitPitchAngle(void)
+{
+	// Caution: Angle[Pitch] is positive down which is the opposite sense to the pitch angle
+	Angle[Pitch] += Rate[Pitch];
+	Angle[Pitch] = Limit1(Angle[Pitch], PitchIntLimit256);
+	Angle[Pitch] = Decay1(Angle[Pitch]); 
+	Angle[Pitch] += IntCorr[FB];
+} // LimitPitchAngle
+
+#else
+
 void DoAttitudeAngle(uint8 a, uint8 c)
 {	// Caution: Angles are the opposite to the normal aircraft coordinate conventions
 
@@ -181,6 +208,8 @@ void DoAttitudeAngle(uint8 a, uint8 c)
 	Angle[a] = Temp;
 
 } // DoAttitudeAngle
+
+#endif // OLD_CONTROL
 
 void DoYawRate(void)
 { 	// Yaw gyro compensation using compass
@@ -317,6 +346,40 @@ void DoControl(void)
 	 
     #else
 
+	#ifdef OLD_CONTROL
+
+	GainSchedule();
+
+	// Roll
+				
+	LimitRollAngle();
+
+	Rl  = SRS16(Rate[Roll] * P[RollKp] + (Ratep[Roll]-Rate[Roll]) * P[RollKd], 5);
+	Rl += SRS16(Angle[Roll] * (int16)P[RollKi], 9); 
+	Rl -= NavCorr[Roll];
+
+	Rl = SRS32((int32)Rl * GS, 8);
+
+	Rl -= ControlRoll;
+	ControlRollP = ControlRoll;
+	Ratep[Roll] = Rate[Roll];
+
+	// Pitch
+
+	LimitPitchAngle();
+
+	Pl  = SRS16(Rate[Pitch] * P[PitchKp] + (Ratep[Pitch]-Rate[Pitch]) * P[PitchKd], 5);
+	Pl += SRS16(Angle[Pitch] * (int16)P[PitchKi], 9);
+	Pl -= NavCorr[Pitch];
+
+	Pl = SRS32((int32)Pl * GS, 8);
+
+	Pl -= ControlPitch;
+	ControlPitchP = ControlPitch;
+	Ratep[Pitch] = Rate[Pitch];
+
+	#else
+
 	GainSchedule();
 
 	// Roll
@@ -348,6 +411,8 @@ void DoControl(void)
 	Pl -= ( ControlPitch + NavCorr[Pitch]);
 
 	Ratep[Pitch] = Rate[Pitch];
+
+	#endif // OLD_CONTROL
 
 	// Yaw - rate control
 

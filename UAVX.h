@@ -1,5 +1,7 @@
 #define NEW_YAW
 
+#define OLD_CONTROL
+
 //#define JIM_MPX_INVERT
 //#define THREE_DOF		// ITG3200 ONLY
 
@@ -806,6 +808,11 @@ extern int16 YawIntLimit256;
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
+#ifdef OLD_CONTROL
+extern int16 ControlRollP, ControlPitchP;
+extern int16 RollIntLimit256, PitchIntLimit256;
+#endif // OLD_CONTROL
+
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep; 
 extern int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
@@ -1187,7 +1194,7 @@ enum Params { // MAX 64
 	YawLimit,			// 14
 	YawIntLimit,		// 15
 	ConfigBits,			// 16
-	unused17,			// 17 was TimeSlots
+	RxThrottleCh,		// 17 was TimeSlots
 	LowVoltThres,		// 18
 	CamRollKp,			// 19
 	PercentCruiseThr,	// 20 
@@ -1210,28 +1217,29 @@ enum Params { // MAX 64
 	DesGyroType,		// 35
 	ESCType,			// 36
 	TxRxType,			// 37
-	NeutralRadius,		// 38
+	RxRollCh,			// 38
 	PercentNavSens6Ch,	// 39
 	CamRollTrim,		// 40
 	NavKd,				// 41
-	unused42,			// 42
-	HorizDampDecay,		// 43
+	RxPitchCh,			// 42
+	RxYawCh,			// 43
 	BaroScale,			// 44
 	TelemetryType,		// 45
 	MaxDescentRateDmpS,	// 46
 	DescentDelayS,		// 47
 	NavIntLimit,		// 48
 	AltIntLimit,		// 49
-	unused50,			// 50 was GravComp
-	unused51,			// 51 was CompSteps
+	RxGearCh,			// 50 was GravComp
+	RxAux1Ch,			// 51 was CompSteps
 	ServoSense,			// 52
 	CompassOffsetQtr,	// 53
 	BatteryCapacity,	// 54
-	unused55,			// 55 was GyroYawType
-	unused56,			// 56 was AltKd
+	RxAux2Ch,				// 55 was GyroYawType
+	RxAux3Ch,				// 56 was AltKd
 	Orient,				// 57
 	NavYawLimit,		// 58
-	Balance				// 59
+	Balance,			// 59
+	RxAux4Ch
 	
 	// 60 - 64 unused currently
 	};
@@ -1260,6 +1268,10 @@ enum Params { // MAX 64
 #define	UsePolarMask		0x40
 
 // bit 7 unusable in UAVPSet
+
+// In Servo Sense Byte
+#define Polarity 			6
+#define	PPMPolarityMask		0x40
 
 extern const int8 DefaultParams[MAX_PARAMETERS][2];
 extern const uint8 ESCLimits [];
@@ -1294,9 +1306,8 @@ extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void CheckThrottleMoved(void);
 
-extern const boolean PPMPosPolarity[];
-extern uint8 RMap[];
-extern const uint8 Map[CustomTxRx+1][CONTROLS];
+extern int8 Map[];
+extern boolean PPMPosPolarity;
 extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;

@@ -27,66 +27,9 @@ void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
 
-const uint8 Map[CustomTxRx+1][CONTROLS] = {
-	{ 2,0,1,3,4,5,6 }, 	// Futaba Thr 3 Throttle
-	{ 1,0,3,2,4,5,6 },	// Futaba Thr 2 Throttle
-	{ 4,2,1,0,5,3,6 },	// Futaba 9C Spektrum DM8/AR7000
-	{ 0,1,2,3,4,5,6 },	// JR XP8103/PPM
-	{ 6,0,3,5,2,4,1 },	// JR 9XII Spektrum DM9 ?
+int8 Map[CONTROLS] = {0,1,2,3,4,5,6};
+boolean PPMPosPolarity;
 
-	{ 5,0,3,6,2,1,4 },	// JR DXS12 
-	{ 5,0,3,6,2,1,4 },	// Spektrum DX7/AR7000
-	{ 4,0,3,5,2,1,6 },	// Spektrum DX7/AR6200
-
-	{ 2,0,1,3,4,6,5 }, 	// Futaba Thr 3 Sw 6/7
-	{ 0,1,2,3,4,5,6 },	// Spektrum DX7/AR6000
-	{ 0,1,2,3,4,5,6 },	// Graupner MX16S
-	{ 4,0,2,3,1,5,6 },	// Spektrum DX6i/AR6200
-	{ 2,0,1,3,4,5,6 },	// Futaba Th 3/R617FS
-	{ 4,0,2,3,5,1,6 },	// Spektrum DX7a/AR7000
-	{ 2,0,1,3,4,6,5 }, 	// External decoder (Futaba Thr 3 6/7 swap)
-	{ 0,1,2,3,4,5,6 },	// FrSky DJT/D8R-SP
-	{ 5,0,3,6,2,1,4 },	// UNDEFINED Spektrum DX7/AR7000
-	{ 2,0,1,3,4,5,6 }	// Custom
-//{ 4,0,2,1,3,5,6 }	// Custom
-	};
-
-// Rx signalling polarity used only for serial PPM frames usually
-// by tapping internal Rx circuitry.
-const boolean PPMPosPolarity[CustomTxRx+1] =
-	{
-		false, 	// Futaba Ch3 Throttle
-		false,	// Futaba Ch2 Throttle
-		true,	// Futaba 9C Spektrum DM8/AR7000
-		true,	// JR XP8103/PPM
-		true,	// JR 9XII Spektrum DM9/AR7000
-
-		true,	// JR DXS12
-		true,	// Spektrum DX7/AR7000
-		true,	// Spektrum DX7/AR6200
-		false,	// Futaba Thr 3 Sw 6/7
-		true,	// Spektrum DX7/AR6000
-		true,	// Graupner MX16S
-		true,	// Graupner DX6i/AR6200
-		true,	// Futaba Thr 3/R617FS
-		true, 	// Spektrum DX7a/AR7000
-		false, 	// External decoder (Futaba Ch3 Throttle)
-		true,	// FrSky DJT/D8R-SP
-		true,	// UNKNOWN using Spektrum DX7/AR7000
-		true	// custom Tx/Rx combination
-	};
-
-// Reference Internal Quadrocopter Channel Order
-// 0 Throttle
-// 1 Aileron
-// 2 Elevator
-// 3 Rudder
-// 4 Gear
-// 5 Aux1
-// 6 Aux2
-
-
-uint8 RMap[CONTROLS];
 int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
 int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
@@ -95,9 +38,9 @@ int16 ThrLow, ThrHigh, ThrNeutral;
 void DoRxPolarity(void)
 {
 	if ( F.UsingSerialPPM  ) // serial PPM frame from within an Rx
-		CCP1CONbits.CCP1M0 = PPMPosPolarity[P[TxRxType]];
+		CCP1CONbits.CCP1M0 = PPMPosPolarity;
 	else
-		CCP1CONbits.CCP1M0 = 1;	
+		CCP1CONbits.CCP1M0 = true;	
 }  // DoRxPolarity
 
 void InitRC(void)
@@ -134,7 +77,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 	for (c = 0 ; c < RC_CONTROLS ; c++) 
 	{
-		i = Map[P[TxRxType]][c];
+		i = Map[c];
 		#ifdef CLOCK_16MHZ
 			Temp = PPM[i].b0; // clip to bottom byte 0..255
 		#else // CLOCK_40MHZ

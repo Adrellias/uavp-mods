@@ -79,7 +79,7 @@ void ShowPrompt(void)
 void ShowRxSetup(void)
 {
 	if ( F.UsingSerialPPM )
-		if ( PPMPosPolarity[P[TxRxType]] )
+		if ( PPMPosPolarity )
 			TxString("Serial PPM frame (Pos. Polarity)");
 		else
 			TxString("Serial PPM frame (Neg. Polarity)");
@@ -167,57 +167,8 @@ void ShowSetup(boolean h)
 	}	
 	TxNextLine();
 	
-	#ifdef RX6CH
-		TxString("6 CH - 5 ACTIVE CHANNELS\r\n");
-	#endif // RX6CH
-
-	#ifndef CLOCK_40MHZ
-
 	TxString("Tx/Rx: ");
-	
-	switch ( P[TxRxType] ) {
-		case FutabaCh3: TxString("Futaba Th 3 {"); break;
-		case FutabaCh2: TxString("Futaba Th 2 {"); break;
-		case FutabaDM8:TxString("Futaba DM8 & AR7000 {"); break; 
-		case JRPPM: TxString("JR PPM {"); break; 
-		case JRDM9: TxString("JR DM9 & AR7000{"); break; 
-		case JRDXS12: TxString("JR DSX12 & AR7000 {"); break; 
-		case DX7AR7000: TxString("Spektrum DX7 & AR7000 {"); break;
-		case DX7AR6200: TxString("Spektrum DX7 & AR6200 {"); break;
-		case CustomTxRx: TxString("Custom {"); break;
-		case FutabaCh3_6_7: TxString("Futaba Th 2 Swap 6&7 {"); break;
-		case DX7AR6000:TxString("Spektrum DX7 & AR6000 {"); break;
-		case DX6iAR6200: TxString("Spektrum DX6i & AR6200 {"); break;
-		case FutabaCh3_R617FS: TxString("Futaba Th 3 & R617FS {"); break; 
-		case GraupnerMX16s: TxString("Graupner MX16s {"); break;
-		case DX7aAR7000: TxString("Spektrum DX7a & AR7000 {"); break;
-		case FrSkyDJT_D8R: TxString("FrSky DJT & D8R-SP Composite {"); break;
-		case ExternalDecoder: TxString("External Decoder {"); break;
-		case UnknownTxRx: TxString("UNKNOWN {"); break;
-		default: ;
-	} // switch
-
-	#endif // CLOCK_40MHZ
-	
-	if ( F.UsingSerialPPM )
-		ShowRxSetup();
-	else
-		if ( P[TxRxType] != UnknownTxRx )	
-		{	
-			for ( i = 0; i < RC_CONTROLS; i++)
-				TxChar(RxChMnem[RMap[i]]);
-			
-			TxString("} connect {");
-			
-			for ( i = 0; i < RC_CONTROLS; i+=2)
-			{
-				TxChar(RxChMnem[RMap[i]]);
-				TxChar(' ');
-			}
-		}
-	TxChar('}');
-	if (( P[TxRxType] == DX7AR6200 ) || ( P[TxRxType] == DX6iAR6200))
-		TxString(" Mix Rudder to Aux1/Flaps ");
+	ShowRxSetup();
 	if ( F.UsingTxMode2 )
 		TxString(" Tx Mode 2");
 	else
@@ -252,6 +203,10 @@ void ShowSetup(boolean h)
 	#ifdef TESTING
 		TxString("\tTEST VERSION - No Motors\r\n");
 	#endif // TESTING
+
+	#ifdef RX6CH
+		TxString("6 CH - 5 ACTIVE CHANNELS\r\n");
+	#endif // RX6CH
 
 	if ( !F.ParametersValid )
 		TxString("\tINVALID flight parameters (PID)!\r\n");

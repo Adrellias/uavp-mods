@@ -90,15 +90,27 @@ void ReadParametersEE(void)
 			b >>=1;
 		}
 
+		PPMPosPolarity = (P[ServoSense] & PPMPolarityMask) == 0;
+
 		F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
 		F.UsingPolarCoordinates = ( (P[ConfigBits] & UsePolarMask ) != 0);
 
-		for ( i = 0; i < CONTROLS; i++) // make reverse map
-			RMap[Map[P[TxRxType]][i]] = i;
+		Map[ThrottleRC] = P[RxThrottleCh]-1;
+		Map[RollRC] = P[RxRollCh]-1;
+		Map[PitchRC] = P[RxPitchCh]-1;
+		Map[YawRC] = P[RxYawCh]-1;
+		Map[RTHRC] = P[RxGearCh]-1;
+		Map[CamPitchRC] = P[RxAux1Ch]-1;
+		Map[NavGainRC] = P[RxAux2Ch]-1;
 	
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
+
+		#ifdef OLD_CONTROL
+		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
+		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
+		#endif // OLD_CONTROL
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
