@@ -29,12 +29,13 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
+#define DEBUG_GYROS	
+
 #ifndef BATCHMODE
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING
-	#define DEBUG_GYROS						
+	#define TESTING					
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
