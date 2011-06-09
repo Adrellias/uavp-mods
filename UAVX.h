@@ -2,6 +2,9 @@
 
 #define OLD_CONTROL
 
+
+#define DEBUG_GYROS	
+
 //#define JIM_MPX_INVERT
 //#define THREE_DOF		// ITG3200 ONLY
 
@@ -29,13 +32,12 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-#define DEBUG_GYROS	
 
 #ifndef BATCHMODE
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	#define TESTING					
+	//#define TESTING					
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -101,12 +103,7 @@
 
 // Filters
 
-#define	FILT_ROLL_PITCH_HZ				100		// Hz Roll and Pitch PID loops 125-200Hz	
-#define	FILT_BATT_HZ				5
-
-#define FILT_YAW_HZ				10		// Hz must be less than 10Hz
-
-#define GPS_INC_GROUNDSPEED					// GPS groundspeed is not used for flight but may be of interest
+#define FILT_YAW_HZ					10		// Hz must be less than 10Hz
 
 // Timeouts and Update Intervals
 
@@ -114,11 +111,11 @@
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
-	#define RESCALE_TO_ACC 			36		// (256/7.16)
+	#define RESCALE_TO_ACC 			51		// 256/5   36		// (256/7.16)
 	#define ANGLE_LIMIT				((7*1024*4)/5)	
 #else
 	#define PID_CYCLE_MS			5 		// mS @ 200Hz
-	#define RESCALE_TO_ACC 			22		// (256/11.46)
+	#define RESCALE_TO_ACC 			30		//22		// (256/11.46)
 	#define ANGLE_LIMIT				((11*1024*4)/5)
 #endif // CLOCK_16MHZ
 
@@ -891,6 +888,8 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 
 // gyro.c
 
+extern int16 Grav[], Dyn[]; // zzz
+
 extern void AdaptiveYawFilterA(void);
 extern void ShowGyroType(void);
 extern void CompensateRollPitchGyros(void);
@@ -919,7 +918,7 @@ extern int8 GyroType;
 
 // irq.c
 
-#define CONTROLS 			7
+#define CONTROLS 			9
 #define MAX_CONTROLS 		12 	// maximum Rx channels
 
 #define RxFilter			MediumFilterU
@@ -955,7 +954,7 @@ extern int8 GyroType;
 #ifdef RX6CH 
 	#define RC_CONTROLS 5			
 #else
-	#define RC_CONTROLS CONTROLS
+	#define RC_CONTROLS 7 // CONTROLS
 #endif //RX6CH
 
 extern void SyncToTimer0AndDisableInterrupts(void);
@@ -1172,7 +1171,7 @@ enum TxRxTypes {
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
-enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC}; 
+enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };

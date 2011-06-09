@@ -23,12 +23,20 @@
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
 	{0,0},				// was HorizDampKp,	04
+#ifdef OLD_CONTROL
+	{4,0},	 			// RollIntLimit,	05
+#else
 	{15,0},	 			// RollIntLimit,	05
+#endif
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
 	{8,0},	 			// AltKp,			09
+#ifdef OLD_CONTROL
+	{4,0},	 			// PitchIntLimit,	10
+#else
 	{15,0},	 			// PitchIntLimit,	10
+#endif
 	
 	{-30,0},	 		// YawKp, 			11
 	{-25,0},	 		// YawKi,			12
@@ -59,7 +67,7 @@
 	{0,true},			// NavMagVar,		34c
 	{LY530Gyro,true}, 	// DesGyroType,     35c
 	{ESCPPM,true}, 		// ESCType,			36c
-	{UnknownTxRx,true}, // TxRxType			37c
+	{0,true}, 			// was TxRxType		37c
 	{2,true},			// RxRollCh was NeutralRadius	38
 	{30,true},			// PercentNavSens6Ch	39c
 	{1,true},			// CamRollTrim,		40c
