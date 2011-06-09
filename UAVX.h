@@ -1,6 +1,6 @@
 #define NEW_YAW
 
-#define OLD_CONTROL
+//#define OLD_CONTROL
 
 
 #define DEBUG_GYROS	
