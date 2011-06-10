@@ -199,7 +199,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	#ifndef TESTING // not used for testing - make space!
 
-	static int16 SinHeading, CosHeading;
+	static int16 SinHeading, CosHeading, NavKp;
     static int24 Radius;
 	static int24 AltE;
 	static int32 EastDiff, NorthDiff;
@@ -246,10 +246,15 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	
 			SinHeading = int16sin(RelHeading);
 			CosHeading = int16cos(RelHeading);
-			
-			Temp32.i32 = SinHeading * NAV_MAX_ROLL_PITCH; 
+
+		//	NavKp = NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius) / NavProximityRadius*2;
+			// assume closing radius is 15M * 54 ~= say 512
+			NavKp = SRS32((int32)NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius), 9);		
+			NavKp = Limit(NavKp, 0, NAV_MAX_ROLL_PITCH);
+
+			Temp32.i32 = SinHeading * NavKp; 
 			NavE[Roll] = Temp32.i3_1;
-			Temp32.i32 = CosHeading * NAV_MAX_ROLL_PITCH;
+			Temp32.i32 = CosHeading * NavKp;
 			NavE[Pitch] = -Temp32.i3_1;
 			
 			// Roll & Pitch

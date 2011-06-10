@@ -38,7 +38,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING					
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
