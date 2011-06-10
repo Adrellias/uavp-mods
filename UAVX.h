@@ -1180,7 +1180,7 @@ enum Params { // MAX 64
 	RollKp, 			// 01
 	RollKi,				// 02
 	RollKd,				// 03
-	HorizDampKp,		// 04
+	NeutralRadius,		// 04 was HorizDampKp
 	RollIntLimit,		// 05
 	PitchKp,			// 06
 	PitchKi,			// 07

@@ -22,7 +22,7 @@
 	{-20,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
-	{0,0},				// was HorizDampKp,	04
+	{2,0},				// NeutralRadius was HorizDampKp,	04
 	{25,0},	 			// RollIntLimit,	05
 	{-20,0},	 		// PitchKp,			06
 	{-12,0},	 		// PitchKi,			07

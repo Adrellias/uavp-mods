@@ -116,6 +116,8 @@ void ReadParametersEE(void)
 	 
 		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 100); 
 		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(5*10); // assumes 5 GPS updates/sec
+		NavNeutralRadius = Limit(P[NeutralRadius], 0, 5);
+		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius);
 
 		#ifdef RX6CH
 			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;

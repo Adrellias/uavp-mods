@@ -247,7 +247,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			SinHeading = int16sin(RelHeading);
 			CosHeading = int16cos(RelHeading);
 
-		//	NavKp = NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius) / NavProximityRadius*2;
+			//	NavKp = NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius) / NavProximityRadius*2;
 			// assume closing radius is 15M * 54 ~= say 512
 			NavKp = SRS32((int32)NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius), 9);		
 			NavKp = Limit(NavKp, 0, NAV_MAX_ROLL_PITCH);

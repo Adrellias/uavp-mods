@@ -22,7 +22,7 @@
 	{-20,0},			// RollKp, 			01
 	{-12,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
-	{0,0},				// was HorizDampKp,	04
+	{2,0},				// NeutralRadius was HorizDampKp,	04
 #ifdef OLD_CONTROL
 	{4,0},	 			// RollIntLimit,	05
 #else
