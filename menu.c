@@ -196,6 +196,13 @@ void ShowSetup(boolean h)
 		TxString("\tManual Nav Alt Hold CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
+
+	#ifdef OLD_CONTROL
+		TxString("OLD V1 CONTROL SCHEME\r\n");
+	#else
+		TxString("NEW V2 CONTROL SCHEME\r\n");
+	#endif // OLD_CONTROL
+
 	if ( !F.FailsafesEnabled )
 		TxString("\tYOU have chosen to DISABLE Failsafes\r\n");
 	if ( P[TxRxType] == UnknownTxRx )
