@@ -1,12 +1,7 @@
-#define NEW_YAW
 
-//#define OLD_CONTROL
-
-
-#define DEBUG_GYROS	
+#define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
 
 //#define JIM_MPX_INVERT
-//#define THREE_DOF		// ITG3200 ONLY
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -805,11 +800,6 @@ extern int16 HoldYaw;
 extern int16 YawIntLimit256;
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
-
-#ifdef OLD_CONTROL
-extern int16 ControlRollP, ControlPitchP;
-extern int16 RollIntLimit256, PitchIntLimit256;
-#endif // OLD_CONTROL
 
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep; 

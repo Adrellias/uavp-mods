@@ -84,10 +84,10 @@ void CalculateGyroRates(void)
 		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
 	case ITG3200Gyro:// ITG3200
-	case ITG3200DOF9: // 9DOF Sensor Stick
-		RollT.i24 = (int24)Rate[Roll] * 18;
-		PitchT.i24 = (int24)Rate[Pitch] * 18;
-		YawT.i24 = (int24)Rate[Yaw] * 9;
+	case ITG3200DOF9: // 9DOF Sensor Stick 73/45
+		RollT.i24 = (int24)Rate[Roll] * 11; // 18
+		PitchT.i24 = (int24)Rate[Pitch] * 11;
+		YawT.i24 = (int24)Rate[Yaw] * 5;
 		break;
 	case IRSensors:// IR Sensors - NOT IMPLEMENTED IN PIC VERSION
 		RollT.i24 = PitchT.i24 = YawT.i24 = 0;
@@ -99,10 +99,6 @@ void CalculateGyroRates(void)
 		break;
 	default:;
 	} // GyroType
-
-	Rate[Roll] += 128;
-	Rate[Pitch] += 128;
-	Rate[Yaw] += 128;
 
 	Rate[Roll] = RollT.i2_1;
 	Rate[Pitch] = PitchT.i2_1;
@@ -199,19 +195,18 @@ void GyroTest(void)
 } // GyroTest
 #endif // TESTING
 
+ int16 Grav[2], Dyn[2]; // zzz
+
 void CompensateRollPitchGyros(void)
 {
 
-	#define AccFilter HardFilter // NoFilter
-
-	static i32u Temp;
-
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
-
 	#define ANGLE_COMP_STEP 6 //25
 
-	static int16 Grav[2], Dyn[2];
+	#define AccFilter HardFilter // NoFilter
+
 	static int16 NewAcc[3];
+	static i32u Temp;
 
 	if( F.AccelerationsValid ) 
 	{
@@ -234,7 +229,7 @@ void CompensateRollPitchGyros(void)
 		
 		// Roll
 	
-		Temp.i32 = -(int32)Angle[Roll] * RESCALE_TO_ACC; // avoid shift
+		Temp.i32 = -(int32)Angle[Roll] * RESCALE_TO_ACC; // avoid shift  32/256 = 0.125 @ 16MHz
 		Grav[LR] = Temp.i3_1;
 		Dyn[LR] = 0; //Rate[Roll];
 	
@@ -246,7 +241,7 @@ void CompensateRollPitchGyros(void)
 		Temp.i32 = -(int32)Angle[Pitch] * RESCALE_TO_ACC; // avoid shift
 		Grav[FB] = Temp.i3_1;
 		Dyn[FB] = 0; // Rate[Pitch];
-	
+
 		IntCorr[FB] = SRS16(Acc[FB] + Grav[FB] + Dyn[FB], 3); 
 		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP);
 	}	

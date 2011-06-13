@@ -20,26 +20,19 @@
 	
 	const int8 DefaultParams[MAX_PARAMETERS][2] = {
 	{-20,0},			// RollKp, 			01
-	{-12,0},	 		// RollKi,			02
+	{-10,0},	 		// RollKi,			02
 	{50, 0},			// RollKd,			03
 	{2,0},				// NeutralRadius was HorizDampKp,	04
-#ifdef OLD_CONTROL
-	{4,0},	 			// RollIntLimit,	05
-#else
-	{15,0},	 			// RollIntLimit,	05
-#endif
+	{6,0},	 			// RollIntLimit,	05
+
 	{-20,0},	 		// PitchKp,			06
-	{-12,0},	 		// PitchKi,			07
+	{-10,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
 	{8,0},	 			// AltKp,			09
-#ifdef OLD_CONTROL
-	{4,0},	 			// PitchIntLimit,	10
-#else
-	{15,0},	 			// PitchIntLimit,	10
-#endif
+	{6,0},	 			// PitchIntLimit,	10
 	
-	{-30,0},	 		// YawKp, 			11
-	{-25,0},	 		// YawKi,			12
+	{-25,0},	 		// YawKp, 			11
+	{-35,0},	 		// YawKi,			12
 	{0,0},	 			// was YawKd,		13
 
 	{50,0},	 			// YawLimit,		14
