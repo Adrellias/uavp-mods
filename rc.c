@@ -56,7 +56,7 @@ void InitRC(void)
 	SignalCount = -RC_GOOD_BUCKET_MAX;
 	F.Signal = F.RCNewValues = false;
 	
-	for (c = 0; c < RC_CONTROLS; c++)
+	for (c = 0; c < CONTROLS; c++)
 	{
 		PPM[c].i16 = 0;
 		RC[c] = RCp[c] = 0;

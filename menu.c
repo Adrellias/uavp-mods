@@ -198,9 +198,9 @@ void ShowSetup(boolean h)
 	TxString("\r\nALARM (if any):\r\n");
 
 	#ifdef OLD_CONTROL
-		TxString("OLD V1 CONTROL SCHEME\r\n");
+		TxString("\tOLD V1 CONTROL SCHEME\r\n");
 	#else
-		TxString("NEW V2 CONTROL SCHEME\r\n");
+		TxString("\tNEW V2 CONTROL SCHEME\r\n");
 	#endif // OLD_CONTROL
 
 	if ( !F.FailsafesEnabled )
@@ -354,6 +354,8 @@ void ProcessCommand(void)
 				TxString(",5:");TxValU(ToPercent(RC[RTHRC], RC_MAXIMUM));
 				TxString(",6:");TxValS(ToPercent(((RC[CamPitchRC] - RC_NEUTRAL) * 2L), RC_MAXIMUM));
 				TxString(",7:");TxValU(ToPercent(RC[NavGainRC], RC_MAXIMUM));
+				TxString(",8:");TxValU(ToPercent(RC[Ch8RC], RC_MAXIMUM));
+				TxString(",9:");TxValU(ToPercent(RC[Ch9RC], RC_MAXIMUM));
 				ShowPrompt();
 				break;
 			case 'S' :	// show status

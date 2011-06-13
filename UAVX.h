@@ -1,4 +1,4 @@
-//#define OLD_CONTROL
+#define OLD_CONTROL
 
 #define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
 
@@ -34,7 +34,7 @@
 	//#define RX6CH
 	//#define EXPERIMENTAL
 	//#define TESTING					
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
