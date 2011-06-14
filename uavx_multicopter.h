@@ -28,7 +28,7 @@
 	{-20,0},	 		// PitchKp,			06
 	{-10,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
-	{8,0},	 			// AltKp,			09
+	{3,0},	 			// AltKp,			09 // was 8
 	{6,0},	 			// PitchIntLimit,	10
 	
 	{-25,0},	 		// YawKp, 			11
@@ -43,14 +43,14 @@
 	{20,true}, 			// CamRollKp,		19c
 	{45,true}, 			// PercentCruiseThr,20c 
 	
-	{7,true}, 			// BaroFilt,		21c
+	{10,true}, 			// BaroFilt,		21c // was 7
 	{0,true}, 			// MiddleDU,		22c
 	{20,true}, 			// PercentIdleThr,	23c
 	{0,true}, 			// MiddleLR,		24c
 	{0,true}, 			// MiddleFB,		25c
 	{20,true}, 			// CamPitchKp,		26c
 	{10,0}, 			// CompassKp,		27
-	{8,0},				// AltKi,			28
+	{6,0},				// AltKi,			28 // was 8
 	{10,0}, 			// NavGPSSlewdM was NavRadius,	29
 	{8,0}, 				// NavKi,			30 
 
@@ -73,7 +73,7 @@
 	{-8,0},			    // MaxDescentRateDmpS 	46
 	{30,0},				// DescentDelayS	47
 	{4,0},				// NavIntLimit		48
-	{20,0},				// AltIntLimit		49
+	{8,0},				// AltIntLimit		49
 	{5,true},			// RxGearCh was GravComp		50c
 
 	{6,true},			// RxAux1Ch was CompSteps	51

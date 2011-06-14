@@ -197,12 +197,6 @@ void ShowSetup(boolean h)
 
 	TxString("\r\nALARM (if any):\r\n");
 
-	#ifdef OLD_CONTROL
-		TxString("\tOLD V1 CONTROL SCHEME\r\n");
-	#else
-		TxString("\tNEW V2 CONTROL SCHEME\r\n");
-	#endif // OLD_CONTROL
-
 	if ( !F.FailsafesEnabled )
 		TxString("\tYOU have chosen to DISABLE Failsafes\r\n");
 	if ( P[TxRxType] == UnknownTxRx )

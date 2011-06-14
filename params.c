@@ -107,10 +107,6 @@ void ReadParametersEE(void)
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
 
-		#ifdef OLD_CONTROL
-		RollIntLimit256 = (int16)P[RollIntLimit] * 256L;
-		PitchIntLimit256 = (int16)P[PitchIntLimit] * 256L;
-		#endif // OLD_CONTROL
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
 		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 100); 

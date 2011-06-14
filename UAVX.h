@@ -1,6 +1,5 @@
-#define OLD_CONTROL
 
-#define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
+//#define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
 
 //#define JIM_MPX_INVERT
 
@@ -799,11 +798,6 @@ extern int16 Ylp;
 extern int16 YawRateIntE;
 extern int16 HoldYaw;
 extern int16 YawIntLimit256;
-
-#ifdef OLD_CONTROL
-extern int16 ControlRollP, ControlPitchP;
-extern int16 RollIntLimit256, PitchIntLimit256;
-#endif // OLD_CONTROL
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
