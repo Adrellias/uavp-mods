@@ -394,12 +394,11 @@ void ParseGPSSentence(void)
 		{
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
-			if (( Abs(GPSLatitudeP - GPSLatitude) > NavGPSSlew ) ||
-				 ( Abs(GPSLongitudeP - GPSLongitude) > NavGPSSlew ))
-				Stats[BadS]++;
-
 			if ( F.NearLevel ) // got to filtered GPS
 			{
+				if (( Abs(GPSLatitudeP - GPSLatitude) > NavGPSSlew ) ||
+				 ( Abs(GPSLongitudeP - GPSLongitude) > NavGPSSlew ))
+						Stats[BadS]++;
 				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
 				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
 			}

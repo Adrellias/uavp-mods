@@ -1,4 +1,5 @@
 
+
 //#define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
 
 //#define JIM_MPX_INVERT
@@ -32,8 +33,9 @@
 	//#define USE_ARDU
 	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING					
-	//#define SIMULATE
+	//#define TESTING
+	#define FORCE_NAV					
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -166,7 +168,8 @@
 #define	ALT_UPDATE_HZ				20L		// Hz
 #define FILT_ALT_HZ					(ALT_UPDATE_HZ/2)
 
-#define BARO_MAX_CHANGE_CMPS		500L	// centimetres/Sec maximum sensor change later scaled to read rate 
+#define BARO_SLEW_LIMIT_CMPS		1500L	//500L	// cm/S  
+#define BARO_SANITY_CHANGE_CMPS		3000L	//500L	// cm/S 
 #define BARO_UPDATE_MS				(1000/ALT_UPDATE_HZ)	
 
 // Navigation
@@ -680,8 +683,9 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 // baro.c
 
-#define MPX4115_BARO_SANITY_CHECK_CM	((BARO_MAX_CHANGE_CMPS*PID_CYCLE_MS)/1000L)
-#define BOSCH_BARO_SANITY_CHECK_CM		((BARO_MAX_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
+#define BARO_SANITY_CHECK_CM	((BARO_SANITY_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
+#define BARO_SLEW_LIMIT_CM		((BARO_SLEW_LIMIT_CMPS*BARO_UPDATE_MS)/1000L)
+
 #define BARO_INIT_RETRIES	10	// max number of initialisation retries
 
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
@@ -803,7 +807,7 @@ extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
 extern int16 AttitudeHoldResetCount;
 extern int24 DesiredAltitude, Altitude, Altitudep; 
-extern int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
+extern int16 AccAltComp, AltComp, BaroROC, BaroROCp, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
 
 extern int32 GS;
 

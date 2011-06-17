@@ -189,7 +189,11 @@ void UpdateControls(void)
 			F.AllowTurnToWP = SaveAllowTurnToWP;
 	else
 		if ( RC[RTHRC] > ((2L*RC_MAXIMUM)/3L) )
-			F.ReturnHome = true;
+			#ifdef FORCE_NAV
+				F.Navigate = true;
+			#else
+				F.ReturnHome = true;
+			#endif // FORCE_NAV
 		else
 			if ( RC[RTHRC] > (RC_NEUTRAL/3L) )
 				F.Navigate = true;

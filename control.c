@@ -51,7 +51,7 @@ int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 
-int16 AccAltComp, AltComp, BaroROC, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
+int16 AccAltComp, AltComp, BaroROC, BaroROCp, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
 
 int32 GS;
 
@@ -70,27 +70,20 @@ void DoAltitudeHold(void)
 	if ( (--BeepTick <= 0) && !F.BeeperInUse ) 
 		Beeper_TOG;
 	#endif
-
-	if ( F.NearLevel )
-	{
 					
-		AltE = DesiredAltitude - Altitude;
+	AltE = DesiredAltitude - Altitude;
 		
-		DesiredROC = Limit(AltE, MinROCCmpS, ALT_MAX_ROC_CMPS);
+	DesiredROC = Limit(AltE, MinROCCmpS, ALT_MAX_ROC_CMPS);
 		
-		ROCE = DesiredROC - ROC;		
-		pROC = ROCE * (int16)P[AltKp]; 
+	ROCE = DesiredROC - ROC;		
+	pROC = ROCE * (int16)P[AltKp]; 
 		
-		ROCIntE += ROCE  * (int16)P[AltKi];
-		ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
-	    iROC = ROCIntE;
+	ROCIntE += ROCE  * (int16)P[AltKi];
+	ROCIntE = Limit1(ROCIntE, (int16)P[AltIntLimit]);
+	iROC = ROCIntE;
 				
-		NewAltComp = SRS16(pROC + iROC, 6);
-		AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
-
-	}
-	else
-		AltComp = DecayX(AltComp, 1);
+	NewAltComp = SRS16(pROC + iROC, 6);
+	AltComp = Limit1(NewAltComp, ALT_MAX_THR_COMP);
 					
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (BeepTick <= 0) && !F.BeeperInUse) 
@@ -135,12 +128,14 @@ void AltitudeHold()
 			else
 				if ( F.ThrottleMoving )
 				{
+					#ifndef SIMULATE
 					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) 
 					{
 						NewCruiseThrottle = DesiredThrottle + AltComp;
 						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
 						CruiseThrottle = Limit(CruiseThrottle , IdleThrottle, THROTTLE_MAX_CRUISE );
 					}
+					#endif // !SIMULATE
 					ROCIntE = 0;
 					F.HoldingAlt = false;
 					SetDesiredAltitude(Altitude);
@@ -149,7 +144,7 @@ void AltitudeHold()
 				else
 				{ // throttle is not moving therefore we are hovering!
 					F.HoldingAlt = true;
-					DoAltitudeHold(); // not using cruise throttle
+					DoAltitudeHold(); 
 				}
 		}	
 	}
