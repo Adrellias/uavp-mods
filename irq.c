@@ -43,8 +43,8 @@ volatile uint24 PIDUpdate;
 
 #pragma udata access isrvars
 near volatile uint24 MilliSec;
-near i16u 	PPM[MAX_CONTROLS];
-near int8 	PPM_Index;
+near i16u 	PPM[CONTROLS];
+near int8 	PPM_Index, NoOfControls;
 near int24 	PrevEdge, CurrEdge;
 near i16u 	Width, Timer0;
 near int24 	PauseTime;
@@ -156,7 +156,7 @@ void high_isr_handler(void)
 			PauseTime = Width.i16;	
 		}
 		else 
-			if (PPM_Index < RC_CONTROLS)
+			if (PPM_Index < NoOfControls)
 			{
 				#ifdef CLOCK_16MHZ	
 					Width.i16 >>= 1; 				// Width in 4us ticks.	
@@ -176,7 +176,7 @@ void high_isr_handler(void)
 				PPM_Index++;
 				// MUST demand rock solid RC frames for autonomous functions not
 				// to be cancelled by noise-generated partially correct frames
-				if ( PPM_Index == RC_CONTROLS )
+				if ( PPM_Index == NoOfControls )
 				{
 					if ( F.RCFrameOK )
 					{

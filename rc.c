@@ -27,7 +27,7 @@ void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
 
-int8 Map[CONTROLS] = {0,1,2,3,4,5,6};
+int8 Map[CONTROLS];
 boolean PPMPosPolarity;
 
 int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
@@ -75,7 +75,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 	LastThrottle = RC[ThrottleRC];
 
-	for (c = 0 ; c < RC_CONTROLS ; c++) 
+	for (c = 0 ; c < P[RxChannels] ; c++) 
 	{
 		i = Map[c];
 		#ifdef CLOCK_16MHZ
@@ -200,14 +200,15 @@ void UpdateControls(void)
 	
 	F.Ch5Active = NewCh5Active;
 
-	#ifdef RX6CH
+	if (P[RxChannels] < 7 )
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE
-	#else
+	else
+	{
 		DesiredCamPitchTrim = RC[CamPitchRC] - RC_NEUTRAL;
 		NavSensitivity = RC[NavGainRC];
 		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
-	#endif // !RX6CH
+	}
 
 	//_________________________________________________________________________________________
 

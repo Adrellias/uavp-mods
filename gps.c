@@ -57,6 +57,7 @@ NMEAStruct NMEA;
 uint8 	GPSPacketTag;
 int32 	GPSMissionTime, GPSStartTime;
 int32 	GPSLatitude, GPSLongitude, GPSLatitudeP, GPSLongitudeP;
+int16	GPSEastDiff, GPSNorthDiff;
 int32 	OriginLatitude, OriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int32 	DesiredLatitude, DesiredLongitude;
@@ -278,7 +279,6 @@ void SetGPSOrigin(void)
 		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitudeP = GPSLatitude;
 		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitudeP = GPSLongitude;
 
-
 		GPSVel = 0;
 		
 		#ifdef SIMULATE
@@ -394,18 +394,20 @@ void ParseGPSSentence(void)
 		{
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
+			GPSNorthDiff = GPSLatitudeP - GPSLatitude;
+			GPSEastDiff = GPSLongitudeP - GPSLongitude;
+			
 			if ( F.NearLevel ) // got to filtered GPS
 			{
-				if (( Abs(GPSLatitudeP - GPSLatitude) > NavGPSSlew ) ||
-				 ( Abs(GPSLongitudeP - GPSLongitude) > NavGPSSlew ))
+				if (( Abs(GPSNorthDiff) > NavGPSSlew ) || ( Abs(GPSEastDiff) > NavGPSSlew ))
 						Stats[BadS]++;
 				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
 				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
 			}
+		
+			GPSLatitudeP = GPSLatitude;
+			GPSLongitudeP = GPSLongitude;	
 		}
-
-		GPSLatitudeP = GPSLatitude;
-		GPSLongitudeP = GPSLongitude;				
 
 		#endif // SIMULATE
 

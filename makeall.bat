@@ -24,7 +24,7 @@ rem Add/Delete required combinations to these sets
 set CLOCK=CLOCK_16MHZ CLOCK_40MHZ
 set PROC=18F2620
 set DBG=NO_DEBUG
-set RX=RX7CH RX6CH
+set RX=RX7CH
 rem set CFG=QUADROCOPTER TRICOPTER VCOPTER Y6COPTER HELICOPTER AILERON ELEVON
 rem set EXP=NO_EXP EXPERIMENTAL
 set BRD=UAVPBLACK
@@ -53,7 +53,7 @@ for %%x in (%CLOCK%) do for %%p in (%PROC%) do for %%d in (%DBG%) do for %%r in 
 
 set PROC=18F2620
 set DBG=TESTING SIMULATE 
-set RX=RX7CH RX6CH
+set RX=RX7CH
 set CFG=QUADROCOPTER
 set BRD=UAVPBLACK
 

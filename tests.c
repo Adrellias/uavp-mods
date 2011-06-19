@@ -56,7 +56,7 @@ void ReceiverTest(void)
 	TxString("\tRAW Rx frame values - neutrals NOT applied\r\n");
 
 	TxString("\tChannel order is: ");
-	for ( s = 0; s < RC_CONTROLS; s++)
+	for ( s = 0; s < NoOfControls; s++)
 		TxChar(RxChMnem[Map[s]]);
 
 	if ( F.Signal )
@@ -69,7 +69,7 @@ void ReceiverTest(void)
 	// Be wary as new RC frames are being received as this
 	// is being displayed so data may be from overlapping frames
 
-	for ( s = 0; s < RC_CONTROLS ; s++ )
+	for ( s = 0; s < NoOfControls; s++ )
 	{
 		TxChar(s+'1');
 		TxString(": ");

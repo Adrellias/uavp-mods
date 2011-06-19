@@ -31,11 +31,10 @@
 
 #ifndef BATCHMODE
 	//#define USE_ARDU
-	//#define RX6CH
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	#define FORCE_NAV					
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -206,8 +205,8 @@
 
 #define SIM_CRUISE_MPS				8		// M/S
 #define	GPS_UPDATE_HZ				5		// Hz - can obtain from GPS updates
-#define	SIM_WING_YAW_RATE_DPS		10		// Deg/S
-#define	SIM_MULTI_YAW_RATE_DPS		45		// Deg/S	
+#define	SIM_WING_YAW_RATE_DPS		30		// Deg/S
+#define	SIM_MULTI_YAW_RATE_DPS		90		// Deg/S	
 
 #define	GPS_MIN_SATELLITES			4		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
@@ -912,8 +911,7 @@ extern int8 GyroType;
 
 // irq.c
 
-#define CONTROLS 			9
-#define MAX_CONTROLS 		12 	// maximum Rx channels
+#define CONTROLS 			10
 
 #define RxFilter			MediumFilterU
 //#define RxFilter			SoftFilterU
@@ -945,12 +943,6 @@ extern int8 GyroType;
 
 #define MAX_ROLL_PITCH		RC_NEUTRAL	// Rx stick units - rely on Tx Rate/Exp
 
-#ifdef RX6CH 
-	#define RC_CONTROLS 5			
-#else
-	#define RC_CONTROLS 7 // CONTROLS
-#endif //RX6CH
-
 extern void SyncToTimer0AndDisableInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern void InitTimersAndInterrupts(void);
@@ -969,8 +961,8 @@ extern volatile uint24 mS[];
 extern volatile uint24 PIDUpdate;
 
 extern volatile near uint24 	MilliSec;
-extern near i16u 	PPM[MAX_CONTROLS];
-extern near int8 	PPM_Index;
+extern near i16u 	PPM[CONTROLS];
+extern near int8 	PPM_Index, NoOfControls;
 extern near int24 	PrevEdge, CurrEdge;
 extern near i16u 	Width, Timer0;
 extern near int24 	PauseTime;
@@ -1165,7 +1157,7 @@ enum TxRxTypes {
 	FutabaCh3, FutabaCh2, FutabaDM8, JRPPM, JRDM9, JRDXS12, 
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
-enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC}; 
+enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC, ChDumpRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
@@ -1210,7 +1202,7 @@ enum Params { // MAX 64
 	NavMagVar,			// 34
 	DesGyroType,		// 35
 	ESCType,			// 36
-	TxRxType,			// 37
+	RxChannels,			// 37 was TxRxType
 	RxRollCh,			// 38
 	PercentNavSens6Ch,	// 39
 	CamRollTrim,		// 40

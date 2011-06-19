@@ -444,9 +444,9 @@ void LightsAndSirens(void)
 		}	
 		ReadParametersEE();	
 	}
-	while( ( P[TxRxType] == UnknownTxRx ) ||  (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
+	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
 		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
-				
+//( P[TxRxType] == UnknownTxRx ) ||				
 	FirstPass = false;
 
 	Beeper_OFF;

@@ -266,6 +266,11 @@ UAVX ********************************************************************
 - Added revised Tricopter mixing to allow Y flight or one arm forward.
 - Added Aileron and Elevon Mix.
 
+19.06.2011
+- Long time since an update of the README - time flies.
+- V2 with re-formulated attitude control also for inclusion in UAVXArm.
+- Improved communications with UAVXGS and UAVXNav.
+
 =========================================================================
  SAFETY FIRST!                              
 =========================================================================

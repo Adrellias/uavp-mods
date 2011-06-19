@@ -196,18 +196,18 @@ void ShowSetup(boolean h)
 		TxString("\tManual Nav Alt Hold CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
-
+	if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
+	{
+		TxString("\tODD CHANNEL INPUT selected but EVEN number used - reduced to ");
+		TxVal32(NoOfChannels,0,0);
+		TxNextLine();
+	}
 	if ( !F.FailsafesEnabled )
 		TxString("\tYOU have chosen to DISABLE Failsafes\r\n");
-	if ( P[TxRxType] == UnknownTxRx )
-		TxString("\tTx/Rx TYPE not set\r\n");
+
 	#ifdef TESTING
 		TxString("\tTEST VERSION - No Motors\r\n");
 	#endif // TESTING
-
-	#ifdef RX6CH
-		TxString("6 CH - 5 ACTIVE CHANNELS\r\n");
-	#endif // RX6CH
 
 	if ( !F.ParametersValid )
 		TxString("\tINVALID flight parameters (PID)!\r\n");

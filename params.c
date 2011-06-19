@@ -90,19 +90,9 @@ void ReadParametersEE(void)
 			b >>=1;
 		}
 
-		PPMPosPolarity = (P[ServoSense] & PPMPolarityMask) == 0;
-
 		F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
 		F.UsingPolarCoordinates = ( (P[ConfigBits] & UsePolarMask ) != 0);
 
-		Map[ThrottleRC] = P[RxThrottleCh]-1;
-		Map[RollRC] = P[RxRollCh]-1;
-		Map[PitchRC] = P[RxPitchCh]-1;
-		Map[YawRC] = P[RxYawCh]-1;
-		Map[RTHRC] = P[RxGearCh]-1;
-		Map[CamPitchRC] = P[RxAux1Ch]-1;
-		Map[NavGainRC] = P[RxAux2Ch]-1;
-	
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
 		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
@@ -113,11 +103,6 @@ void ReadParametersEE(void)
 		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(5*10); // assumes 5 GPS updates/sec
 		NavNeutralRadius = Limit(P[NeutralRadius], 0, 5);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius);
-
-		#ifdef RX6CH
-			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;
-			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
-		#endif // RX6CH
 
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;
 
@@ -136,12 +121,33 @@ void ReadParametersEE(void)
 		#else
 			Orientation = 0;
 		#endif // MULTICOPTER
-	
-		F.UsingSerialPPM = ( P[TxRxType] == FrSkyDJT_D8R ) || ( P[TxRxType] == ExternalDecoder ) || ( (P[ConfigBits] & RxSerialPPMMask ) != 0);
+
+		PPMPosPolarity = (P[ServoSense] & PPMPolarityMask) == 0;	
+		F.UsingSerialPPM = ( P[ConfigBits] & RxSerialPPMMask ) != 0;
 		PIE1bits.CCP1IE = false;
 		DoRxPolarity();
 		PPM_Index = PrevEdge = 0;
 		PIE1bits.CCP1IE = true;
+
+		NoOfControls = P[RxChannels];
+		if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
+			NoOfControls--;
+
+		if ( NoOfControls < 7 )
+		{
+			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;
+			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
+		}
+
+		Map[ThrottleRC] = P[RxThrottleCh]-1;
+		Map[RollRC] = P[RxRollCh]-1;
+		Map[PitchRC] = P[RxPitchCh]-1;
+		Map[YawRC] = P[RxYawCh]-1;
+		Map[RTHRC] = P[RxGearCh]-1;
+		Map[CamPitchRC] = P[RxAux1Ch]-1;
+		Map[NavGainRC] = P[RxAux2Ch]-1;
+		Map[Ch8RC]= P[RxAux3Ch]-1;
+		Map[Ch9RC] = P[RxAux4Ch]-1;
 
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
@@ -318,7 +324,7 @@ void InitParameters(void)
 	ALL_LEDS_ON;
 	ParamSet = 1;
 
-	if ( ( ReadEE((uint16)TxRxType) == -1 ) || (ReadEE(MAX_PARAMETERS + (uint16)TxRxType) == -1 ) )
+	if ( ( ReadEE((uint16)RxChannels) == -1 ) || (ReadEE(MAX_PARAMETERS + (uint16)RxChannels) == -1 ) )
 		UseDefaultParameters();
 
 	ParamSet = 1;
