@@ -32,15 +32,15 @@
 #ifndef BATCHMODE
 	//#define USE_ARDU
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	#define FORCE_NAV					
-	//#define SIMULATE
-	#define QUADROCOPTER
+	#define SIMULATE
+	//#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
-	//#define AILERON
+	#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE

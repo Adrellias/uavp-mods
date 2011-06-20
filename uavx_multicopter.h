@@ -28,7 +28,7 @@
 	{-20,0},	 		// PitchKp,			06
 	{-10,0},	 		// PitchKi,			07
 	{50,0},	 			// PitchKd,			08
-	{4,0},	 			// AltKp,			09 // was 8
+	{5,0},	 			// AltKp,			09 // was 8
 	{6,0},	 			// PitchIntLimit,	10
 	
 	{-25,0},	 		// YawKp, 			11
