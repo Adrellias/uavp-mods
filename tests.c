@@ -57,7 +57,7 @@ void ReceiverTest(void)
 
 	TxString("\tChannel order is: ");
 	for ( s = 0; s < NoOfControls; s++)
-		TxChar(RxChMnem[Map[s]]);
+		TxChar(RxChMnem[RMap[s]]);
 
 	if ( F.Signal )
 		TxString("\r\nSignal OK ");
@@ -73,7 +73,7 @@ void ReceiverTest(void)
 	{
 		TxChar(s+'1');
 		TxString(": ");
-		TxChar(RxChMnem[Map[s]]);
+		TxChar(RxChMnem[RMap[s]]);
 		TxString(":\t");
  
 		#ifdef CLOCK_16MHZ

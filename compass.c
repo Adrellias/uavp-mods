@@ -61,49 +61,53 @@ int16 GetCompass()
 void GetHeading(void)
 {
 	static int16 HeadingChange, Temp;
-
-	if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
-	{
-		MagHeading = GetCompass();
-		Heading = Make2Pi(MagHeading - CompassOffset);
-
-		HeadingChange = Abs( Heading - HeadingValF.iw1 );
-	    if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
-	        HeadingValF.iw1 = Heading;
-	    else
-	        if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) { // Sanity check - discard reading
-	     		Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
-	            Stats[CompassFailS]++;
-	        }
-			
-	    LPFilter16(&Heading, &HeadingValF, YawFilterA);
-	}
 	
 	#ifdef SIMULATE
-	if ( mSClock() > mS[CompassUpdate] )
-	{
-		mS[CompassUpdate] += COMPASS_TIME_MS;
-		if ( State == InFlight )
+		if ( mSClock() > mS[CompassUpdate] )
 		{
-			#ifdef  NAV_WING
-				Temp = ( (int24)( FakeDesiredYaw - FakeDesiredRoll ) * SIM_WING_YAW_RATE_DPS * MILLIRAD )/
-						( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );
-
-				if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
-					FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
-			#else
-				Temp = ( (int24)FakeDesiredYaw * SIM_MULTI_YAW_RATE_DPS * MILLIRAD )/
-						( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );	
-
-				if ( Abs(FakeDesiredYaw) > 5 )
-					FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
-			#endif // NAV_WING
-			
-			FakeHeading = Make2Pi((int16)FakeHeading);
+			mS[CompassUpdate] += COMPASS_TIME_MS;
+			if ( State == InFlight )
+			{
+				#ifdef  NAV_WING
+					Temp = ( (int24)( FakeDesiredYaw - FakeDesiredRoll ) * SIM_WING_YAW_RATE_DPS * MILLIRAD )/
+							( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );
+	
+					if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
+						FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
+				#else
+					Temp = ( (int24)FakeDesiredYaw * SIM_MULTI_YAW_RATE_DPS * MILLIRAD )/
+							( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );	
+	
+					if ( Abs(FakeDesiredYaw) > 5 )
+						FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
+				#endif // NAV_WING
+				
+				FakeHeading = Make2Pi((int16)FakeHeading);
+			}
 		}
-	}
+	
+		Heading = FakeHeading;
+		MagHeading = Make2Pi(Heading + CompassOffset);
 
-	Heading = FakeHeading;
+	#else
+
+		if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
+		{
+			MagHeading = GetCompass();
+			Heading = Make2Pi(MagHeading - CompassOffset);
+	
+			HeadingChange = Abs( Heading - HeadingValF.iw1 );
+		    if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
+		        HeadingValF.iw1 = Heading;
+		    else
+		        if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) { // Sanity check - discard reading
+		     		Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
+		            Stats[CompassFailS]++;
+		        }
+				
+		    LPFilter16(&Heading, &HeadingValF, YawFilterA);
+		}
+
 	#endif // SIMULATE
 
 } // GetHeading
@@ -257,7 +261,7 @@ void DoHMC5843Test(void) {
 
     TxString("\r\nCompass test (HMC5843)\r\n\r\n");
 
-    for ( i = 0; i < (uint8)250; i++)
+    for ( i = 0; i < (uint8)100; i++)
 		GetHeading();
 
     TxString("Mag:\t");
@@ -308,8 +312,6 @@ int16 GetHMC6352(void)
 {
 	static i16u CompassVal;
 
-/// slew limit setting
-
 	I2CStart();
 	F.CompassMissRead = WriteI2CByte(HMC6352_ID+1) != I2C_ACK; 
 	CompassVal.b1 = ReadI2CByte(I2C_ACK);
@@ -327,7 +329,7 @@ static uint8 CP[9];
 
 void GetHMC6352Parameters(void)
 {
-	#ifndef CLOCK_40MHZ
+	#ifdef FULL_TEST
 
 	uint8 r;
 
@@ -368,8 +370,9 @@ CTerror:
 	I2CStop();
 	TxString("FAIL\r\n");
 
-	#endif // CLOCK_40MHZ
-} // GetHMC5352Parameters
+	#endif // FULL_TEST
+
+} // GetHMC6352Parameters
 
 void DoHMC6352Test(void)
 {
@@ -380,6 +383,7 @@ void DoHMC6352Test(void)
 
 	TxString("\r\nCompass test (HMC6352)\r\n");
 
+	#ifdef FULL_TEST
 	I2CStart();
 	r = WriteI2CByte(HMC6352_ID);
 	r = WriteI2CByte('G');
@@ -395,8 +399,6 @@ void DoHMC6352Test(void)
 	I2CStop();
 
 	Delay1mS(7);
-
-	#ifndef CLOCK_40MHZ
 
 	GetHMC6352Parameters();
 
@@ -444,13 +446,14 @@ void DoHMC6352Test(void)
 		case 2: TxString(" Continuous"); break;
 		case 3: TxString(" Not-allowed"); break;
 		}
+
+	Delay1mS(500);
+
+	#endif // FULL_TEST
+
 	TxNextLine();
 
-	#endif // CLOCK_40MHZ
-
-	Delay1mS(COMPASS_TIME_MS);
-
-	for ( i = 0; i < (uint8)250; i++) 
+	for ( i = 0; i < (uint8)200; i++) // settle filter 
     	GetHeading();
 
     TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);

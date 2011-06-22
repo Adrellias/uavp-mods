@@ -32,15 +32,16 @@
 #ifndef BATCHMODE
 	//#define USE_ARDU
 	//#define EXPERIMENTAL
-	//#define TESTING
-	#define FORCE_NAV					
-	#define SIMULATE
-	//#define QUADROCOPTER
+	#define TESTING
+	//#define FULL_TEST
+	//#define FORCE_NAV					
+	//#define SIMULATE
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
-	#define AILERON
+	//#define AILERON
 	//#define ELEVON
 	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
@@ -1292,7 +1293,7 @@ extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void CheckThrottleMoved(void);
 
-extern int8 Map[];
+extern int8 Map[], RMap[];
 extern boolean PPMPosPolarity;
 extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
@@ -1363,6 +1364,7 @@ extern void SendStatsPacket(void);
 extern void SendArduStation(void);
 extern void SendCustom(void);
 extern void CheckTelemetry(void);
+extern void SensorTrace(void);
 
 extern uint8 UAVXCurrPacketTag;
 

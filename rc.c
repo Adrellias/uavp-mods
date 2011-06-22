@@ -27,7 +27,7 @@ void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
 
-int8 Map[CONTROLS];
+int8 Map[CONTROLS], RMap[CONTROLS];
 boolean PPMPosPolarity;
 
 int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
@@ -60,6 +60,7 @@ void InitRC(void)
 	{
 		PPM[c].i16 = 0;
 		RC[c] = RCp[c] = 0;
+		Map[c] = RMap[c] = c;
 	}
 	RC[ThrottleRC] = RCp[ThrottleRC] = 0; 
 	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;

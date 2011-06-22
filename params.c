@@ -149,6 +149,9 @@ void ReadParametersEE(void)
 		Map[Ch8RC]= P[RxAux3Ch]-1;
 		Map[Ch9RC] = P[RxAux4Ch]-1;
 
+		for ( i = 0; i < NoOfControls; i++) // make reverse map
+			RMap[Map[i]] = i;
+
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
 
 		F.FailsafesEnabled = ((P[ConfigBits] & UseFailsafeMask) == 0);

@@ -221,6 +221,7 @@ void main(void)
 
 			#ifndef DEBUG_PRINT
 				CheckTelemetry();
+				SensorTrace();
 			#endif // ! DEBUG_PRINT
 		
 		} // flight while armed
