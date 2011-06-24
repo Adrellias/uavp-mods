@@ -44,7 +44,7 @@ int24 EastD, EastDiffP, NorthD, NorthDiffP;
 int16 DescentComp;
 
 #ifdef SIMULATE
-int16 FakeDesiredRoll, FakeDesiredPitch, FakeDesiredYaw, FakeHeading;
+int16 FakeDesiredRoll, FakeDesiredPitch, FakeDesiredYaw, FakeMagHeading;
 #endif // SIMULATE
 
 #pragma udata uavxnav_waypoints
@@ -202,7 +202,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static int16 SinHeading, CosHeading, NavKp;
     static int24 Radius;
 	static int24 AltE;
-	static int32 EastDiff, NorthDiff;
+	static int32 LongitudeDiff, LatitudeDiff;
 	static int16 RelHeading;
 	static uint8 a;
 	static int16 Diff, NavP, NavI, NavD;
@@ -215,16 +215,16 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	DesiredLongitude = NavLongitude;
 	
 	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
-	EastDiff = Temp32.i3_1;
-	NorthDiff = DesiredLatitude - GPSLatitude;
+	LongitudeDiff = Temp32.i3_1;
+	LatitudeDiff = DesiredLatitude - GPSLatitude;
 
-	Radius = int32sqrt( EastDiff * EastDiff + NorthDiff * NorthDiff );
+	Radius = int32sqrt( Sqr(LongitudeDiff) + Sqr(LatitudeDiff) );
 
 	F.WayPointCentred =  Radius < NAV_NEUTRAL_RADIUS;
 	AltE = DesiredAltitude - Altitude;
 	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(AltE) < NavProximityAltitude );
 
-	WayHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff));
+	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
 	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 
 	if ( NavSensitivity > NAV_SENS_THRESHOLD ) 

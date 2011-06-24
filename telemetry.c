@@ -192,10 +192,10 @@ void SendNavPacket(void){
 	
 	TxESCu8(CurrWP);	
 	
-	TxESCi16(BaroROC); 							// cm/S
+	TxESCi16(ROC); 	// was BaroROC						// cm/S
 	TxESCi24(BaroRelAltitude);
 	
-	TxESCi16(GPSHeading); 				
+	TxESCi16(CruiseThrottle); 				
 	TxESCi16(RangefinderAltitude); 				// cm
 	
 	TxESCi16(GPSHDilute);
@@ -203,7 +203,7 @@ void SendNavPacket(void){
 	TxESCi16(WayHeading);
 	
 	TxESCi16(GPSVel);
-	TxESCi16(0); 							    // GPS ROC dm/S
+	TxESCi16(GPSHeading); 							    // GPS ROC dm/S
 	
 	TxESCi24(GPSRelAltitude); 					// cm
 	TxESCi32(GPSLatitude); 						// 5 decimal minute units

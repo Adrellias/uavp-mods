@@ -1,12 +1,13 @@
 
+//#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
-//#define DEBUG_GYROS				// puts out raw angles in telemetry for comparison with comp. values
-
-//#define JIM_MPX_INVERT
+//#define JIM_MPX_INVERT		// early version of MPX baro
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
 //#define DEBUG_PRINT			// direct printing of baro values
+
+//#define INC_GPS_VEL			// Should not be needed as all GPS units will have RMC sentences
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -32,10 +33,10 @@
 #ifndef BATCHMODE
 	//#define USE_ARDU
 	//#define EXPERIMENTAL
-	#define TESTING
-	//#define FULL_TEST
+	//#define TESTING
+	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -43,16 +44,12 @@
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
-	//#define HAVE_CUTOFF_SW			// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
+	//#define HAVE_CUTOFF_SW	// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
 
 #ifdef EXPERIMENTAL
 //	#define UAVXBOARD
-	//#define HMC5843 // not commissioned
 #endif // EXPERIMENTAL
-
-#define MASTER 		0
-#define SLEW_ON 	0
 
 //________________________________________________________________________________________________
 
@@ -659,7 +656,7 @@ enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, N
 enum FailStates { MonitoringRx, Aborting, Terminating, Terminated, RxTerminate };
 
 #ifdef SIMULATE
-extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeHeading;
+extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeMagHeading;
 #endif // SIMULATE
 
 extern WayPoint WP;
@@ -830,6 +827,7 @@ extern void Write32EE(uint16, int32);
 
 extern void UpdateField(void);
 extern int32 ConvertGPSToM(int32);
+extern int32 ConvertGPSTodM(int32);
 extern int32 ConvertMToGPS(int32);
 extern int24 ConvertInt(uint8, uint8);
 extern int32 ConvertLatLonM(uint8, uint8);

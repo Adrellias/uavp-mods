@@ -24,6 +24,7 @@
 
 void UpdateField(void);
 int32 ConvertGPSToM(int32);
+int32 ConvertGPSTodM(int32);
 int32 ConvertMToGPS(int32);
 int24 ConvertInt(uint8, uint8);
 int32 ConvertLatLonM(uint8, uint8);
@@ -85,6 +86,12 @@ int32 ConvertGPSToM(int32 c)
 	// conversion max is 21Km
 	return ( ((int32)c * (int32)1855)/((int32)100000) );
 } // ConvertGPSToM
+
+int32 ConvertGPSTodM(int32 c)
+{	
+	// conversion max is 2.1Km
+	return ( ((int32)c * (int32)1855)/((int32)10000) );
+} // ConvertGPSTodM
 
 int32 ConvertMToGPS(int32 c)
 {
@@ -311,7 +318,7 @@ void SetGPSOrigin(void)
 
 void ParseGPSSentence(void)
 {
-	static int32 Temp;
+	static i32u Temp32u;
 	static int24 LongitudeDiff, LatitudeDiff;
 	static int24 GPSInterval;
 
@@ -320,7 +327,7 @@ void ParseGPSSentence(void)
 
 	#define FAKE_NORTH_WIND 	0L
 	#define FAKE_EAST_WIND 		0L
-    #define SCALE_VEL			64L
+    #define SCALE_VEL			5
 	#endif // SIMULATE
 
 	cc = 0;
@@ -357,35 +364,44 @@ void ParseGPSSentence(void)
 
 		if ( State == InFlight )
 		{  // don't bother with GPS longitude correction for now?
+			GPSRelAltitude = BaroRelAltitude;
 
 			CosH = int16cos(Heading);
 			SinH = int16sin(Heading);
+
+			FakeGPSLongitude += FAKE_EAST_WIND; 
+			FakeGPSLatitude += FAKE_NORTH_WIND; 
 
 			#ifdef NAV_WING
 
 				FakeGPSLongitude += ConvertMToGPS(SIM_CRUISE_MPS*SinH)/(GPS_UPDATE_HZ*256);
 				FakeGPSLatitude += ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
+				GPSVel = SIM_CRUISE_MPS * 10;
 
 			#else
 	
-				FakeGPSLongitude += ((int32)(-FakeDesiredPitch) * SinH)/SCALE_VEL;
-				FakeGPSLatitude += ((int32)(-FakeDesiredPitch) * CosH)/SCALE_VEL;
+				FakeGPSLongitude -= SRS32((int32)FakeDesiredPitch * SinH, SCALE_VEL);
+				FakeGPSLatitude -= SRS32((int32)FakeDesiredPitch * CosH, SCALE_VEL);
 									
 				A = Make2Pi(Heading + HALFMILLIPI);
 				CosH = int16cos(A);
 				SinH = int16sin(A);
-				FakeGPSLongitude += ((int32)FakeDesiredRoll * SinH) / SCALE_VEL;
-				FakeGPSLatitude += ((int32)FakeDesiredRoll * CosH) / SCALE_VEL;
+				FakeGPSLongitude += SRS32((int32)FakeDesiredRoll * SinH, SCALE_VEL);
+				FakeGPSLatitude += SRS32((int32)FakeDesiredRoll * CosH, SCALE_VEL);
+
+				LongitudeDiff = FakeGPSLongitude - GPSLongitudeP;
+				LatitudeDiff = FakeGPSLatitude - GPSLatitudeP;
+
+				GPSVel = int32sqrt(Sqr(LongitudeDiff)+Sqr(LatitudeDiff));
+				GPSVel = ConvertGPSTodM(GPSVel);
 
 			#endif // NAV_WING
 
-			FakeGPSLongitude += FAKE_EAST_WIND; 
-			FakeGPSLatitude += FAKE_NORTH_WIND; 
-		
 			GPSLongitude = FakeGPSLongitude;
 			GPSLatitude = FakeGPSLatitude;
 
-			GPSRelAltitude = BaroRelAltitude;
+			GPSLatitudeP = GPSLatitude;
+			GPSLongitudeP = GPSLongitude;
 		}
 		
 		#else
@@ -394,17 +410,31 @@ void ParseGPSSentence(void)
 		{
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
-			GPSNorthDiff = GPSLatitudeP - GPSLatitude;
-			GPSEastDiff = GPSLongitudeP - GPSLongitude;
+			LatitudeDiff = GPSLatitudeP - GPSLatitude;
+			LongitudeDiff = GPSLongitudeP - GPSLongitude;
 			
 			if ( F.NearLevel ) // got to filtered GPS
-			{
-				if (( Abs(GPSNorthDiff) > NavGPSSlew ) || ( Abs(GPSEastDiff) > NavGPSSlew ))
-						Stats[BadS]++;
-				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
-				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
-			}
+				if (( Abs(LatitudeDiff) > NavGPSSlew ) || ( Abs(LongitudeDiff) > NavGPSSlew ))
+				{
+					Stats[BadS]++;
+					GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
+					GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+				}
 		
+			#ifdef INC_GPS_VEL
+			if ( !F.HaveGPRMC )
+			{
+				LatitudeDiff = GPSLatitudeP - GPSLatitude; // do again after slew limit
+				LongitudeDiff = GPSLongitudeP - GPSLongitude;
+
+				Temp32.i32 = LongitudeDiff * GPSLongitudeCorrection;
+				LongitudeDiff = Temp32.i3_1;
+
+				GPSVel = int16sqrt(Sqr(LongitudeDiff)+Sqr(LatitudeDiff));
+				GPSVel = ConvertGPSTodM(GPSVel);
+			}
+			#endif // INC_GPS_VEL
+
 			GPSLatitudeP = GPSLatitude;
 			GPSLongitudeP = GPSLongitude;	
 		}

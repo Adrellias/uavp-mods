@@ -57,58 +57,57 @@ int16 GetCompass()
 			return(0);
 	
 } // GetCompass
-
+ 
 void GetHeading(void)
 {
 	static int16 HeadingChange, Temp;
 	
 	#ifdef SIMULATE
+
 		if ( mSClock() > mS[CompassUpdate] )
 		{
 			mS[CompassUpdate] += COMPASS_TIME_MS;
 			if ( State == InFlight )
 			{
 				#ifdef  NAV_WING
-					Temp = ( (int24)( FakeDesiredYaw - FakeDesiredRoll ) * SIM_WING_YAW_RATE_DPS * MILLIRAD )/
-							( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );
-	
+					Temp = SRS16( FakeDesiredYaw - FakeDesiredRoll, 1);	
 					if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
-						FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
+						FakeMagHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
 				#else
-					Temp = ( (int24)FakeDesiredYaw * SIM_MULTI_YAW_RATE_DPS * MILLIRAD )/
-							( COMPASS_UPDATE_HZ * NAV_MAX_ROLL_PITCH );	
-	
+					Temp = FakeDesiredYaw * 5; // ~90 deg/sec
 					if ( Abs(FakeDesiredYaw) > 5 )
-						FakeHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
+						FakeMagHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
 				#endif // NAV_WING
 				
-				FakeHeading = Make2Pi((int16)FakeHeading);
+				FakeMagHeading = Make2Pi((int16)FakeMagHeading);
 			}
 		}
-	
-		Heading = FakeHeading;
-		MagHeading = Make2Pi(Heading + CompassOffset);
+
+		MagHeading = FakeMagHeading;
 
 	#else
 
 		if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
-		{
 			MagHeading = GetCompass();
-			Heading = Make2Pi(MagHeading - CompassOffset);
-	
-			HeadingChange = Abs( Heading - HeadingValF.iw1 );
-		    if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
-		        HeadingValF.iw1 = Heading;
-		    else
-		        if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) { // Sanity check - discard reading
-		     		Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
-		            Stats[CompassFailS]++;
-		        }
-				
-		    LPFilter16(&Heading, &HeadingValF, YawFilterA);
-		}
+		else
+			MagHeading = 0;
 
 	#endif // SIMULATE
+
+	Heading = Make2Pi(MagHeading + CompassOffset);
+
+	HeadingChange = Abs( Heading - HeadingValF.iw1 );
+	if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
+		HeadingValF.iw1 = Heading;
+	else
+		if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
+		{
+		     Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
+		     Stats[CompassFailS]++;
+		}
+
+	LPFilter16(&Heading, &HeadingValF, YawFilterA);
+	Heading = Make2Pi(Heading);
 
 } // GetHeading
 
@@ -132,7 +131,7 @@ void InitHeading(void)
 	HeadingValF.iw1 = Heading; 
 
 	#ifdef SIMULATE
-		FakeHeading = Heading = 0;
+		FakeMagHeading = Heading = 0;
 	#endif // SIMULATE
 	DesiredHeading = Heading;
 

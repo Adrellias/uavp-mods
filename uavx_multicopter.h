@@ -38,7 +38,7 @@
 	{20,0},	 			// YawLimit,		14 was 50
 	{2,0},	 			// YawIntLimit,		15
 	{2,true}, 			// ConfigBits,		16c
-	{9,true},			// RxThrottleCh was TimeSlots,	17
+	{1,true},			// RxThrottleCh was TimeSlots,	17
 	{51,true}, 			// LowVoltThres,	18c
 	{20,true}, 			// CamRollKp,		19c
 	{45,true}, 			// PercentCruiseThr,20c 
@@ -61,27 +61,27 @@
 	{LY530Gyro,true}, 	// DesGyroType,     35c
 	{ESCPPM,true}, 		// ESCType,			36c
 	{7,true}, 			// RxChannels was TxRxType		37c
-	{9,true},			// RxRollCh was NeutralRadius	38
+	{2,true},			// RxRollCh was NeutralRadius	38
 	{30,true},			// PercentNavSens6Ch	39c
 	{1,true},			// CamRollTrim,		40c
 
 	{-16,0},			// NavKd			41
-	{9,true},			// RxPitchCh was VertDampDecay    42
-	{9,true},			// RxYawCh was HorizDampDecay	43
+	{3,true},			// RxPitchCh was VertDampDecay    42
+	{4,true},			// RxYawCh was HorizDampDecay	43
 	{56,true},			// BaroScale	    44c
 	{UAVXTelemetry,true}, // TelemetryType	45c
 	{-10,0},		    // MaxDescentRateDmpS 	46
 	{30,0},				// DescentDelayS	47
 	{4,0},				// NavIntLimit		48
 	{1,0},				// AltIntLimit		49 was 8
-	{9,true},			// RxGearCh was GravComp		50c
+	{5,true},			// RxGearCh was GravComp		50c
 
-	{9,true},			// RxAux1Ch was CompSteps	51
+	{6,true},			// RxAux1Ch was CompSteps	51
 	{0,true},			// ServoSense		52c	
 	{3,true},			// CompassOffsetQtr 53c
 	{49,true},			// BatteryCapacity	54c	
-	{9,true},			// RxAux2Ch was GyroYawType	55c		
-	{9,true},			// RxAux3Ch was AltKd		56
+	{7,true},			// RxAux2Ch was GyroYawType	55c		
+	{8,true},			// RxAux3Ch was AltKd		56
 	#if (defined  TRICOPTER) | (defined VTCOPTER ) | (defined Y6COPTER )
 	{24,true},			// Orient			57
 	#else	

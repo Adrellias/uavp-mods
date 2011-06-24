@@ -72,10 +72,8 @@ void ReadParametersEE(void)
 		if ( P[ESCType] == ESCPPM )
 			TRISB = 0b00000000; // make outputs
 		else
-		{
 			for ( i = 0; i < NoOfPWMOutputs; i++ )
-				ESCI2CFail[i] = 0;;
-		}
+				ESCI2CFail[i] = 0;
 
 		InitGyros();
 		InitAccelerometers();
@@ -93,9 +91,12 @@ void ReadParametersEE(void)
 		F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
 		F.UsingPolarCoordinates = ( (P[ConfigBits] & UsePolarMask ) != 0);
 
+		#ifdef SIMULATE
+			P[PercentCruiseThr] = 35;
+		#endif // SIMULATE
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
-		CruiseThrottle = ((int16)P[PercentCruiseThr] * OUT_MAXIMUM )/100L;
+		CruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 

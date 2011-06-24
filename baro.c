@@ -631,46 +631,53 @@ void GetBaroAltitude(void)
 {
 	static int24 Temp;
 
-	if ( BaroType == BaroMPX4115 )
-		GetFreescaleBaroAltitude();
-	else
-		GetBoschBaroAltitude();
+	#ifdef SIMULATE
 
-	if ( F.NewBaroValue )
-	{
-		#ifdef SIMULATE
+		if ( mSClock() >= mS[BaroUpdate])
+		{
+			mS[BaroUpdate] += BARO_UPDATE_MS;
 
 			if ( State == InFlight )
-			{
-				if ( ++SimulateCycles >= ALT_UPDATE_HZ )
-				{
-					FakeBaroRelAltitude += ( ( DesiredThrottle - CruiseThrottle ) + AltComp ) * 10;
-					if ( FakeBaroRelAltitude < -100 ) 
-						FakeBaroRelAltitude = 0;
-		
-					SimulateCycles = 0;
-				}
-				BaroRelAltitude = FakeBaroRelAltitude;
-			}
+				if ( AltComp < 0 )
+					FakeBaroRelAltitude += DesiredThrottle - CruiseThrottle + AltComp*2;
+				else
+					FakeBaroRelAltitude += (DesiredThrottle - CruiseThrottle + AltComp/2);
 			else
 				FakeBaroRelAltitude = DecayX(FakeBaroRelAltitude, 5);
 
-		#endif // SIMULATE
+			if ( FakeBaroRelAltitude < -100 ) 
+				FakeBaroRelAltitude = 0;
 
-		BaroRelAltitude = AltitudeCF(BaroRelAltitude);	
+			BaroRelAltitude = AltitudeCF(FakeBaroRelAltitude);
 
-		if ( State == InFlight ) 
-		{
-			if ( BaroRelAltitude > Stats[BaroRelAltitudeS] )
-				Stats[BaroRelAltitudeS] = BaroRelAltitude;
-
-			if ( BaroROC > Stats[MaxROCS] )
-					Stats[MaxROCS] = BaroROC;
-			else
-				if ( BaroROC < Stats[MinROCS] )
-					Stats[MinROCS] = BaroROC;
+			F.NewBaroValue = true;
 		}
-	}
+
+	#else
+
+		if ( BaroType == BaroMPX4115 )
+			GetFreescaleBaroAltitude();
+		else
+			GetBoschBaroAltitude();
+	
+		if ( F.NewBaroValue )
+		{
+			BaroRelAltitude = AltitudeCF(BaroRelAltitude);	
+	
+			if ( State == InFlight ) 
+			{
+				if ( BaroRelAltitude > Stats[BaroRelAltitudeS] )
+					Stats[BaroRelAltitudeS] = BaroRelAltitude;
+	
+				if ( BaroROC > Stats[MaxROCS] )
+						Stats[MaxROCS] = BaroROC;
+				else
+					if ( BaroROC < Stats[MinROCS] )
+						Stats[MinROCS] = BaroROC;
+			}
+		}
+
+	#endif // SIMULATE
 	
 } // GetBaroAltitude
 

@@ -144,7 +144,7 @@ void AltitudeHold()
 				else
 				{ // throttle is not moving therefore we are hovering!
 					F.HoldingAlt = true;
-					DoAltitudeHold(); 
+					DoAltitudeHold(); // NOT using cruise throttle
 				}
 		}	
 	}
@@ -305,7 +305,7 @@ void DoControl(void)
 	Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 4);
 	Rl = -FakeDesiredRoll;
 	Pl = -FakeDesiredPitch;
-	Yl = DesiredYaw;
+	Yl = -DesiredYaw;
 
 	CameraRollAngle = Angle[Roll];
 	CameraPitchAngle = Angle[Pitch];
