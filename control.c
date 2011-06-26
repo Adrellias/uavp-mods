@@ -134,9 +134,11 @@ void AltitudeHold()
 				else
 				{
 					F.HoldingAlt = true;
+					DoAltitudeHold(); // not using cruise throttle
+
 					#ifndef SIMULATE
 						ActualThrottle = DesiredThrottle + AltComp;
-						if ( ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
+						if (( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
 						{
 							NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
 							NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
@@ -145,7 +147,6 @@ void AltitudeHold()
 							#endif // !DISABLE_CRUISE_UPDATE
 						}
 					#endif // !SIMULATE
-					DoAltitudeHold(); // not using cruise throttle
 				}
 		}	
 	}
@@ -162,7 +163,6 @@ void AltitudeHold()
 
 void DoAttitudeAngle(uint8 a, uint8 c)
 {	// Caution: Angles are the opposite to the normal aircraft coordinate conventions
-
 	static int16 Temp;
 
 	#ifdef DEBUG_GYROS

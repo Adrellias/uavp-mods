@@ -1,3 +1,4 @@
+#define NEW_YAW
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
@@ -9,7 +10,7 @@
 
 //#define INC_GPS_VEL			// Should not be needed as all GPS units will have RMC sentences
 
-//#define DISABLE_CRUISE_UPDATE
+//#define DISABLE_CRUISE_UPDATE	// Disables dynamic updates to cruise throttle  
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -38,7 +39,7 @@
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -201,6 +202,7 @@
 
 // reads $GPGGA sentence - all others discarded
 
+#define GPS_SLEW_LIMIT				10		// M
 #ifdef SIMULATE
 
 #define SIM_CRUISE_MPS				8		// M/S
@@ -215,6 +217,7 @@
 
 #else
 
+#define	GPS_UPDATE_HZ				5		// Hz - can obtain from GPS updates
 #define	GPS_MIN_SATELLITES			6		// preferably > 5 for 3D fix
 #define GPS_MIN_FIX					1		// must be 1 or 2 
 #define GPS_ORIGIN_SENTENCES 		30L		// Number of sentences needed to obtain reasonable Origin

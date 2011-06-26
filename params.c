@@ -94,14 +94,16 @@ void ReadParametersEE(void)
 		#ifdef SIMULATE
 			P[PercentCruiseThr] = 35;
 		#endif // SIMULATE
+		CruiseThrottle = NewCruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
+
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
-		CruiseThrottle = NewCruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
 		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 100); 
-		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(5*10); // assumes 5 GPS updates/sec
+		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(GPS_UPDATE_HZ * 10); // assumes 5 GPS updates/sec
+
 		NavNeutralRadius = Limit(P[NeutralRadius], 0, 5);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius);
 
