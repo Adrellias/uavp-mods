@@ -164,7 +164,7 @@ void main(void)
 							DesiredThrottle = IdleThrottle;
 						else
 						{
-							DesiredThrottle = 0; // to catch cycles between Rx updates
+							DesiredThrottle = AltComp = 0; // to catch cycles between Rx updates
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
@@ -175,7 +175,7 @@ void main(void)
 				case Shutdown:
 					// wait until arming switch is cycled
 					F.LostModel = true;
-					DesiredRoll = DesiredPitch = DesiredYaw = 0;
+					DesiredRoll = DesiredPitch = DesiredYaw = AltComp = 0;
 					StopMotors();
 					break;
 				case InFlight:
@@ -185,13 +185,16 @@ void main(void)
 					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
 
 					DoNavigation();
+					AltitudeHold();
 
 					if ( StickThrottle < IdleThrottle )
 					{
+						AltComp = 0;
 						mS[ThrottleIdleTimeout] = mSClock() + THROTTLE_LOW_DELAY_MS;
 						RestoreLEDs();
 						State = Landing;
 					}
+
 					break;
 				} // Switch State
 				mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
@@ -202,7 +205,6 @@ void main(void)
 					DoFailsafe();
 
 			GetHeading();
-			AltitudeHold();
 
 			while ( WaitingForSync ) {};
 

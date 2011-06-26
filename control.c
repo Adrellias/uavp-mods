@@ -97,8 +97,7 @@ void DoAltitudeHold(void)
 
 void AltitudeHold()
 {  // relies upon good cross calibration of baro and rangefinder!!!!!!
-
-	static int16 NewCruiseThrottle;
+	static int16 ActualThrottle;
 
 	GetBaroAltitude();
 	GetRangefinderAltitude();
@@ -128,23 +127,25 @@ void AltitudeHold()
 			else
 				if ( F.ThrottleMoving )
 				{
-					#ifndef SIMULATE
-					if ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) 
-					{
-						NewCruiseThrottle = DesiredThrottle + AltComp;
-						CruiseThrottle = HardFilter(CruiseThrottle, NewCruiseThrottle);
-						CruiseThrottle = Limit(CruiseThrottle , IdleThrottle, THROTTLE_MAX_CRUISE );
-					}
-					#endif // !SIMULATE
-					ROCIntE = 0;
 					F.HoldingAlt = false;
 					SetDesiredAltitude(Altitude);
 					AltComp = Decay1(AltComp);
 				}
 				else
-				{ // throttle is not moving therefore we are hovering!
+				{
 					F.HoldingAlt = true;
-					DoAltitudeHold(); // NOT using cruise throttle
+					#ifndef SIMULATE
+					ActualThrottle = DesiredThrottle + AltComp;
+					if (( State == InFlight ) && ( Abs(ROC) < ALT_HOLD_MAX_ROC_DMPS  ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
+					{
+						NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
+						NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
+						#ifndef DISABLE_CRUISE_UPDATE
+							CruiseThrottle = NewCruiseThrottle;
+						#endif // !DISABLE_CRUISE_UPDATE
+					}
+					#endif // !SIMULATE
+					DoAltitudeHold(); // not using cruise throttle
 				}
 		}	
 	}

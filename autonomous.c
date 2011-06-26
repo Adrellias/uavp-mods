@@ -238,6 +238,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			{
 				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
 				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
+//zzz Roll as well at 25%
 			}
 
 		#else // MULTICOPTER

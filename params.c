@@ -96,7 +96,7 @@ void ReadParametersEE(void)
 		#endif // SIMULATE
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
 		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
-		CruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
+		CruiseThrottle = NewCruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 

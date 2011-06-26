@@ -195,7 +195,7 @@ void SendNavPacket(void){
 	TxESCi16(ROC); 	// was BaroROC						// cm/S
 	TxESCi24(BaroRelAltitude);
 	
-	TxESCi16(CruiseThrottle); 				
+	TxESCi16(NewCruiseThrottle); 				
 	TxESCi16(RangefinderAltitude); 				// cm
 	
 	TxESCi16(GPSHDilute);

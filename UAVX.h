@@ -9,6 +9,8 @@
 
 //#define INC_GPS_VEL			// Should not be needed as all GPS units will have RMC sentences
 
+//#define DISABLE_CRUISE_UPDATE
+
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
 // =                           Copyright (c) 2008 by Prof. Greg Egan                             =
@@ -244,6 +246,7 @@
 #define THROTTLE_MIN_ALT_HOLD		75		// min throttle stick for altitude lock
 
 #define THROTTLE_MAX_CRUISE			((RC_MAXIMUM * 60L * OUT_MAXIMUM)/100L) // 60%
+#define THROTTLE_MIN_CRUISE			((RC_MAXIMUM * 35L * OUT_MAXIMUM)/100L) // 35%
 
 // RC
 
@@ -1294,7 +1297,7 @@ extern void CheckThrottleMoved(void);
 extern int8 Map[], RMap[];
 extern boolean PPMPosPolarity;
 extern int16 RC[], RCp[], Trim[];
-extern int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+extern int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
 

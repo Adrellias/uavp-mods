@@ -31,7 +31,7 @@ int8 Map[CONTROLS], RMap[CONTROLS];
 boolean PPMPosPolarity;
 
 int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
-int16 CruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
+int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 int16 ThrLow, ThrHigh, ThrNeutral;
 
