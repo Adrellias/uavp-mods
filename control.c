@@ -136,7 +136,7 @@ void AltitudeHold()
 					F.HoldingAlt = true;
 					#ifndef SIMULATE
 					ActualThrottle = DesiredThrottle + AltComp;
-					if (( State == InFlight ) && ( Abs(ROC) < ALT_HOLD_MAX_ROC_DMPS  ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
+					if (( State == InFlight ) && ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS  ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
 					{
 						NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
 						NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
