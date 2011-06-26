@@ -135,15 +135,15 @@ void AltitudeHold()
 				{
 					F.HoldingAlt = true;
 					#ifndef SIMULATE
-					ActualThrottle = DesiredThrottle + AltComp;
-					if (( State == InFlight ) && ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS  ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
-					{
-						NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
-						NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
-						#ifndef DISABLE_CRUISE_UPDATE
-							CruiseThrottle = NewCruiseThrottle;
-						#endif // !DISABLE_CRUISE_UPDATE
-					}
+						ActualThrottle = DesiredThrottle + AltComp;
+						if ( ( Abs(ROC) < ALT_HOLD_MAX_ROC_CMPS ) && ( ActualThrottle > THROTTLE_MIN_CRUISE )) 
+						{
+							NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
+							NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
+							#ifndef DISABLE_CRUISE_UPDATE
+								CruiseThrottle = NewCruiseThrottle;
+							#endif // !DISABLE_CRUISE_UPDATE
+						}
 					#endif // !SIMULATE
 					DoAltitudeHold(); // not using cruise throttle
 				}

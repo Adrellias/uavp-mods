@@ -38,7 +38,7 @@
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -169,7 +169,7 @@
 
 #define BARO_SLEW_LIMIT_CMPS		1500L	//500L	// cm/S  
 #define BARO_SANITY_CHANGE_CMPS		3000L	//500L	// cm/S 
-#define BARO_UPDATE_MS				(1000/ALT_UPDATE_HZ)	
+#define BARO_UPDATE_MS				(1000/ALT_UPDATE_HZ)
 
 // Navigation
 
