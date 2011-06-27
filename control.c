@@ -97,6 +97,7 @@ void DoAltitudeHold(void)
 
 void AltitudeHold()
 {  // relies upon good cross calibration of baro and rangefinder!!!!!!
+
 	static int16 ActualThrottle;
 
 	GetBaroAltitude();
@@ -202,18 +203,18 @@ void DoYawRate(void)
 	else
 		HE = 0;
 
-	#ifdef NEW_YAW
-
-	Angle[Yaw] = HE;
-
-	#else
+	#ifdef OLD_YAW
 
 	Angle[Yaw] += Rate[Yaw];
 	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
 
 	Angle[Yaw] = DecayX(Angle[Yaw], 2); 				// GKE added to kill gyro drift
 
-	#endif // NEW_YAW
+	#else
+
+	Angle[Yaw] = HE;
+
+	#endif // OLD_YAW
 
 } // DoYawRate
 
@@ -357,18 +358,18 @@ void DoControl(void)
 	
 		RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
 	
-		#ifdef NEW_YAW
+		#ifdef OLD_YAW
+
+		Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
+
+		#else
 	
 		YawRateIntE += RateE;
 		YawRateIntE = Limit1(YawRateIntE, P[YawIntLimit]);
 	
 		Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
 	
-		#else
-	
-		Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
-	
-		#endif // NEW_YAW
+		#endif // OLD_YAW
 	
 		Ratep[Yaw] = Rate[Yaw];
 	

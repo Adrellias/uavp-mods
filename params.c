@@ -94,10 +94,10 @@ void ReadParametersEE(void)
 		#ifdef SIMULATE
 			P[PercentCruiseThr] = 35;
 		#endif // SIMULATE
-		CruiseThrottle = NewCruiseThrottle = (int16)P[PercentCruiseThr] << 1; // * OUT_MAXIMUM + 100)/100L;
+		CruiseThrottle = NewCruiseThrottle = FromPercent((int16)P[PercentCruiseThr], RC_MAXIMUM);
 
-		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 30); // 10-30%
-		IdleThrottle = (IdleThrottle * OUT_MAXIMUM )/100L;
+		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 20); // 10-25%
+		IdleThrottle = FromPercent(IdleThrottle, RC_MAXIMUM);
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
@@ -138,7 +138,7 @@ void ReadParametersEE(void)
 
 		if ( NoOfControls < 7 )
 		{
-			NavSensitivity = ((int24)P[PercentNavSens6Ch] * RC_MAXIMUM) /100;
+			NavSensitivity = FromPercent((int16)P[PercentNavSens6Ch], RC_MAXIMUM);
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
 		}
 

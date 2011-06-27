@@ -323,11 +323,11 @@ void ParseGPSSentence(void)
 	static int24 GPSInterval;
 
 	#ifdef SIMULATE
-	static int16 CosH, SinH, A;
-
-	#define FAKE_NORTH_WIND 	0L
-	#define FAKE_EAST_WIND 		0L
-    #define SCALE_VEL			5
+		static int16 CosH, SinH, A;
+	
+		#define FAKE_NORTH_WIND 	0L
+		#define FAKE_EAST_WIND 		0L
+	    #define SCALE_VEL			5
 	#endif // SIMULATE
 
 	cc = 0;
@@ -376,7 +376,6 @@ void ParseGPSSentence(void)
 
 				FakeGPSLongitude += ConvertMToGPS(SIM_CRUISE_MPS*SinH)/(GPS_UPDATE_HZ*256);
 				FakeGPSLatitude += ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
-				GPSVel = SIM_CRUISE_MPS * 10;
 
 			#else
 	
@@ -389,13 +388,13 @@ void ParseGPSSentence(void)
 				FakeGPSLongitude += SRS32((int32)FakeDesiredRoll * SinH, SCALE_VEL);
 				FakeGPSLatitude += SRS32((int32)FakeDesiredRoll * CosH, SCALE_VEL);
 
-				LongitudeDiff = FakeGPSLongitude - GPSLongitudeP;
-				LatitudeDiff = FakeGPSLatitude - GPSLatitudeP;
-
-				GPSVel = int32sqrt(Sqr(LongitudeDiff)+Sqr(LatitudeDiff));
-				GPSVel = ConvertGPSTodM(GPSVel);
-
 			#endif // NAV_WING
+
+			LongitudeDiff = FakeGPSLongitude - GPSLongitudeP;
+			LatitudeDiff = FakeGPSLatitude - GPSLatitudeP;
+
+			GPSVel = int32sqrt(Sqr(LongitudeDiff)+Sqr(LatitudeDiff));
+			GPSVel = ConvertGPSTodM(GPSVel);
 
 			GPSLongitude = FakeGPSLongitude;
 			GPSLatitude = FakeGPSLatitude;

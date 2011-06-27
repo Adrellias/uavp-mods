@@ -32,10 +32,8 @@ uint8 p;
 int8 near State, NavState, FailState;
 #pragma udata
 
-
 void main(void)
 {
-
 	DisableInterrupts;
 
 	InitPortsAndUSART();

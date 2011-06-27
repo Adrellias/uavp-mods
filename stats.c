@@ -70,7 +70,7 @@ void WriteStatsEE()
 		Write16EE(STATS_ADDR_EE + s*2, Stats[s]);
 
 	#ifndef SIMULATE
-		Temp = SRS16(NewCruiseThrottle, 1); //ToPercent(CruiseThrottle, OUT_MAXIMUM);
+		Temp = ToPercent(CruiseThrottle, RC_MAXIMUM);
 		WriteEE(PercentCruiseThr, Temp);
 	#endif // !SIMULATE
 } // WriteStatsEE

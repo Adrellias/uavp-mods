@@ -638,7 +638,7 @@ void GetBaroAltitude(void)
 			mS[BaroUpdate] += BARO_UPDATE_MS;
 
 			if ( State == InFlight )
-				FakeBaroRelAltitude += (DesiredThrottle - CruiseThrottle + SRS16(AltComp, 1));
+				FakeBaroRelAltitude += (DesiredThrottle - CruiseThrottle + AltComp * 2 );
 			else
 				FakeBaroRelAltitude = DecayX(FakeBaroRelAltitude, 5);
 

@@ -1,4 +1,3 @@
-#define NEW_YAW
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
@@ -34,11 +33,10 @@
 
 
 #ifndef BATCHMODE
-	//#define USE_ARDU
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
-	//#define FORCE_NAV					
+	#define FORCE_NAV					
 	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -248,9 +246,6 @@
 #define THROTTLE_MIDDLE				10  	// throttle stick dead zone for baro 
 #define THROTTLE_MIN_ALT_HOLD		75		// min throttle stick for altitude lock
 
-#define THROTTLE_MAX_CRUISE			((RC_MAXIMUM * 60L * OUT_MAXIMUM)/100L) // 60%
-#define THROTTLE_MIN_CRUISE			((RC_MAXIMUM * 35L * OUT_MAXIMUM)/100L) // 35%
-
 // RC
 
 #define RC_INIT_FRAMES				32		// number of initial RC frames to allow filters to settle
@@ -412,7 +407,8 @@ typedef struct { // GPS
 //#define ConvertGPSToM(c) (((int32)c*(int32)1855)/((int32)100000))
 //#define ConvertMToGPS(c) (((int32)c*(int32)100000)/((int32)1855))
 
-#define ToPercent(n, m) (((n)*100L)/m)
+#define ToPercent(n, m) (((n)*100L+(m)/2)/(m))
+#define FromPercent(n, m) (((n)*(m)+50)/100L)
 
 // Simple filters using weighted averaging
 #define VerySoftFilter(O,N) 	(SRS16((O)+(N)*3, 2))
@@ -934,15 +930,16 @@ extern int8 GyroType;
 #endif // CLOCK_40MHZ
 
 #define RC_NEUTRAL			((RC_MAXIMUM-RC_MINIMUM+1)/2)
+	
+#define RC_THRES_STOP		FromPercent(6, RC_MAXIMUM)
+#define RC_THRES_START		FromPercent(10, RC_MAXIMUM) 
 
-#define RC_MAX_ROLL_PITCH	(170)	
-
-#define RC_THRES_STOP		((6L*RC_MAXIMUM)/100)		
-#define RC_THRES_START		((10L*RC_MAXIMUM)/100)		
+#define THROTTLE_MAX_CRUISE			FromPercent(60, RC_MAXIMUM) 
+#define THROTTLE_MIN_CRUISE			FromPercent(30, RC_MAXIMUM)
 
 #define RC_FRAME_TIMEOUT_MS 	25
 #define RC_SIGNAL_TIMEOUT_MS 	(5L*RC_FRAME_TIMEOUT_MS)
-#define RC_THR_MAX 			RC_MAXIMUM
+#define RC_THR_MAX 				RC_MAXIMUM
 
 #define RC_NO_CHANGE_TIMEOUT_MS 20000L		// mS.
 
