@@ -227,7 +227,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
 	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 
-	if ( NavSensitivity > NAV_SENS_THRESHOLD ) 
+	if (( NavSensitivity > NAV_SENS_THRESHOLD ) && ( Radius > NavNeutralRadius ))
 	{	
 		#ifdef NAV_WING
 		
