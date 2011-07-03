@@ -94,7 +94,7 @@ void GetHeading(void)
 
 	#endif // SIMULATE
 
-	Heading = Make2Pi(MagHeading + CompassOffset);
+	Heading = Make2Pi(MagHeading - CompassOffset);
 
 	HeadingChange = Abs( Heading - HeadingValF.iw1 );
 	if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI

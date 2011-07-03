@@ -1,3 +1,4 @@
+#define OLD_YAW
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
