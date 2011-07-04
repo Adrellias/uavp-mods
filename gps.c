@@ -413,8 +413,10 @@ void ParseGPSSentence(void)
 				if (( Abs(LatitudeDiff) > NavGPSSlew ) || ( Abs(LongitudeDiff) > NavGPSSlew ))
 				{
 					Stats[BadS]++;
-					GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
-					GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+					#ifndef DISABLE_GPS_SLEW
+						GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
+						GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
+					#endif // DISABLE_GPS_SLEW
 				}
 		
 			#ifdef INC_GPS_VEL

@@ -1,5 +1,7 @@
 #define OLD_YAW
 
+#define DISABLE_GPS_SLEW
+
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
 //#define JIM_MPX_INVERT		// early version of MPX baro
@@ -35,10 +37,10 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
