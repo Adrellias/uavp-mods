@@ -226,8 +226,6 @@ void ParseGPGGASentence(void)
 void ParseGPRMCSentence() 
 { // main current position and heading
 
-	#ifndef TESTING
-
     UpdateField();
 
     UpdateField();   //UTime
@@ -271,7 +269,6 @@ void ParseGPRMCSentence()
 		*/
         F.HaveGPRMC = true;
     } else
-	#endif // !TESTING
         F.HaveGPRMC = false;
 
 } // ParseGPRMCSentence
@@ -467,13 +464,6 @@ void UpdateGPS(void)
 		{
 			F.NavComputed = false;
 			mS[GPSTimeout] = mSClock() + GPS_TIMEOUT_MS;
-		}
-		else
-		{
-			NavCorr[Pitch] = DecayX(NavCorr[Pitch], 2);
-			NavCorr[Roll] = DecayX(NavCorr[Roll], 2);
-			NavCorr[Yaw] = 0;
-			EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
 		}
 	}
 	else

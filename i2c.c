@@ -48,6 +48,7 @@ void I2CStop(void);
 boolean I2CWaitClkHi(void); // has timeout
 uint8 ReadI2CByte(uint8);
 uint8 WriteI2CByte(uint8);
+void ShowI2CDeviceName(uint8);
 uint8 ScanI2CBus(void);
 uint8 ReadI2CString(uint8 *, uint8);
 
@@ -207,6 +208,43 @@ uint8 ReadI2CString(uint8 *S, uint8 l)
 
 #ifdef TESTING
 
+void ShowI2CDeviceName(uint8 d) {
+    TxChar(' ');
+    switch ( d  ) {
+        case ADXL345_ID:
+            TxString("ADXL345 Acc");
+            break;
+        case ITG_ID_3DOF:
+            TxString("ITG3200 3DOF Gyro");
+            break;
+        case ITG_ID_6DOF:
+            TxString("ITG3200 6DOF Gyro");
+            break;
+        case HMC5843_ID:
+            TxString("HMC5843 Magnetometer");
+            break;
+        case HMC6352_ID:
+            TxString("HMC6352 Compass");
+            break;
+        case ADS7823_ID:
+            TxString("ADS7823 ADC");
+            break;
+        case MCP4725_ID:
+            TxString("MCP4725 DAC");
+            break;
+        case BOSCH_ID:
+            TxString("Bosch Baro");
+            break;
+        case TMP100_ID:
+            TxString("TMP100 Temp");
+            break;
+        default:
+            break;
+    } // switch
+    TxChar(' ');
+
+} // ShowI2CDeviceName
+
 uint8 ScanI2CBus(void)
 {
 	uint8 s;
@@ -223,6 +261,7 @@ uint8 ScanI2CBus(void)
 			d++;
 			TxString("\t0x");
 			TxValH(s);
+			ShowI2CDeviceName(s);
 			TxNextLine();
 		}
 		I2CStop();
@@ -241,6 +280,7 @@ uint8 ScanI2CBus(void)
 				d++;
 				TxString("\t0x");
 				TxValH(s);
+				ShowI2CDeviceName(s);
 				TxNextLine();
 			}
 			ESCI2CStop();

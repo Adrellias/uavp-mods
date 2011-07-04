@@ -175,8 +175,6 @@ void CalibrateCompass(void)
 
 // HMC5843 3 Axis Magnetometer
 
-#define HMC5843_ID      0x3C        // 0x1E 9DOF
-
 int16 Mag[3];
 
 int16 GetHMC5843(void) {
@@ -304,8 +302,6 @@ boolean HMC5843MagnetometerActive(void) {
 //________________________________________________________________________________________
 
 // HMC6352 Bosch Compass
-
-#define HMC6352_ID             0x42
 
 int16 GetHMC6352(void)
 {

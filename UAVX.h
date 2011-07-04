@@ -35,10 +35,10 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
-	#define FORCE_NAV					
-	#define SIMULATE
+	//#define FORCE_NAV					
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -591,6 +591,8 @@ extern void GetNeutralAccelerations(void);
 extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
+#define ADXL345_ID          0xA6
+
 extern void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 extern boolean ADXL345AccActive(void);
@@ -638,6 +640,7 @@ extern uint8 ADCChannel;
 // autonomous.c
 
 extern void DoShutdown(void);
+extern void DecayNavCorr(void);
 extern void FailsafeHoldPosition(void);
 extern void DoPolarOrientation(void);
 extern void Navigate(int32, int32);
@@ -673,11 +676,10 @@ extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
 
-extern int16 NavCorr[3], NavCorrp[3];
-extern int16 NavE[2], NavEp[2], NavIntE[2];
+extern int16 NavCorr[], NavCorrp[], NavE[], NavEp[], NavIntE[];
 extern int16 EffNavSensitivity;
-extern int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
-extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
+extern int16 EastP, EastI, EastCorr, NorthP, NorthI, NorthCorr;
+extern int24 EastD, NorthD;
 
 //______________________________________________________________________________________________
 
@@ -690,6 +692,24 @@ extern int24 EastD, EastDiffP, NorthD, NorthDiffP;
 
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
 
+// Freescale Baro
+
+#define MCP4725_MAX	 	4095 	// 12 bits
+
+#define ADS7823_TIME_MS	50		// 20Hz
+#define ADS7823_MAX	 	4095 	// 12 bits
+#define ADS7823_ID	0x90 	// ADS7823 ADC
+#define ADS7823_WR	0x90 	// ADS7823 ADC
+#define ADS7823_RD	0x91 	// ADS7823 ADC
+#define ADS7823_CMD	0x00
+
+#define MCP4725_ID		0xC8
+#define MCP4725_WR		MCP4725_ID
+
+#define MCP4725_RD		(MCP4725_ID+1)
+#define MCP4725_CMD		0x40 	// write to DAC registor in next 2 bytes
+#define MCP4725_EPROM	0x60    // write to DAC registor and eprom
+
 extern void SetFreescaleMCP4725(int16);
 extern void SetFreescaleOffset(void);
 extern void ReadFreescaleBaro(void);
@@ -697,6 +717,10 @@ extern int24 FreescaleToCm(int24);
 extern void GetFreescaleBaroAltitude(void);
 extern boolean IsFreescaleBaroActive(void);
 extern void InitFreescaleBarometer(void);
+
+// Bosch Baro
+
+#define BOSCH_ID			0xee
 
 extern void StartBoschBaroADC(boolean);
 extern void ReadBoschBaro(void);
@@ -755,12 +779,16 @@ extern void CalibrateCompass(void);
 
 // HMC5843 Bosch Magnetometer
 
+#define HMC5843_ID      0x3C        // 0x1E 9DOF
+
 extern int16 GetHMC5843(void);
 extern void DoTestHMC5843(void);
 extern void CalibrateHMC5843(void);
 extern boolean HMC5843MagnetometerActive(void);
 
 // HMC6352 Bosch Compass
+
+#define HMC6352_ID             0x42
 
 extern int16 GetHMC6352(void);
 extern void DoTestHMC6352(void);
@@ -895,14 +923,16 @@ extern void ErectGyros(void);
 extern void GyroTest(void);
 extern void InitGyros(void);
 
+#define ITG_ID_3DOF 	0xD2
+#define ITG_ID_6DOF 	0xD0
+extern uint8 ITG_ID, ITG_R, ITG_W;
+
 extern void ITG3200ViewRegisters(void);
 extern void BlockReadITG3200(void);
 extern uint8 ReadByteITG3200(uint8);
 extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 extern boolean ITG3200GyroActive(void);
-
-extern uint8 ITG_ID, ITG_R, ITG_W;
 
 extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern i32u YawRateF;
@@ -1004,6 +1034,7 @@ extern void I2CStop(void);
 extern uint8 WriteI2CByte(uint8);
 extern uint8 ReadI2CByte(uint8);
 extern uint8 ReadI2CString(uint8 *, uint8);
+extern void ShowI2CDeviceName(uint8);
 extern uint8 ScanI2CBus(void);
 
 extern boolean ESCWaitClkHi(void);
@@ -1382,6 +1413,8 @@ enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelem
 //______________________________________________________________________________________________
 
 // temperature.c
+
+#define TMP100_ID		0x96 
 
 extern void GetTemperature(void);
 extern void InitTemperature(void);

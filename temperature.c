@@ -25,22 +25,22 @@
 void GetTemperature(void);
 void InitTemperature(void);
 
-#define TEMPERATURE_MAX_ADC 	4095 		// 12 bits
-#define TEMPERATURE_I2C_ID		0x96 		
-#define TEMPERATURE_I2C_WR		0x96 		// Write
-#define TEMPERATURE_I2C_RD		0x97 		// Read	
-#define TEMPERATURE_I2C_TMP		0x00		// Temperature
-#define TEMPERATURE_I2C_CMD		0x01 	
-#define TEMPERATURE_I2C_LOW		0x02 		// Alarm low limit
-#define TEMPERATURE_I2C_HI		0x03 		// Alarm high limit
-#define TEMPERATURE_I2C_CFG		0b00000000	// 0.5 deg resolution continuous
+#define TMP100_MAX_ADC 	4095 		// 12 bits
+		
+#define TMP100_WR		0x96 		// Write
+#define TMP100_RD		0x97 		// Read	
+#define TMP100_TMP		0x00		// Temperature
+#define TMP100_CMD		0x01 	
+#define TMP100_LOW		0x02 		// Alarm low limit
+#define TMP100_HI		0x03 		// Alarm high limit
+#define TMP100_CFG		0b00000000	// 0.5 deg resolution continuous
 
 i16u AmbientTemperature;
 
 void GetTemperature(void)
 {
 	I2CStart();
-	if( WriteI2CByte(TEMPERATURE_I2C_RD) != I2C_ACK ) goto Terror;
+	if( WriteI2CByte(TMP100_RD) != I2C_ACK ) goto Terror;
 	AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
 	AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
 	I2CStop();
@@ -66,14 +66,14 @@ void InitTemperature(void)
 	static uint8 r;
 
 	I2CStart();
-	r = WriteI2CByte(TEMPERATURE_I2C_WR);
-	r = WriteI2CByte(TEMPERATURE_I2C_CMD);
-	r = WriteI2CByte(TEMPERATURE_I2C_CFG);
+	r = WriteI2CByte(TMP100_WR);
+	r = WriteI2CByte(TMP100_CMD);
+	r = WriteI2CByte(TMP100_CFG);
 	I2CStop();
 
 	I2CStart();
-	r = WriteI2CByte(TEMPERATURE_I2C_WR);	
-	r = WriteI2CByte(TEMPERATURE_I2C_TMP);  // Select temperature
+	r = WriteI2CByte(TMP100_WR);	
+	r = WriteI2CByte(TMP100_TMP);  // Select temperature
 	I2CStop();
 
 	GetTemperature();

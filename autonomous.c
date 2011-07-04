@@ -23,6 +23,7 @@
 #include "uavx.h"
 
 void DoShutdown(void);
+void DecayNavCorr(void);
 void DoPolarOrientation(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int24);
@@ -35,12 +36,11 @@ void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
 
-int16 NavCorr[3], NavCorrp[3];
-int16 NavE[2], NavEp[2], NavIntE[2];
+int16 NavCorr[3], NavCorrp[3], NavE[3], NavEp[3], NavIntE[3];
 
 int16 EffNavSensitivity;
-int16 EastP, EastDiffSum, EastI, EastCorr, NorthP, NorthDiffSum, NorthI, NorthCorr;
-int24 EastD, EastDiffP, NorthD, NorthDiffP;
+int16 EastP, EastI, EastCorr, NorthP, NorthI, NorthCorr;
+int24 EastD, NorthD;
 int16 DescentComp;
 
 #ifdef SIMULATE
@@ -95,6 +95,15 @@ void DoShutdown(void)
 	State = Shutdown;
 	StopMotors();
 } // DoShutdown
+
+void DecayNavCorr(void)
+{
+		NavCorr[Roll] = NavCorrp[Roll] = DecayX(NavCorr[Roll], 2);
+		NavIntE[Roll] = DecayX(NavIntE[Roll], 2);
+		NavCorr[Pitch] = NavCorrp[Pitch] = DecayX(NavCorr[Pitch], 2);
+		NavIntE[Pitch] = DecayX(NavIntE[Pitch], 2);
+		NavCorr[Yaw] = 0;
+} // DecayNavCorr
 
 void FailsafeHoldPosition(void)
 {
@@ -197,6 +206,8 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	// cos/sin/arctan lookup tables are used for speed.
 	// BEWARE magic numbers for integer arithmetic
 
+	static uint8 a;
+
 	#ifndef TESTING // not used for testing - make space!
 
 	static int16 SinHeading, CosHeading, NavKp;
@@ -204,7 +215,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static int24 AltE;
 	static int32 LongitudeDiff, LatitudeDiff;
 	static int16 RelHeading;
-	static uint8 a;
 	static int16 Diff, NavP, NavI, NavD;
 	static int16 NavERoll, NavEPitch;
 	static i32u Temp32;
@@ -227,11 +237,10 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
 	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 
-	if (( NavSensitivity > NAV_SENS_THRESHOLD ) && ( Radius > NavNeutralRadius ))
+	if ( Radius > NavNeutralRadius )
 	{	
 		#ifdef NAV_WING
 		
-			// no Nav for conventional aircraft - yet!
 			NavCorr[Pitch] = 0; 
 			// Just use simple rudder only for now.
 			if ( !F.WayPointAchieved )
@@ -267,7 +276,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				NavIntE[a] += NavE[a];
 				NavIntE[a] = Limit1(NavIntE[a], (int16)P[NavIntLimit]);
 				NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
-				NavIntE[a] = Decay1(NavIntE[a]);
 				
 				Diff = (NavEp[a] - NavE[a]);
 				Diff = Limit1(Diff, 256);
@@ -298,13 +306,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	}	
 	else
     #endif // !TESTING
-	{
-		// Neutral Zone - no GPS influence
-		NavCorr[Pitch] = DecayX(NavCorr[Pitch], 2);
-		NavCorr[Roll] = DecayX(NavCorr[Roll], 2);
-		NavCorr[Yaw] = 0;
-		EastDiffP = NorthDiffP = EastDiffSum = NorthDiffSum = 0;
-	}
+		DecayNavCorr();
 
 	F.NavComputed = true;
 
@@ -314,7 +316,7 @@ void DoNavigation(void)
 {
 	#ifndef TESTING // not used for testing - make space!
 
-	F.NavigationActive = F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
+	F.NavigationActive = ( NavSensitivity > NAV_SENS_THRESHOLD ) && F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
 
 	if ( F.NavigationActive )
 	{
@@ -456,8 +458,8 @@ void DoNavigation(void)
 			DoFailsafeLanding();
 		}
 	#endif // ENABLE_STICK_CHANGE_FAILSAFE
-		else // kill nav correction immediately
-		 	NavCorr[Pitch] = NavCorr[Roll] = NavCorr[Yaw] = 0; // zzz
+		else 
+			DecayNavCorr();
 
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
@@ -644,11 +646,11 @@ void GetWayPointEE(int8 wp)
 
 void InitNavigation(void)
 {
-	static uint8 wp;
+	static uint8 wp, a;
 
 	HoldLatitude = HoldLongitude = WayHeading = 0;
-	NavCorr[Pitch] = NavCorrp[Pitch] = NavCorr[Roll] = NavCorrp[Roll] = NavCorr[Yaw] = 0;
-	EastDiffP = NorthDiffP = 0;
+	for ( a = 0; a < (uint8)3 ; a++ )			
+		NavCorr[a] = NavCorrp[a] = NavIntE[a] = 0;
 
 	NavState = HoldingStation;
 	AttitudeHoldResetCount = 0;

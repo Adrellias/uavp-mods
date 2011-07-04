@@ -20,9 +20,6 @@
 
 // ITG3200 3-axis I2C Gyro
 
-#define ITG_ID_3DOF 	0xD2
-#define ITG_ID_6DOF 	0xD0
-
 // ITG3200 Register Defines
 #define ITG_WHO		0x00
 #define	ITG_SMPL	0x15

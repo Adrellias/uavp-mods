@@ -101,10 +101,10 @@ void ReadParametersEE(void)
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
-		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 100); 
-		NavGPSSlew = ConvertMToGPS(NavGPSSlew)/(GPS_UPDATE_HZ * 10); // assumes 5 GPS updates/sec
+		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 99); 
+		NavGPSSlew = ConvertMToGPS(NavGPSSlew); 
 
-		NavNeutralRadius = Limit(P[NeutralRadius], 0, 5);
+		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, 5);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius);
 
 		MinROCCmpS = (int16)P[MaxDescentRateDmpS] * 10;

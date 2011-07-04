@@ -201,7 +201,6 @@ void InitAccelerometers(void)
 
 boolean ADXL345AccActive(void);
 
-#define ADXL345_ID          0xA6
 #define ADXL345_W           ADXL345_ID
 #define ADXL345_R           (ADXL345_ID+1)
 
