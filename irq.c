@@ -78,6 +78,7 @@ void ReceivingGPSOnly(boolean r)
 		PIE1bits.RCIE = false;
 		F.ReceivingGPS = r;
 
+		#ifndef TESTING 
 		if ( F.ReceivingGPS )			
 			#ifdef CLOCK_16MHZ
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
@@ -87,6 +88,7 @@ void ReceivingGPSOnly(boolean r)
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_LOW, _B9600);
 			#endif // CLOCK_16MHZ
 		else
+		#endif // !TESTING
 			OpenUSART(USART_TX_INT_OFF&USART_RX_INT_OFF&USART_ASYNCH_MODE&
 				USART_EIGHT_BIT&USART_CONT_RX&USART_BRGH_HIGH, _B38400);
    		PIE1bits.RCIE = r;
