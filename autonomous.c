@@ -36,11 +36,11 @@ void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
 
-int16 NavCorr[3], NavCorrp[3], NavE[3], NavEp[3], NavIntE[3];
+int16 NavCorr[3], NavCorrp[3], NavIntE[3];
+int24 NavPosE[2], NavPosEp[2], NavVelEp[2];
+int32 NavScale[2];
 
-int16 EffNavSensitivity;
-int16 EastP, EastI, EastCorr, NorthP, NorthI, NorthCorr;
-int24 EastD, NorthD;
+boolean StartingNav = true;
 int16 DescentComp;
 
 #ifdef SIMULATE
@@ -98,10 +98,14 @@ void DoShutdown(void)
 
 void DecayNavCorr(void)
 {
+		NavVelEp[Roll] = NavVelEp[Pitch] = 0;
+
 		NavCorr[Roll] = NavCorrp[Roll] = DecayX(NavCorr[Roll], 2);
-		NavIntE[Roll] = DecayX(NavIntE[Roll], 2);
 		NavCorr[Pitch] = NavCorrp[Pitch] = DecayX(NavCorr[Pitch], 2);
+
+		NavIntE[Roll] = DecayX(NavIntE[Roll], 2);
 		NavIntE[Pitch] = DecayX(NavIntE[Pitch], 2);
+
 		NavCorr[Yaw] = 0;
 } // DecayNavCorr
 
@@ -185,8 +189,7 @@ void DoPolarOrientation(void)
 			P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
 		
 			while ( P > 24 ) P -=24;
-			while ( P < 0 ) P +=24;
-	
+			while ( P < 0 ) P +=24;	
 		}
 		else
 			P = 0; 
@@ -210,18 +213,20 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	#ifndef TESTING // not used for testing - make space!
 
-	static int16 SinHeading, CosHeading, NavKp;
-    static int24 Radius;
-	static int24 AltE;
-	static int32 LongitudeDiff, LatitudeDiff;
-	static int16 RelHeading;
-	static int16 Diff, NavP, NavI, NavD;
-	static int16 NavERoll, NavEPitch;
+	static int16 EffNavSensitivity;
+	static int16 SinHeading, CosHeading, RelHeading;
+	static int16 NavVel, NavVelE, NavDesV;
+    static int24 Radius, DistE, AltE;
+	static int32 Diff, LongitudeDiff, LatitudeDiff;
+	static int16 NavP, NavI, NavD, NavKp;
 	static i32u Temp32;
 
 	DoPolarOrientation();
 
-	DesiredLatitude = NavLatitude;
+	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
+	EffNavSensitivity = Limit(EffNavSensitivity, 0, RC_MAXIMUM);
+
+	DesiredLatitude = NavLatitude; // for telemetry tracking
 	DesiredLongitude = NavLongitude;
 	
 	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
@@ -230,15 +235,25 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	Radius = int32sqrt( Sqr(LongitudeDiff) + Sqr(LatitudeDiff) );
 
-	F.WayPointCentred =  Radius < NAV_NEUTRAL_RADIUS;
+	F.WayPointCentred = Radius < NavNeutralRadius;
 	AltE = DesiredAltitude - Altitude;
-	F.WayPointAchieved = ( Radius < NavProximityRadius ) && ( Abs(AltE) < NavProximityAltitude );
+	F.WayPointAchieved = ( (Radius < NavProximityRadius) && ( Abs(AltE) < NavProximityAltitude ) );
 
-	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
-	RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
+	if ( F.AttitudeHold && ( EffNavSensitivity > 0 ) && !F.WayPointCentred )
+	{
 
-	if ( Radius > NavNeutralRadius )
-	{	
+		WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
+		RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
+	
+		SinHeading = int16sin(Heading);
+		CosHeading = int16cos(Heading);
+		
+		Temp32.i32 = -LatitudeDiff * SinHeading + LongitudeDiff * CosHeading;
+		NavPosE[Roll] = Temp32.i3_1;
+	
+		Temp32.i32 = -LatitudeDiff * CosHeading - LongitudeDiff * SinHeading;
+		NavPosE[Pitch] = Temp32.i3_1;
+	
 		#ifdef NAV_WING
 		
 			NavCorr[Pitch] = 0; 
@@ -247,51 +262,98 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			{
 				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
 				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
-//zzz Roll as well at 25%
+				//zzz Roll as well at 25%
 			}
 
 		#else // MULTICOPTER
 
 			// revert to original simpler version from UAVP->UAVX transition
-	
-			SinHeading = int16sin(RelHeading);
-			CosHeading = int16cos(RelHeading);
-
-			//	NavKp = NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius) / NavProximityRadius*2;
-			// assume closing radius is 15M * 54 ~= say 512
-			NavKp = SRS32((int32)NAV_MAX_ROLL_PITCH * (Radius - NavNeutralRadius), 9);		
-			NavKp = Limit(NavKp, 0, NAV_MAX_ROLL_PITCH);
-
-			Temp32.i32 = SinHeading * NavKp; 
-			NavE[Roll] = Temp32.i3_1;
-			Temp32.i32 = CosHeading * NavKp;
-			NavE[Pitch] = -Temp32.i3_1;
 			
 			// Roll & Pitch
+
+			#ifdef VELOCITY_SCHEME
+
+			if ( StartingNav )
+			{
+				NavPosEp[Roll] = NavPosE[Roll];
+				NavVelEp[Roll] = 0;
+				NavPosEp[Pitch] = NavPosE[Pitch];
+				NavVelEp[Pitch] = 0;
+				StartingNav = false;
+			}
 			
 			for ( a = 0; a < (uint8)2 ; a++ )
 			{
-				NavP = NavE[a];
-			
-				NavIntE[a] += NavE[a];
-				NavIntE[a] = Limit1(NavIntE[a], (int16)P[NavIntLimit]);
-				NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 6);
-				
-				Diff = (NavEp[a] - NavE[a]);
-				Diff = Limit1(Diff, 256);
-				NavD = SRS16(Diff * (int16)P[NavKd], 8);
-				NavD = Limit1(NavD, NAV_DIFF_LIMIT);
-				
-				NavEp[a] = NavE[a];
-				
-				Temp32.i32 = ( NavP + NavI + NavD ) * NavSensitivity;
-				NavCorr[a] = Temp32.i3_1;
-	
+				#define MAX_VELOCITY	(5*54L)
+				#define POSITION_SCALE	1
+
+				P[NavKi] = 1;
+				P[NavKd] = 4;
+
+				NavDesV = NavPosE[a];// * POSITION_SCALE;
+				NavDesV = Limit(NavDesV, -MAX_VELOCITY, MAX_VELOCITY);
+
+				NavVel = (NavPosE[a] - NavPosEp[a]) * GPS_UPDATE_HZ;
+
+				NavVelE = NavDesV - NavVel; // scale to GPS update rate?
+			//	NavVelE = SoftFilter(NavVelEp[a], NavVelE);
+
+				NavP = NavVelE * (int16)P[NavKi]; // use Ki temp.
+							
+				NavD = (NavVelE - NavVelEp[a]) * (int16)P[NavKd];
+
+				NavCorr[a] = NavP + NavD; // scaling for angles
+
 			  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
-			  	NavCorr[a] = Limit1(NavCorr[a], NAV_MAX_ROLL_PITCH);
-			 
+			  	NavCorr[a] = Limit1(NavCorr[a], EffNavSensitivity);
+
+				NavPosEp[a] = NavPosE[a];
+				NavVelEp[a] = NavVelE;
 			  	NavCorrp[a] = NavCorr[a];
 			}
+
+			#else
+
+			if ( Abs(NavPosE[Roll]) > Abs(NavPosE[Pitch]) ) // expensive but gives straight path.
+			{
+				NavScale[Pitch] = (NavPosE[Pitch] * 256) / NavPosE[Roll];
+				NavScale[Pitch] = Abs(NavScale[Pitch]);
+				NavScale[Roll] = 256;
+			}
+			else
+			{
+				NavScale[Roll] = (NavPosE[Roll] * 256) / NavPosE[Pitch];
+				NavScale[Roll] = Abs(NavScale[Roll]);
+				NavScale[Pitch] = 256;
+			}		
+
+			for ( a = 0; a < (uint8)2 ; a++ )
+			{
+				NavP = SRS32(NavPosE[a], 2);
+				NavP = Limit1(NavP, EffNavSensitivity);
+
+				Temp32.i32 = NavP * NavScale[a];
+				NavP = Temp32.i3_1;
+			
+				NavIntE[a] += NavP;
+				NavIntE[a] = Limit1(NavIntE[a], 512);
+				NavI = SRS16(NavIntE[a] * (int16)P[NavKi], 4);
+				NavI = Limit1(NavI,(int16)P[NavIntLimit]); 
+				
+				Diff = NavPosE[a] - NavPosEp[a];
+				NavD = SRS16(Diff * (int16)P[NavKd], 4);
+				NavD = Limit1(NavD, 128);
+
+				NavCorr[a] = NavP + NavI - NavD;
+
+			  	NavCorr[a] = SlewLimit(NavCorrp[a], NavCorr[a], NAV_CORR_SLEW_LIMIT);
+			  	NavCorr[a] = Limit1(NavCorr[a], EffNavSensitivity);
+
+			  	NavCorrp[a] = NavCorr[a];
+				NavPosEp[a] = NavPosE[a];
+			}
+
+			#endif // VELOCITY_SCHEME
 	
 			// Yaw
 			if ( F.AllowTurnToWP && !F.WayPointAchieved )
@@ -306,7 +368,10 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	}	
 	else
     #endif // !TESTING
+	{
+		StartingNav = true;
 		DecayNavCorr();
+	}
 
 	F.NavComputed = true;
 
@@ -316,7 +381,7 @@ void DoNavigation(void)
 {
 	#ifndef TESTING // not used for testing - make space!
 
-	F.NavigationActive = ( NavSensitivity > NAV_SENS_THRESHOLD ) && F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
+	F.NavigationActive = F.GPSValid && F.CompassValid && F.AccelerationsValid && ( mSClock() > mS[NavActiveTime]);
 
 	if ( F.NavigationActive )
 	{
@@ -365,7 +430,7 @@ void DoNavigation(void)
 				break;
 			case ReturningHome:		
 				Navigate(OriginLatitude, OriginLongitude);				
-				if ( F.ReturnHome || F.Navigate )
+				if ( F.ReturnHome || F.Navigate ) 
 				{
 					if ( F.WayPointAchieved )
 					{
@@ -649,8 +714,9 @@ void InitNavigation(void)
 	static uint8 wp, a;
 
 	HoldLatitude = HoldLongitude = WayHeading = 0;
-	for ( a = 0; a < (uint8)3 ; a++ )			
-		NavCorr[a] = NavCorrp[a] = NavIntE[a] = 0;
+	for ( a = 0; a < (uint8)2 ; a++ )			
+		NavCorr[a] = NavCorrp[a] = NavPosEp[a] = NavIntE[a] = NavVelEp[a] = 0;
+	NavCorr[Yaw] = NavCorrp[Yaw] = 0;
 
 	NavState = HoldingStation;
 	AttitudeHoldResetCount = 0;

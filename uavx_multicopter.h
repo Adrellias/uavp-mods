@@ -65,14 +65,14 @@
 	{30,true},			// PercentNavSens6Ch	39c
 	{1,true},			// CamRollTrim,		40c
 
-	{-16,0},			// NavKd			41
+	{-48,0},			// NavKd			41
 	{3,true},			// RxPitchCh was VertDampDecay    42
 	{4,true},			// RxYawCh was HorizDampDecay	43
 	{56,true},			// BaroScale	    44c
 	{UAVXTelemetry,true}, // TelemetryType	45c
 	{-10,0},		    // MaxDescentRateDmpS 	46
 	{30,0},				// DescentDelayS	47
-	{4,0},				// NavIntLimit		48
+	{6,0},				// NavIntLimit		48 
 	{1,0},				// AltIntLimit		49 was 8
 	{5,true},			// RxGearCh was GravComp		50c
 

@@ -233,14 +233,8 @@ void UpdateControls(void)
 			
 	// Attitude
 		
-	#ifdef ATTITUDE_NO_LIMITS
-		DesiredRoll = RC[RollRC] - RC_NEUTRAL;
-		DesiredPitch = RC[PitchRC] - RC_NEUTRAL;		
-	#else
-		RollPitchScale = MAX_ROLL_PITCH - (NavSensitivity >> 2);
-		DesiredRoll = SRS16((RC[RollRC] - RC_NEUTRAL) * RollPitchScale, 7);
-		DesiredPitch = SRS16((RC[PitchRC] - RC_NEUTRAL) * RollPitchScale, 7);
-	#endif // ATTITUDE_NO_LIMITS
+	DesiredRoll = RC[RollRC] - RC_NEUTRAL;
+	DesiredPitch = RC[PitchRC] - RC_NEUTRAL;		
 	DesiredYaw = RC[YawRC] - RC_NEUTRAL;
 
 	AdaptiveYawFilterA(); // increase cutoff frquency with increased yaw stick

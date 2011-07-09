@@ -251,6 +251,9 @@ void MixAndLimitCam(void)
 	static int32 NewCamRoll, NewCamPitch;
 
 	// use only roll/pitch angle estimates
+
+// zzz this where we lose the resolution say 20/256 so need camera gimbal gearing if ~12.
+
 	Temp.i24 = (int24)CameraRollAngle * P[CamRollKp];
 	NewCamRoll = Temp.i2_1 + (int16)P[CamRollTrim];
 	NewCamRoll = PWMSense[CamRollC] * NewCamRoll + OUT_NEUTRAL;

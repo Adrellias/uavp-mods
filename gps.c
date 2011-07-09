@@ -375,14 +375,17 @@ void ParseGPSSentence(void)
 				FakeGPSLatitude += ConvertMToGPS(SIM_CRUISE_MPS*CosH)/(GPS_UPDATE_HZ*256);
 
 			#else
+
+//	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
+//	LongitudeDiff = Temp32.i3_1;
 	
-				FakeGPSLongitude -= SRS32((int32)FakeDesiredPitch * SinH, SCALE_VEL);
+				FakeGPSLongitude -= SRS32((int32)FakeDesiredPitch * SinH * 256 / GPSLongitudeCorrection, SCALE_VEL);
 				FakeGPSLatitude -= SRS32((int32)FakeDesiredPitch * CosH, SCALE_VEL);
 									
 				A = Make2Pi(Heading + HALFMILLIPI);
 				CosH = int16cos(A);
 				SinH = int16sin(A);
-				FakeGPSLongitude += SRS32((int32)FakeDesiredRoll * SinH, SCALE_VEL);
+				FakeGPSLongitude += SRS32((int32)FakeDesiredRoll * SinH  * 256 / GPSLongitudeCorrection, SCALE_VEL);
 				FakeGPSLatitude += SRS32((int32)FakeDesiredRoll * CosH, SCALE_VEL);
 
 			#endif // NAV_WING

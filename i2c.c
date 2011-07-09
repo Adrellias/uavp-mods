@@ -214,6 +214,9 @@ void ShowI2CDeviceName(uint8 d) {
         case ADXL345_ID:
             TxString("ADXL345 Acc");
             break;
+        case BMA180_ID:
+            TxString("BMA180 Acc");
+            break;
         case ITG_ID_3DOF:
             TxString("ITG3200 3DOF Gyro");
             break;

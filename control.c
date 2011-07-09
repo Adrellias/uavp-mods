@@ -203,18 +203,9 @@ void DoYawRate(void)
 	else
 		HE = 0;
 
-	#ifdef OLD_YAW
-
 	Angle[Yaw] += Rate[Yaw];
 	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
-
-	Angle[Yaw] = DecayX(Angle[Yaw], 2); 				// GKE added to kill gyro drift
-
-	#else
-
-	Angle[Yaw] = HE;
-
-	#endif // OLD_YAW
+	Angle[Yaw] = DecayX(Angle[Yaw], 2); 
 
 } // DoYawRate
 
@@ -357,19 +348,7 @@ void DoControl(void)
 		DoYawRate();
 	
 		RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
-	
-		#ifdef OLD_YAW
-
 		Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
-
-		#else
-	
-		YawRateIntE += RateE;
-		YawRateIntE = Limit1(YawRateIntE, P[YawIntLimit]);
-	
-		Yl  = SRS32( RateE * (int16)P[YawKp] + SRS16( YawRateIntE * P[YawKi], 4), 4);
-	
-		#endif // OLD_YAW
 	
 		Ratep[Yaw] = Rate[Yaw];
 	

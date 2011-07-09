@@ -1,4 +1,4 @@
-#define OLD_YAW
+//#define VELOCITY_SCHEME
 
 #define DISABLE_GPS_SLEW
 
@@ -37,9 +37,9 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+//	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
-	//#define FORCE_NAV					
+	#define FORCE_NAV					
 	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
@@ -191,7 +191,6 @@
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
 #define NAV_POLAR_RADIUS			10L		// Polar coordinates arm outside this distance from origin
-#define NAV_NEUTRAL_RADIUS			1L		// Metres shows as WP centred
 
 #ifdef NAV_WING
 	#define NAV_PROXIMITY_RADIUS	20L		// Metres if there are no WPs
@@ -585,7 +584,7 @@ extern int8 near State, NavState, FailState;
 
 // accel.c
 
-enum AccTypes { LISLAcc, ADXL345Acc, AccUnknown };
+enum AccTypes { LISLAcc, ADXL345Acc, BMA180Acc, AccUnknown };
 
 extern void ShowAccType(void);
 extern void ReadAccelerations(void);
@@ -598,6 +597,12 @@ extern void InitAccelerometers(void);
 extern void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 extern boolean ADXL345AccActive(void);
+
+#define BMA180_ID          0x08
+
+extern void ReadBMA180Acc(void);
+void InitBMA180Acc(void);
+extern boolean BMA180AccActive(void);
 
 extern void SendCommand(int8);
 extern uint8 ReadLISL(uint8);
@@ -677,11 +682,8 @@ extern int16 NavPolarRadius, NavProximityRadius, NavNeutralRadius, NavProximityA
 extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
-
-extern int16 NavCorr[], NavCorrp[], NavE[], NavEp[], NavIntE[];
-extern int16 EffNavSensitivity;
-extern int16 EastP, EastI, EastCorr, NorthP, NorthI, NorthCorr;
-extern int24 EastD, NorthD;
+extern int16 NavCorr[], NavCorrp[], NavIntE[];
+extern int24 NavE[], NavEp[];
 
 //______________________________________________________________________________________________
 

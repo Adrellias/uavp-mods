@@ -32,6 +32,10 @@ void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 boolean ADXL345AccActive(void);
 
+void ReadBMA180Acc(void);
+void InitBMA180Acc(void);
+boolean BMA180AccActive(void);
+
 void SendCommand(int8);
 uint8 ReadLISL(uint8);
 uint8 ReadLISLNext(void);
@@ -59,6 +63,9 @@ void ShowAccType(void)
 	case ADXL345Acc:
 		TxString("ADXL345");
 		break;
+	case BMA180Acc:
+		TxString("BMA180");
+		break;
 	case AccUnknown:
 		TxString("Unknown");
 		break;
@@ -68,10 +75,11 @@ void ShowAccType(void)
 
 void ReadAccelerations(void)
 {
-	if ( AccType == LISLAcc )
+	switch ( AccType ) {
+	case LISLAcc:
 		ReadLISLAcc();
-	else
-	{
+		break;
+	case ADXL345Acc:
 		ReadADXL345Acc();
 		#ifdef FULL_MONTY
 		// rescale to 1024 = 1G
@@ -83,7 +91,14 @@ void ReadAccelerations(void)
 		  	Ay.i16 *= 5; // DU
 		  	Az.i16 *= 5; // FB
 		#endif // FULL_MONTY
-	}
+		break;
+	case BMA180Acc:
+		ReadBMA180Acc();
+		// scaling??
+		break;
+	default:
+		break;
+	} // Switch
 
 } // ReadAccelerations
 
@@ -177,16 +192,22 @@ void InitAccelerometers(void)
 		InitADXL345Acc();
 	}		
 	else
-		if ( LISLAccActive() )
+		if ( BMA180AccActive() )
 		{
-			AccType = LISLAcc;
-			InitLISLAcc();
+			AccType = BMA180Acc;
+			InitBMA180Acc();
 		}
 		else
-		{
-			AccType = AccUnknown;
-			F.AccelerationsValid = false;
-		}
+			if ( LISLAccActive() )
+			{
+				AccType = LISLAcc;
+				InitLISLAcc();
+			}
+			else
+			{
+				AccType = AccUnknown;
+				F.AccelerationsValid = false;
+			}
 
 	if( F.AccelerationsValid )
 	{
@@ -323,6 +344,116 @@ boolean ADXL345AccActive(void) {
     return( F.AccelerationsValid );
 
 } // ADXL345AccActive
+
+//________________________________________________________________________________________________
+
+boolean BMA180AccActive(void);
+
+#define BMA180_W           BMA180_ID
+#define BMA180_R           (ADXL345_ID+1)
+
+void ReadBMA180Acc(void) {
+    static uint8 a;
+	static int8 r;
+    static char b[6];
+
+    I2CStart();
+    r = WriteI2CByte(BMA180_ID);
+    r = WriteI2CByte(0x32); // point to acc data
+    I2CStop();
+
+	I2CStart();	
+	if( WriteI2CByte(BMA180_R) != I2C_ACK ) goto SGerror;
+	r = ReadI2CString(b, 6);
+	I2CStop();
+
+	// Ax LR, Ay DU, Az FB
+
+
+		// Ax LR
+		Ax.b1 = b[1]; Ax.b0 = b[0]; 
+		Ax.i16 = -Ax.i16;	
+	    
+		// Ay DU	
+	    Ay.b1 = b[5]; Ay.b0 = b[4];
+
+		// Az FB	
+	    Az.b1 = b[3]; Az.b0 = b[2];
+
+	return;
+
+SGerror:
+	Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
+	if ( State == InFlight )
+	{
+		Stats[AccFailS]++;	// data over run - acc out of range
+		// use neutral values!!!!
+		F.AccFailure = true;
+	}
+
+} // ReadBMA180Acc
+
+void InitBMA180Acc() {
+
+	uint8 i;
+	int16 AccLR, AccDU, AccFB;
+
+    I2CStart();
+    WriteI2CByte(BMA180_W);
+    WriteI2CByte(0x2D);  // power register
+    WriteI2CByte(0x08);  // measurement mode
+    I2CStop();
+
+    Delay1mS(5);
+
+    I2CStart();
+    WriteI2CByte(BMA180_W);
+    WriteI2CByte(0x31);  // format
+    WriteI2CByte(0x08);  // full resolution, 2g
+    I2CStop();
+
+    Delay1mS(5);
+
+    I2CStart();
+    WriteI2CByte(BMA180_W);
+    WriteI2CByte(0x2C);  // Rate
+    //WriteI2CByte(0x0C);  	// 400Hz
+	//WriteI2CByte(0x0b);	// 200Hz 
+  	WriteI2CByte(0x0a); 	// 100Hz 
+  	//WriteI2CByte(0x09); 	// 50Hz
+    I2CStop();
+
+    Delay1mS(5);
+
+	#ifdef FULL_MONTY
+	ReadBMA180Acc();
+	for ( i = 16; i; i--)
+	{
+		ReadAccelerations();
+
+		AccLR += Ax.i16;
+		AccDU += Ay.i16;
+		AccFB += Az.i16;
+
+		Delay1mS(5);
+	}
+
+	BMA180Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)),4);
+
+	#endif // FULL_MONTY
+
+} // InitBMA180Acc
+
+boolean BMA180AccActive(void) {
+
+    I2CStart();
+    F.AccelerationsValid = WriteI2CByte(BMA180_ID) == I2C_ACK;
+    I2CStop();
+
+    return( F.AccelerationsValid );
+
+} // BMA180AccActive
+
 
 //________________________________________________________________________________________________
 
