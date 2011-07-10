@@ -37,8 +37,9 @@ void SendCustom(void);
 
 uint8 UAVXCurrPacketTag;
 
-void CheckTelemetry(void) {
-
+void CheckTelemetry(void) 
+{
+	#ifndef TESTING // not used for testing - make space!
 	if ( mSClock() > mS[TelemetryUpdate] )		
 		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry:
@@ -62,7 +63,8 @@ void CheckTelemetry(void) {
 			SendCustom(); 
 			break;
 		case GPSTelemetry: break;
-		} 
+		}
+	#endif //! TESTING // not used for testing - make space! 
 } // CheckTelemetry
 
 #define NAV_STATS_INTERLEAVE	10
@@ -356,37 +358,39 @@ void SensorTrace(void)
 {
 	#ifdef TESTING
 
-	if ( DesiredThrottle > 20 ) 
+	if (( DesiredThrottle > 20 ) && ( mSClock() > mS[TelemetryUpdate] )) 
 	{
+		mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TEL_INTERVAL_MS;
+
 		F.TxToBuffer = false; // direct to USART
 
-		TxValH16(Heading); TxChar(';');
+		TxValH16(Heading); TxChar(';'); //1
 
-		TxValH16(BaroRelAltitude); TxChar(';');
-		TxValH16(RangefinderAltitude); TxChar(';');
-		TxValH16(0); TxChar(';');
+		TxValH16(BaroRelAltitude); TxChar(';'); //2
+		TxValH16(RangefinderAltitude); TxChar(';'); //3
+		TxValH16(0); TxChar(';'); //4
 			
-		TxValH16(DesiredThrottle); TxChar(';');
-		TxValH16(DesiredRoll); TxChar(';');
-		TxValH16(DesiredPitch); TxChar(';');
-		TxValH16(DesiredYaw); TxChar(';');
+		TxValH16(DesiredThrottle); TxChar(';'); //5
+		TxValH16(DesiredRoll); TxChar(';'); //6
+		TxValH16(DesiredPitch); TxChar(';'); //7
+		TxValH16(DesiredYaw); TxChar(';'); //8
 
-		TxValH16(Rate[Roll]); TxChar(';');
-		TxValH16(Rate[Pitch]); TxChar(';');
-		TxValH16(Rate[Yaw]); TxChar(';');
+		TxValH16(Rate[Roll]); TxChar(';'); //9
+		TxValH16(Rate[Pitch]); TxChar(';'); //10
+		TxValH16(Rate[Yaw]); TxChar(';'); //11
 
-		TxValH16(Angle[Roll]); TxChar(';');
-		TxValH16(Angle[Pitch]); TxChar(';');
-		TxValH16(Angle[Yaw]); TxChar(';');
+		TxValH16(Angle[Roll]); TxChar(';'); //12
+		TxValH16(Angle[Pitch]); TxChar(';'); //13
+		TxValH16(Angle[Yaw]); TxChar(';'); //14
 
-		TxValH16(Acc[LR]); TxChar(';');
-		TxValH16(Acc[FB]); TxChar(';');
-		TxValH16(Acc[DU]); TxChar(';');
+		TxValH16(Acc[LR]); TxChar(';'); //15
+		TxValH16(Acc[FB]); TxChar(';'); //16
+		TxValH16(Acc[DU]); TxChar(';'); //17
 
-		TxValH16(0); TxChar(';');
-		TxValH16(0); TxChar(';');
-		TxValH16(0); TxChar(';');
-		TxValH16(AltComp); TxChar(';');
+		TxValH16(0); TxChar(';'); //18
+		TxValH16(0); TxChar(';'); //19
+		TxValH16(0); TxChar(';'); //20
+		TxValH16(AltComp); TxChar(';'); //21
 		TxNextLine();
 	}
  

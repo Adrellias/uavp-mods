@@ -33,8 +33,7 @@
 	
 	{-25,0},	 		// YawKp, 			11
 	{-4,0},	 			// YawKi,			12 was 35
-	{0,0},	 			// was YawKd,		13
-
+	{RESCALE_TO_ACC,true},	 			// AccTrack was YawKd,		13
 	{20,0},	 			// YawLimit,		14 was 50
 	{2,0},	 			// YawIntLimit,		15
 	{2,true}, 			// ConfigBits,		16c

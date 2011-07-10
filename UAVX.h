@@ -37,10 +37,10 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
-//	#define FORCE_NAV					
-	//#define SIMULATE
+	#define FORCE_NAV					
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -1214,7 +1214,7 @@ enum Params { // MAX 64
 	
 	YawKp, 				// 11
 	YawKi,				// 12
-	YawKd,				// 13
+	AccTrack,			// 13
 	YawLimit,			// 14
 	YawIntLimit,		// 15
 	ConfigBits,			// 16

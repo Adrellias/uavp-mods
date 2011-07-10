@@ -125,12 +125,11 @@ void ReadFreescaleBaro(void)
 	mS[BaroUpdate] += BARO_UPDATE_MS;
 
 	I2CStart();  // start conversion
-	if( WriteI2CByte(ADS7823_WR) != I2C_ACK ) goto FSError;
-	if( WriteI2CByte(ADS7823_CMD) != I2C_ACK ) goto FSError;
-
+		if( WriteI2CByte(ADS7823_WR) != I2C_ACK ) goto FSError;
+		if( WriteI2CByte(ADS7823_CMD) != I2C_ACK ) goto FSError;
 	I2CStart();	// read block of 4 baro samples
-	if( WriteI2CByte(ADS7823_RD) != I2C_ACK ) goto FSError;
-	r = ReadI2CString(B, 8);
+		if( WriteI2CByte(ADS7823_RD) != I2C_ACK ) goto FSError;
+		r = ReadI2CString(B, 8);
 	I2CStop();
 
 	B0.b0 = B[1]; B0.b1 = B[0];

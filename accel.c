@@ -231,13 +231,13 @@ void ReadADXL345Acc(void) {
     static char b[6];
 
     I2CStart();
-    r = WriteI2CByte(ADXL345_ID);
-    r = WriteI2CByte(0x32); // point to acc data
+	    r = WriteI2CByte(ADXL345_ID);
+	    r = WriteI2CByte(0x32); // point to acc data
     I2CStop();
 
 	I2CStart();	
-	if( WriteI2CByte(ADXL345_R) != I2C_ACK ) goto SGerror;
-	r = ReadI2CString(b, 6);
+		if( WriteI2CByte(ADXL345_R) != I2C_ACK ) goto SGerror;
+		r = ReadI2CString(b, 6);
 	I2CStop();
 
 	// Ax LR, Ay DU, Az FB
@@ -290,28 +290,28 @@ void InitADXL345Acc() {
 	int16 AccLR, AccDU, AccFB;
 
     I2CStart();
-    WriteI2CByte(ADXL345_W);
-    WriteI2CByte(0x2D);  // power register
-    WriteI2CByte(0x08);  // measurement mode
+	    WriteI2CByte(ADXL345_W);
+	    WriteI2CByte(0x2D);  // power register
+	    WriteI2CByte(0x08);  // measurement mode
     I2CStop();
 
     Delay1mS(5);
 
     I2CStart();
-    WriteI2CByte(ADXL345_W);
-    WriteI2CByte(0x31);  // format
-    WriteI2CByte(0x08);  // full resolution, 2g
+	    WriteI2CByte(ADXL345_W);
+	    WriteI2CByte(0x31);  // format
+	    WriteI2CByte(0x08);  // full resolution, 2g
     I2CStop();
 
     Delay1mS(5);
 
     I2CStart();
-    WriteI2CByte(ADXL345_W);
-    WriteI2CByte(0x2C);  // Rate
-    //WriteI2CByte(0x0C);  	// 400Hz
-	//WriteI2CByte(0x0b);	// 200Hz 
-  	WriteI2CByte(0x0a); 	// 100Hz 
-  	//WriteI2CByte(0x09); 	// 50Hz
+	    WriteI2CByte(ADXL345_W);
+	    WriteI2CByte(0x2C);  // Rate
+	    //WriteI2CByte(0x0C);  	// 400Hz
+		//WriteI2CByte(0x0b);	// 200Hz 
+	  	WriteI2CByte(0x0a); 	// 100Hz 
+	  	//WriteI2CByte(0x09); 	// 50Hz
     I2CStop();
 
     Delay1mS(5);
@@ -347,38 +347,68 @@ boolean ADXL345AccActive(void) {
 
 //________________________________________________________________________________________________
 
-boolean BMA180AccActive(void);
+// Bosch BMA180 Acc
 
 #define BMA180_W           BMA180_ID
-#define BMA180_R           (ADXL345_ID+1)
+#define BMA180_R           (BMA180_ID+1)
 
-void ReadBMA180Acc(void) {
+// 0 1g, 1 1.5g, 2 2g, 3 3g, 4 4g, 5 8g, 6 16g
+// 0 19Hz, 1 20, 2 40, 3 75, 4 150, 5 300, 6 600, 7 1200Hz 
+
+#define BMA180_RANGE	5
+#define BMA180_BW 		4
+
+#define BMA180_Version 0x01
+#define BMA180_ACCXLSB 0x02
+#define BMA180_TEMPERATURE 0x08
+#define BMA180_STATREG1 0x09
+#define BMA180_STATREG2 0x0A
+#define BMA180_STATREG3 0x0B
+#define BMA180_STATREG4 0x0C
+#define BMA180_CTRLREG0 0x0D
+#define BMA180_CTRLREG1 0x0E
+#define BMA180_CTRLREG2 0x0F
+
+#define BMA180_BWTCS 0x20
+#define BMA180_CTRLREG3 0x21
+
+#define BMA180_HILOWNFO 0x25
+#define BMA180_LOWDUR 0x26
+#define BMA180_LOWTH 0x29
+
+#define BMA180_tco_y 0x2F
+#define BMA180_tco_z 0x30
+
+#define BMA180_OLSB1 0x35
+
+boolean BMA180AccActive(void);
+
+void ReadBMA180Acc(void) 
+{
     static uint8 a;
 	static int8 r;
     static char b[6];
 
     I2CStart();
-    r = WriteI2CByte(BMA180_ID);
-    r = WriteI2CByte(0x32); // point to acc data
+	    r = WriteI2CByte(BMA180_ID);
+	    r = WriteI2CByte(BMA180_ACCXLSB); // point to acc data
     I2CStop();
 
 	I2CStart();	
-	if( WriteI2CByte(BMA180_R) != I2C_ACK ) goto SGerror;
-	r = ReadI2CString(b, 6);
+		if( WriteI2CByte(BMA180_R) != I2C_ACK ) goto SGerror;
+		r = ReadI2CString(b, 6);
 	I2CStop();
 
-	// Ax LR, Ay DU, Az FB
+	// Ax ??, Ay ??, Az ??
 
-
-		// Ax LR
-		Ax.b1 = b[1]; Ax.b0 = b[0]; 
-		Ax.i16 = -Ax.i16;	
+	// Ax LR
+	Ax.b1 = b[1]; Ax.b0 = b[0]; 	
 	    
-		// Ay DU	
-	    Ay.b1 = b[5]; Ay.b0 = b[4];
+	// Ay DU	
+	Ay.b1 = b[5]; Ay.b0 = b[4];
 
-		// Az FB	
-	    Az.b1 = b[3]; Az.b0 = b[2];
+	// Az FB	
+	Az.b1 = b[3]; Az.b0 = b[2];
 
 	return;
 
@@ -394,36 +424,55 @@ SGerror:
 } // ReadBMA180Acc
 
 void InitBMA180Acc() {
-
-	uint8 i;
+	
+	uint8 i, bw, range, ee_w;
 	int16 AccLR, AccDU, AccFB;
 
-    I2CStart();
-    WriteI2CByte(BMA180_W);
-    WriteI2CByte(0x2D);  // power register
-    WriteI2CByte(0x08);  // measurement mode
-    I2CStop();
+	// if connected correctly, ID register should be 3
+//	if(read(ID) != 3)
+//		return -1;
 
-    Delay1mS(5);
+	I2CStart();	
+		WriteI2CByte(BMA180_ID);
+		WriteI2CByte(BMA180_CTRLREG0);	
+	I2CStart();
+		WriteI2CByte(BMA180_R);
+		ee_w = ReadI2CByte(I2C_NACK);
+	I2CStop();
+	ee_w |= 0x10;
+	I2CStart();
+		WriteI2CByte(BMA180_ID);
+		WriteI2CByte(BMA180_CTRLREG0);
+		WriteI2CByte(ee_w);	// Have to set ee_w to write any other registers
+	I2CStop();
 
-    I2CStart();
-    WriteI2CByte(BMA180_W);
-    WriteI2CByte(0x31);  // format
-    WriteI2CByte(0x08);  // full resolution, 2g
-    I2CStop();
-
-    Delay1mS(5);
-
-    I2CStart();
-    WriteI2CByte(BMA180_W);
-    WriteI2CByte(0x2C);  // Rate
-    //WriteI2CByte(0x0C);  	// 400Hz
-	//WriteI2CByte(0x0b);	// 200Hz 
-  	WriteI2CByte(0x0a); 	// 100Hz 
-  	//WriteI2CByte(0x09); 	// 50Hz
-    I2CStop();
-
-    Delay1mS(5);
+	I2CStart();	
+		WriteI2CByte(BMA180_ID);
+		WriteI2CByte(BMA180_BWTCS);	
+	I2CStart();
+		WriteI2CByte(BMA180_R);
+		ee_w = ReadI2CByte(I2C_NACK);
+	I2CStop();
+	bw |= (BMA180_BW << 4) &~0xF0;
+	I2CStart();	
+		WriteI2CByte(BMA180_W);
+		WriteI2CByte(BMA180_BWTCS);
+		WriteI2CByte(bw);	// Keep tcs<3:0> in BWTCS, but write new BW	
+	I2CStop();
+		
+	I2CStart();	
+		WriteI2CByte(BMA180_ID);
+		WriteI2CByte(BMA180_OLSB1);
+	I2CStart();
+		WriteI2CByte(BMA180_R);
+		range = ReadI2CByte(I2C_NACK);
+	I2CStop();
+	range |= (BMA180_RANGE<<1) & ~0x0E;
+	I2CStart();
+		WriteI2CByte(BMA180_ID);
+		WriteI2CByte(BMA180_OLSB1);
+		WriteI2CByte(range); //Write new range data, keep other bits the same	
+	I2CStop();
 
 	#ifdef FULL_MONTY
 	ReadBMA180Acc();
@@ -438,7 +487,7 @@ void InitBMA180Acc() {
 		Delay1mS(5);
 	}
 
-	BMA180Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)),4);
+	BMA180Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)), 4);
 
 	#endif // FULL_MONTY
 
@@ -447,7 +496,8 @@ void InitBMA180Acc() {
 boolean BMA180AccActive(void) {
 
     I2CStart();
-    F.AccelerationsValid = WriteI2CByte(BMA180_ID) == I2C_ACK;
+		WriteI2CByte(BMA180_R);
+	    F.AccelerationsValid =  ReadI2CByte(I2C_NACK) == BMA180_Version; 
     I2CStop();
 
     return( F.AccelerationsValid );
