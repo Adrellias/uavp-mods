@@ -293,9 +293,9 @@ void DoControl(void)
 	FakeDesiredRoll = ControlRoll + NavCorr[Roll];
 	FakeDesiredPitch = ControlPitch + NavCorr[Pitch];
 	FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
-	Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 16, 4);
-	Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 16, 4);
-	Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 4);
+	Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 32, 16);
+	Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 32, 16);
+	Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 8);
 	Rl = -FakeDesiredRoll;
 	Pl = -FakeDesiredPitch;
 	Yl = -DesiredYaw;

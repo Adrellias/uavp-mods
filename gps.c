@@ -324,7 +324,7 @@ void ParseGPSSentence(void)
 	
 		#define FAKE_NORTH_WIND 	0L
 		#define FAKE_EAST_WIND 		0L
-	    #define SCALE_VEL			5
+	    #define SCALE_VEL			6  // was 5
 	#endif // SIMULATE
 
 	cc = 0;

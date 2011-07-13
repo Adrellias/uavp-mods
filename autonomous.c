@@ -25,6 +25,7 @@
 void DoShutdown(void);
 void DecayNavCorr(void);
 void DoPolarOrientation(void);
+void DoCompScaling(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int24);
 void DoFailsafeLanding(void);
@@ -202,6 +203,22 @@ void DoPolarOrientation(void)
 	
 } // DoPolarOrientation
 
+void DoCompScaling(void)
+{
+	if ( Abs(NavPosE[Roll]) > Abs(NavPosE[Pitch]) ) // expensive but gives straight path.
+	{
+		NavScale[Pitch] = (NavPosE[Pitch] * 256) / NavPosE[Roll];
+		NavScale[Pitch] = Abs(NavScale[Pitch]);
+		NavScale[Roll] = 256;
+	}
+	else
+	{
+		NavScale[Roll] = (NavPosE[Roll] * 256) / NavPosE[Pitch];
+		NavScale[Roll] = Abs(NavScale[Roll]);
+		NavScale[Pitch] = 256;
+	}		
+} // DoCompScaling
+
 void Navigate(int32 NavLatitude, int32 NavLongitude )
 {	// F.GPSValid must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
@@ -213,11 +230,12 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	#ifndef TESTING // not used for testing - make space!
 
+	static int16 NavVel, NavVelE, NavDesV;
+
 	static int16 EffNavSensitivity;
 	static int16 SinHeading, CosHeading, RelHeading;
-	static int16 NavVel, NavVelE, NavDesV;
     static int24 Radius, DistE, AltE;
-	static int32 Diff, LongitudeDiff, LatitudeDiff;
+	static int32 MaxDiff, Diff, LongitudeDiff, LatitudeDiff;
 	static int16 NavP, NavI, NavD, NavKp;
 	static i32u Temp32;
 
@@ -233,18 +251,20 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	LongitudeDiff = Temp32.i3_1;
 	LatitudeDiff = DesiredLatitude - GPSLatitude;
 
-	Radius = int32sqrt( Sqr(LongitudeDiff) + Sqr(LatitudeDiff) );
+	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
 
-	F.WayPointCentred = Radius < NavNeutralRadius;
-	AltE = DesiredAltitude - Altitude;
-	F.WayPointAchieved = ( (Radius < NavProximityRadius) && ( Abs(AltE) < NavProximityAltitude ) );
+	MaxDiff = Max(Abs(LongitudeDiff), Abs(LatitudeDiff));
+	if ( MaxDiff < NavProximityRadius )
+	{
+		AltE = DesiredAltitude - Altitude;
+		F.WayPointAchieved =  Abs(AltE) < NavProximityAltitude;
+		F.WayPointCentred = MaxDiff < NavNeutralRadius;
+	}
+	else
+		F.WayPointAchieved = F.WayPointCentred = false;
 
 	if ( F.AttitudeHold && ( EffNavSensitivity > 0 ) && !F.WayPointCentred )
 	{
-
-		WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
-		RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
-	
 		SinHeading = int16sin(Heading);
 		CosHeading = int16cos(Heading);
 		
@@ -260,6 +280,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			// Just use simple rudder only for now.
 			if ( !F.WayPointAchieved )
 			{
+				RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
 				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
 				//zzz Roll as well at 25%
@@ -314,22 +335,11 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 			#else
 
-			if ( Abs(NavPosE[Roll]) > Abs(NavPosE[Pitch]) ) // expensive but gives straight path.
-			{
-				NavScale[Pitch] = (NavPosE[Pitch] * 256) / NavPosE[Roll];
-				NavScale[Pitch] = Abs(NavScale[Pitch]);
-				NavScale[Roll] = 256;
-			}
-			else
-			{
-				NavScale[Roll] = (NavPosE[Roll] * 256) / NavPosE[Pitch];
-				NavScale[Roll] = Abs(NavScale[Roll]);
-				NavScale[Pitch] = 256;
-			}		
+			DoCompScaling();
 
 			for ( a = 0; a < (uint8)2 ; a++ )
 			{
-				NavP = SRS32(NavPosE[a], 2);
+				NavP = SRS32(NavPosE[a], 2); 
 				NavP = Limit1(NavP, EffNavSensitivity);
 
 				Temp32.i32 = NavP * NavScale[a];
@@ -358,6 +368,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			// Yaw
 			if ( F.AllowTurnToWP && !F.WayPointAchieved )
 			{
+				RelHeading = MakePi(WayHeading - Heading); // make +/- MilliPi
 				NavCorr[Yaw] = -SRS16(RelHeading, 4); // ~1deg
 				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
 			}
@@ -376,6 +387,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	F.NavComputed = true;
 
 } // Navigate
+
 
 void DoNavigation(void)
 {

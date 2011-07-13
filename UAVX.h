@@ -650,6 +650,7 @@ extern void DoShutdown(void);
 extern void DecayNavCorr(void);
 extern void FailsafeHoldPosition(void);
 extern void DoPolarOrientation(void);
+extern void DoCompScaling(void);
 extern void Navigate(int32, int32);
 extern void SetDesiredAltitude(int24);
 extern void DoFailsafeLanding(void);
