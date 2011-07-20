@@ -1,6 +1,5 @@
-//#define VELOCITY_SCHEME
 
-#define DISABLE_GPS_SLEW
+//#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
@@ -8,11 +7,7 @@
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
-//#define DEBUG_PRINT			// direct printing of baro values
-
-//#define INC_GPS_VEL			// Should not be needed as all GPS units will have RMC sentences
-
-//#define DISABLE_CRUISE_UPDATE	// Disables dynamic updates to cruise throttle  
+//#define DEBUG_PRINT			// direct printing of debug values
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -39,8 +34,8 @@
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
-	#define FORCE_NAV					
-	#define SIMULATE
+	//#define FORCE_NAV					
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -175,13 +170,16 @@
 
 // Navigation
 
+#define	M_TO_GPS					54L		// approximate for constant folding
+
 #define NAV_ACQUIRE_BEEPER
 
 //#define ATTITUDE_NO_LIMITS				// full stick range is available otherwise it is scaled to Nav sensitivity
 
 #define NAV_RTH_LOCKOUT				1000L	// ~100 ~ angle units per degree
 
-#define NAV_MAX_ROLL_PITCH 			25L		// Rx stick units
+#define NAV_MAX_ROLL_PITCH 			64L		// Rx stick units
+#define NAV_MAX_FAKE_COMPASS_SLEW	25L		// Rx stick units
 #define NAV_CONTROL_HEADROOM		10L		// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
 #define NAV_INT_WINDUP_LIMIT		64L		// ???
@@ -191,6 +189,8 @@
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
 #define NAV_POLAR_RADIUS			10L		// Polar coordinates arm outside this distance from origin
+#define NAV_CLOSING_RADIUS_SHIFT	9		// Using shift to avoid division 
+#define NAV_CLOSING_RADIUS			((int32)1<<NAV_CLOSING_RADIUS_SHIFT) // GPS units ~54 per metre
 
 #ifdef NAV_WING
 	#define NAV_PROXIMITY_RADIUS	20L		// Metres if there are no WPs
@@ -202,7 +202,9 @@
 
 // reads $GPGGA sentence - all others discarded
 
-#define GPS_SLEW_LIMIT				10		// M
+#define GPS_OUTLIER_SLEW_LIMIT		(1*M_TO_GPS)	// maximum slew towards a detected outlier	
+#define GPS_OUTLIER_LIMIT			(10*M_TO_GPS)	// maximum lat/lon change in one GPS update
+
 #ifdef SIMULATE
 
 #define SIM_CRUISE_MPS				8		// M/S
@@ -229,9 +231,7 @@
 #define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
 #define NAV_SENS_6CH				80L		// Low GPS gain for 6ch Rx
 
-#define	NAV_YAW_LIMIT				10L		// yaw slew rate for RTH
 #define NAV_MAX_TRIM				20L		// max trim offset for altitude hold
-#define NAV_CORR_SLEW_LIMIT			1L		// *5L maximum change in roll or pitch correction per GPS update
 
 #define ATTITUDE_HOLD_LIMIT 		8L		// dead zone for roll/pitch stick for position hold
 #define ATTITUDE_HOLD_RESET_INTERVAL 25L	// number of impulse cycles before GPS position is re-acquired
@@ -378,10 +378,13 @@ typedef struct { // Baro
 	int24 B[8];
 	} int24x8Q;	
 
+#define NAVQ_MASK 3
+#define NAVQ_SHIFT 2
 typedef struct { // GPS
 	uint8 Head, Tail;
-	int32 Lat[4], Lon[4];
-	} int32x4Q;
+	int32 LatDiffSum, LonDiffSum;
+	int32 LatDiff[NAVQ_MASK], LonDiff[NAVQ_MASK];
+	} int32Q;
 
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
@@ -647,7 +650,7 @@ extern uint8 ADCChannel;
 // autonomous.c
 
 extern void DoShutdown(void);
-extern void DecayNavCorr(void);
+extern void DecayNavCorr(uint8);
 extern void FailsafeHoldPosition(void);
 extern void DoPolarOrientation(void);
 extern void DoCompScaling(void);
@@ -679,12 +682,14 @@ extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
-extern int16 NavPolarRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude; 
+extern int16 NavPolarRadius, NavClosingRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude; 
 extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
 extern int16 NavCorr[], NavCorrp[], NavIntE[];
-extern int24 NavE[], NavEp[];
+extern int32 NavPosE[], NavPosEp[], NavVelp[];
+extern int32 NavScale[];
+extern int16 NavSlewLimit;
 
 //______________________________________________________________________________________________
 
@@ -903,7 +908,6 @@ extern int16 GPSVel;
 extern int8 GPSNoOfSats;
 extern int8 GPSFix;
 extern int16 GPSHDilute;
-extern int16 NavGPSSlew;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
 extern int16 ValidGPSSentences;
@@ -1232,7 +1236,7 @@ enum Params { // MAX 64
 	CamPitchKp,			// 26
 	CompassKp,			// 27
 	AltKi,				// 28c
-	NavGPSSlewdM,		// 29 was NavRadius
+	NavSlew,			// 29 was NavRadius
 	NavKi,				// 30
 	
 	GSThrottle,			// 31

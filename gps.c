@@ -69,8 +69,6 @@ int16 	GPSVel, GPSVelP;
 int8 	GPSNoOfSats;
 int8 	GPSFix;
 int16 	GPSHDilute;
-int16 	NavGPSSlew;
-
 #pragma udata
 
 int32 FakeGPSLongitude, FakeGPSLatitude;
@@ -82,20 +80,20 @@ int16 ValidGPSSentences;
 #pragma udata
 
 int32 ConvertGPSToM(int32 c)
-{	// approximately 1.8553257183 cm per LSB at the Equator
+{	// approximately 1.8553257183 cm per NMEA LSD with 5 decimal minutes at the Equator
+	// 32bit is 0.933 cm less than a factor of 2
 	// conversion max is 21Km
 	return ( ((int32)c * (int32)1855)/((int32)100000) );
 } // ConvertGPSToM
 
 int32 ConvertGPSTodM(int32 c)
 {	
-	// conversion max is 2.1Km
+	// conversion max is 21Km
 	return ( ((int32)c * (int32)1855)/((int32)10000) );
 } // ConvertGPSTodM
 
 int32 ConvertMToGPS(int32 c)
 {
-	// conversion max is 21Km 
 	return ( ((int32)c * (int32)100000)/((int32)1855) );
 } // ConvertMToGPS
 
@@ -116,7 +114,7 @@ int32 ConvertLatLonM(uint8 lo, uint8 hi)
 { 	// NMEA coordinates normally assumed as DDDMM.MMMMM ie 5 decimal minute digits
 	// but code can deal with 4 and 5 decimal minutes 
 	// Positions are stored at 5 decimal minute NMEA resolution which is
-	// approximately 1.855 cm per LSB at the Equator.
+	// approximately 1.855 cm per LSD at the Equator.
 	static int32 dd, mm, dm, r;
 	static uint8 dp;	
 	
@@ -316,7 +314,7 @@ void SetGPSOrigin(void)
 void ParseGPSSentence(void)
 {
 	static i32u Temp32u;
-	static int24 LongitudeDiff, LatitudeDiff;
+	static int24 MaxDiff, LongitudeDiff, LatitudeDiff;
 	static int24 GPSInterval;
 
 	#ifdef SIMULATE
@@ -407,34 +405,27 @@ void ParseGPSSentence(void)
 
 		if (F.NavValid )
 		{
+			#ifdef DEBUG_PRINT
+			if (Armed)
+				F.TxToBuffer = true;
+			#endif // DEBUG_PRINT
+
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
-			LatitudeDiff = GPSLatitudeP - GPSLatitude;
-			LongitudeDiff = GPSLongitudeP - GPSLongitude;
-			
-			if ( F.NearLevel ) // got to filtered GPS
-				if (( Abs(LatitudeDiff) > NavGPSSlew ) || ( Abs(LongitudeDiff) > NavGPSSlew ))
-				{
-					Stats[BadS]++;
-					#ifndef DISABLE_GPS_SLEW
-						GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, NavGPSSlew);
-						GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, NavGPSSlew );
-					#endif // DISABLE_GPS_SLEW
-				}
-		
-			#ifdef INC_GPS_VEL
-			if ( !F.HaveGPRMC )
+			LatitudeDiff = GPSLatitude - GPSLatitudeP; // do again after slew limit
+			LongitudeDiff = GPSLongitude - GPSLongitudeP;
+
+			MaxDiff = (Abs(LatitudeDiff),Abs(LongitudeDiff));
+			if ( MaxDiff > GPS_OUTLIER_LIMIT )
 			{
-				LatitudeDiff = GPSLatitudeP - GPSLatitude; // do again after slew limit
-				LongitudeDiff = GPSLongitudeP - GPSLongitude;
-
-				Temp32.i32 = LongitudeDiff * GPSLongitudeCorrection;
-				LongitudeDiff = Temp32.i3_1;
-
-				GPSVel = int16sqrt(Sqr(LongitudeDiff)+Sqr(LatitudeDiff));
-				GPSVel = ConvertGPSTodM(GPSVel);
+				Stats[BadS]++;
+				if ( MaxDiff > Stats[BadNumS] ) 
+					Stats[BadNumS] = MaxDiff;
+				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, GPS_OUTLIER_SLEW_LIMIT );
+				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, GPS_OUTLIER_SLEW_LIMIT );
+				LatitudeDiff = GPSLatitude - GPSLatitudeP; // do again after slew limit
+				LongitudeDiff = GPSLongitude - GPSLongitudeP;
 			}
-			#endif // INC_GPS_VEL
 
 			GPSLatitudeP = GPSLatitude;
 			GPSLongitudeP = GPSLongitude;	

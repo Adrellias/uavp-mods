@@ -143,9 +143,7 @@ void AltitudeHold()
 						{
 							NewCruiseThrottle = HardFilter(NewCruiseThrottle, ActualThrottle);
 							NewCruiseThrottle = Limit(NewCruiseThrottle, THROTTLE_MIN_CRUISE, THROTTLE_MAX_CRUISE );
-							#ifndef DISABLE_CRUISE_UPDATE
-								CruiseThrottle = NewCruiseThrottle;
-							#endif // !DISABLE_CRUISE_UPDATE
+							CruiseThrottle = NewCruiseThrottle;
 						}
 					#endif // !SIMULATE
 				}

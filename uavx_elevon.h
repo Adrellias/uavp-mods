@@ -51,7 +51,7 @@
 	{20,true}, 			// CamPitchKp,		26c
 	{10,0}, 			// CompassKp,		27
 	{6,0},				// AltKi,			28 // was 8
-	{10,0}, 			// NavGPSSlewdM was NavRadius,	29
+	{1,0}, 			// NavSlew was NavRadius,	29
 	{8,0}, 				// NavKi,			30 
 
 	{0,0}, 				// GSThrottle,	    31

@@ -62,6 +62,10 @@ void main(void)
 	InitTemperature();
 	InitBarometer();
 
+#ifdef DEBUG_NAV
+ while (1) Navigate(0,0); // zzz
+#endif // zzz DEBUG_NAV
+
 	ShowSetup(true);
 
 	FirstPass = true;
@@ -129,6 +133,7 @@ void main(void)
 						{
 							SetGPSOrigin();
 							GetHeading();
+							DecayNavCorr(6);
 	    					if ( F.NewCommands )
 								F.LostModel = F.ForceFailsafe;
 						}
@@ -162,6 +167,7 @@ void main(void)
 							DesiredThrottle = IdleThrottle;
 						else
 						{
+							DecayNavCorr(6);
 							DesiredThrottle = AltComp = 0; // to catch cycles between Rx updates
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
@@ -172,6 +178,7 @@ void main(void)
 					break;
 				case Shutdown:
 					// wait until arming switch is cycled
+					NavCorr[Roll] = NavCorr[Pitch] = 0;
 					F.LostModel = true;
 					DesiredRoll = DesiredPitch = DesiredYaw = AltComp = 0;
 					StopMotors();

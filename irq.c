@@ -233,6 +233,8 @@ void high_isr_handler(void)
 				{
 					NMEA.length = ll;	
 					F.PacketReceived = GPSTxCheckSum == RxCheckSum;
+				// zzz	if ( !F.PacketReceived) 
+				// zzz		Stats[BadS]++;
 					RxState = WaitSentinel;
 				}
 				break;

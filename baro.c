@@ -525,19 +525,6 @@ int24 AltitudeCF(int24 Alt)
 
 	AccAltComp = AltCF - Alt; // for debugging
 
-	#ifdef DEBUG_PRINT
-	if (Armed){
-		F.TxToBuffer = true;
-		TxVal32(mSClock(),0,','); 
-		TxVal32(AmbientTemperature.i16,0,',');
-		TxVal32(Acc[DU],0,','); 
-		TxVal32(Alt,0,','); 
-		TxVal32(AltCF,0,',');
-		TxVal32(BaroROC,0,',');
-		TxNextLine();
-	}
-	#endif // DEBUG_PRINT
-
 	return( AltCF ); 
 } // AltitudeCF
 

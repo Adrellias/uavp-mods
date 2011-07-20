@@ -72,11 +72,11 @@ void GetHeading(void)
 				#ifdef  NAV_WING
 					Temp = SRS16( FakeDesiredYaw - FakeDesiredRoll, 1);	
 					if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
-						FakeMagHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);
+						FakeMagHeading -= Limit1(Temp, NAV_MAX_FAKE_COMPASS_SLEW);
 				#else
 					Temp = FakeDesiredYaw * 5; // ~90 deg/sec
 					if ( Abs(FakeDesiredYaw) > 5 )
-						FakeMagHeading -= Limit1(Temp, NAV_MAX_ROLL_PITCH);				
+						FakeMagHeading -= Limit1(Temp, NAV_MAX_FAKE_COMPASS_SLEW);				
 				#endif // NAV_WING
 				
 				FakeMagHeading = Make2Pi((int16)FakeMagHeading);

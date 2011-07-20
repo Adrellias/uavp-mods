@@ -101,8 +101,8 @@ void ReadParametersEE(void)
 
 		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
-		NavGPSSlew = Limit(P[NavGPSSlewdM], 20, 99); 
-		NavGPSSlew = ConvertMToGPS(NavGPSSlew); 
+		NavSlewLimit = Limit(P[NavSlew], 1, 4); 
+		NavSlewLimit = ConvertMToGPS(NavSlewLimit); 
 
 		NavNeutralRadius = Limit((int16)P[NeutralRadius], 0, 5);
 		NavNeutralRadius = ConvertMToGPS(NavNeutralRadius);

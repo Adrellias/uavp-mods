@@ -226,7 +226,7 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 	if (V<0)
 	{
 		TxChar('-');
-	    V=-V;
+	    V = -V;
 	}
 //	else
 //		TxChar(' ');
@@ -234,12 +234,12 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 	c=0;
 	do
 	{
-	    NewV=V/10;
-	    Rem=V-(NewV*10);
-	    S[c++]=Rem + '0';
-	    V=NewV;
+	    NewV = V/10;
+	    Rem = V - (NewV * 10);
+	    S[c++] = Rem + '0';
+	    V = NewV;
 	}
-	while (V>0);
+	while (V > 0);
 	  
 	if ((c < ( dp + 1 ) ) && (dp > 0 ))
 	{
@@ -256,7 +256,7 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 	{
 	    c--;
 	    TxChar(S[c]);
-	    if ((c==dp)&&(c>0)) 
+	    if ((c == dp)&&(c>0)) 
 	      TxChar('.');
 	}
 	while ( c > 0 );
@@ -267,14 +267,14 @@ void TxVal32(int32 V, int8 dp, uint8 Separator)
 
 void TxESCu8(uint8 ch)
 {
-  if ((ch==SOH)||(ch==EOT)||(ch==ESC))
+  if ((ch == SOH)||(ch == EOT)||(ch == ESC))
 	TxChar(ESC);
   TxChar(ch);
 } // TxESCu8
 
 void TxESCi8(int8 b)
 {
-  if (((uint8)b==SOH)||((uint8)b==EOT)||((uint8)b==ESC))
+  if (((uint8)b == SOH)||((uint8)b == EOT)||((uint8)b == ESC))
 	TxChar(ESC);
   TxChar(b);
 } // TxESCu8

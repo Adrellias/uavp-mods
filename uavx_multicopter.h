@@ -50,7 +50,7 @@
 	{20,true}, 			// CamPitchKp,		26c
 	{10,0}, 			// CompassKp,		27
 	{6,0},				// AltKi,			28 // was 8
-	{90,0}, 			// NavGPSSlewdM was NavRadius,	29
+	{2,0}, 				// NavSlew was NavRadius,	29
 	{8,0}, 				// NavKi,			30 
 
 	{0,0}, 				// GSThrottle,	    31
@@ -64,7 +64,7 @@
 	{30,true},			// PercentNavSens6Ch	39c
 	{1,true},			// CamRollTrim,		40c
 
-	{-48,0},			// NavKd			41
+	{-20,0},			// NavKd			41
 	{3,true},			// RxPitchCh was VertDampDecay    42
 	{4,true},			// RxYawCh was HorizDampDecay	43
 	{56,true},			// BaroScale	    44c
