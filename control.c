@@ -46,6 +46,7 @@ int24 OSO, OCO;
 int16 YawRateIntE;
 int16 HoldYaw;
 int16 YawIntLimit256;
+int16 RateE[3], RateEp[3];
 
 int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
@@ -279,7 +280,6 @@ void DoControl(void)
 	static int16 Temp;
 	static i32u Temp32;
 	static i24u Temp24;
-	static int16 RateE;
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
@@ -303,7 +303,61 @@ void DoControl(void)
 	 
     #else
 
-	GainSchedule();
+	#ifdef EXPERIMENTAL		// define is set in uavx.h
+
+//	#define P_RATE
+
+	// Removed GS modifiers
+
+	// Roll
+				
+	DoAttitudeAngle(Roll, LR);
+
+	#ifdef P_RATE
+
+	// My P rate control testing if there is an OL pole s = 0 in OLTF 8/7/2011
+	// The idea is keep Greg's code only changing ControlRoll divided by 16 then multiplied Kp
+	Rl = SRS32(((int32)Rate[Roll] + ControlRoll + NavCorr[Roll]) * P[RollKp], 4); 
+
+    #else // PI_RATE
+
+	// My PI rate control 11/7/2011
+	
+	RateE[Roll]  = Rate[Roll] + ControlRoll + NavCorr[Roll] ; // may need relaive scaling for stick and gyro rate?
+	Rl = SRS32((int32)RateE[Roll] * P[RollKp], 4); 
+	Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 4);
+	
+	Rl += Limit1(Temp, (int16)P[RollIntLimit]);
+	RateEp[Roll] = RateE[Roll];
+	
+	#endif // PI_RATE
+
+	// Pitch
+
+	DoAttitudeAngle(Pitch, FB);
+
+	#ifdef P_RATE
+
+    // My P rate control testing if there is an OL pole s = 0 in OLTF 8/7/2011
+	// The idea is keep Greg's code only changing Controlpitch divided by 16 then multiplied Kp
+	Pl = SRS32(((int32)Rate[Pitch] + ControlRoll + NavCorr[Pitch]) * P[PitchKp], 4);
+	
+	#else // PI_RATE
+
+	// My PI rate control 11/7/2011
+	
+	RateE[Pitch] = Rate[Pitch] + ControlPitch + NavCorr[Pitch]; 
+	Pl = SRS32(RateE[Pitch] * P[PitchKp], 4); 
+	Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 4);
+	
+	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
+	RateEp[Pitch] = RateE[Pitch];
+	
+	#endif // PI_RATE
+
+	#else // DEFAULT
+
+	GainSchedule(); 
 
 	// Roll
 				
@@ -335,6 +389,8 @@ void DoControl(void)
 
 	Ratep[Pitch] = Rate[Pitch];
 
+	#endif // EXPERIMENTAL
+
 	// Yaw - rate control
 
 	#ifdef NAV_WING
@@ -345,8 +401,8 @@ void DoControl(void)
 	
 		DoYawRate();
 	
-		RateE = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
-		Yl  = SRS16( RateE * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
+		RateE[Yaw] = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
+		Yl  = SRS16( RateE[Yaw] * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
 	
 		Ratep[Yaw] = Rate[Yaw];
 	
@@ -443,9 +499,14 @@ void LightsAndSirens(void)
 
 void InitControl(void)
 {
+	uint8 a;
+
 	CameraRollAngle = CameraPitchAngle = 0;
 	Ylp = AltComp = ROCIntE = 0;
 	YawRateIntE = 0;
+
+	for ( a = 0; a <(uint8)3; a++)
+		RateEp[a] = Ratep[a] = 0;
 
 } // InitControl
 

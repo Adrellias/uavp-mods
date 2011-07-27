@@ -92,10 +92,12 @@ void ReadAccelerations(void)
 		  	Az.i16 *= 5; // FB
 		#endif // FULL_MONTY
 		break;
+	#ifndef CLOCK_40MHZ
 	case BMA180Acc:
 		ReadBMA180Acc();
 		// scaling??
 		break;
+	#endif // !CLOCK_40MHZ
 	default:
 		break;
 	} // Switch
@@ -192,12 +194,14 @@ void InitAccelerometers(void)
 		InitADXL345Acc();
 	}		
 	else
+		#ifndef CLOCK_40MHZ
 		if ( BMA180AccActive() )
 		{
 			AccType = BMA180Acc;
 			InitBMA180Acc();
 		}
 		else
+		#endif // !CLOCK_40MHZ
 			if ( LISLAccActive() )
 			{
 				AccType = LISLAcc;
@@ -346,6 +350,8 @@ boolean ADXL345AccActive(void) {
 } // ADXL345AccActive
 
 //________________________________________________________________________________________________
+
+#ifndef CLOCK_40MHZ
 
 // Bosch BMA180 Acc
 
@@ -504,6 +510,7 @@ boolean BMA180AccActive(void) {
 
 } // BMA180AccActive
 
+#endif // !CLOCK_40MHZ
 
 //________________________________________________________________________________________________
 

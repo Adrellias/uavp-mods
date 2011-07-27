@@ -1,4 +1,6 @@
 
+#define NAV_SENS_SHIFT	2		// scaling of NavSensitivity-NAV_SENS_THRESHOLD >0
+
 //#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
@@ -35,7 +37,7 @@
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	//#define SIMULATE
+	#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -46,15 +48,8 @@
 	//#define HAVE_CUTOFF_SW	// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
 
-#ifdef EXPERIMENTAL
-//	#define UAVXBOARD
-#endif // EXPERIMENTAL
-
 //________________________________________________________________________________________________
 
-#ifndef TESTING
-	#define USE_PPM_FAILSAFE
-#endif // !TESTING
 
 // Airframe
 
@@ -178,7 +173,7 @@
 
 #define NAV_RTH_LOCKOUT				1000L	// ~100 ~ angle units per degree
 
-#define NAV_MAX_ROLL_PITCH 			64L		// Rx stick units
+#define NAV_MAX_ROLL_PITCH 			32L		// Rx stick units
 #define NAV_MAX_FAKE_COMPASS_SLEW	25L		// Rx stick units
 #define NAV_CONTROL_HEADROOM		10L		// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT
@@ -840,6 +835,7 @@ extern int16 Ylp;
 extern int16 YawRateIntE;
 extern int16 HoldYaw;
 extern int16 YawIntLimit256;
+extern int16 RateE[3], RateEp[3];
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 

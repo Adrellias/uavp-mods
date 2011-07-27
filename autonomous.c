@@ -37,11 +37,13 @@ void UAVXNavCommand(void);
 void GetWayPointEE(int8);
 void InitNavigation(void);
 
+#pragma udata nav_vars
 int16 NavCorr[3], NavCorrp[3], NavIntE[3];
 int32 NavPosE[2], NavPosEp[2], NavVelp[2];
 int32 NavScale[2];
 int16 NavSlewLimit;
 boolean NavNotSaturated[2];
+#pragma udata
 
 boolean StartingNav = true;
 int16 DescentComp;
@@ -232,7 +234,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	#ifndef TESTING // not used for testing - make space!
 
-	static int16 NavVel, NavAttitudeLimit;
+	static int16 NavVel, NavAttitudeLimit, EffNavSensitivity;
 	static int16 RelHeading;
     static int24 AltE;
 	static int32 MaxDiff, Diff, LongitudeDiff, LatitudeDiff;
@@ -252,8 +254,11 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 		NavSensitivity = 100;
 	#endif // DEBUG_NAV
 
-	Temp24.i24 = (int24)NavSensitivity * NAV_MAX_ROLL_PITCH;
-	NavAttitudeLimit = Temp24.i2_1; //  divide RC_MAXIMUM
+	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
+	EffNavSensitivity = SRS16(EffNavSensitivity, NAV_SENS_SHIFT);
+
+	Temp24.i24 = (int24)EffNavSensitivity * NAV_MAX_ROLL_PITCH;
+	NavAttitudeLimit = Temp24.i2_1; //  ~ divide by RC_MAXIMUM
 	NavAttitudeLimit = Limit(NavAttitudeLimit, 0, NAV_MAX_ROLL_PITCH);
 
 	DesiredLatitude = NavLatitude; // for telemetry tracking
@@ -382,7 +387,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	}	
 	else
     #endif // !TESTING
-		DecayNavCorr(4);
+		DecayNavCorr(6);
 
 	F.NavComputed = true;
 
