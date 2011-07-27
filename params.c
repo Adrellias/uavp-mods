@@ -163,8 +163,6 @@ void ReadParametersEE(void)
 		F.UsingRTHAutoDescend = ((P[ConfigBits] & UseRTHDescendMask) != 0);
 		NavRTHTimeoutmS = (uint24)P[DescentDelayS]*1000L;
 
-		YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
-
 		BatteryVoltsLimitADC = BatteryVoltsADC = ((int24)P[LowVoltThres] * 1024 + 70L) / 139L; // UAVPSet 0.2V units
 		BatteryCurrentADC = 0;
 		
@@ -336,8 +334,6 @@ void InitParameters(void)
 	ParamSet = 1;
 	ReadParametersEE();
 	ParametersChanged = true;
-
-	YawFilterA	= ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
 
 	ALL_LEDS_OFF;  
 } // InitParameters

@@ -1,7 +1,9 @@
 
-#define NAV_SENS_SHIFT	2		// scaling of NavSensitivity-NAV_SENS_THRESHOLD >0
+#define NAV_SENS_SHIFT	1		// scaling of NavSensitivity-NAV_SENS_THRESHOLD >0
 
 //#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
+
+//#define INC_BMA180			// include BMA180 accelerometer code
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
@@ -37,11 +39,11 @@
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	#define SIMULATE
-	#define QUADROCOPTER
+	//#define SIMULATE
+	//#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
-	//#define VTCOPTER
+	#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
