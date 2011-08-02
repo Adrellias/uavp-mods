@@ -224,6 +224,8 @@ void ParseGPGGASentence(void)
 void ParseGPRMCSentence() 
 { // main current position and heading
 
+	static i32u Temp32;
+
     UpdateField();
 
     UpdateField();   //UTime
@@ -247,11 +249,12 @@ void ParseGPRMCSentence()
         	GPSLongitude = -GPSLongitude;
 
         UpdateField();   // Groundspeed (Knots)
-		GPSVel = SRS32((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi) * 421, 13);// dm/S 514 / 10000; // 0.5144444 MPS/Kt
+		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 3372L;//  5.144444 dMPS/Kt
+		GPSVel = Temp32.i3_1;
 
         UpdateField();   // True course made good (Degrees)
-		GPSHeading = SRS32((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi) * 2859, 14); // MilliRadians 3142/18000; 
-
+		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 11438L; // MilliRadians 3142/18000; 
+		GPSHeading = Temp32.i3_1;
       	/*
         UpdateField();   //UDate
 

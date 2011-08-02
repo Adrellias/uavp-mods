@@ -175,7 +175,7 @@
 
 #define NAV_RTH_LOCKOUT				1000L	// ~100 ~ angle units per degree
 
-#define NAV_MAX_ROLL_PITCH 			32L		// Rx stick units
+#define NAV_MAX_ROLL_PITCH 			64L		// Rx stick units
 #define NAV_MAX_FAKE_COMPASS_SLEW	25L		// Rx stick units
 #define NAV_CONTROL_HEADROOM		10L		// at least this much stick control headroom above Nav control	
 #define NAV_DIFF_LIMIT				24L		// Approx double NAV_INT_LIMIT

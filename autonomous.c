@@ -255,7 +255,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	#endif // DEBUG_NAV
 
 	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
-	EffNavSensitivity = SRS16(EffNavSensitivity, NAV_SENS_SHIFT);
+//	EffNavSensitivity = SRS16(EffNavSensitivity, NAV_SENS_SHIFT);
 
 	Temp24.i24 = (int24)EffNavSensitivity * NAV_MAX_ROLL_PITCH;
 	NavAttitudeLimit = Temp24.i2_1; //  ~ divide by RC_MAXIMUM
