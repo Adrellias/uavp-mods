@@ -450,9 +450,9 @@ void ConfigureESCs(void)
 					case 3 : TxString("Left");  break;
 				#else
 					case 0 : TxString("Front"); break;
-					case 1 : TxString("Back");  break;
+					case 1 : TxString("Left");  break;
 					case 2 : TxString("Right"); break;
-					case 3 : TxString("Left");  break;
+					case 3 : TxString("Back");  break;
 				#endif // HEXACOPTER
 			}
 			TxString(" ESC, then the CONTINUE button \r\n");

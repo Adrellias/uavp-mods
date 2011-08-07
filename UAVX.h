@@ -1,6 +1,4 @@
 
-#define NAV_SENS_SHIFT	1		// scaling of NavSensitivity-NAV_SENS_THRESHOLD >0
-
 //#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
 
 //#define INC_BMA180			// include BMA180 accelerometer code
@@ -1163,7 +1161,7 @@ extern void WriteT580ESC(uint8, uint8, uint8);
 extern void WriteT580ESCs(int8,  uint8, uint8, uint8, uint8);
 extern void T580ESCs(uint8, uint8, uint8, uint8);
 
-enum PWMTags1 {FrontC=0, BackC, RightC, LeftC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
+enum PWMTags1 {FrontC=0, LeftC, RightC, BackC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
 enum PWMTags5 {FrontLeftC=0, FrontRightC}; // VTCopter
 enum PWMTags6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
 enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
