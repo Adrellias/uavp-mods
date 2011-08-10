@@ -158,7 +158,7 @@ void ShowSetup(boolean h)
 
 	if ( P[ESCType] != ESCPPM )
 	{
-		for ( i = 0; i < NoOfPWMOutputs; i++ )
+		for ( i = 0; i < NoOfI2CESCOutputs; i++ )
 			if ( ESCI2CFail[i] )
 				TxString(" Fail");
 			else

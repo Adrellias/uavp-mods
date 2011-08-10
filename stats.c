@@ -63,7 +63,7 @@ void WriteStatsEE()
 	int16 Temp;
 
 	if ( P[ESCType] != ESCPPM )
-		for ( i = 0; i < NoOfPWMOutputs; i++ )
+		for ( i = 0; i < NoOfI2CESCOutputs; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
