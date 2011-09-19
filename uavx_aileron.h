@@ -58,7 +58,7 @@
 	{0,0},				// Acro,	    	32
 	{10,0}, 		    // NavRTHAlt,		33
 	{0,true},			// NavMagVar,		34c
-	{LY530Gyro,true}, 	// DesGyroType,     35c
+	{LY530Gyro,true}, 	// SensorHint,     35c
 	{ESCPPM,true}, 		// ESCType,			36c
 	{7,true}, 			// RxChannels was TxRxType		37c
 	{9,true},			// RxRollCh was NeutralRadius	38

@@ -61,6 +61,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 
 //	"B..Load UAVX hex file\r\n"
 	"D..Load default parameter set\r\n"
+	"I..I2C bus scan\r\n"
 	"S..Setup\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
@@ -175,18 +176,18 @@ void ShowSetup(boolean h)
 		TxString(" Tx Mode 1");
 	TxNextLine();
 
-	TxString("Selected parameter set: "); // must be exactly this string as UAVPSet expects it
+	TxString("Param set: "); // must be exactly this string as UAVPSet expects it
 	TxChar('0' + ParamSet);	
 	TxNextLine();
 
 	TxString("\r\nNav:\r\n");
 	if ( F.UsingRTHAutoDescend )
-		TxString("\tAuto descend ENABLED\r\n");
+		TxString("\tAutoland ENABLED\r\n");
 	else
-		TxString("\tAuto descend disabled\r\n");
+		TxString("\tAutoland disabled\r\n");
 
 	if ( F.AllowTurnToWP )
-		TxString("\tTurn toward way point\r\n");
+		TxString("\tTurn toward WP\r\n");
 	else
 		TxString("\tHold heading\r\n");
 
@@ -359,6 +360,13 @@ void ProcessCommand(void)
 				ShowStats();
 				ShowPrompt();
 				break;
+			case 'I':
+				TxString("\r\nI2C devices ...\r\n");
+				TxVal32(ScanI2CBus(),0,0);
+				TxString(" device(s) found\r\n");
+				ShowPrompt();
+				break;
+
 			#ifdef TESTING
 			case 'A' :	// linear sensor
 				AccelerometerTest();
@@ -374,12 +382,6 @@ void ProcessCommand(void)
 				break;
 			case 'G':	// gyro
 				GyroTest();
-				ShowPrompt();
-				break;
-			case 'I':
-				TxString("\r\nI2C devices ...\r\n");
-				TxVal32(ScanI2CBus(),0,0);
-				TxString(" device(s) found\r\n");
 				ShowPrompt();
 				break;	
 			case 'K':

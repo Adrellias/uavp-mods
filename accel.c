@@ -253,64 +253,37 @@ void InitAccelerometers(void)
 
 boolean ADXL345AccActive(void);
 
-#define ADXL345_W           ADXL345_ID
-#define ADXL345_R           (ADXL345_ID+1)
+void ReadADXL345Acc(void) 
+{	// Ax LR, Ay DU, Az FB
 
-void ReadADXL345Acc(void) {
     static uint8 a;
 	static int8 r;
     static char b[6];
 
-    I2CStart();
-	    r = WriteI2CByte(ADXL345_ID);
-	    r = WriteI2CByte(0x32); // point to acc data
-    I2CStop();
-
-	I2CStart();	
-		if( WriteI2CByte(ADXL345_R) != I2C_ACK ) goto SGerror;
-		r = ReadI2CString(b, 6);
-	I2CStop();
-
-	// Ax LR, Ay DU, Az FB
-
-	if ( P[DesGyroType] == ITG3200DOF9)
-	{
-		// SparkFun 9DOF breakouts pins forward components up
-
-		// Ax LR
-		Ax.b1 = b[1]; Ax.b0 = b[0]; 
-		Ax.i16 = -Ax.i16;	
-	    
-		// Ay DU	
-	    Ay.b1 = b[5]; Ay.b0 = b[4];
-
-		// Az FB	
-	    Az.b1 = b[3]; Az.b0 = b[2];
-	}
+	if ( ReadI2CString(ADXL345_ID, 0x32, b, 6) ) 
+		if ( P[SensorHint] == ITG3200DOF9)
+		{
+			// SparkFun 9DOF breakouts pins forward components up
+			Ax.b1 = b[1]; Ax.b0 = b[0]; Ax.i16 = -Ax.i16; // LR		
+		    Ay.b1 = b[5]; Ay.b0 = b[4]; // DU	
+		    Az.b1 = b[3]; Az.b0 = b[2]; // FB 
+		}
+		else
+		{
+			// SparkFun 6DOF & ITG3200 breakouts pins forward components up    	
+		    Ax.b1 = b[3]; Ax.b0 = b[2]; // LR
+		    Ay.b1 = b[5]; Ay.b0 = b[4]; // DU
+			Az.b1 = b[1]; Az.b0 = b[0];	// FB
+		}
 	else
 	{
-		// SparkFun 6DOF & ITG3200 breakouts pins forward components up
-
-		// Ax LR	    	
-	    Ax.b1 = b[3]; Ax.b0 = b[2];
-	
-		// Ay DU
-	    Ay.b1 = b[5]; Ay.b0 = b[4];
-
-		// Az FB
-		Az.b1 = b[1]; Az.b0 = b[0];	
-
-	}
-
-	return;
-
-SGerror:
-	Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
-	if ( State == InFlight )
-	{
-		Stats[AccFailS]++;	// data over run - acc out of range
-		// use neutral values!!!!
-		F.AccFailure = true;
+		Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
+		if ( State == InFlight )
+		{
+			Stats[AccFailS]++;	// data over run - acc out of range
+			// use neutral values!!!!
+			F.AccFailure = true;
+		}
 	}
 
 } // ReadADXL345Acc
@@ -320,34 +293,19 @@ void InitADXL345Acc() {
 	uint8 i;
 	int16 AccLR, AccDU, AccFB;
 
-    I2CStart();
-	    WriteI2CByte(ADXL345_W);
-	    WriteI2CByte(0x2D);  // power register
-	    WriteI2CByte(0x08);  // measurement mode
-    I2CStop();
-
+	WriteI2CByteAtAddr(ADXL345_ID, 0x2D, 0x08);  // measurement mode
     Delay1mS(5);
-
-    I2CStart();
-	    WriteI2CByte(ADXL345_W);
-	    WriteI2CByte(0x31);  // format
-	    WriteI2CByte(0x08);  // full resolution, 2g
-    I2CStop();
-
+	WriteI2CByteAtAddr(ADXL345_ID, 0x31, 0x08);  // full resolution, 2g
     Delay1mS(5);
-
-    I2CStart();
-	    WriteI2CByte(ADXL345_W);
-	    WriteI2CByte(0x2C);  // Rate
-	    //WriteI2CByte(0x0C);  	// 400Hz
-		//WriteI2CByte(0x0b);	// 200Hz 
-	  	WriteI2CByte(0x0a); 	// 100Hz 
+	WriteI2CByteAtAddr(ADXL345_ID, 0x2C,
+	    //0x0C);  	// 400Hz
+		//0x0b);	// 200Hz 
+	  	0x0a); 	// 100Hz 
 	  	//WriteI2CByte(0x09); 	// 50Hz
-    I2CStop();
-
     Delay1mS(5);
 
 	#ifdef FULL_MONTY
+
 	ReadADXL345Acc();
 	for ( i = 16; i; i--)
 	{
@@ -366,14 +324,10 @@ void InitADXL345Acc() {
 
 } // InitADXL345Acc
 
-boolean ADXL345AccActive(void) {
-
-    I2CStart();
-    F.AccelerationsValid = WriteI2CByte(ADXL345_ID) == I2C_ACK;
-    I2CStop();
-
+boolean ADXL345AccActive(void) 
+{
+    F.AccelerationsValid = I2CResponse(ADXL345_ID);
     return( F.AccelerationsValid );
-
 } // ADXL345AccActive
 
 //________________________________________________________________________________________________
@@ -381,9 +335,6 @@ boolean ADXL345AccActive(void) {
 #ifdef INC_BMA180
 
 // Bosch BMA180 Acc
-
-#define BMA180_W           BMA180_ID
-#define BMA180_R           (BMA180_ID+1)
 
 // 0 1g, 1 1.5g, 2 2g, 3 3g, 4 4g, 5 8g, 6 16g
 // 0 19Hz, 1 20, 2 40, 3 75, 4 150, 5 300, 6 600, 7 1200Hz 
@@ -418,40 +369,23 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-    static uint8 a;
-	static int8 r;
     static char b[6];
 
-    I2CStart();
-	    r = WriteI2CByte(BMA180_ID);
-	    r = WriteI2CByte(BMA180_ACCXLSB); // point to acc data
-    I2CStop();
-
-	I2CStart();	
-		if( WriteI2CByte(BMA180_R) != I2C_ACK ) goto SGerror;
-		r = ReadI2CString(b, 6);
-	I2CStop();
-
-	// Ax ??, Ay ??, Az ??
-
-	// Ax LR
-	Ax.b1 = b[1]; Ax.b0 = b[0]; 	
-	    
-	// Ay DU	
-	Ay.b1 = b[5]; Ay.b0 = b[4];
-
-	// Az FB	
-	Az.b1 = b[3]; Az.b0 = b[2];
-
-	return;
-
-SGerror:
-	Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
-	if ( State == InFlight )
+	if ( ReadI2CString(BMA180_ID, BMA180_ACCXLSB, b, 6) )
 	{
-		Stats[AccFailS]++;	// data over run - acc out of range
-		// use neutral values!!!!
-		F.AccFailure = true;
+		Ax.b1 = b[1]; Ax.b0 = b[0]; // LR		
+		Ay.b1 = b[5]; Ay.b0 = b[4]; // DU
+		Az.b1 = b[3]; Az.b0 = b[2]; // FB
+	}
+	else
+	{
+		Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
+		if ( State == InFlight )
+		{
+			Stats[AccFailS]++;	// data over run - acc out of range
+			// use neutral values!!!!
+			F.AccFailure = true;
+		}
 	}
 
 } // ReadBMA180Acc
@@ -465,49 +399,20 @@ void InitBMA180Acc() {
 //	if(read(ID) != 3)
 //		return -1;
 
-	I2CStart();	
-		WriteI2CByte(BMA180_ID);
-		WriteI2CByte(BMA180_CTRLREG0);	
-	I2CStart();
-		WriteI2CByte(BMA180_R);
-		ee_w = ReadI2CByte(I2C_NACK);
-	I2CStop();
+	ee_w = ReadI2CByteAtAddr(BMA180_ID, BMA180_CTRLREG0);
 	ee_w |= 0x10;
-	I2CStart();
-		WriteI2CByte(BMA180_ID);
-		WriteI2CByte(BMA180_CTRLREG0);
-		WriteI2CByte(ee_w);	// Have to set ee_w to write any other registers
-	I2CStop();
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_CTRLREG0, ee_w); // Have to set ee_w to write any other registers
 
-	I2CStart();	
-		WriteI2CByte(BMA180_ID);
-		WriteI2CByte(BMA180_BWTCS);	
-	I2CStart();
-		WriteI2CByte(BMA180_R);
-		ee_w = ReadI2CByte(I2C_NACK);
-	I2CStop();
+	bw = ReadI2CByteAtAddr(BMA180_ID, BMA180_BWTCS);
 	bw |= (BMA180_BW << 4) &~0xF0;
-	I2CStart();	
-		WriteI2CByte(BMA180_W);
-		WriteI2CByte(BMA180_BWTCS);
-		WriteI2CByte(bw);	// Keep tcs<3:0> in BWTCS, but write new BW	
-	I2CStop();
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_BWTCS, bw); // Keep tcs<3:0> in BWTCS, but write new BW	
 		
-	I2CStart();	
-		WriteI2CByte(BMA180_ID);
-		WriteI2CByte(BMA180_OLSB1);
-	I2CStart();
-		WriteI2CByte(BMA180_R);
-		range = ReadI2CByte(I2C_NACK);
-	I2CStop();
+	range = ReadI2CByteAtAddr(BMA180_ID, BMA180_OLSB1);
 	range |= (BMA180_RANGE<<1) & ~0x0E;
-	I2CStart();
-		WriteI2CByte(BMA180_ID);
-		WriteI2CByte(BMA180_OLSB1);
-		WriteI2CByte(range); //Write new range data, keep other bits the same	
-	I2CStop();
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_OLSB1, range); //Write new range data, keep other bits the same
 
 	#ifdef FULL_MONTY
+
 	ReadBMA180Acc();
 	for ( i = 16; i; i--)
 	{
@@ -607,7 +512,7 @@ uint8 ReadLISL(uint8 c)
 	SPI_SDA = 1;	//zzz // very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
-	d=ReadLISLNext();
+	d = ReadLISLNext();
 	
 	if( (c & LISL_INCR_ADDR) == (uint8)0 )
 		SPI_CS = DSEL_LISL;

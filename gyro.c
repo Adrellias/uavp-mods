@@ -47,7 +47,7 @@ void AdaptiveYawFilterA(void)
 
 void GetGyroValues(void)
 {
-	if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
+	if (GyroType == ITG3200Gyro)
 		BlockReadITG3200();
 	else
 		GetAnalogGyroValues();
@@ -83,8 +83,7 @@ void CalculateGyroRates(void)
 		PitchT.i24 = (int24)Rate[Pitch] * 169;
 		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
-	case ITG3200Gyro:// ITG3200
-	case ITG3200DOF9: // 9DOF Sensor Stick 73/45
+	case ITG3200Gyro: // Gyro alone or 6&9DOF SF Sensor Stick 73/45
 		RollT.i24 = (int24)Rate[Roll] * 11; // 18
 		PitchT.i24 = (int24)Rate[Pitch] * 11;
 		YawT.i24 = (int24)Rate[Yaw] * 5;
@@ -173,22 +172,24 @@ void ShowGyroType(void)
 
 void InitGyros(void)
 {
-
-	GyroType = P[DesGyroType];
-	if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
+	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) )
 	{
+		GyroType = ITG3200Gyro;
 		if ( ITG3200GyroActive() )
 			InitITG3200();	
 	}
 	else
+	{
+		GyroType = P[SensorHint];
 		InitAnalogGyros();
+	}
 
 } // InitGyros
 
 #ifdef TESTING
 void GyroTest(void)
 {
-		if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
+	if (GyroType == ITG3200Gyro)
 		GyroITG3200Test();
 	else
 		GyroAnalogTest();

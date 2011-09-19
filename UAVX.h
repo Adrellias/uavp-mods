@@ -1,6 +1,6 @@
 
-#define PREFER_HMC5843			// uses the magnetometer in preference
-#define PREFER_LISL				// uses the old ac in preference
+#define PREFER_HMC5843			// use magnetometer first
+#define PREFER_LISL				// use old acc first
 
 //#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
 
@@ -34,17 +34,16 @@
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
 
-
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
 	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
-	#define QUADROCOPTER
+	//#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
-	//#define VTCOPTER
+	#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -706,10 +705,10 @@ enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
 
 #define ADS7823_TIME_MS	50		// 20Hz
 #define ADS7823_MAX	 	4095 	// 12 bits
-#define ADS7823_ID	0x90 	// ADS7823 ADC
-#define ADS7823_WR	0x90 	// ADS7823 ADC
-#define ADS7823_RD	0x91 	// ADS7823 ADC
-#define ADS7823_CMD	0x00
+#define ADS7823_ID		0x90 	// ADS7823 ADC
+#define ADS7823_WR		0x90 	// ADS7823 ADC
+#define ADS7823_RD		0x91 	// ADS7823 ADC
+#define ADS7823_CMD		0x00
 
 #define MCP4725_ID		0xC8
 #define MCP4725_WR		MCP4725_ID
@@ -787,23 +786,25 @@ extern void CalibrateCompass(void);
 
 // HMC5843 Bosch Magnetometer
 
-#define HMC5843_3DOF    0x3C        
-#define HMC5843_9DOF	0x1E
+#define HMC5843_3DOF    0x3C       
+#define HMC5843_9DOF 	0x1E
 
-extern uint8	HMC5843_ID;
-
-extern int16 GetHMC5843(void);
-extern void DoTestHMC5843(void);
-extern void CalibrateHMC5843(void);
+extern int16 GetHMC5843Magnetometer(void);
+extern void DoTestHMC5843Magnetometer(void);
+extern void CalibrateHMC5843Magnetometer(void);
+extern void InitHMC5843Magnetometer(void);
 extern boolean HMC5843MagnetometerActive(void);
+
+extern uint8 HMC5843_ID;
 
 // HMC6352 Bosch Compass
 
-#define HMC6352_ID             0x42
+#define HMC6352_ID		0x42
 
-extern int16 GetHMC6352(void);
-extern void DoTestHMC6352(void);
-extern void CalibrateHMC6352(void);
+extern int16 GetHMC6352Compass(void);
+extern void DoTestHMC6352Compass(void);
+extern void CalibrateHMC6352Compass(void);
+extern void InitHMC6352Compass(void);
 extern boolean HMC6352CompassActive(void);
 
 extern i24u Compass;
@@ -936,12 +937,10 @@ extern void InitGyros(void);
 
 #define ITG_ID_3DOF 	0xD2
 #define ITG_ID_6DOF 	0xD0
-extern uint8 ITG_ID, ITG_R, ITG_W;
+extern uint8 ITG_ID;
 
 extern void ITG3200ViewRegisters(void);
 extern void BlockReadITG3200(void);
-extern uint8 ReadByteITG3200(uint8);
-extern void WriteByteITG3200(uint8, uint8);
 extern void InitITG3200(void);
 extern boolean ITG3200GyroActive(void);
 
@@ -1044,9 +1043,12 @@ extern void I2CStart(void);
 extern void I2CStop(void);
 extern uint8 WriteI2CByte(uint8);
 extern uint8 ReadI2CByte(uint8);
-extern uint8 ReadI2CString(uint8 *, uint8);
+extern uint8 ReadI2CByteAtAddr(uint8, uint8);
+extern void WriteI2CByteAtAddr(uint8, uint8, uint8);
+extern boolean ReadI2CString(uint8, uint8, uint8 *, uint8);
 extern void ShowI2CDeviceName(uint8);
 extern uint8 ScanI2CBus(void);
+extern boolean I2CResponse(uint8);
 
 extern boolean ESCWaitClkHi(void);
 extern void ESCI2CStart(void);
@@ -1174,7 +1176,7 @@ enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
 enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
 enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
 #define NoOfPWMOutputs 			4
-#define NoOfI2CESCOutputs 		4 
+#define NoOfI2CESCOutputs 		4
 
 extern int16 PWM[6];
 extern int16 PWMSense[6];
@@ -1245,7 +1247,7 @@ enum Params { // MAX 64
 	Acro,				// 32
 	NavRTHAlt,			// 33
 	NavMagVar,			// 34
-	DesGyroType,		// 35
+	SensorHint,			// 35
 	ESCType,			// 36
 	RxChannels,			// 37 was TxRxType
 	RxRollCh,			// 38

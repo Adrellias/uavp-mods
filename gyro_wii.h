@@ -36,7 +36,7 @@
 #define WII_GZ_L	0x22
 #define WII_PWR_M	0x3E
 
-#define WII_I2C_ID 	0xD2
+#define WII_ID 		0xD2
 #define WII_R 		(WII_I2C_ID+1)	
 #define WII_W 		WII_I2C_ID
 
@@ -52,8 +52,6 @@
 
 void WIIViewRegisters(void);
 void BlockReadWII(void);
-uint8 ReadByteWII(uint8);
-void WriteByteWII(uint8, uint8);
 void InitWII(void);
 
 void BlockReadWII(void)
@@ -61,83 +59,32 @@ void BlockReadWII(void)
 	static uint8 G[6], r;
 	static i16u GX, GY, GZ;
 
-	I2CStart();
-	if( WriteI2CByte(WII_W) != I2C_ACK ) goto SGerror;
+	F.GyroFailure = !ReadI2CString(WII_ID, WII_GX_H, G, 6);
 
-	if( WriteI2CByte(WII_GX_H) != I2C_ACK ) goto SGerror;
-
-	I2CStart();	
-	if( WriteI2CByte(WII_R) != I2C_ACK ) goto SGerror;
-	r = ReadI2CString(G, 6);
-	I2CStop();
-
-	GX.b0 = G[1]; GX.b1 = G[0];
-	GY.b0 = G[3]; GY.b1 = G[2];
-	GZ.b0 = G[5]; GZ.b1 = G[4];
-
-	RollRateADC = GX.i16;
-	PitchRateADC = -GY.i16;
-	YawRateADC = -GZ.i16;
-
-	return;	
-
-SGerror:
-	I2CStop();
-	// GYRO FAILURE - FATAL
-	Stats[GyroFailS]++;
-	F.GyroFailure = true;
-	return;
-} // BlockReadWII
-
-uint8 ReadByteWII(uint8 address)
-{
-	uint8 data;
-		
-	I2CStart();
-	if( WriteI2CByte(WII_W) != I2C_ACK ) goto SGerror;
-	if( WriteI2CByte(address) != I2C_ACK ) goto SGerror;
-
-	I2CStart();
-	if( WriteI2CByte(WII_R) != I2C_ACK ) goto SGerror;	
-	data = ReadI2CByte(I2C_NACK);
-	I2CStop();
+	if ( !F.GyroFailure )
+	{
+		GX.b0 = G[1]; GX.b1 = G[0];
+		GY.b0 = G[3]; GY.b1 = G[2];
+		GZ.b0 = G[5]; GZ.b1 = G[4];
 	
-	return ( data );
+		RollRateADC = GX.i16;
+		PitchRateADC = -GY.i16;
+		YawRateADC = -GZ.i16;
+	}
+	else
+		Stats[GyroFailS]++;
 
-SGerror:
-	I2CStop();
-	// GYRO FAILURE - FATAL
-	Stats[GyroFailS]++;
-	F.GyroFailure = true;
-	return ( 0 );
-} // ReadByteWII
-
-void WriteByteWII(uint8 address, uint8 data)
-{
-	I2CStart();	// restart
-	if( WriteI2CByte(WII_W) != I2C_ACK ) goto SGerror;
-	if( WriteI2CByte(address) != I2C_ACK ) goto SGerror;
-	if(WriteI2CByte(data) != I2C_ACK ) goto SGerror;
-	I2CStop();
-	return;
-
-SGerror:
-	I2CStop();
-	// GYRO FAILURE - FATAL
-	Stats[GyroFailS]++;
-	F.GyroFailure = true;
-	return;
-} // WriteByteWII
+} // BlockReadWII
 
 void InitWII(void)
 {
 	F.GyroFailure = false; // reset optimistically!
 
-	WriteByteWII(WII_PWR_M, 0x80);			// Reset to defaults
-	WriteByteWII(WII_SMPL, 0x00);			// continuous update
-	WriteByteWII(WII_DLPF, 0b00011001);		// 188Hz, 2000deg/S
-	WriteByteWII(WII_INT_C, 0b00000000);	// no interrupts
-	WriteByteWII(WII_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
+	WriteI2CByteAtAddr(WII_ID,WII_PWR_M, 0x80);			// Reset to defaults
+	WriteI2CByteAtAddr(WII_ID,WII_SMPL, 0x00);			// continuous update
+	WriteI2CByteAtAddr(WII_ID,WII_DLPF, 0b00011001);		// 188Hz, 2000deg/S
+	WriteI2CByteAtAddr(WII_ID,WII_INT_C, 0b00000000);	// no interrupts
+	WriteI2CByteAtAddr(WII_ID,WII_PWR_M, 0b00000001);	// X Gyro as Clock Ref.
 } // InitWII
 
 void GetGyroValues(void)

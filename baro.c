@@ -70,10 +70,10 @@ void SetFreescaleMCP4725(int16 d)
 
 	dd.u16 = d << 4; // left align
 	I2CStart();
-		r = WriteI2CByte(MCP4725_WR) != I2C_ACK;
-		r = WriteI2CByte(MCP4725_CMD) != I2C_ACK;
-		r = WriteI2CByte(dd.b1) != I2C_ACK;
-		r = WriteI2CByte(dd.b0) != I2C_ACK;
+		WriteI2CByte(MCP4725_WR);
+		WriteI2CByte(MCP4725_CMD);
+		WriteI2CByte(dd.b1);
+		WriteI2CByte(dd.b0);
 	I2CStop();
 } // SetFreescaleMCP4725
 
@@ -124,37 +124,29 @@ void ReadFreescaleBaro(void)
 
 	mS[BaroUpdate] += BARO_UPDATE_MS;
 
-	I2CStart();  // start conversion
-		if( WriteI2CByte(ADS7823_WR) != I2C_ACK ) goto FSError;
-		if( WriteI2CByte(ADS7823_CMD) != I2C_ACK ) goto FSError;
-	I2CStart();	// read block of 4 baro samples
-		if( WriteI2CByte(ADS7823_RD) != I2C_ACK ) goto FSError;
-		r = ReadI2CString(B, 8);
-	I2CStop();
-
-	B0.b0 = B[1]; B0.b1 = B[0];
-	B1.b0 = B[3]; B1.b1 = B[2];
-	B2.b0 = B[5]; B2.b1 = B[4];
-	B3.b0 = B[7]; B3.b1 = B[6];
-
-	BaroVal.u16 = B0.u16 + B1.u16 + B2.u16 + B3.u16;
-	#ifndef JIM_MPX_INVERT
-	BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
-	#endif // !JIM_MPX_INVERT
-
-	F.BaroAltitudeValid = true;
-	return;
-
-FSError:
-	I2CStop();
-
-	F.BaroAltitudeValid = F.HoldingAlt = false;
-	if ( State == InFlight ) 
+	F.BaroAltitudeValid = ReadI2CString(ADS7823_ID, ADS7823_CMD,  B, 8);
+	if ( F.BaroAltitudeValid )
 	{
-		Stats[BaroFailS]++; 
-		F.BaroFailure = true;
+		B0.b0 = B[1]; B0.b1 = B[0];
+		B1.b0 = B[3]; B1.b1 = B[2];
+		B2.b0 = B[5]; B2.b1 = B[4];
+		B3.b0 = B[7]; B3.b1 = B[6];
+	
+		BaroVal.u16 = B0.u16 + B1.u16 + B2.u16 + B3.u16;
+		#ifndef JIM_MPX_INVERT
+		BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
+		#endif // !JIM_MPX_INVERT
 	}
-	return;
+	else
+	{	
+		F.HoldingAlt = false;
+		if ( State == InFlight ) 
+		{
+			Stats[BaroFailS]++; 
+			F.BaroFailure = true;
+		}
+	}
+
 } // ReadFreescaleBaro
 
 int24 FreescaleToCm (int24 p)
@@ -187,18 +179,13 @@ void GetFreescaleBaroAltitude(void)
 
 boolean IsFreescaleBaroActive(void)
 { // check for Freescale Barometer
+	boolean r;
 	
-	I2CStart();
-	if( WriteI2CByte(ADS7823_ID) != I2C_ACK ) goto FreescaleInactive;
+	r = I2CResponse(ADS7823_ID);
+	if ( r )
+		BaroType = BaroMPX4115;
 
-	BaroType = BaroMPX4115;
-	I2CStop();
-
-	return(true);
-
-FreescaleInactive:
-	I2CStop();
-	return(false);
+	return (r);
 
 } // IsFreescaleBaroActive
 
@@ -287,57 +274,15 @@ void StartBoschBaroADC(boolean ReadPressure)
 			TempOrPress = BOSCH_TEMP_SMD500;
 	}
 
-	I2CStart();
-		if( WriteI2CByte(BOSCH_ID) != I2C_ACK ) goto SBerror;
-	
-		// access control register, start measurement
-		if( WriteI2CByte(BOSCH_CTL) != I2C_ACK ) goto SBerror;
-	
-		// select 32kHz input, measure temperature
-		if( WriteI2CByte(TempOrPress) != I2C_ACK ) goto SBerror;
-	I2CStop();
+	WriteI2CByteAtAddr(BOSCH_ID, BOSCH_CTL, TempOrPress); // select 32kHz input
 
-	F.BaroAltitudeValid = true;
-	return;
-
-SBerror:
-	I2CStop();
-	F.BaroAltitudeValid = F.HoldingAlt = false; 
-	return;
 } // StartBoschBaroADC
 
 void ReadBoschBaro(void)
 {
 	// Possible I2C protocol error - split read of ADC
-	I2CStart();
-		if( WriteI2CByte(BOSCH_ID) != I2C_ACK ) goto RVerror;
-		if( WriteI2CByte(BOSCH_ADC_MSB) != I2C_ACK ) goto RVerror;
-		I2CStart();	// restart
-		if( WriteI2CByte(BOSCH_ID+1) != I2C_ACK ) goto RVerror;
-		BaroVal.b1 = ReadI2CByte(I2C_NACK);
-	I2CStop();
-			
-	I2CStart();
-		if( WriteI2CByte(BOSCH_ID) != I2C_ACK ) goto RVerror;
-		if( WriteI2CByte(BOSCH_ADC_LSB) != I2C_ACK ) goto RVerror;
-		I2CStart();	// restart
-		if( WriteI2CByte(BOSCH_ID+1) != I2C_ACK ) goto RVerror;
-		BaroVal.b0 = ReadI2CByte(I2C_NACK);
-	I2CStop();
-
-	F.BaroAltitudeValid = true;
-	return;
-
-RVerror:
-	I2CStop();
-
-	F.BaroAltitudeValid = F.HoldingAlt = false;
-	if ( State == InFlight ) 
-	{
-		Stats[BaroFailS]++; 
-		F.BaroFailure = true;
-	}
-	return;
+	BaroVal.b1 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_MSB);
+	BaroVal.b0 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_LSB);
 } // ReadBoschBaro
 
 int24 BoschToCm(int24 CP) {
@@ -398,7 +343,6 @@ void GetBoschBaroAltitude(void)
 				AcquiringPressure = true;
 				Stats[BaroFailS]++;
 			}	
-
 		StartBoschBaroADC(AcquiringPressure);
 	}
 			
@@ -406,25 +350,17 @@ void GetBoschBaroAltitude(void)
 
 boolean IsBoschBaroActive(void)
 { // check for Bosch Barometers
-	static uint8 r;
+	boolean r;
 
-	I2CStart();
-		if( WriteI2CByte(BOSCH_ID) != I2C_ACK ) goto BoschInactive;
-		if( WriteI2CByte(BOSCH_TYPE) != I2C_ACK ) goto BoschInactive;
-		I2CStart();	// restart
-		if( WriteI2CByte(BOSCH_ID+1) != I2C_ACK ) goto BoschInactive;
-		r = ReadI2CByte(I2C_NACK);
-	I2CStop();
+	r = I2CResponse(BOSCH_ID);
 
-	if (r == BOSCH_ID_BMP085 )
-		BaroType = BaroBMP085;
-	else
-		BaroType = BaroSMD500;
+	if ( r )
+		if (ReadI2CByteAtAddr(BOSCH_ID, BOSCH_TYPE) == BOSCH_ID_BMP085 )
+			BaroType = BaroBMP085;
+		else
+			BaroType = BaroSMD500;
 
-	return(true);
-
-BoschInactive:
-	return(false);
+	return(r);
 
 } // IsBoschBaroActive
 
@@ -540,6 +476,7 @@ void ShowBaroType(void)
 } // ShowBaroType
 
 #ifdef TESTING
+
 void BaroTest(void)
 {
 	TxString("\r\nAltitude test\r\n");
@@ -566,34 +503,33 @@ void BaroTest(void)
 		TxNextLine();
 	}
 
-	if ( !F.BaroAltitudeValid ) goto BAerror;	
-
-	F.NewBaroValue = false;
-	while ( !F.NewBaroValue )
-		GetBaroAltitude();	
-	F.NewBaroValue = false;
-
-	TxString("Alt.:     \t");
-	TxVal32((int32)BaroRelAltitude, 2, ' ');
-	TxString("M\r\n");
-
-	TxString("\r\nR.Finder: \t");
-	if ( F.RangefinderAltitudeValid )
-	{
-		GetRangefinderAltitude();
-		TxVal32((int32)RangefinderAltitude, 2, ' ');
+	if ( F.BaroAltitudeValid ) 
+	{	
+		F.NewBaroValue = false;
+		while ( !F.NewBaroValue )
+			GetBaroAltitude();	
+		F.NewBaroValue = false;
+	
+		TxString("Alt.:     \t");
+		TxVal32((int32)BaroRelAltitude, 2, ' ');
 		TxString("M\r\n");
+	
+		TxString("\r\nR.Finder: \t");
+		if ( F.RangefinderAltitudeValid )
+		{
+			GetRangefinderAltitude();
+			TxVal32((int32)RangefinderAltitude, 2, ' ');
+			TxString("M\r\n");
+		}
+		else
+			TxString("no rangefinder\r\n");
+		
+		TxString("\r\nAmbient :\t");
+		TxVal32((int32)AmbientTemperature.i16, 1, ' ');
+		TxString("C\r\n");
 	}
 	else
-		TxString("no rangefinder\r\n");
-	
-	TxString("\r\nAmbient :\t");
-	TxVal32((int32)AmbientTemperature.i16, 1, ' ');
-	TxString("C\r\n");
-
-	return;
-BAerror:
-	TxString("FAIL\r\n");
+		TxString("FAIL\r\n");
 } // BaroTest
 
 #endif // TESTING

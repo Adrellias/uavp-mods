@@ -50,7 +50,10 @@ uint8 ReadI2CByte(uint8);
 uint8 WriteI2CByte(uint8);
 void ShowI2CDeviceName(uint8);
 uint8 ScanI2CBus(void);
-uint8 ReadI2CString(uint8 *, uint8);
+uint8 ReadI2CByteAtAddr(uint8, uint8);
+void WriteI2CByteAtAddr(uint8, uint8, uint8);
+boolean ReadI2CString(uint8, uint8, uint8 *, uint8);
+boolean I2CResponse(uint8);
 
 #ifdef UAVX_HW
 	#define I2C_SDA_SW			PORTCbits.RC4
@@ -190,117 +193,81 @@ uint8 WriteI2CByte(uint8 d)
 	return(s);
 } // WriteI2CByte
 
-uint8 ReadI2CString(uint8 *S, uint8 l)
+uint8 ReadI2CByteAtAddr(uint8 d, uint8 address)
 {
-	static uint8 d, b;
+	static uint8 data;
+		
+	I2CStart();
+		if( WriteI2CByte(d) != I2C_ACK ) goto IRerror;
+		if( WriteI2CByte(address) != I2C_ACK ) goto IRerror;
+	I2CStart();
+		if( WriteI2CByte(d | 1) != I2C_ACK ) goto IRerror;	
+		data = ReadI2CByte(I2C_NACK);
+	I2CStop();
+	
+	return ( data );
+
+IRerror:
+	I2CStop();
+	Stats[I2CFailS]++;
+	return (0);
+} // ReadI2CByteAtAddr
+
+void WriteI2CByteAtAddr(uint8 d, uint8 address, uint8 v)
+{
+	I2CStart();	// restart
+		if( WriteI2CByte(d) != I2C_ACK ) goto IWerror;
+		if( WriteI2CByte(address) != I2C_ACK ) goto IWerror;
+		if(WriteI2CByte(v) != I2C_ACK ) goto IWerror;
+	I2CStop();
+	return;
+
+IWerror:
+	I2CStop();
+	Stats[I2CFailS]++;
+	return;
+} // WriteI2CByteAtAddr
+
+boolean ReadI2CString(uint8 d, uint8 cmd, uint8 *S, uint8 l)
+{
+	static uint8 b;
+
+	I2CStart();
+	if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
+
+	if( WriteI2CByte(cmd) != I2C_ACK ) goto IRSerror;
+
+	I2CStart();	
+		if( WriteI2CByte(d | 1) != I2C_ACK ) goto IRSerror;
+		for (b = 0; b < l; b++)
+			if ( b < (l-1) )
+				S[b] = ReadI2CByte(I2C_ACK);
+			else
+				S[b] = ReadI2CByte(I2C_NACK);
+	I2CStop();
+
+	return( true );
+
+IRSerror:
+	I2CStop();
 
 	for (b = 0; b < l; b++)
-	{
-		if ( b < (l-1) )
-			d = ReadI2CByte(I2C_ACK);
-		else
-			d = ReadI2CByte(I2C_NACK);
-		S[b] = d;
-	}
+		S[b] = 0;
 
-	return( 0 );
+	return(false);
+
 } // ReadI2CString
 
-#ifdef TESTING
-
-void ShowI2CDeviceName(uint8 d) {
-    TxChar(' ');
-    switch ( d  ) {
-        case ADXL345_ID:
-            TxString("ADXL345 SF-6&9DOF Acc");
-            break;
-        case BMA180_ID:
-            TxString("BMA180 Acc");
-            break;
-        case ITG_ID_3DOF:
-            TxString("ITG3200 SF-3DOF Gyro");
-            break;
-        case ITG_ID_6DOF:
-            TxString("ITG3200 SF-6&9DOF Gyro");
-            break;
-        case HMC5843_3DOF:
-            TxString("HMC5843 SF-3DOF Magnetometer");
-            break;
-        case HMC5843_9DOF:
-            TxString("HMC5843 SF-9DOF Magnetometer");
-            break;
-        case HMC6352_ID:
-            TxString("HMC6352 Compass");
-            break;
-        case ADS7823_ID:
-            TxString("ADS7823 ADC");
-            break;
-        case MCP4725_ID:
-            TxString("MCP4725 DAC");
-            break;
-        case BOSCH_ID:
-            TxString("Bosch Baro");
-            break;
-        case TMP100_ID:
-            TxString("TMP100 Temp");
-            break;
-        default:
-            break;
-    } // switch
-    TxChar(' ');
-
-} // ShowI2CDeviceName
-
-uint8 ScanI2CBus(void)
+boolean I2CResponse(uint8 d)
 {
-	uint8 s;
-	uint8 d;
+	static boolean r;
 
-	d = 0;
+    I2CStart();
+ 	   r = WriteI2CByte(d) == I2C_ACK;
+    I2CStop();
 
-	TxString("Sensor Bus\r\n");
-	for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
-	{
-		I2CStart();
-		if( WriteI2CByte(s) == I2C_ACK )
-		{
-			d++;
-			TxString("\t0x");
-			TxValH(s);
-			ShowI2CDeviceName(s);
-			TxNextLine();
-		}
-		I2CStop();
-
-		Delay1mS(2);
-	}
-
-	TxString("\r\nESC Bus\r\n");
-
-	if ( (P[ESCType] == ESCHolger)||(P[ESCType] == ESCX3D)||(P[ESCType] == ESCYGEI2C)||(P[ESCType] == ESCLRCI2C))
-		for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
-		{
-			ESCI2CStart();
-			if( WriteESCI2CByte(s) == I2C_ACK )
-			{
-				d++;
-				TxString("\t0x");
-				TxValH(s);
-				ShowI2CDeviceName(s);
-				TxNextLine();
-			}
-			ESCI2CStop();
-	
-			Delay1mS(2);
-		}
-	else
-		TxString("\tinactive - I2C ESCs not selected..\r\n");
-	TxNextLine();
-
-	return(d);
-} // ScanI2CBus
-
-#endif // TESTING
+	return (r);
+} // I2CResponse
 
 // -----------------------------------------------------------
 
@@ -390,6 +357,99 @@ uint8 WriteESCI2CByte(uint8 d)
 	return( s);
 } // WriteESCI2CByte
 
+void ShowI2CDeviceName(uint8 d) {
+    TxChar(' ');
+    switch ( d  ) {
+        case ADXL345_ID:
+            TxString("ADXL345 SF-6&9DOF Acc");
+            break;
+        case BMA180_ID:
+            TxString("BMA180 Acc");
+            break;
+        case ITG_ID_3DOF:
+            TxString("ITG3200 Gyro");
+            break;
+        case ITG_ID_6DOF:
+            TxString("ITG3200 Gyro (SF-6&9DOF)");
+            break;
+        case HMC5843_3DOF:
+            TxString("HMC5843 Mag");
+            break;
+        case HMC5843_9DOF:
+            TxString("HMC5843 Mag (SF-9DOF)");
+            break;
+        case HMC6352_ID:
+            TxString("HMC6352 Compass");
+            break;
+        case ADS7823_ID:
+            TxString("ADS7823 ADC");
+            break;
+        case MCP4725_ID:
+            TxString("MCP4725 DAC");
+            break;
+        case BOSCH_ID:
+            TxString("Bosch Baro");
+            break;
+        case TMP100_ID:
+            TxString("TMP100 Temp");
+            break;
+        default:
+            break;
+    } // switch
+    TxChar(' ');
+
+} // ShowI2CDeviceName
+
+uint8 ScanI2CBus(void)
+{
+	uint8 s;
+	uint8 d;
+
+	d = 0;
+
+	TxString("Sensor Bus\r\n");
+	for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
+	{
+		if( I2CResponse(s) )
+		{
+			d++;
+			TxString("\t0x");
+			TxValH(s);
+			ShowI2CDeviceName(s);
+			TxNextLine();
+		}
+		Delay1mS(2);
+	}
+
+/*
+
+	TxString("\r\nESC Bus\r\n");
+
+	d = 0;
+
+	if ( (P[ESCType] == ESCHolger)||(P[ESCType] == ESCX3D)||(P[ESCType] == ESCYGEI2C)||(P[ESCType] == ESCLRCI2C))
+		for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
+		{
+			ESCI2CStart();
+			if( WriteESCI2CByte(s) == I2C_ACK )
+			{
+				d++;
+				TxString("\t0x");
+				TxValH(s);
+				TxNextLine();
+			}
+			ESCI2CStop();
+	
+			Delay1mS(2);
+		}
+	else
+		TxString("\tinactive - I2C ESCs not selected..\r\n");
+	TxNextLine();
+*/
+
+	return(d);
+} // ScanI2CBus
+
 #ifdef TESTING
 
 void ProgramSlaveAddress(uint8 addr)
@@ -409,7 +469,6 @@ void ProgramSlaveAddress(uint8 addr)
 				return;
 			}
 			else
-			{
 				if( WriteESCI2CByte(0x87) == I2C_ACK ) // select register 0x07
 					if( WriteESCI2CByte( addr ) == I2C_ACK ) // new slave address
 					{
@@ -421,18 +480,12 @@ void ProgramSlaveAddress(uint8 addr)
 						TxNextLine();
 						return;
 					}
-			}
 		ESCI2CStop();
 	}
 	TxString("\tESC at SLA 0x");
 	TxValH(addr);
 	TxString(" no response - check cabling and pullup resistors!\r\n");
 } // ProgramSlaveAddress
-
-boolean CheckESCBus(void)
-{
-	return ( true );
-} // CheckESCBus
 
 void ConfigureESCs(void)
 {
@@ -444,19 +497,11 @@ void ConfigureESCs(void)
 		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 		{
 			TxString("Connect ONLY ");
-			switch( m )
-			{
-				#ifdef VTCOPTER
-					case 0 : TxString("VLeft"); break;
-					case 1 : TxString("VRight");  break;
-					case 2 : TxString("Right"); break;
-					case 3 : TxString("Left");  break;
-				#else
-					case 0 : TxString("Front"); break;
-					case 1 : TxString("Left");  break;
-					case 2 : TxString("Right"); break;
-					case 3 : TxString("Back");  break;
-				#endif // HEXACOPTER
+			switch( m ) {
+				case 0 : TxString("Front"); break;
+				case 1 : TxString("Left");  break;
+				case 2 : TxString("Right"); break;
+				case 3 : TxString("Back"); break;
 			}
 			TxString(" ESC, then the CONTINUE button \r\n");
 			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
@@ -470,7 +515,5 @@ void ConfigureESCs(void)
 } // ConfigureESCs
 
 #endif // TESTING
-
-
 
 

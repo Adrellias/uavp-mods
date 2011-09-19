@@ -39,10 +39,13 @@ void OutSignals(void)
 
 	#if !( defined SIMULATE | defined TESTING )
 
-	PWM0 = PWMLimit(PWM[FrontC]);
-	PWM1 = PWMLimit(PWM[LeftC]);
-	PWM2 = PWMLimit(PWM[RightC]);
-	PWM3 = PWMLimit(PWM[BackC]);
+	if ( P[ESCType] == ESCPPM ) { // may as well save the time
+		PWM0 = PWMLimit(PWM[FrontC]);
+		PWM1 = PWMLimit(PWM[LeftC]);
+		PWM2 = PWMLimit(PWM[RightC]);
+		PWM3 = PWMLimit(PWM[BackC]);
+	}
+	
 	PWM4 = PWMLimit(PWM[CamRollC]);
 	PWM5 = PWMLimit(PWM[CamPitchC]);
 
@@ -141,7 +144,7 @@ OS009:
 		GOTO	OS010
 						
 		BCF		SHADOWB,3,1	
-		#endif // !TRICOPTER		
+		#endif // !TRICOPTER
 
 OS010:
 		_endasm
@@ -150,7 +153,7 @@ OS010:
 			Delay1TCY(); 
 			Delay1TCY(); 
 			Delay1TCY();  
-		#endif // TRICOPTER 
+		#endif // TRICOPTER
 
 		#ifdef CLOCK_40MHZ
 			Delay10TCYx(2); 
@@ -211,11 +214,11 @@ OS006:
 		switch ( P[ESCType] ) {
 		case ESCX3D:
 			ESCI2CStart();
-			r = WriteESCI2CByte(0x10); // one command, 4 data bytes
-			r += WriteESCI2CByte( I2CESCLimit(PWM[FrontC]) ); 
-			r += WriteESCI2CByte( I2CESCLimit(PWM[LeftC]) );
-			r += WriteESCI2CByte( I2CESCLimit(PWM[RightC]) );
-			r += WriteESCI2CByte( I2CESCLimit(PWM[BackC]) );
+				r = WriteESCI2CByte(0x10); // one command, 4 data bytes
+				r += WriteESCI2CByte( I2CESCLimit(PWM[FrontC]) ); 
+				r += WriteESCI2CByte( I2CESCLimit(PWM[LeftC]) );
+				r += WriteESCI2CByte( I2CESCLimit(PWM[RightC]) );
+				r += WriteESCI2CByte( I2CESCLimit(PWM[BackC]) );
 			ESCI2CStop();
 			ESCI2CFail[0] = r;
 			break;
@@ -226,9 +229,9 @@ OS006:
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = WriteESCI2CByte(0x62 + ( m*2 ) ); // one cmd, one data byte per motor
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) >> 1 );
-			  ESCI2CStop();
+					r = WriteESCI2CByte(0x62 + ( m*2 ) ); // one cmd, one data byte per motor
+					r += WriteESCI2CByte( I2CESCLimit(PWM[m]) >> 1 );
+			  	ESCI2CStop();
 				ESCI2CFail[m] = r;
 			}
 			break;
@@ -236,9 +239,9 @@ OS006:
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = WriteESCI2CByte(0x52 + ( m*2 )); // one command, one data byte per motor
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) );
-			  ESCI2CStop();
+					r = WriteESCI2CByte(0x52 + ( m*2 )); // one command, one data byte per motor
+					r += WriteESCI2CByte( I2CESCLimit(PWM[m]) );
+			  	ESCI2CStop();
 				ESCI2CFail[m] = r;
 			}
 			break;
@@ -350,9 +353,9 @@ uint32 T580Available = 0;
 void WriteT580ESC(uint8 a, uint8 s, uint8 d2) {
 
 	ESCI2CStart();
-	WriteESCI2CByte(a);
-	WriteESCI2CByte(0xa0 | s );
-	WriteESCI2CByte(d2);
+		WriteESCI2CByte(a);
+		WriteESCI2CByte(0xa0 | s );
+		WriteESCI2CByte(d2);
 	ESCI2CStop();
 
 } // WriteT580ESC
