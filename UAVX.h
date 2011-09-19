@@ -1,4 +1,7 @@
 
+#define PREFER_HMC5843			// uses the magnetometer in preference
+#define PREFER_LISL				// uses the old ac in preference
+
 //#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
 
 //#define INC_BMA180			// include BMA180 accelerometer code
@@ -38,10 +41,10 @@
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
-	//#define QUADROCOPTER
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
-	#define VTCOPTER
+	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -784,7 +787,10 @@ extern void CalibrateCompass(void);
 
 // HMC5843 Bosch Magnetometer
 
-#define HMC5843_ID      0x3C        // 0x1E 9DOF
+#define HMC5843_3DOF    0x3C        
+#define HMC5843_9DOF	0x1E
+
+extern uint8	HMC5843_ID;
 
 extern int16 GetHMC5843(void);
 extern void DoTestHMC5843(void);

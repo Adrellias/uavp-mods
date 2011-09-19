@@ -62,7 +62,7 @@ int16	GPSEastDiff, GPSNorthDiff;
 int32 	OriginLatitude, OriginLongitude;
 int24 	GPSAltitude, GPSRelAltitude, GPSOriginAltitude;
 int32 	DesiredLatitude, DesiredLongitude;
-int32	LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
+int32	HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
 int16	GPSHeading;
 int16 	GPSVel, GPSVelP;
@@ -281,8 +281,8 @@ void SetGPSOrigin(void)
 	if ( ( ValidGPSSentences == GPS_ORIGIN_SENTENCES ) && F.GPSValid )
 	{
 		GPSStartTime = GPSMissionTime;
-		OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitudeP = GPSLatitude;
-		OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitudeP = GPSLongitude;
+		OriginLatitude = DesiredLatitude = HoldLatitude = GPSLatitudeP = GPSLatitude;
+		OriginLongitude = DesiredLongitude = HoldLongitude = GPSLongitudeP = GPSLongitude;
 
 		GPSVel = 0;
 		
@@ -485,8 +485,8 @@ void InitGPS(void)
 	GPSRelAltitude = GPSAltitude = 0;
 	GPSHeading = GPSVel = GPSVelP = 0;
 
-	OriginLatitude = DesiredLatitude = HoldLatitude = LatitudeP = GPSLatitude = 0;
-	OriginLongitude = DesiredLongitude = HoldLongitude = LongitudeP = GPSLongitude = 0;
+	OriginLatitude = DesiredLatitude = HoldLatitude = GPSLatitudeP = GPSLatitude = 0;
+	OriginLongitude = DesiredLongitude = HoldLongitude = GPSLongitudeP = GPSLongitude = 0;
 
 	Write32EE(NAV_ORIGIN_LAT, 0);
 	Write32EE(NAV_ORIGIN_LON, 0);

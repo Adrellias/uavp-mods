@@ -48,11 +48,12 @@ int8 	CompassType;
 
 int16 GetCompass()
 {
-	if ( CompassType == HMC6352Compass )
-		return (GetHMC6352());
+
+	if ( CompassType == HMC5843Magnetometer )
+		return (GetHMC5843());
 	else
-		if ( CompassType == HMC5843Magnetometer )
-			return (GetHMC5843());
+		if ( CompassType == HMC6352Compass )
+			return (GetHMC6352());
 		else
 			return(0);
 	
@@ -139,6 +140,15 @@ void InitHeading(void)
 
 void InitCompass(void)
 {
+#ifdef PREFER_HMC5853
+	if ( HMC5843MagnetometerActive() )
+		CompassType = HMC5843Magnetometer;
+	else
+		if ( HMC6352CompassActive() )
+			CompassType = HMC6352Compass;
+		else
+			CompassType = UnknownCompass;
+#else
 	if ( HMC6352CompassActive() )
 		CompassType = HMC6352Compass;
 	else
@@ -146,6 +156,7 @@ void InitCompass(void)
 			CompassType = HMC5843Magnetometer;
 		else
 			CompassType = UnknownCompass;
+#endif // PREFER_HMC5843
 
 } // InitCompass
 
@@ -176,6 +187,7 @@ void CalibrateCompass(void)
 // HMC5843 3 Axis Magnetometer
 
 int16 Mag[3];
+uint8 HMC5843_ID;
 
 int16 GetHMC5843(void) {
 
@@ -215,26 +227,32 @@ int16 GetHMC5843(void) {
 	    Mag[DU] = -Z.i16;    // Z axis
 	}
 
-	#ifdef HMC5843_FULL
-
-		// UNFORTUNATELY THE ANGLE ESTIMATES ARE NOT VALID FOR THE PIC VERSION
-		// AS THEY ARE NOT BOUNDED BY +/- Pi
-	    CRoll = int16cos(Angle[Roll]);
-	    SRoll = int16sin(Angle[Roll]);
-	    CPitch = int16cos(Angle[Pitch]);
-	    SPitch = int16sin(Angle[Pitch]);
+		#ifdef HMC5843_FULL
 	
-	    // Tilt compensated Magnetic field X:
-	    mx = Mag[0] * CPitch + Mag[1] * SRoll * SPitch;
-		mx += SRS16(Mag[2] * CRoll * SPitch, 8);
+			// UNFORTUNATELY THE ANGLE ESTIMATES ARE NOT VALID FOR THE PIC VERSION
+			// AS THEY ARE NOT BOUNDED BY +/- Pi
+		    CRoll = int16cos(Angle[Roll]);
+		    SRoll = int16sin(Angle[Roll]);
+		    CPitch = int16cos(Angle[Pitch]);
+		    SPitch = int16sin(Angle[Pitch]);
+
+			// Tilt compensated Magnetic field X:
+			Temp.i32 = (int32)Mag[1] * SRoll * SPitch + (int32)Mag[2] * CRoll * SPitch;
+			Temp.i32 = (int24)Mag[0] * CPitch + Temp.i3_1;
+			mx = Temp.i3_1;
+			
+			// Tilt compensated Magnetic field Y:
+			Temp.i32 =  (int24)Mag[1] * CRoll - (int24)Mag[2] * SRoll;
+			my = Temp.i3_1;
+
+		    // Magnetic Heading
+		    CompassVal = int32atan2( -my, mx );
 	
-	    // Tilt compensated Magnetic field Y:
-	    my =  Mag[1] * CRoll - Mag[2] * SRoll;
-
-	#endif // HMC5843_FULL
-
-    // Magnetic Heading
-    CompassVal = int32atan2( -my, mx );
+		#else
+	
+	    	CompassVal = int32atan2( -Mag[1], Mag[0] );
+	
+		#endif // HMC5843_FULL
 
     F.CompassValid = true;
 
@@ -279,9 +297,19 @@ void DoHMC5843Test(void) {
 boolean HMC5843MagnetometerActive(void) {
     uint8 r;
 
-    I2CStart();
+	HMC5843_ID = HMC5843_3DOF;
+
+	I2CStart();
     F.CompassValid = !(WriteI2CByte(HMC5843_ID) != I2C_ACK);
     I2CStop();
+
+	if ( !F.CompassValid )
+	{
+		HMC5843_ID = HMC5843_9DOF;
+	  	I2CStart();
+    	F.CompassValid = !(WriteI2CByte(HMC5843_ID) != I2C_ACK);
+    	I2CStop();
+	}
 
 	if ( !F.CompassValid ) return(false);
 

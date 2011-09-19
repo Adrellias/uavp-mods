@@ -47,7 +47,7 @@ void AdaptiveYawFilterA(void)
 
 void GetGyroValues(void)
 {
-	if ( GyroType == ITG3200Gyro )
+	if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
 		BlockReadITG3200();
 	else
 		GetAnalogGyroValues();
@@ -157,10 +157,10 @@ void ShowGyroType(void)
             TxString("ADXRS610/300");
             break;
         case ITG3200Gyro:
-            TxString("ITG3200/SF-6DOF");
+            TxString("ITG3200 or SF-6DOF");
             break;
 		case ITG3200DOF9:
-            TxString("SF-9DOF & ITG3200");
+            TxString("SF-9DOF");
             break;
         case IRSensors:
             TxString("IR Sensors");
@@ -175,7 +175,7 @@ void InitGyros(void)
 {
 
 	GyroType = P[DesGyroType];
-	if ( GyroType == ITG3200Gyro )
+	if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
 	{
 		if ( ITG3200GyroActive() )
 			InitITG3200();	
@@ -188,7 +188,7 @@ void InitGyros(void)
 #ifdef TESTING
 void GyroTest(void)
 {
-	if ( GyroType == ITG3200Gyro )
+		if (( GyroType == ITG3200Gyro ) || ( GyroType == ITG3200DOF9 ))
 		GyroITG3200Test();
 	else
 		GyroAnalogTest();

@@ -216,8 +216,8 @@ OS006:
 			r += WriteESCI2CByte( I2CESCLimit(PWM[LeftC]) );
 			r += WriteESCI2CByte( I2CESCLimit(PWM[RightC]) );
 			r += WriteESCI2CByte( I2CESCLimit(PWM[BackC]) );
-			ESCI2CFail[0] += r;
 			ESCI2CStop();
+			ESCI2CFail[0] = r;
 			break;
 		case ESCLRCI2C:
 			T580ESCs(I2CESCLimit(PWM[FrontC]), I2CESCLimit(PWM[LeftC]), I2CESCLimit(PWM[RightC]), I2CESCLimit(PWM[BackC]));
@@ -226,10 +226,10 @@ OS006:
 			for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
 			{
 				ESCI2CStart();
-				r = WriteESCI2CByte(0x62 + ( m*2) ); // one cmd, one data byte per motor
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m])>>1 );
-				ESCI2CFail[m] += r;
-				ESCI2CStop();
+				r = WriteESCI2CByte(0x62 + ( m*2 ) ); // one cmd, one data byte per motor
+				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) >> 1 );
+			  ESCI2CStop();
+				ESCI2CFail[m] = r;
 			}
 			break;
  		case ESCHolger:
@@ -238,8 +238,8 @@ OS006:
 				ESCI2CStart();
 				r = WriteESCI2CByte(0x52 + ( m*2 )); // one command, one data byte per motor
 				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) );
-				ESCI2CFail[m] += r;
-				ESCI2CStop();
+			  ESCI2CStop();
+				ESCI2CFail[m] = r;
 			}
 			break;
 		default:

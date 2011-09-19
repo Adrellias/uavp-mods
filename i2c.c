@@ -212,19 +212,22 @@ void ShowI2CDeviceName(uint8 d) {
     TxChar(' ');
     switch ( d  ) {
         case ADXL345_ID:
-            TxString("ADXL345 Acc");
+            TxString("ADXL345 SF-6&9DOF Acc");
             break;
         case BMA180_ID:
             TxString("BMA180 Acc");
             break;
         case ITG_ID_3DOF:
-            TxString("ITG3200 3DOF Gyro");
+            TxString("ITG3200 SF-3DOF Gyro");
             break;
         case ITG_ID_6DOF:
-            TxString("ITG3200 6DOF Gyro");
+            TxString("ITG3200 SF-6&9DOF Gyro");
             break;
-        case HMC5843_ID:
-            TxString("HMC5843 Magnetometer");
+        case HMC5843_3DOF:
+            TxString("HMC5843 SF-3DOF Magnetometer");
+            break;
+        case HMC5843_9DOF:
+            TxString("HMC5843 SF-9DOF Magnetometer");
             break;
         case HMC6352_ID:
             TxString("HMC6352 Compass");

@@ -359,7 +359,6 @@ void ProcessCommand(void)
 				ShowStats();
 				ShowPrompt();
 				break;
-
 			#ifdef TESTING
 			case 'A' :	// linear sensor
 				AccelerometerTest();

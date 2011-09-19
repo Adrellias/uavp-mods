@@ -23,7 +23,7 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 =========================================================================
-  Reference Sites                          
+  Reference Sites                           
 =========================================================================
 
 The original project may be found at:

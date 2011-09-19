@@ -188,6 +188,32 @@ void InitAccelerometers(void)
 
 	AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = Ax.i16 = Ay.i16 = Az.i16 = 0;
 
+#ifdef PREFER_LISL
+	if ( LISLAccActive() )
+	{
+		AccType = LISLAcc;
+		InitLISLAcc();
+	}
+	else
+		if ( ADXL345AccActive() )
+		{
+			AccType = ADXL345Acc;
+			InitADXL345Acc();
+		}		
+		else
+			#ifdef INC_BMA180
+			if ( BMA180AccActive() )
+			{
+				AccType = BMA180Acc;
+				InitBMA180Acc();
+			}
+			else
+			#endif // INC_BMA180
+			{
+				AccType = AccUnknown;
+				F.AccelerationsValid = false;
+			}
+#else
 	if ( ADXL345AccActive() )
 	{
 		AccType = ADXL345Acc;
@@ -212,6 +238,7 @@ void InitAccelerometers(void)
 				AccType = AccUnknown;
 				F.AccelerationsValid = false;
 			}
+#endif // PREFER_LISL
 
 	if( F.AccelerationsValid )
 	{

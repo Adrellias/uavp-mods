@@ -190,7 +190,7 @@ boolean ITG3200GyroActive(void)
 	ITG_R = ITG_ID+1;	
 	ITG_W =	ITG_ID;	
 
-    return ( !F.GyroFailure );
+  return ( !F.GyroFailure );
 } // ITG3200GyroActive
 
 #ifdef TESTING
