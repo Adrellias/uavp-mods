@@ -119,20 +119,14 @@ void SetFreescaleOffset(void)
 
 void ReadFreescaleBaro(void)
 {
-	static uint8 B[8], r;
-	static i16u B0, B1, B2, B3;
+	static charint16x4u B;
 
 	mS[BaroUpdate] += BARO_UPDATE_MS;
 
-	F.BaroAltitudeValid = ReadI2CString(ADS7823_ID, ADS7823_CMD,  B, 8);
+	F.BaroAltitudeValid = ReadI2CString(ADS7823_ID, ADS7823_CMD,  B.c, 8);
 	if ( F.BaroAltitudeValid )
-	{
-		B0.b0 = B[1]; B0.b1 = B[0];
-		B1.b0 = B[3]; B1.b1 = B[2];
-		B2.b0 = B[5]; B2.b1 = B[4];
-		B3.b0 = B[7]; B3.b1 = B[6];
-	
-		BaroVal.u16 = B0.u16 + B1.u16 + B2.u16 + B3.u16;
+	{	
+		BaroVal.u16 = B.i16[0] + B.i16[1] + B.i16[2] + B.i16[3];
 		#ifndef JIM_MPX_INVERT
 		BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
 		#endif // !JIM_MPX_INVERT
@@ -424,24 +418,9 @@ int24 AltitudeCF(int24 Alt)
 	const int16 BaroAccScale = 2;
 	const int16 TauCF = 7; // 5 FOR BMP085 increasing value reduces filtering
 
-//	const int16 AccDUFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_ALT_HZ ) + PID_CYCLE_MS );
-
 	static i32u Temp;
 	static int32 AltD;
-	static int24 AltCFp;
-
-	/*
-	const real32 kvz = -0.0001*4096;
-	const real32 khest = -0.008*4096;
-
-	vzest = vzest + accz*dT;
-	hest = hest + vzest*dT;
-
-	vzest = (vzest*4096 + kvz*(hest-baralt))/4096;
-	hest = (hest*4096 + khest*(hest-baralt))/4096;
-	*/
-
-	//LPFilter16(&Acc[DU], &AccDUF, AccDUFilterA);	
+	static int24 AltCFp;	
 
 	AltD = Alt - AltCF;
 	AltCFp = AltCF;

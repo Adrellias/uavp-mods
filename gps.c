@@ -408,11 +408,6 @@ void ParseGPSSentence(void)
 
 		if (F.NavValid )
 		{
-			#ifdef DEBUG_PRINT
-			if (Armed)
-				F.TxToBuffer = true;
-			#endif // DEBUG_PRINT
-
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
 
 			LatitudeDiff = GPSLatitude - GPSLatitudeP; // do again after slew limit

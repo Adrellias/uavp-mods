@@ -481,13 +481,18 @@ void LightsAndSirens(void)
 	}
 	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
 		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
-//( P[TxRxType] == UnknownTxRx ) ||				
+			
 	FirstPass = false;
 
 	Beeper_OFF;
 	LEDRed_OFF;
 	LEDGreen_ON;
-	LEDYellow_ON;
+
+	#ifdef SUPPRESS_ACC
+		LEDYellow_OFF;
+	#else
+		LEDYellow_ON;
+	#endif // SUPPRESS_ACC
 
 	mS[LastBattery] = mSClock();
 	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;

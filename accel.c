@@ -22,6 +22,8 @@
 
 #include "uavx.h"
 
+#include "MPU6050.h"
+
 void ShowAccType(void);
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
@@ -31,6 +33,10 @@ void InitAccelerometers(void);
 void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 boolean ADXL345AccActive(void);
+
+void ReadMPU6050Acc(void);
+void InitMPU6050Acc(void);
+boolean MPU6050AccActive(void);
 
 void ReadBMA180Acc(void);
 void InitBMA180Acc(void);
@@ -45,13 +51,11 @@ boolean LISLAccActive(void);
 void ReadLISLAcc(void);
 
 #pragma udata accs
-i16u	Ax, Ay, Az;
+int16	AccADC[3];
 int16	IntCorr[3];
 int8	AccNeutral[3];
 int16	Acc[3];
 int8 	AccType;
-int32	AccDUF;
-int16   ADXL345Mag;
 #pragma udata
 
 void ShowAccType(void)
@@ -62,6 +66,9 @@ void ShowAccType(void)
 		break;
 	case ADXL345Acc:
 		TxString("ADXL345");
+		break;
+	case MPU6050Acc:
+		TxString("MPU6050");
 		break;
 	case BMA180Acc:
 		TxString("BMA180");
@@ -79,25 +86,21 @@ void ReadAccelerations(void)
 	case LISLAcc:
 		ReadLISLAcc();
 		break;
+	#ifdef INC_ADXL345
 	case ADXL345Acc:
 		ReadADXL345Acc();
-		#ifdef FULL_MONTY
-		// rescale to 1024 = 1G
-		  	Ax.i16 = ((int24)Ax.i16*1024)/ADXL345Mag; // LR
-		  	Ay.i16 = ((int24)Ay.i16*1024)/ADXL345Mag; // DU
-		  	Az.i16 = ((int24)Ay.i16*1024)/ADXL345Mag; // FB
-		#else
-		  	Ax.i16 *= 5; // LR
-		  	Ay.i16 *= 5; // DU
-		  	Az.i16 *= 5; // FB
-		#endif // FULL_MONTY
 		break;
+	#endif // INC_ADXL345
 	#ifdef INC_BMA180
 	case BMA180Acc:
 		ReadBMA180Acc();
-		// scaling??
 		break;
 	#endif // INC_BMA180
+	#ifdef INC_MPU6050
+	case MPU6050Acc:
+		ReadMPU6050Acc();
+		break;
+	#endif // INC_MPU6050
 	default:
 		break;
 	} // Switch
@@ -120,9 +123,9 @@ void GetNeutralAccelerations(void)
 		{
 			ReadAccelerations();
 
-			AccLR += Ax.i16;
-			AccDU += Ay.i16;
-			AccFB += Az.i16;
+			AccLR += AccADC[LR];
+			AccDU += AccADC[DU];
+			AccFB += AccADC[FB];
 		}	
 	
 		AccLR = SRS16(AccLR, 4);
@@ -153,26 +156,26 @@ void AccelerometerTest(void)
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
-		TxVal32((int32)Ax.i16, 0, 0);
-		if ( Abs((Ax.i16)) > 128 )
+		TxVal32((int32)AccADC[LR], 0, 0);
+		if ( Abs((AccADC[LR])) > 128 )
 			TxString(" fault?");
 		TxNextLine();
 
 		TxString("\tF->B: \t");	
-		TxVal32((int32)Az.i16, 0, 0);
-		if ( Abs((Az.i16)) > 128 )
+		TxVal32((int32)AccADC[FB], 0, 0);
+		if ( Abs((AccADC[FB])) > 128 )
 			TxString(" fault?");	
 		TxNextLine();
 
 		TxString("\tD->U:    \t");
 	
-		TxVal32((int32)Ay.i16, 0, 0);
-		if ( ( Ay.i16 < 896 ) || ( Ay.i16 > 1152 ) )
+		TxVal32((int32)AccADC[DU], 0, 0);
+		if ( ( AccADC[DU] < 896 ) || ( AccADC[DU] > 1152 ) )
 			TxString(" fault?");	
 		TxNextLine();
 
 		TxString("\tMag:    \t");
-		Mag = int32sqrt(Sqr((int24)Ax.i16)+Sqr((int24)Ay.i16)+Sqr((int24)Az.i16));
+		Mag = int32sqrt(Sqr((int24)AccADC[LR])+Sqr((int24)AccADC[FB])+Sqr((int24)AccADC[DU]));
 		TxVal32((int32)Mag, 0, 0);
 		TxNextLine();
 	}
@@ -184,23 +187,66 @@ void AccelerometerTest(void)
 
 void InitAccelerometers(void)
 {
-	static int8 i;
+	uint8 a;
 
-	AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = Ax.i16 = Ay.i16 = Az.i16 = 0;
+	for ( a = 0; a<(uint8)3; a++)
+		AccNeutral[a] = AccADC[a] = 0;
+	AccADC[DU] = GRAVITY;
 
-#ifdef PREFER_LISL
-	if ( LISLAccActive() )
-	{
-		AccType = LISLAcc;
-		InitLISLAcc();
-	}
-	else
+	#ifdef SUPPRESS_ACC
+
+		AccType = AccUnknown;
+		F.AccelerationsValid = false;
+
+	#else
+
+		#ifdef PREFER_LISL
+	
+		if ( LISLAccActive() )
+		{
+			AccType = LISLAcc;
+			InitLISLAcc();
+		}
+		else
+			#ifdef INC_ADXL345
+			if ( ADXL345AccActive() )
+			{
+				AccType = ADXL345Acc;
+				InitADXL345Acc();
+			}		
+			else
+			#endif // INC_ADXL345
+				#ifdef INC_BMA180
+				if ( BMA180AccActive() )
+				{
+					AccType = BMA180Acc;
+					InitBMA180Acc();
+				}
+				else
+				#endif // INC_BMA180
+					#ifdef INC_MPU6050
+					if ( MPU6050AccActive() )
+					{
+						AccType = MPU6050Acc;
+						InitMPU6050Acc();
+					}
+					else
+					#endif // INC_MPU6050
+					{
+						AccType = AccUnknown;
+						F.AccelerationsValid = false;
+					}
+		
+		#else
+	
+		#ifdef INC_ADXL345
 		if ( ADXL345AccActive() )
 		{
 			AccType = ADXL345Acc;
 			InitADXL345Acc();
 		}		
 		else
+		#endif // INC_ADXL345
 			#ifdef INC_BMA180
 			if ( BMA180AccActive() )
 			{
@@ -209,36 +255,28 @@ void InitAccelerometers(void)
 			}
 			else
 			#endif // INC_BMA180
-			{
-				AccType = AccUnknown;
-				F.AccelerationsValid = false;
-			}
-#else
-	if ( ADXL345AccActive() )
-	{
-		AccType = ADXL345Acc;
-		InitADXL345Acc();
-	}		
-	else
-		#ifdef INC_BMA180
-		if ( BMA180AccActive() )
-		{
-			AccType = BMA180Acc;
-			InitBMA180Acc();
-		}
-		else
-		#endif // INC_BMA180
-			if ( LISLAccActive() )
-			{
-				AccType = LISLAcc;
-				InitLISLAcc();
-			}
-			else
-			{
-				AccType = AccUnknown;
-				F.AccelerationsValid = false;
-			}
-#endif // PREFER_LISL
+				#ifdef INC_MPU6050
+				if ( MPU6050AccActive() )
+				{
+					AccType = MPU6050Acc;
+					InitMPU6050Acc();
+				}
+				else
+				#endif // INC_MPU6050
+					if ( LISLAccActive() )
+					{
+						AccType = LISLAcc;
+						InitLISLAcc();
+					}
+					else
+					{
+						AccType = AccUnknown;
+						F.AccelerationsValid = false;
+					}
+	
+		#endif // PREFER_LISL
+
+	#endif // SUPPRESS_ACC
 
 	if( F.AccelerationsValid )
 	{
@@ -246,38 +284,46 @@ void InitAccelerometers(void)
 		GetNeutralAccelerations();
 	}
 	else
+	{
+		LEDYellow_OFF;
 		F.AccFailure = true;
+	}
 } // InitAccelerometers
 
 //________________________________________________________________________________________________
 
+#ifdef INC_ADXL345
+
 boolean ADXL345AccActive(void);
 
 void ReadADXL345Acc(void) 
-{	// Ax LR, Ay DU, Az FB
+{
+	static charint16x4u A;
 
-    static uint8 a;
-	static int8 r;
-    static char b[6];
-
-	if ( ReadI2CString(ADXL345_ID, 0x32, b, 6) ) 
+	if ( ReadI2CString(ADXL345_ID, 0x32, A.c, 6) ) 
+	{
 		if ( P[SensorHint] == ITG3200DOF9)
 		{
 			// SparkFun 9DOF breakouts pins forward components up
-			Ax.b1 = b[1]; Ax.b0 = b[0]; Ax.i16 = -Ax.i16; // LR		
-		    Ay.b1 = b[5]; Ay.b0 = b[4]; // DU	
-		    Az.b1 = b[3]; Az.b0 = b[2]; // FB 
+			AccADC[LR] = -A.i16[X]; 		
+		    AccADC[DU] = A.i16[Z]; 	
+		    AccADC[FB] = A.i16[Y]; 
 		}
 		else
 		{
 			// SparkFun 6DOF & ITG3200 breakouts pins forward components up    	
-		    Ax.b1 = b[3]; Ax.b0 = b[2]; // LR
-		    Ay.b1 = b[5]; Ay.b0 = b[4]; // DU
-			Az.b1 = b[1]; Az.b0 = b[0];	// FB
+			AccADC[LR] = A.i16[Y]; 		
+		    AccADC[DU] = A.i16[Z]; 	
+		    AccADC[FB] = A.i16[X]; 
 		}
+		
+		AccADC[LR] *= 5; 		
+		AccADC[DU] *= 5; 	
+		AccADC[FB] *= 5;
+	}
 	else
 	{
-		Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
+		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range
@@ -304,24 +350,6 @@ void InitADXL345Acc() {
 	  	//WriteI2CByte(0x09); 	// 50Hz
     Delay1mS(5);
 
-	#ifdef FULL_MONTY
-
-	ReadADXL345Acc();
-	for ( i = 16; i; i--)
-	{
-		ReadAccelerations();
-
-		AccLR += Ax.i16;
-		AccDU += Ay.i16;
-		AccFB += Az.i16;
-
-		Delay1mS(5);
-	}
-
-	ADXL345Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)),4);
-
-	#endif // FULL_MONTY
-
 } // InitADXL345Acc
 
 boolean ADXL345AccActive(void) 
@@ -329,6 +357,64 @@ boolean ADXL345AccActive(void)
     F.AccelerationsValid = I2CResponse(ADXL345_ID);
     return( F.AccelerationsValid );
 } // ADXL345AccActive
+
+#endif // INC_ADXL345
+
+//________________________________________________________________________________________________
+
+#ifdef INC_MPU6050
+
+boolean MPU6050AccActive(void);
+
+void ReadMPU6050Acc(void) 
+{
+	static charint16x4u A;
+
+	if ( ReadI2CString(MPU6050_ID, MPU6050_ACC_XOUT_H, A.c, 6) ) 
+	{
+		// QuadroUFO 	
+		AccADC[LR] = A.i16[Y]; 
+		AccADC[DU] = A.i16[Z];
+		AccADC[FB] = A.i16[X];
+	}
+	else
+	{
+		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY_MPU6050;
+		if ( State == InFlight )
+		{
+			Stats[AccFailS]++;	// data over run - acc out of range
+			// use neutral values!!!!
+			F.AccFailure = true;
+		}
+	}
+
+} // ReadMPU6050Acc
+
+void InitMPU6050Acc() {
+
+	uint8 i;
+	int16 AccLR, AccDU, AccFB;
+
+	WriteI2CByteAtAddr(MPU6050_ID, 0x2D, 0x08);  // measurement mode
+    Delay1mS(5);
+	WriteI2CByteAtAddr(MPU6050_ID, 0x31, 0x08);  // full resolution, 2g
+    Delay1mS(5);
+	WriteI2CByteAtAddr(MPU6050_ID, 0x2C,
+	    //0x0C);  	// 400Hz
+		//0x0b);	// 200Hz 
+	  	0x0a); 	// 100Hz 
+	  	//WriteI2CByte(0x09); 	// 50Hz
+    Delay1mS(5);
+
+} // InitMPU6050Acc
+
+boolean MPU6050AccActive(void) 
+{
+    F.AccelerationsValid = I2CResponse(MPU6050_ID);
+    return( F.AccelerationsValid );
+} // MPU6050AccActive
+
+#endif // INC_MPU6050
 
 //________________________________________________________________________________________________
 
@@ -369,17 +455,17 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-    static char b[6];
+	static charint16x4u A;
 
-	if ( ReadI2CString(BMA180_ID, BMA180_ACCXLSB, b, 6) )
+	if ( ReadI2CString(BMA180_ID, BMA180_ACCXLSB, A.c, 6) )
 	{
-		Ax.b1 = b[1]; Ax.b0 = b[0]; // LR		
-		Ay.b1 = b[5]; Ay.b0 = b[4]; // DU
-		Az.b1 = b[3]; Az.b0 = b[2]; // FB
+		AccADC[LR] = A.i16[0]; 
+		AccADC[DU] = A.i16[2]; 
+		AccADC[FB] = A.i16[1];
 	}
 	else
 	{
-		Ax.i16 = Ay.i16 = 0; Az.i16 = 1024;
+		AccADC[FB] = AccADC[LR] = 0; AccADC[DU] = GRAVITY;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range
@@ -411,30 +497,12 @@ void InitBMA180Acc() {
 	range |= (BMA180_RANGE<<1) & ~0x0E;
 	WriteI2CByteAtAddr(BMA180_ID, BMA180_OLSB1, range); //Write new range data, keep other bits the same
 
-	#ifdef FULL_MONTY
-
-	ReadBMA180Acc();
-	for ( i = 16; i; i--)
-	{
-		ReadAccelerations();
-
-		AccLR += Ax.i16;
-		AccDU += Ay.i16;
-		AccFB += Az.i16;
-
-		Delay1mS(5);
-	}
-
-	BMA180Mag = SRS32(int32sqrt(Sqr(AccLR) + Sqr(AccDU) + Sqr(AccFB)), 4);
-
-	#endif // FULL_MONTY
-
 } // InitBMA180Acc
 
 boolean BMA180AccActive(void) {
 
     I2CStart();
-		WriteI2CByte(BMA180_R);
+		WriteI2CByte(BMA180_ID);
 	    F.AccelerationsValid =  ReadI2CByte(I2C_NACK) == BMA180_Version; 
     I2CStop();
 
@@ -592,23 +660,27 @@ boolean LISLAccActive(void)
 
 void ReadLISLAcc()
 {
+	static charint16x4u A;
 
 //	while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
 
 	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a; // Acc still there?
 	if ( F.AccelerationsValid ) 
 	{
-		Ax.b0 = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
-		Ax.b1 = ReadLISLNext();
-		Ay.b0 = ReadLISLNext();
-		Ay.b1 = ReadLISLNext();
-		Az.b0 = ReadLISLNext();
-		Az.b1 = ReadLISLNext();
+		A.c[0] = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
+		A.c[1] = ReadLISLNext();
+		A.c[2] = ReadLISLNext();
+		A.c[3] = ReadLISLNext();
+		A.c[4] = ReadLISLNext();
+		A.c[5] = ReadLISLNext();
 		SPI_CS = DSEL_LISL;	// end transmission
+		AccADC[LR] = A.i16[X];
+		AccADC[DU] = A.i16[Y];
+		AccADC[FB] = A.i16[Z];
 	}
 	else
 	{
-		Ax.i16 = Ay.i16 = Az.i16 = 0;
+		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY_LISL;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range

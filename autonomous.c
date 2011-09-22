@@ -245,15 +245,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	DoPolarOrientation();
 
-	#ifdef DEBUG_NAV
-		NavLatitude = 0; // zzz
-		NavLongitude = 0;
-		GPSLatitude = 54L * 50;
-		GPSLongitude = 0;
-		Heading = 0;
-		NavSensitivity = 100;
-	#endif // DEBUG_NAV
-
 	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
 
 	Temp24.i24 = (int24)EffNavSensitivity * NAV_MAX_ROLL_PITCH;

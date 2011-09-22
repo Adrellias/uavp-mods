@@ -36,8 +36,11 @@ int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 i32u YawRateF;
 int16 YawFilterA;
 int8 GyroType;
+charint16x4u G;
 
-#include "gyro_itg3200.h"
+#include "MPU6050.h"
+
+#include "gyro_i2c.h"
 #include "gyro_analog.h"
 
 void AdaptiveYawFilterA(void)
@@ -48,7 +51,7 @@ void AdaptiveYawFilterA(void)
 void GetGyroValues(void)
 {
 	if (GyroType == ITG3200Gyro)
-		BlockReadITG3200();
+		BlockReadInvenSenseGyro();
 	else
 		GetAnalogGyroValues();
 
@@ -129,7 +132,7 @@ void ErectGyros(void)
 	
 	for ( g = 0; g < (int8)3; g++ )
 	{
-		GyroNeutral[g] = (int16)SRS32( Av[g], 5); // ITG3200 is signed
+		GyroNeutral[g] = (int16)SRS32( Av[g], 5); // InvenSense is signed
 		Rate[g] =  Ratep[g] = Angle[g] = RawAngle[g] = 0;
 	}
  
@@ -139,7 +142,7 @@ void ErectGyros(void)
 
 void ShowGyroType(void)
 {
-    switch ( GyroType ) {
+    switch ( P[SensorHint] ) {
         case MLX90609Gyro:
             TxString("MLX90609");
             break;
@@ -156,11 +159,14 @@ void ShowGyroType(void)
             TxString("ADXRS610/300");
             break;
         case ITG3200Gyro:
-            TxString("ITG3200 or SF-6DOF");
+            TxString("SF-3/6DOF");
             break;
 		case ITG3200DOF9:
             TxString("SF-9DOF");
             break;
+		case MPU6050Gyro:
+			TxString("MPU6050");
+			break;
         case IRSensors:
             TxString("IR Sensors");
             break;
@@ -172,11 +178,12 @@ void ShowGyroType(void)
 
 void InitGyros(void)
 {
-	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) )
+	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) || (P[SensorHint] == MPU6050Gyro) )
 	{
 		GyroType = ITG3200Gyro;
-		if ( ITG3200GyroActive() )
-			InitITG3200();	
+		
+		if ( InvenSenseGyroActive() )
+			InitInvenSenseGyro();	
 	}
 	else
 	{
@@ -190,7 +197,7 @@ void InitGyros(void)
 void GyroTest(void)
 {
 	if (GyroType == ITG3200Gyro)
-		GyroITG3200Test();
+		GyroInvenSenseTest();
 	else
 		GyroAnalogTest();
 } // GyroTest
@@ -200,7 +207,6 @@ void GyroTest(void)
 
 void CompensateRollPitchGyros(void)
 {
-
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
 	#define ANGLE_COMP_STEP 6 //25
 
@@ -209,13 +215,15 @@ void CompensateRollPitchGyros(void)
 	static int16 NewAcc[3];
 	static i32u Temp;
 
+	#ifndef SUPPRESS_ACC
+
 	if( F.AccelerationsValid ) 
 	{
 		ReadAccelerations();
 	
-		NewAcc[LR] = Ax.i16;
-		NewAcc[FB] = Az.i16;
-		NewAcc[DU] = Ay.i16;
+		NewAcc[LR] = AccADC[LR]; // X
+		NewAcc[FB] = AccADC[FB]; // Z
+		NewAcc[DU] = AccADC[DU]; // Y
 
 		// NeutralLR, NeutralFB, NeutralDU pass through UAVPSet 
 		// and come back as MiddleLR etc.
@@ -247,8 +255,9 @@ void CompensateRollPitchGyros(void)
 		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP);
 	}	
 	else
+	#endif // !SUPPRESS_ACC
 	{
-		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = Acc[DU] = 0;
+		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = 0; Acc[DU] = GRAVITY;
 		F.UsingAccComp = false;
 	}
 

@@ -1,18 +1,18 @@
 
-#define PREFER_HMC5843			// use magnetometer first
+//#define PREFER_HMC5843			// use magnetometer first
 #define PREFER_LISL				// use old acc first
 
-//#define DEBUG_NAV				// zzz CAUTION - will not BOOT if LOADED
+//#define SUPPRESS_ACC			// don't use the accelerometer
 
-//#define INC_BMA180			// include BMA180 accelerometer code
+//#define INC_BMA180				// include BMA180 accelerometer code
+#define INC_ADXL345				// include ADXL345 accelerometer code
+#define INC_MPU6050				// include MPU6050 accelerometer/gyros
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
 
 //#define JIM_MPX_INVERT		// early version of MPX baro
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
-
-//#define DEBUG_PRINT			// direct printing of debug values
 
 // ===============================================================================================
 // =                                UAVX Quadrocopter Controller                                 =
@@ -40,10 +40,10 @@
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
-	//#define QUADROCOPTER
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
-	#define VTCOPTER
+	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
@@ -141,12 +141,6 @@
 //#define ALT_SCRATCHY_BEEPER					// Scratchy beeper noise on altitude hold
 #define ALT_HOLD_MAX_ROC_CMPS		50L		// Must be changing altitude at less than this for alt. hold to be detected
 
-// Accelerometers
-
-#define DAMP_HORIZ_LIMIT 			3L		// equivalent stick units - no larger than 5
-#define DAMP_VERT_LIMIT_LOW			-5L		// maximum throttle reduction
-#define DAMP_VERT_LIMIT_HIGH		20L		// maximum throttle increase
-
 // Altitude Hold
 
 #define LAND_CM						300L	// centimetres deemed to have landed when below this height
@@ -155,8 +149,8 @@
 
 #define ALT_MAX_THR_COMP			80L		// Stick units was 40
 
-#define ALT_RF_ENABLE_CM			500L	// altitude below which the rangefiner is selected as the altitude source
-#define ALT_RF_DISABLE_CM			600L	// altitude above which the rangefiner is deselected as the altitude source
+#define ALT_RF_ENABLE_CM			300L //500L	// altitude below which the rangefiner is selected as the altitude source
+#define ALT_RF_DISABLE_CM			400L //600L	// altitude above which the rangefiner is deselected as the altitude source
 
 #define	ALT_UPDATE_HZ				20L		// Hz
 #define FILT_ALT_HZ					(ALT_UPDATE_HZ/2)
@@ -301,6 +295,11 @@ typedef long 				int32;
 typedef unsigned long 		uint32;
 typedef uint8 				boolean;
 typedef float 				real32;
+
+typedef union {
+	char c[8];
+	int16 i16[4];
+} charint16x4u;
 
 typedef union {
 	int16 i16;
@@ -584,7 +583,9 @@ extern int8 near State, NavState, FailState;
 
 // accel.c
 
-enum AccTypes { LISLAcc, ADXL345Acc, BMA180Acc, AccUnknown };
+#define GRAVITY 1024
+
+enum AccTypes { LISLAcc, ADXL345Acc, BMA180Acc, MPU6050Acc, AccUnknown };
 
 extern void ShowAccType(void);
 extern void ReadAccelerations(void);
@@ -593,16 +594,27 @@ extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
 #define ADXL345_ID          0xA6
+#define GRAVITY_ADXL345	 	200
 
 extern void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 extern boolean ADXL345AccActive(void);
 
-#define BMA180_ID          0x08
+#define MPU6050_ID     		0x68
+#define GRAVITY_MPU6050 	1024 // zzz
+
+extern void ReadMPU6050Acc(void);
+extern void InitMPU6050Acc(void);
+extern boolean MPU6050AccActive(void);
+
+#define BMA180_ID          	0x08
+#define GRAVITY_BMA180 		1024 // zzz
 
 extern void ReadBMA180Acc(void);
 void InitBMA180Acc(void);
 extern boolean BMA180AccActive(void);
+
+#define GRAVITY_LISL		1024
 
 extern void SendCommand(int8);
 extern uint8 ReadLISL(uint8);
@@ -612,13 +624,12 @@ extern void InitLISLAcc(void);
 extern boolean LISLAccActive(void);
 extern void ReadLISLAcc(void);
 
-extern i16u Ax, Ay, Az;
+extern int16 AccADC[3];
 extern int16 IntCorr[3];
 extern int8 AccNeutral[3];
 extern int16 Acc[3];
+extern charint16x4u A;
 extern int8 AccType;
-extern int32 AccDUF;
-extern const int16 AccDUFilterA;
 
 //______________________________________________________________________________________________
 
@@ -817,7 +828,8 @@ extern int8 CompassType;
 // control.c
 
 enum Attitudes { Roll, Pitch, Yaw };
-enum Directions { FB, LR, DU, Alt };
+enum Sensors {X, Y, Z};
+enum Directions { FB, LR, DU };
 
 extern void DoAltitudeHold(void);
 extern void UpdateAltitudeSource(void);
@@ -935,19 +947,21 @@ extern void ErectGyros(void);
 extern void GyroTest(void);
 extern void InitGyros(void);
 
-#define ITG_ID_3DOF 	0xD2
-#define ITG_ID_6DOF 	0xD0
-extern uint8 ITG_ID;
+#define INV_ID_3DOF 	0xD2
+#define INV_ID_6DOF 	0xD0
+#define INV_ID_MPU6050	MPU6050_ID
+extern uint8 INV_ID, INVGyroAddress, INVAccAddress;
 
-extern void ITG3200ViewRegisters(void);
-extern void BlockReadITG3200(void);
-extern void InitITG3200(void);
-extern boolean ITG3200GyroActive(void);
+extern void InvenSenseViewRegisters(void);
+extern void BlockReadInvensenseGyro(void);
+extern void InitInvenSenseGyro(void);
+extern boolean InvenSenseGyroActive(void);
 
 extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern i32u YawRateF;
 extern int16 YawFilterA;
 extern int8 GyroType;
+extern charint16x4u G;
 
 //______________________________________________________________________________________________
 
@@ -1206,7 +1220,7 @@ enum TxRxTypes {
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC, ChDumpRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
-enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, IRSensors, UnknownGyro };
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, MPU6050Gyro, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64

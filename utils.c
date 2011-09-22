@@ -198,12 +198,14 @@ void CheckAlarms(void)
 			Beeper_OFF;
 	#endif // NAV_ACQUIRE_BEEPER 
 
+	#ifndef SUPPRESS_ACC
 	if ( !F.AccelerationsValid && ( mSClock() > mS[AccTimeout] ) )
 	{
 		InitAccelerometers();
 		LEDYellow_TOG;
 		mS[AccTimeout] += 500;
 	}
+	#endif // !SUPPRESS_ACC
 
 } // CheckAlarms
 

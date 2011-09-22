@@ -62,10 +62,6 @@ void main(void)
 	InitTemperature();
 	InitBarometer();
 
-#ifdef DEBUG_NAV
- while (1) Navigate(0,0); // zzz
-#endif // zzz DEBUG_NAV
-
 	ShowSetup(true);
 
 	FirstPass = true;
@@ -226,10 +222,8 @@ void main(void)
 			GetTemperature(); 
 			CheckAlarms();
 
-			#ifndef DEBUG_PRINT
-				CheckTelemetry();
-				SensorTrace();
-			#endif // ! DEBUG_PRINT
+			CheckTelemetry();
+			SensorTrace();
 		
 		} // flight while armed
 	}

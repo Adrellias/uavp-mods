@@ -366,10 +366,10 @@ void ShowI2CDeviceName(uint8 d) {
         case BMA180_ID:
             TxString("BMA180 Acc");
             break;
-        case ITG_ID_3DOF:
+        case INV_ID_3DOF:
             TxString("ITG3200 Gyro");
             break;
-        case ITG_ID_6DOF:
+        case INV_ID_6DOF:
             TxString("ITG3200 Gyro (SF-6&9DOF)");
             break;
         case HMC5843_3DOF:
