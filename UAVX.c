@@ -111,8 +111,8 @@ void main(void)
 					InitBarometer(); // try to get launch alt as close as possible.
 					DoStartingBeepsWithOutput(3);
 
-					SendParameters(0);
-					SendParameters(1);
+					//SendParameters(0);
+					//SendParameters(1);
 
 					mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
 					mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
@@ -223,7 +223,6 @@ void main(void)
 			CheckAlarms();
 
 			CheckTelemetry();
-			SensorTrace();
 		
 		} // flight while armed
 	}

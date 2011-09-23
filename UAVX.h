@@ -1,10 +1,11 @@
 
-//#define PREFER_HMC5843			// use magnetometer first
+
 #define PREFER_LISL				// use old acc first
+//#define PREFER_HMC5843			// use magnetometer first
 
 //#define SUPPRESS_ACC			// don't use the accelerometer
 
-//#define INC_BMA180				// include BMA180 accelerometer code
+#define INC_BMA180				// include BMA180 accelerometer code
 #define INC_ADXL345				// include ADXL345 accelerometer code
 #define INC_MPU6050				// include MPU6050 accelerometer/gyros
 
@@ -52,6 +53,9 @@
 
 //________________________________________________________________________________________________
 
+#ifdef TESTING
+	//#define USE_SENSOR_TRACE		// use sensor trace through UAVPSet	
+#endif
 
 // Airframe
 

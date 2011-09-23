@@ -61,7 +61,6 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 
 //	"B..Load UAVX hex file\r\n"
 	"D..Load default parameter set\r\n"
-	"I..I2C bus scan\r\n"
 	"S..Setup\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
@@ -360,14 +359,15 @@ void ProcessCommand(void)
 				ShowStats();
 				ShowPrompt();
 				break;
+
+			#ifdef TESTING
+
 			case 'I':
 				TxString("\r\nI2C devices ...\r\n");
 				TxVal32(ScanI2CBus(),0,0);
 				TxString(" device(s) found\r\n");
 				ShowPrompt();
 				break;
-
-			#ifdef TESTING
 			case 'A' :	// linear sensor
 				AccelerometerTest();
 				ShowPrompt();

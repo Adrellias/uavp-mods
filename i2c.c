@@ -357,6 +357,8 @@ uint8 WriteESCI2CByte(uint8 d)
 	return( s);
 } // WriteESCI2CByte
 
+#ifdef TESTING
+
 void ShowI2CDeviceName(uint8 d) {
     TxChar(' ');
     switch ( d  ) {
@@ -377,6 +379,9 @@ void ShowI2CDeviceName(uint8 d) {
             break;
         case HMC5843_9DOF:
             TxString("HMC5843 Mag (SF-9DOF)");
+            break;
+        case MPU6050_ID:
+            TxString("MPU6050");
             break;
         case HMC6352_ID:
             TxString("HMC6352 Compass");
@@ -449,8 +454,6 @@ uint8 ScanI2CBus(void)
 
 	return(d);
 } // ScanI2CBus
-
-#ifdef TESTING
 
 void ProgramSlaveAddress(uint8 addr)
 {
