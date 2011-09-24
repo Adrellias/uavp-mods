@@ -62,23 +62,32 @@ void BlockReadInvenSenseGyro(void)
 				GyroADC[Pitch] = G.i16[Y];
 				GyroADC[Yaw] = -G.i16[Z];
 			}
+			#ifdef INC_MPU6050
 			else
-			{ // MPU6050
-				GyroADC[Roll] = -G.i16[X];
-				GyroADC[Pitch] = G.i16[Y];
-				GyroADC[Yaw] = -G.i16[Z];
+			{ // MPU6050 I2C pins forward, components up
+				GyroADC[Roll] = -G.i16[Y];
+				GyroADC[Pitch] = -G.i16[X];
+				GyroADC[Yaw] = G.i16[Z];
 			}
+			#endif // INC_MPU6050
 
 } // BlockReadInvenSenseGyro
 
 void InitInvenSenseGyro(void)
 {
+	#ifdef INC_MPU6050
 	if ( INV_ID == MPU6050_ID )
 	{
-
-
+		WriteI2CByteAtAddr(INV_ID,MPU6050_PWR_MGMT_1, 0x80); // Reset to defaults
+		WriteI2CByteAtAddr(INV_ID,MPU6050_SMPLRT_DIV, 0x00); // continuous update
+		WriteI2CByteAtAddr(INV_ID,MPU6050_GYRO_CONFIG, 0b00011001);	// 188Hz, 2000deg/S
+		WriteI2CByteAtAddr(INV_ID,MPU6050_INT_ENABLE, 0b00000000);	// no interrupts
+		WriteI2CByteAtAddr(INV_ID,MPU6050_PWR_MGMT_1, 0b00000001);	// X Gyro as Clock Ref.
+		
+		InitMPU6050Acc();
 	}
 	else
+	#endif // INC_MPU6050
 	{
 		WriteI2CByteAtAddr(INV_ID,INV_PWR_M, 0x80);			// Reset to defaults
 		WriteI2CByteAtAddr(INV_ID,INV_SMPL, 0x00);			// continuous update

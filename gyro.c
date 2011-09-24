@@ -164,9 +164,9 @@ void ShowGyroType(void)
 		case ITG3200DOF9:
             TxString("SF-9DOF");
             break;
-		case MPU6050Gyro:
-			TxString("MPU6050");
-			break;
+        case MPU6050:
+            TxString("MPU6050");
+            break;
         case IRSensors:
             TxString("IR Sensors");
             break;
@@ -178,7 +178,7 @@ void ShowGyroType(void)
 
 void InitGyros(void)
 {
-	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) || (P[SensorHint] == MPU6050Gyro) )
+	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) || (P[SensorHint] == MPU6050) )
 	{
 		GyroType = ITG3200Gyro;
 		

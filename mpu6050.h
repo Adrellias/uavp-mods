@@ -1,5 +1,6 @@
 // Invensense MPU6050
 
+// X left, Y back, Z up
 
 #define MPU6050_AUX_VDDIO        0x01
 #define MPU6050_SMPLRT_DIV       0x19

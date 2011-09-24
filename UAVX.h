@@ -1,6 +1,6 @@
 
 
-#define PREFER_LISL				// use old acc first
+//#define PREFER_LISL				// use old legacy acc first
 //#define PREFER_HMC5843			// use magnetometer first
 
 //#define SUPPRESS_ACC			// don't use the accelerometer
@@ -615,7 +615,7 @@ extern boolean MPU6050AccActive(void);
 #define GRAVITY_BMA180 		1024 // zzz
 
 extern void ReadBMA180Acc(void);
-void InitBMA180Acc(void);
+extern void InitBMA180Acc(void);
 extern boolean BMA180AccActive(void);
 
 #define GRAVITY_LISL		1024
@@ -1224,7 +1224,7 @@ enum TxRxTypes {
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC, ChDumpRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
-enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, MPU6050Gyro, IRSensors, UnknownGyro };
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, MPU6050, IRSensors, UnknownGyro };
 enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
 
 enum Params { // MAX 64

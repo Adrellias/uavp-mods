@@ -113,28 +113,28 @@ void GetNeutralAccelerations(void)
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
 	static uint8 i;
-	static int16 AccLR, AccFB, AccDU;
+	static int16 Temp[3];
 
 	// already done in caller program
-	AccLR = AccFB = AccDU = 0;
+	Temp[LR] = Temp[FB] = Temp[DU] = 0;
 	if ( F.AccelerationsValid )
 	{
 		for ( i = 16; i; i--)
 		{
 			ReadAccelerations();
 
-			AccLR += AccADC[LR];
-			AccDU += AccADC[DU];
-			AccFB += AccADC[FB];
+			Temp[LR] += AccADC[LR];
+			Temp[DU] += AccADC[DU];
+			Temp[FB] += AccADC[FB];
 		}	
 	
-		AccLR = SRS16(AccLR, 4);
-		AccFB = SRS16(AccFB, 4);
-		AccDU = SRS16(AccDU, 4);
+		Temp[LR] = SRS16(Temp[LR], 4);
+		Temp[FB] = SRS16(Temp[FB], 4);
+		Temp[DU] = SRS16(Temp[DU], 4);
 	
-		AccNeutral[LR] = Limit1(AccLR, 99);
-		AccNeutral[FB] = Limit1(AccFB, 99);
-		AccNeutral[DU] = Limit1(AccDU - 1024, 99); // -1g
+		AccNeutral[LR] = Limit1(Temp[LR], 99);
+		AccNeutral[FB] = Limit1(Temp[FB], 99);
+		AccNeutral[DU] = Limit1(Temp[DU] - 1024, 99); // -1g
 	}
 	else
 		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;
@@ -392,18 +392,20 @@ void ReadMPU6050Acc(void)
 
 void InitMPU6050Acc() {
 
-	uint8 i;
-	int16 AccLR, AccDU, AccFB;
+	InitInvenSenseGyro();
 
-	WriteI2CByteAtAddr(MPU6050_ID, 0x2D, 0x08);  // measurement mode
-    Delay1mS(5);
-	WriteI2CByteAtAddr(MPU6050_ID, 0x31, 0x08);  // full resolution, 2g
-    Delay1mS(5);
-	WriteI2CByteAtAddr(MPU6050_ID, 0x2C,
-	    //0x0C);  	// 400Hz
-		//0x0b);	// 200Hz 
-	  	0x0a); 	// 100Hz 
-	  	//WriteI2CByte(0x09); 	// 50Hz
+	WriteI2CByteAtAddr(MPU6050_ID, MPU6050_ACC_CONFIG, 
+			0 // 2G
+			//1 << 3 // 4G
+			//2 << 3 // 8G
+			//3 << 3 // 16G 
+			//| 1 // 2.5Hz
+			//| 2 // 2.5Hz
+			| 3 // 1.25Hz
+			//| 4 // 0.63Hz
+			//| 7 // 0.63Hz
+			);
+
     Delay1mS(5);
 
 } // InitMPU6050Acc
