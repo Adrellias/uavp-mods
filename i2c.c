@@ -383,9 +383,9 @@ void ShowI2CDeviceName(uint8 d) {
         case HMC5843_9DOF:
             TxString("HMC5843 Mag (SF-9DOF)");
             break;
-        case MPU6050_ID:
-            TxString("MPU6050");
-            break;
+    //    case MPU6050_ID:
+    //        TxString("MPU6050");
+    //        break;
         case HMC6352_ID:
             TxString("HMC6352 Compass");
             break;

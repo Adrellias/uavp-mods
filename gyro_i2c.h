@@ -113,7 +113,7 @@ void GyroInvenSenseTest(void)
 {
 	TxString("\r\nInvenSense 3 axis I2C Gyro Test\r\n");
 
-	if ( GyroType == MPU6050Gyro )
+	if ( GyroType == MPU6050 )
 	{
 		TxString("No MPU6050 Test yet\r\n");
 	}

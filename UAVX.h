@@ -37,7 +37,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
