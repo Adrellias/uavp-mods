@@ -58,26 +58,12 @@ int16	Acc[3];
 int8 	AccType;
 #pragma udata
 
+const rom char * AccName[AccUnknown+1] = 
+		{"LIS3L","ADXL345","BMA180","MPU6050","Unknown"};
+
 void ShowAccType(void)
 {
-    switch ( AccType ) {
-	case LISLAcc:
-		TxString("LIS3L");
-		break;
-	case ADXL345Acc:
-		TxString("ADXL345");
-		break;
-	case MPU6050Acc:
-		TxString("MPU6050");
-		break;
-	case BMA180Acc:
-		TxString("BMA180");
-		break;
-	case AccUnknown:
-		TxString("Unknown");
-		break;
-	default:;
-	} // switch
+	TxString(AccName[AccType]);
 } // ShowAccType
 
 void ReadAccelerations(void)
@@ -302,7 +288,7 @@ void ReadADXL345Acc(void)
 
 	if ( ReadI2CString(ADXL345_ID, 0x32, A.c, 6) ) 
 	{
-		if ( P[SensorHint] == ITG3200DOF9)
+		if ( P[SensorHint] == SFDOF9)
 		{
 			// SparkFun 9DOF breakouts pins forward components up
 			AccADC[LR] = -A.i16[X]; 		

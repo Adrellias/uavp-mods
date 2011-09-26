@@ -87,6 +87,15 @@ void ShowRxSetup(void)
 		TxString("Odd Rx Channels PPM");
 } // ShowRxSetup
 
+const rom char * AFName[AFUnknown+1] = {
+		"QUAD","TRI","VT","Y6","HELI","ELEVON","AILERON","Unknown"
+		};
+
+void ShowAFType(void)
+{
+	TxString(AFName[AF_TYPE]);
+} // ShowAFType
+
 void ShowSetup(boolean h)
 {
 	int8 i, NoOfChannels;
@@ -107,28 +116,20 @@ void ShowSetup(boolean h)
 		TxString("Clock: 40MHz\r\n");
 	#endif // CLOCK_16MHZ
 
-	TxString("Aircraft: ");
-	switch ( UAVXAirframe ) {
-		case QuadAF: TxString("QUAD"); break;
-		case TriAF: TxString("TRI"); break;
-		case VAF: TxString("VT"); break;
-		case Y6AF: TxString("Y6"); break;
-		case HeliAF: TxString("HELI"); break;
-		case ElevAF: TxString("FLYING WING"); break;
-		case AilAF: TxString("AILERON"); break;
-		default: TxString("Unknown");
-	}
-	TxNextLine();
+	TxString("Aircraft: "); ShowAFType(); TxNextLine();
 
+	TxString("Compass: ");
+	ShowCompassType();
 	if( F.CompassValid )
 	{
-		TxString("Compass Offset: ");
+		TxString(" Offset ");
 		TxVal32((int16)P[CompassOffsetQtr] * 90,0,0);
 		TxString("deg.\r\n");
 	}
+	else
+		TxNextLine();
 
-	TxString("Baro: ");
-	ShowBaroType();
+	TxString("Baro: "); ShowBaroType(); TxNextLine();
 
 	#ifdef MULTICOPTER
 		TxString("Forward Flight: ");
@@ -143,21 +144,13 @@ void ShowSetup(boolean h)
 	else
 		TxString(" FAILED\r\n");
 	
-	TxString("Roll/Pitch Gyros: ");
-	ShowGyroType();	
-	TxNextLine();
+	TxString("Gyros: "); ShowGyroType(); TxNextLine();
 
 	TxString("Motor ESCs: ");	
-	switch ( P[ESCType] ) {
-	case ESCPPM:TxString("PPM "); break;
-	case ESCHolger:TxString("Holger I2C {"); break;
-	case ESCX3D:TxString("X-3D I2C {"); break;
-	case ESCYGEI2C:TxString("YGE I2C {"); break;
-	case ESCLRCI2C:TxString("LRC I2C {"); break;
-	} // switch
-
+	ShowESCType();
 	if ( P[ESCType] != ESCPPM )
 	{
+		TxString(" {");
 		for ( i = 0; i < NoOfI2CESCOutputs; i++ )
 			if ( ESCI2CFail[i] )
 				TxString(" Fail");

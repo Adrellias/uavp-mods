@@ -27,7 +27,6 @@ int24 AltitudeCF(int24);
 void GetBaroAltitude(void);
 void InitBarometer(void);
 
-void ShowBaroType(void);
 void BaroTest(void);
 
 uint16	BaroPressure, BaroTemperature;
@@ -443,15 +442,13 @@ int24 AltitudeCF(int24 Alt)
 	return( AltCF ); 
 } // AltitudeCF
 
+const rom char BaroName[BaroUnknown+1][8] = {
+		"BMP085","SMD500","MPX4115","None"
+		};		
+
 void ShowBaroType(void)
 {
-	switch ( BaroType ) {
-		case BaroMPX4115: TxString("MPX4115\r\n"); break;
-		case BaroSMD500: TxString("SMD500\r\n"); break;
-		case BaroBMP085: TxString("BMP085\r\n"); break;
-		case BaroUnknown: TxString("None\r\n"); break;
-		default: break;
-	}
+	TxString(&BaroName[BaroType]);
 } // ShowBaroType
 
 #ifdef TESTING

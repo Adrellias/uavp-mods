@@ -22,6 +22,7 @@
 
 #include "uavx.h"
 
+void ShowCompassType(void);
 int16 GetCompass(void);
 void GetHeading(void);
 int16 MinimumTurn(int16);
@@ -47,6 +48,15 @@ i24u 	Compass;
 i32u 	HeadingValF;
 int16 	MagHeading, Heading, DesiredHeading, CompassOffset;
 int8 	CompassType;
+
+const rom char * CompassName[CompassUnknown+1] = {
+		"HMC5843","HMC6352","None"
+		};
+
+void ShowCompassType(void)
+{
+	TxString(CompassName[CompassType]);
+} // ShowCompassType		
 
 int16 GetCompass()
 {
@@ -167,7 +177,7 @@ void InitCompass(void)
 			InitHMC5843Magnetometer();
 		}
 		else
-			CompassType = UnknownCompass;
+			CompassType = CompassUnknown;
 
 
 #endif // PREFER_HMC5843
@@ -219,7 +229,7 @@ int16 GetHMC5843Magnetometer(void) {
 	    Y.b1 = b[2]; Y.b0 = b[3];
 	    Z.b1 = b[4]; Z.b0 = b[5];
 	
-		if( P[SensorHint] == ITG3200DOF9 )
+		if( P[SensorHint] == SFDOF9 )
 		{
 			// SparkFun 9DOF Sensor Stick
 		    Mag[LR] = X.i16;     // Y axis (internal sensor x axis)

@@ -597,14 +597,14 @@ extern void GetNeutralAccelerations(void);
 extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
-#define ADXL345_ID          0xA6
+#define ADXL345_ID          0xa6
 #define GRAVITY_ADXL345	 	200
 
 extern void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 extern boolean ADXL345AccActive(void);
 
-#define MPU6050_ID     		0x68
+#define MPU6050_ID     		0xd0		//0x68
 #define GRAVITY_MPU6050 	1024 // zzz
 
 extern void ReadMPU6050Acc(void);
@@ -786,8 +786,9 @@ extern int24 FakeBaroRelAltitude;
 
 #define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
 
-enum CompassTypes { HMC5843Magnetometer, HMC6352Compass, UnknownCompass };
+enum CompassTypes { HMC5843Magnetometer, HMC6352Compass, CompassUnknown };
 
+extern void ShowCompassType(void);
 extern int16 GetCompass(void);
 extern void GetHeading(void);
 extern int16 MinimumTurn(int16);
@@ -938,6 +939,9 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 //______________________________________________________________________________________________
 
 // gyro.c
+
+enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, 
+		ITG3200Gyro, SFDOF9, MPU6050, SFDOF6, IRSensors, GyroUnknown }; // fix this order later zzz and ShowGyroName
 
 extern int16 Grav[], Dyn[]; // zzz
 
@@ -1173,6 +1177,7 @@ extern const rom uint8 RxChMnem[];
 #define OUT_X3D_MAXIMUM		200
 #define OUT_LRC_MAXIMUM		200
 
+extern void ShowESCType(void);
 extern uint8 PWMLimit(int16);
 extern uint8 I2CESCLimit(int16);
 extern void DoMulticopterMix(int16 CurrThrottle);
@@ -1223,9 +1228,8 @@ enum TxRxTypes {
 	DX7AR7000, DX7AR6200, FutabaCh3_6_7, DX7AR6000, GraupnerMX16s, DX6iAR6200, FutabaCh3_R617FS, DX7aAR7000, ExternalDecoder, 
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC, ChDumpRC}; 
-enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C };
-enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, ITG3200Gyro, ITG3200DOF9, MPU6050, IRSensors, UnknownGyro };
-enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF };
+enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C, ESCUnknown };
+enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF, AFUnknown };
 
 enum Params { // MAX 64
 	RollKp, 			// 01

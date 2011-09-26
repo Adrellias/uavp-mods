@@ -49,7 +49,7 @@ void BlockReadInvenSenseGyro(void)
 	if ( F.GyroFailure ) 
 		Stats[GyroFailS]++;
 	else	
-		if ( P[SensorHint] == ITG3200DOF9) 
+		if ( P[SensorHint] == SFDOF9) 
 		{
 			GyroADC[Roll] = -G.i16[X];
 			GyroADC[Pitch] = G.i16[Y];
@@ -76,7 +76,7 @@ void BlockReadInvenSenseGyro(void)
 void InitInvenSenseGyro(void)
 {
 	#ifdef INC_MPU6050
-	if ( INV_ID == MPU6050_ID )
+	if ( GyroType == MPU6050 )
 	{
 		WriteI2CByteAtAddr(INV_ID,MPU6050_PWR_MGMT_1, 0x80); // Reset to defaults
 		WriteI2CByteAtAddr(INV_ID,MPU6050_SMPLRT_DIV, 0x00); // continuous update
@@ -102,26 +102,9 @@ void InitInvenSenseGyro(void)
 
 boolean InvenSenseGyroActive(void) 
 {
-	INV_ID = INV_ID_3DOF;
-	INVGyroAddress = INV_GX_H;
-
 	F.GyroFailure = !I2CResponse(INV_ID);
-	if ( F.GyroFailure )
-	{
-		INV_ID = INV_ID_6DOF;
-		INVGyroAddress = INV_GX_H;
 
-	  	F.GyroFailure = !I2CResponse(INV_ID);
-		if ( F.GyroFailure )
-		{
-			INV_ID = INV_ID_MPU6050;
-			INVGyroAddress = MPU6050_GYRO_XOUT_H;
-
-			F.GyroFailure = !I2CResponse(INV_ID);
-		}
-	}
-
-  return ( !F.GyroFailure );
+	return ( !F.GyroFailure );
 } // InvenSenseGyroActive
 
 #ifdef TESTING
@@ -130,12 +113,11 @@ void GyroInvenSenseTest(void)
 {
 	TxString("\r\nInvenSense 3 axis I2C Gyro Test\r\n");
 
-	if ( INV_ID == MPU6050_ID )
+	if ( GyroType == MPU6050Gyro )
 	{
 		TxString("No MPU6050 Test yet\r\n");
 	}
 	else
-	if ( I2CResponse(INV_ID))
 	{
 		TxString("WHO_AM_I  \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_WHO)); TxNextLine();
 	//	Delay1mS(1000);
@@ -150,8 +132,6 @@ void GyroInvenSenseTest(void)
 		TxString("PWR_MGM   \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_PWR_M)); TxNextLine();
 		TxString("\r\nTest OK\r\n");
 	}
-	else
-		TxString("\r\nTest FAILED\r\n");
 
 } // GyroInvenSenseTest
 

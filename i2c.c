@@ -360,6 +360,9 @@ uint8 WriteESCI2CByte(uint8 d)
 #ifdef TESTING
 
 void ShowI2CDeviceName(uint8 d) {
+
+	// could be a full table lookup?
+
     TxChar(' ');
     switch ( d  ) {
         case ADXL345_ID:
@@ -369,7 +372,7 @@ void ShowI2CDeviceName(uint8 d) {
             TxString("BMA180 Acc");
             break;
         case INV_ID_3DOF:
-            TxString("ITG3200 Gyro");
+            TxString("ITG3200 Gyro (MPU6050)");
             break;
         case INV_ID_6DOF:
             TxString("ITG3200 Gyro (SF-6&9DOF)");

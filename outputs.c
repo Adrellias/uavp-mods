@@ -20,6 +20,7 @@
 
 #include "uavx.h"
 
+void ShowESCType(void);
 uint8 PWMLimit(int16);
 uint8 I2CESCLimit(int16);
 void DoMulticopterMix(int16);
@@ -43,6 +44,15 @@ near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
 
 int8 ServoToggle;
 int16 ESCMax;
+
+const rom char * ESCName[ESCUnknown+1] = {
+		"PPM","Holger","X3D I2C","YGE I2C","LRC I2C","Unknown"
+		};
+
+void ShowESCType(void)
+{
+	TxString(ESCName[P[ESCType]]);
+} // ShowESCType
 
 uint8 PWMLimit(int16 T)
 {

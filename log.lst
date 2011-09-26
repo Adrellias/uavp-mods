@@ -1,137 +1,112 @@
 Starting makeall uavp 
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:80:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:84:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:87:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:88:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:89:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:91:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:92:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:93:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:96:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:99:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:105:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:106:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:112:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:123:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:129:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:134:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:136:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:206:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:207:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:66:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:289:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:359:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:76:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:83:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:85:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:87:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:96:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:114:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:119:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:121:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:125:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:127:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:132:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:135:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:137:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:140:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:143:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:145:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:147:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:149:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:153:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:156:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:158:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:159:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:163:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:166:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:168:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:171:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:175:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:179:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:182:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:184:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:189:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:191:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:194:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:199:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:206:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:209:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:211:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:214:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:217:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:220:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:223:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:226:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:231:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:234:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:251:Warning [2058] call of function without prototype
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:252:Warning [2058] call of function without prototype
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:266:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:271:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:273:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:281:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:290:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:313:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:316:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:319:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:337:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:338:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:339:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:340:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:341:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:342:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:343:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:344:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:345:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\compass.c:58:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\compass.c:224:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\baro.c:125:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\baro.c:451:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:187:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:191:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\outputs.c:54:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -140,139 +115,114 @@ MP2HEX 4.37, COFF to HEX File Converter
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
 
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:80:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:84:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:87:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:88:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:89:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:91:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:92:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:93:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:96:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:99:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:105:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:106:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:112:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:123:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:129:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:134:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:136:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:206:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:207:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:66:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:289:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\accel.c:359:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:76:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:83:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:85:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:87:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:96:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:114:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:119:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:121:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:125:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:127:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:132:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:135:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:137:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:140:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:143:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:145:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:147:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:149:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:153:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:156:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:158:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:159:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:163:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:166:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:168:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:171:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:175:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:177:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:179:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:182:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:184:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:187:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:189:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:191:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:194:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:199:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:206:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:209:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:211:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:214:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:217:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:220:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:223:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:226:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:231:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:234:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:251:Warning [2058] call of function without prototype
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:252:Warning [2058] call of function without prototype
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:266:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:271:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:273:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:281:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:290:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:313:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:316:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:319:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:337:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:338:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:339:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:340:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:341:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:342:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:343:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:344:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\menu.c:345:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\compass.c:58:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\compass.c:224:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\baro.c:125:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\baro.c:451:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:187:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:191:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\outputs.c:54:Warning [2054] suspicious pointer conversion
 MPLINK 4.37, Linker
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
@@ -281,1262 +231,31 @@ MP2HEX 4.37, COFF to HEX File Converter
 Copyright (c) 1998-2010 Microchip Technology Inc.
 Errors    : 0
 
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\outputs_y6.h:58:Message [3004] comparison of a signed integer to an unsigned integer detected
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\outputs_conventional.h:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\outputs_conventional.h:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\outputs_conventional.h:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:80:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:84:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:88:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:89:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:91:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:92:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:93:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:96:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:99:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:101:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:105:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:106:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:123:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:129:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\params.c:207:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:65:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:68:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:71:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:74:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:77:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:303:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\accel.c:373:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\irq.c:264:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:107:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:110:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:112:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:113:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:114:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:115:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:117:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:118:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:125:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:127:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:130:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:134:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:136:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:139:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:142:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:144:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:155:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:166:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:175:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:178:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:182:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:184:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:186:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:189:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:194:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:196:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:198:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:201:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:206:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:213:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:216:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:218:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:221:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:224:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:227:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:230:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:233:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:235:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:238:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:241:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:258:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:259:Warning [2058] call of function without prototype
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:273:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:280:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:288:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:297:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:320:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:323:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:326:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:344:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:345:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\compass.c:214:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:126:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:449:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:450:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:451:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\baro.c:452:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:48:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro_i2c.h:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:147:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:150:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:153:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:156:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:159:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:162:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:165:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:168:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:171:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\gyro.c:174:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:187:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:191:Warning [2054] suspicious pointer conversion
-C:\Documents and Settings\gke\Desktop\UAVX-GKE\tests.c:193:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:80:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:84:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:87:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:88:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:89:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:91:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:92:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:93:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:96:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:99:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:101:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:105:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:106:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:112:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:115:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:123:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:129:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:134:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\stats.c:136:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:206:Warning [2054] suspicious pointer conversion
+C:\Documents and Settings\gke\Desktop\UAVX Google\params.c:207:Warning [2054] suspicious pointer conversion

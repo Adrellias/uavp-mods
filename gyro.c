@@ -43,6 +43,17 @@ charint16x4u G;
 #include "gyro_i2c.h"
 #include "gyro_analog.h"
 
+const rom char * GyroName[GyroUnknown+1] ={
+		"MLX90609","ADXRS613/150","IDG300","ST-AY530","ADXRS610/300",
+		"ITG3200 SF-3DOF","ITG3200 SF-9DOF","MPU6050","ITG3200 SF-DOF6","IR Sensors",
+		"Unknown"
+		};
+
+void ShowGyroType(void)
+{
+	TxString(GyroName[P[SensorHint]]);
+} // ShowGyroType
+
 void AdaptiveYawFilterA(void)
 { 
 	YawFilterA = 5 + Abs(DesiredYaw);
@@ -50,7 +61,7 @@ void AdaptiveYawFilterA(void)
 
 void GetGyroValues(void)
 {
-	if (GyroType == ITG3200Gyro)
+	if ((GyroType == ITG3200Gyro) || (GyroType == SFDOF6) || (GyroType == SFDOF9))
 		BlockReadInvenSenseGyro();
 	else
 		GetAnalogGyroValues();
@@ -86,6 +97,8 @@ void CalculateGyroRates(void)
 		PitchT.i24 = (int24)Rate[Pitch] * 169;
 		YawT.i24 = (int24)Rate[Yaw] * 84;
 		break;
+	case SFDOF6:
+	case SFDOF9:
 	case ITG3200Gyro: // Gyro alone or 6&9DOF SF Sensor Stick 73/45
 		RollT.i24 = (int24)Rate[Roll] * 11; // 18
 		PitchT.i24 = (int24)Rate[Pitch] * 11;
@@ -140,55 +153,61 @@ void ErectGyros(void)
 
 } // ErectGyros
 
-void ShowGyroType(void)
-{
-    switch ( P[SensorHint] ) {
-        case MLX90609Gyro:
-            TxString("MLX90609");
-            break;
-        case ADXRS150Gyro:
-            TxString("ADXRS613/150");
-            break;
-        case IDG300Gyro:
-            TxString("IDG300");
-            break;
-        case LY530Gyro:
-            TxString("ST-AY530");
-            break;
-        case ADXRS300Gyro:
-            TxString("ADXRS610/300");
-            break;
-        case ITG3200Gyro:
-            TxString("SF-3/6DOF");
-            break;
-		case ITG3200DOF9:
-            TxString("SF-9DOF");
-            break;
-        case MPU6050:
-            TxString("MPU6050");
-            break;
-        case IRSensors:
-            TxString("IR Sensors");
-            break;
-        default:
-            TxString("UNKNOWN");
-            break;
-	}
-} // ShowGyroType
-
 void InitGyros(void)
 {
-	if ( (P[SensorHint] == ITG3200Gyro) || (P[SensorHint] == ITG3200DOF9) || (P[SensorHint] == MPU6050) )
-	{
-		GyroType = ITG3200Gyro;
-		
-		if ( InvenSenseGyroActive() )
-			InitInvenSenseGyro();	
-	}
-	else
-	{
+	GyroType = GyroUnknown;
+
+	switch (P[SensorHint]){
+	case ITG3200Gyro:
+		INV_ID = INV_ID_3DOF;
+		INVGyroAddress = INV_GX_H;
+		if (InvenSenseGyroActive())
+		{
+			InitInvenSenseGyro();
+			GyroType = ITG3200Gyro;
+		}
+		else
+		{
+			INV_ID = INV_ID_6DOF;
+			INVGyroAddress = INV_GX_H;
+			if (InvenSenseGyroActive())
+			{
+				InitInvenSenseGyro();
+				GyroType = SFDOF6;
+			}
+		}
+		break;
+	case SFDOF6: // ITG3200
+		INV_ID = INV_ID_6DOF;
+		INVGyroAddress = INV_GX_H;
+		if (InvenSenseGyroActive())
+		{
+			InitInvenSenseGyro();
+			GyroType = SFDOF6;
+		}
+		break;
+	case SFDOF9: // ITG3200
+		INV_ID = INV_ID_6DOF;
+		INVGyroAddress = INV_GX_H;
+		if (InvenSenseGyroActive())
+		{
+			InitInvenSenseGyro();
+			GyroType = SFDOF9;
+		}
+		break;
+	case MPU6050:
+		INV_ID = INV_ID_MPU6050;
+		INVGyroAddress = MPU6050_GYRO_XOUT_H;
+		if (InvenSenseGyroActive())
+		{
+			InitInvenSenseGyro();
+			GyroType = MPU6050;
+		}
+		break;	
+	default:
 		GyroType = P[SensorHint];
 		InitAnalogGyros();
+		break;
 	}
 
 } // InitGyros
