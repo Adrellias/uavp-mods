@@ -55,7 +55,7 @@ const rom char * CompassName[CompassUnknown+1] = {
 
 void ShowCompassType(void)
 {
-	TxString(CompassName[CompassType]);
+	TxString(&CompassName[CompassType]);
 } // ShowCompassType		
 
 int16 GetCompass()

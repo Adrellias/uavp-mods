@@ -442,7 +442,7 @@ int24 AltitudeCF(int24 Alt)
 	return( AltCF ); 
 } // AltitudeCF
 
-const rom char BaroName[BaroUnknown+1][8] = {
+const rom char * BaroName[BaroUnknown+1] = {
 		"BMP085","SMD500","MPX4115","None"
 		};		
 

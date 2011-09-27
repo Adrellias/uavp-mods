@@ -51,7 +51,7 @@ const rom char * GyroName[GyroUnknown+1] ={
 
 void ShowGyroType(void)
 {
-	TxString(GyroName[P[SensorHint]]);
+	TxString(&GyroName[P[SensorHint]]);
 } // ShowGyroType
 
 void AdaptiveYawFilterA(void)

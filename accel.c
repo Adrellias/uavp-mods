@@ -63,7 +63,7 @@ const rom char * AccName[AccUnknown+1] =
 
 void ShowAccType(void)
 {
-	TxString(AccName[AccType]);
+	TxString(&AccName[AccType]);
 } // ShowAccType
 
 void ReadAccelerations(void)

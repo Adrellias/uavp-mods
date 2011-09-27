@@ -72,7 +72,6 @@ void CheckTelemetry(void)
 	#endif // !USE_SENSOR_TRACE // not used for testing - make space! 
 } // CheckTelemetry
 
-
 #ifdef USE_SENSOR_TRACE
 
 void SensorTrace(void)
@@ -114,9 +113,6 @@ void SensorTrace(void)
 	}
 
 } // SensorTrace
-
-
-
 
 #else
 
@@ -247,7 +243,7 @@ void SendNavPacket(void){
 	
 	TxESCu8(CurrWP);	
 	
-	TxESCi16(ROC); 	// was BaroROC						// cm/S
+	TxESCi16(ROC); 	// was BaroROC				// cm/S
 	TxESCi24(BaroRelAltitude);
 	
 	TxESCi16(NewCruiseThrottle); 				
@@ -258,7 +254,7 @@ void SendNavPacket(void){
 	TxESCi16(WayHeading);
 	
 	TxESCi16(GPSVel);
-	TxESCi16(GPSHeading); 							    // GPS ROC dm/S
+	TxESCi16(GPSHeading); 						// GPS ROC dm/S
 	
 	TxESCi24(GPSRelAltitude); 					// cm
 	TxESCi32(GPSLatitude); 						// 5 decimal minute units

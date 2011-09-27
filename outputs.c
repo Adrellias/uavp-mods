@@ -51,7 +51,7 @@ const rom char * ESCName[ESCUnknown+1] = {
 
 void ShowESCType(void)
 {
-	TxString(ESCName[P[ESCType]]);
+	TxString(&ESCName[P[ESCType]]);
 } // ShowESCType
 
 uint8 PWMLimit(int16 T)

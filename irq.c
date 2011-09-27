@@ -233,8 +233,6 @@ void high_isr_handler(void)
 				{
 					NMEA.length = ll;	
 					F.PacketReceived = GPSTxCheckSum == RxCheckSum;
-				// zzz	if ( !F.PacketReceived) 
-				// zzz		Stats[BadS]++;
 					RxState = WaitSentinel;
 				}
 				break;
@@ -282,10 +280,10 @@ void high_isr_handler(void)
 				break;	
 		    } 
 		}
-		#ifndef TESTING // not used for testing - make space!
+		#ifndef USE_SENSOR_TRACE  // not used for testing - make space!
 		if ( Armed && ( P[TelemetryType] == GPSTelemetry) ) // piggyback GPS telemetry on GPS Rx
 			TXREG = RxCh;
-		#endif // TESTING
+		#endif // !USE_SENSOR_TRACE 
 	
 		PIR1bits.RCIF = false;
 	}
