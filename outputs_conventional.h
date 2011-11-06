@@ -29,29 +29,30 @@ void OutSignals(void)
 	static uint8 s, r, d;
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
+	static int8 ServoUpdate;
 
 	if ( !F.MotorsArmed )
 		StopMotors();	
 
-	#if !( defined SIMULATE | defined TESTING )
+	#if ( defined SIMULATE | defined TESTING )
 
-	if ( ServoToggle == 0 )
-	{				
-		#ifdef ELEVON
-			PWM0 = PWMLimit(PWM[ThrottleC]);
-			PWM1 = PWMLimit(PWM[RightElevonC]);
-			PWM2 = PWMLimit(PWM[LeftElevonC]);
-			PWM3 = PWMLimit(PWM[RudderC]);
-		#else
-			PWM0 = PWMLimit(PWM[ThrottleC]);
-			PWM1 = PWMLimit(PWM[AileronC]);
-			PWM2 = PWMLimit(PWM[ElevatorC]);
-			PWM3 = PWMLimit(PWM[RudderC]);
-		#endif
+	MixAndLimitMotors();
+	MixAndLimitCam();
 
-		PWM4 = PWMLimit(PWM[CamRollC]);
-		PWM5 = PWMLimit(PWM[CamPitchC]);	
-		
+	PWM0 = PWMLimit(PWM[K1]);
+	PWM1 = PWMLimit(PWM[K2]);
+	PWM2 = PWMLimit(PWM[K3]);
+	PWM3 = PWMLimit(PWM[K4]);	
+	PWM4 = PWMLimit(PWM[K5]);
+	PWM5 = PWMLimit(PWM[K6]);
+
+	DoHouseKeeping();
+
+	#else
+
+	if ( --ServoUpdate <= 0 )
+	{	
+		ServoUpdate = SERVO_INTERVAL;						
 		// Save TMR0 and reset
 		DisableInterrupts;
 		INTCONbits.TMR0IE = false;
@@ -60,18 +61,9 @@ void OutSignals(void)
 		SaveTimer0.u16 = Timer0.u16;
 		FastWriteTimer0(TMR0_1MS);
 		INTCONbits.TMR0IF = false;
-	
-		// dead timing code - caution
-		#ifdef  CLOCK_16MHZ
-			d = 7;
-			do
-				Delay10TCY(); 
-			while ( --d > 0 );
-		#else
-			d = 16;
-			while ( --d > 0 ) 
-				Delay10TCY();
-		#endif // CLOCK_16MHZ
+
+		// dead timing code to reduce pre-pulse to 1mS - caution
+		Delay10TCYx(12); // 2.5uS per click
 	
 		EnableInterrupts;
 		
@@ -82,17 +74,29 @@ void OutSignals(void)
 		MOVLW	0x0f					
 		MOVWF	SHADOWB,1
 		_endasm
-			
+
+		MixAndLimitMotors();
+		MixAndLimitCam();
+
+		PWM0 = PWMLimit(PWM[K1]);
+		PWM1 = PWMLimit(PWM[K2]);
+		PWM2 = PWMLimit(PWM[K3]);
+		PWM3 = PWMLimit(PWM[K4]);	
+		PWM4 = PWMLimit(PWM[K5]);
+		PWM5 = PWMLimit(PWM[K6]);
+
+		DoHouseKeeping();
+
 		SyncToTimer0AndDisableInterrupts();
 		
 		PORTB |= 0x3f;
 		_asm
-		MOVLB	0						// select Bank0
-		MOVLW	0x3f					// turn on all motors
+		MOVLB	0	
+		MOVLW	0x3f				// turn on all motors
 		MOVWF	SHADOWB,1
 			
-		MOVLB	0						// select Bank0
-	OS005:
+		MOVLB	0
+OS005:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
 		ANDLW	0x0f
@@ -103,38 +107,24 @@ void OutSignals(void)
 		GOTO	OS007
 							
 		BCF		SHADOWB,0,1
-	OS007:
+OS007:
 		DECFSZ	PWM1,1,1		
 		GOTO	OS008
 							
 		BCF		SHADOWB,1,1
-	OS008:
+OS008:
 		DECFSZ	PWM2,1,1
 		GOTO	OS009
 							
 		BCF		SHADOWB,2,1	
-	OS009:
+OS009:
 		DECFSZ	PWM3,1,1	
 		GOTO	OS010
 								
-		BCF		SHADOWB,3,1			
-		
-	OS010:
-		_endasm
-		
-		#ifdef CLOCK_40MHZ
-			Delay10TCYx(2); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-		#endif // CLOCK_40MHZ
-		_asm				
+		BCF		SHADOWB,3,1					
+OS010:				
 		GOTO	OS005
-	OS006:
+OS006:
 		_endasm
 				
 		EnableInterrupts;
@@ -142,7 +132,7 @@ void OutSignals(void)
 			
 		_asm
 		MOVLB	0
-	OS001:
+OS001:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
 		ANDLW	0x30
@@ -152,15 +142,13 @@ void OutSignals(void)
 		DECFSZ	PWM4,1,1
 		GOTO	OS003
 		
-		BCF		SHADOWB,4,1
-			
-	OS003:
+		BCF		SHADOWB,4,1			
+OS003:
 		DECFSZ	PWM5,1,1
 		GOTO	OS004
 			
-		BCF		SHADOWB,5,1
-		
-	OS004:
+		BCF		SHADOWB,5,1		
+OS004:
 		_endasm
 			
 		Delay1TCY(); 
@@ -171,21 +159,10 @@ void OutSignals(void)
 		Delay1TCY(); 
 		Delay1TCY();
 			
-		#ifdef CLOCK_40MHZ
-			Delay10TCYx(2); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-			Delay1TCY(); 
-		#endif // CLOCK_40MHZ
-			
 		_asm
 			
 		GOTO	OS001
-	OS002:
+OS002:
 		_endasm
 		
 		EnableInterrupts;
@@ -199,9 +176,6 @@ void OutSignals(void)
 		INTCONbits.TMR0IE = true;
 		EnableInterrupts;
 	}
-
-	if ( ++ServoToggle >= ServoInterval )
-		ServoToggle = 0;
 		
 	#endif // !(SIMULATE | TESTING)
 	

@@ -63,7 +63,7 @@ const rom char * AccName[AccUnknown+1] =
 
 void ShowAccType(void)
 {
-	TxString(&AccName[AccType]);
+	TxString(AccName[AccType]);
 } // ShowAccType
 
 void ReadAccelerations(void)
@@ -133,7 +133,9 @@ void AccelerometerTest(void)
 {
 	int16 Mag;
 
-	TxString("\r\nAccelerometer test:\r\n");
+	TxString("\r\n");
+	ShowAccType();
+	TxString(" - Accelerometer test:\r\n");
 	TxString("Read once - no averaging (1024 = 1G)\r\n");
 
 	InitAccelerometers();
@@ -160,7 +162,7 @@ void AccelerometerTest(void)
 			TxString(" fault?");	
 		TxNextLine();
 
-		TxString("\tMag:    \t");
+		TxString("\tAccMag:    \t");
 		Mag = int32sqrt(Sqr((int24)AccADC[LR])+Sqr((int24)AccADC[FB])+Sqr((int24)AccADC[DU]));
 		TxVal32((int32)Mag, 0, 0);
 		TxNextLine();
@@ -178,13 +180,6 @@ void InitAccelerometers(void)
 	for ( a = 0; a<(uint8)3; a++)
 		AccNeutral[a] = AccADC[a] = 0;
 	AccADC[DU] = GRAVITY;
-
-	#ifdef SUPPRESS_ACC
-
-		AccType = AccUnknown;
-		F.AccelerationsValid = false;
-
-	#else
 
 		#ifdef PREFER_LISL
 	
@@ -262,8 +257,6 @@ void InitAccelerometers(void)
 	
 		#endif // PREFER_LISL
 
-	#endif // SUPPRESS_ACC
-
 	if( F.AccelerationsValid )
 	{
 		LEDYellow_ON;
@@ -284,23 +277,23 @@ boolean ADXL345AccActive(void);
 
 void ReadADXL345Acc(void) 
 {
-	static charint16x4u A;
+	static int16 A[3];
 
-	if ( ReadI2CString(ADXL345_ID, 0x32, A.c, 6) ) 
+	if ( ReadI2Ci16v(ADXL345_ID, 0x32, A, 3) ) 
 	{
 		if ( P[SensorHint] == SFDOF9)
 		{
 			// SparkFun 9DOF breakouts pins forward components up
-			AccADC[LR] = -A.i16[X]; 		
-		    AccADC[DU] = A.i16[Z]; 	
-		    AccADC[FB] = A.i16[Y]; 
+			AccADC[LR] = -A[X]; 		
+		    AccADC[DU] = A[Z]; 	
+		    AccADC[FB] = A[Y]; 
 		}
 		else
 		{
 			// SparkFun 6DOF & ITG3200 breakouts pins forward components up    	
-			AccADC[LR] = A.i16[Y]; 		
-		    AccADC[DU] = A.i16[Z]; 	
-		    AccADC[FB] = A.i16[X]; 
+			AccADC[LR] = A[Y]; 		
+		    AccADC[DU] = A[Z]; 	
+		    AccADC[FB] = A[X]; 
 		}
 		
 		AccADC[LR] *= 5; 		
@@ -354,14 +347,14 @@ boolean MPU6050AccActive(void);
 
 void ReadMPU6050Acc(void) 
 {
-	static charint16x4u A;
+	static int16 A[3];
 
-	if ( ReadI2CString(MPU6050_ID, MPU6050_ACC_XOUT_H, A.c, 6) ) 
+	if ( ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, A, 3) ) 
 	{
 		// QuadroUFO 	
-		AccADC[LR] = A.i16[Y]; 
-		AccADC[DU] = A.i16[Z];
-		AccADC[FB] = A.i16[X];
+		AccADC[LR] = A[Y]; 
+		AccADC[DU] = A[Z];
+		AccADC[FB] = A[X];
 	}
 	else
 	{
@@ -443,13 +436,13 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-	static charint16x4u A;
+	static int16 A[3];
 
-	if ( ReadI2CString(BMA180_ID, BMA180_ACCXLSB, A.c, 6) )
+	if ( ReadI2Ci16v(BMA180_ID, BMA180_ACCXLSB, A, 3) )
 	{
-		AccADC[LR] = A.i16[0]; 
-		AccADC[DU] = A.i16[2]; 
-		AccADC[FB] = A.i16[1];
+		AccADC[LR] = A[0]; 
+		AccADC[DU] = A[2]; 
+		AccADC[FB] = A[1];
 	}
 	else
 	{

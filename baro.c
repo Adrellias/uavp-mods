@@ -118,14 +118,14 @@ void SetFreescaleOffset(void)
 
 void ReadFreescaleBaro(void)
 {
-	static charint16x4u B;
+	static int16 B[4];
 
 	mS[BaroUpdate] += BARO_UPDATE_MS;
 
-	F.BaroAltitudeValid = ReadI2CString(ADS7823_ID, ADS7823_CMD,  B.c, 8);
+	F.BaroAltitudeValid = ReadI2Ci16v(ADS7823_ID, ADS7823_CMD,  B, 4);
 	if ( F.BaroAltitudeValid )
 	{	
-		BaroVal.u16 = B.i16[0] + B.i16[1] + B.i16[2] + B.i16[3];
+		BaroVal.u16 = B[0] + B[1] + B[2] + B[3];
 		#ifndef JIM_MPX_INVERT
 		BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
 		#endif // !JIM_MPX_INVERT
@@ -448,7 +448,7 @@ const rom char * BaroName[BaroUnknown+1] = {
 
 void ShowBaroType(void)
 {
-	TxString(&BaroName[BaroType]);
+	TxString(BaroName[BaroType]);
 } // ShowBaroType
 
 #ifdef TESTING

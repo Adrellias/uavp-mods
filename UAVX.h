@@ -3,8 +3,6 @@
 //#define PREFER_LISL				// use old legacy acc first
 //#define PREFER_HMC5843			// use magnetometer first
 
-//#define SUPPRESS_ACC			// don't use the accelerometer
-
 //#define INC_BMA180				// include BMA180 accelerometer code
 #define INC_ADXL345				// include ADXL345 accelerometer code
 #define INC_MPU6050				// include MPU6050 accelerometer/gyros
@@ -37,17 +35,19 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
+	//#define HEXACOPTER
 	//#define VTCOPTER
 	//#define HELICOPTER
 	//#define AILERON
 	//#define ELEVON
+	//#define VTOL
 	//#define HAVE_CUTOFF_SW	// Ground PortC Bit 0 (Pin 11) for landing cutoff otherwise 4K7 pullup.						
 #endif // !BATCHMODE
 
@@ -63,11 +63,11 @@
 	#define UAVX_HW
 #endif
 
-#if ( defined TRICOPTER | defined QUADROCOPTER | defined Y6COPTER | defined VTCOPTER )
+#if ( defined TRICOPTER | defined QUADROCOPTER | defined Y6COPTER | defined VTCOPTER | defined HEXACOPTER )
 	#define MULTICOPTER
 #endif
 
-#if ( defined HELICOPTER | defined AILERON | defined ELEVON )	
+#if ( defined HELICOPTER | defined AILERON | defined ELEVON | defined VTOL )	
 	#if ( defined AILERON | defined ELEVON )
 		#define NAV_WING
 	#endif
@@ -85,6 +85,12 @@
 #ifdef Y6COPTER
 	#define AF_TYPE Y6AF
 #endif
+#ifdef HEXACOPTER
+	#define AF_TYPE HexAF
+#endif
+#ifdef VTOL
+	#define AF_TYPE VTOLAF
+#endif
 #ifdef HELICOPTER
 	#define AF_TYPE HeliAF
 #endif
@@ -101,17 +107,23 @@
 
 // Timeouts and Update Intervals
 
+#define SERVO_UPDATE_INTERVAL		18		// mS.
+
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
-	#define RESCALE_TO_ACC 			51		// 256/5   36		// (256/7.16)
-	#define ANGLE_LIMIT				((7*1024*4)/5)	
+	#define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
+	#define ANGLE_LIMIT				(7L*(1024*4)/5)	
 #else
-	#define PID_CYCLE_MS			5 		// mS @ 200Hz
-	#define RESCALE_TO_ACC 			30		//22		// (256/11.46)
-	#define ANGLE_LIMIT				((11*1024*4)/5)
+	#define PID_CYCLE_MS			4 		// mS main PID loop time zzz adjust
+	#define RESCALE_TO_ACC 			25		//22		// (256/11.46)
+	#define ANGLE_LIMIT				(11L*(1024*4)/5) 
 #endif // CLOCK_16MHZ
+
+#define MIN_PID_CYCLE_MS			3
+
+#define SERVO_INTERVAL				((SERVO_UPDATE_INTERVAL+PID_CYCLE_MS/2)/PID_CYCLE_MS)	
 
 // DISABLED AS UNSAFE ON BENCH 
 #define ENABLE_STICK_CHANGE_FAILSAFE
@@ -132,7 +144,7 @@
 #define NAV_ACTIVE_DELAY_MS			10000L	// mS. after throttle exceeds idle that Nav becomes active
 #define NAV_RTH_LAND_TIMEOUT_MS		15000L	// mS. Shutdown throttle if descent lasts too long
 
-#define UAVX_TEL_INTERVAL_MS		125L	// mS. emit an interleaved telemetry packet
+#define UAVX_TEL_INTERVAL_MS		200L	// mS. emit an interleaved telemetry packet
 #define UAVX_MIN_TEL_INTERVAL_MS	500L	// mS. emit minimum data packet for example to FrSky
 #define ARDU_TEL_INTERVAL_MS		200L	// mS. alternating 1:5
 #define UAVX_CONTROL_TEL_INTERVAL_MS 100L	// mS. flight control only
@@ -225,6 +237,8 @@
 #define	NAV_SENS_THRESHOLD 			40L		// Navigation disabled if Ch7 is less than this
 #define	NAV_SENS_ALTHOLD_THRESHOLD 	20L		// Altitude hold disabled if Ch7 is less than this
 #define NAV_SENS_6CH				80L		// Low GPS gain for 6ch Rx
+
+#define	NAV_SENS_ACC_THRESHOLD 		20L		// Accelerometers disabled if Ch7 is less than this
 
 #define NAV_MAX_TRIM				20L		// max trim offset for altitude hold
 
@@ -530,7 +544,7 @@ typedef union {
 		ReturnHome:1,
 		WayPointAchieved:1,
 		WayPointCentred:1,
-		UsingAccComp:1,
+		AccelerometersEnabled:1,
 		UsingRTHAutoDescend:1,
 		BaroAltitudeValid:1,
 		RangefinderAltitudeValid:1,
@@ -574,8 +588,9 @@ typedef union {
 		RFInInches:1,
 		FirstArmed:1,
 		HaveGPRMC:1,
-		UsingPolar:1;
-	
+		UsingPolar:1,
+
+		NormalFlightMode:1;	
 		};
 } Flags;
 
@@ -653,9 +668,6 @@ extern int8 AccType;
 
 extern int16 ADC(uint8);
 extern void InitADC(void);
-	
-extern SensorStruct ADCVal[];
-extern uint8 ADCChannel;
 
 //______________________________________________________________________________________________
 
@@ -941,7 +953,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 // gyro.c
 
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, 
-		ITG3200Gyro, SFDOF9, MPU6050, SFDOF6, IRSensors, GyroUnknown }; // fix this order later zzz and ShowGyroName
+		ITG3200Gyro, SFDOF6, SFDOF9, MPU6050, FreeIMU, Drotek, IRSensors, GyroUnknown }; 
 
 extern int16 Grav[], Dyn[]; // zzz
 
@@ -969,7 +981,7 @@ extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern i32u YawRateF;
 extern int16 YawFilterA;
 extern int8 GyroType;
-extern charint16x4u G;
+extern int16 G[];
 
 //______________________________________________________________________________________________
 
@@ -1037,8 +1049,6 @@ extern near uint8 	ll, ss, tt, RxCh;
 extern near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 extern near boolean WaitingForSync;
 
-extern near i24u 	ADCValue, Temp;
-
 extern int8	SignalCount;
 extern uint16 RCGlitches;
 
@@ -1067,7 +1077,7 @@ extern uint8 WriteI2CByte(uint8);
 extern uint8 ReadI2CByte(uint8);
 extern uint8 ReadI2CByteAtAddr(uint8, uint8);
 extern void WriteI2CByteAtAddr(uint8, uint8, uint8);
-extern boolean ReadI2CString(uint8, uint8, uint8 *, uint8);
+extern boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8);
 extern void ShowI2CDeviceName(uint8);
 extern uint8 ScanI2CBus(void);
 extern boolean I2CResponse(uint8);
@@ -1188,27 +1198,33 @@ extern void OutSignals(void);
 extern void StopMotors(void);
 extern void InitMotors(void);
 
+extern void DoI2CESCs(void);
 extern void WriteT580ESC(uint8, uint8, uint8);
 extern void WriteT580ESCs(int8,  uint8, uint8, uint8, uint8);
 extern void T580ESCs(uint8, uint8, uint8, uint8);
 
-enum PWMTags1 {FrontC=0, LeftC, RightC, BackC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
-enum PWMTags5 {FrontLeftC=0, FrontRightC}; // VTCopter
-enum PWMTags6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
-enum PWMTags2 {ThrottleC=0, AileronC, ElevatorC, RudderC};
-enum PWMTags3 {RightElevonC=1, LeftElevonC=2};
-enum PWMTags4 {K1=0, K2, K3, K4, K5, K6};
-#define NoOfPWMOutputs 			4
-#define NoOfI2CESCOutputs 		4
+enum PWMTagsQuad {FrontC=0, LeftC, RightC, BackC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
+enum PWMTagsVT {FrontLeftC=0, FrontRightC};
+enum PWMTagsY6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
+enum PWMTagsHexa {HFrontC=0, HLeftFrontC, HRightFrontC, HLeftBackC, HRightBackC, HBackC }; 
+enum PWMTagsAileron {ThrottleC=0, AileronC, ElevatorC, RudderC};
+enum PWMTagsElevon {RightElevonC=1, LeftElevonC=2};
+enum PWMTagsVTOL { RightPitchYawC=1, LeftPitchYawC=2, RollC=3 };
+enum PWMTags {K1=0, K2, K3, K4, K5, K6};
+
+#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
+	#define NO_OF_I2C_ESCS 	6
+#else
+	#define NO_OF_I2C_ESCS 	4
+#endif
 
 extern int16 PWM[6];
 extern int16 PWMSense[6];
-extern int16 ESCI2CFail[4];
+extern int16 ESCI2CFail[NO_OF_I2C_ESCS];
 extern int16 CurrThrottle;
 extern int8 ServoInterval;
 
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
-extern int8 ServoToggle;
 
 extern int16 ESCMax;
 
@@ -1229,7 +1245,7 @@ enum TxRxTypes {
     FrSkyDJT_D8R, UnknownTxRx, CustomTxRx };
 enum RCControls {ThrottleRC, RollRC, PitchRC, YawRC, RTHRC, CamPitchRC, NavGainRC, Ch8RC, Ch9RC, ChDumpRC}; 
 enum ESCTypes { ESCPPM, ESCHolger, ESCX3D, ESCYGEI2C, ESCLRCI2C, ESCUnknown };
-enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF, AFUnknown };
+enum AFs { QuadAF, TriAF, VAF, Y6AF, HeliAF, ElevAF, AilAF, HexAF, VTOLAF, AFUnknown };
 
 enum Params { // MAX 64
 	RollKp, 			// 01
@@ -1473,6 +1489,7 @@ extern int16 DecayX(int16, int16);
 extern void LPFilter16(int16*, i32u*, int16);
 extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 extern void CheckAlarms(void);
+extern void DoHouseKeeping(void);
 
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;
@@ -1504,7 +1521,7 @@ extern void BatteryTest(void);
 #error RC_MAXIMUM < RC_NEUTRAL !
 #endif
 
-#if (( defined TRICOPTER + defined QUADROCOPTER + defined VTCOPTER + defined Y6COPTER + defined HELICOPTER + defined AILERON + defined ELEVON ) != 1)
+#if (( defined TRICOPTER + defined QUADROCOPTER + defined VTCOPTER + defined Y6COPTER + defined HEXACOPTER + defined HELICOPTER + defined AILERON + defined ELEVON  + defined VTOL ) != 1)
 #error None or more than one aircraft configuration defined !
 #endif
 

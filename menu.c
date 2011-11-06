@@ -88,7 +88,7 @@ void ShowRxSetup(void)
 } // ShowRxSetup
 
 const rom char * AFName[AFUnknown+1] = {
-		"QUAD","TRI","VT","Y6","HELI","ELEVON","AILERON","Unknown"
+		"QUAD","TRI","VT","Y6","HELI","ELEVON","AILERON","Hexacopter","VTOL","Unknown"
 		};
 
 void ShowAFType(void)
@@ -151,7 +151,7 @@ void ShowSetup(boolean h)
 	if ( P[ESCType] != ESCPPM )
 	{
 		TxString(" {");
-		for ( i = 0; i < NoOfI2CESCOutputs; i++ )
+		for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
 			if ( ESCI2CFail[i] )
 				TxString(" Fail");
 			else

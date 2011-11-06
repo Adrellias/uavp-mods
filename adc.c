@@ -23,20 +23,19 @@
 int16 ADC(uint8);
 void InitADC(void);
 
-#pragma udata adcq
-SensorStruct ADCVal[(ADC_TOP_CHANNEL+1)];
-#pragma udata
-uint8 ADCChannel;
-
 int16 ADC(uint8 ADCChannel)
 { // all ADC reads use 5V reference
-	static int16 v;
+	static i16u v;
 
-	DisableInterrupts; // make atomic
-		v = ADCVal[ADCChannel].v.iw1; // rescale by 256
-	EnableInterrupts;
+	ADCON0 = ((ADCChannel << 2) & 0b00111100) | (ADCON0 & 0b11000011);
+	ADCON0bits.GO = true;
 
-	return ( v );
+	while ( ADCON0bits.GO){};
+
+	v.b1 = ADRESH;
+	v.b0 = ADRESL;
+
+	return ( v.i16 );
 } // ADC
 
 void InitADC()
@@ -52,8 +51,7 @@ void InitADC()
           ADC_VREFMINUS_VSS,	  
           ADCPORTCONFIG);
 
-	ADCChannel = 0;
-	SetChanADC(	ADCChannel);					// using automatic acq
+	SetChanADC(	0 );					// using automatic acq
 	ConvertADC();
 
 } // InitADC

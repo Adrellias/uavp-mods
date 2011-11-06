@@ -32,6 +32,7 @@ int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 void LPFilter16(int16*, i32u*, int16);
 void LPFilter24(int24* i, i32u* iF, int16 FilterA);
+void DoHouseKeeping(void);
 
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
@@ -72,8 +73,6 @@ void InitMisc(void)
 	int8 i;
 
 	State = Starting;				// For trace preconditions
-	ServoToggle = 0;
-	ServoInterval = 2;
 	
 	for ( i = 0; i < FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
@@ -198,15 +197,6 @@ void CheckAlarms(void)
 			Beeper_OFF;
 	#endif // NAV_ACQUIRE_BEEPER 
 
-	#ifndef SUPPRESS_ACC
-	if ( !F.AccelerationsValid && ( mSClock() > mS[AccTimeout] ) )
-	{
-		InitAccelerometers();
-		LEDYellow_TOG;
-		mS[AccTimeout] += 500;
-	}
-	#endif // !SUPPRESS_ACC
-
 } // CheckAlarms
 
 #ifndef USE_LIMIT_MACRO
@@ -265,3 +255,7 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA)
 
 } // LPFilter24
 
+void DoHouseKeeping(void)
+{ // must be less than 650uS@16MHz / 830uS@40MHz
+	CheckAlarms();
+} // DoHouseKeping

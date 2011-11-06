@@ -36,7 +36,7 @@ int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 i32u YawRateF;
 int16 YawFilterA;
 int8 GyroType;
-charint16x4u G;
+int16 G[3];
 
 #include "MPU6050.h"
 
@@ -45,13 +45,13 @@ charint16x4u G;
 
 const rom char * GyroName[GyroUnknown+1] ={
 		"MLX90609","ADXRS613/150","IDG300","ST-AY530","ADXRS610/300",
-		"ITG3200 SF-3DOF","ITG3200 SF-9DOF","MPU6050","ITG3200 SF-DOF6","IR Sensors",
+		"ITG3200 SF-3DOF","ITG3200 SF-DOF6","ITG3200 SF-9DOF","MPU6050","ITG3200 FreeIMU","ITG3200 Drotek","IR Sensors",
 		"Unknown"
 		};
 
 void ShowGyroType(void)
 {
-	TxString(&GyroName[P[SensorHint]]);
+	TxString(GyroName[P[SensorHint]]);
 } // ShowGyroType
 
 void AdaptiveYawFilterA(void)
@@ -222,21 +222,19 @@ void GyroTest(void)
 } // GyroTest
 #endif // TESTING
 
- int16 Grav[2], Dyn[2]; // zzz
+int16 Grav[2], Dyn[2]; // zzz
 
 void CompensateRollPitchGyros(void)
 {
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
 	#define ANGLE_COMP_STEP 6 //25
 
-	#define AccFilter HardFilter // NoFilter
+	#define AccFilter NoFilter // HardFilter zzz may be overflow
 
 	static int16 NewAcc[3];
 	static i32u Temp;
 
-	#ifndef SUPPRESS_ACC
-
-	if( F.AccelerationsValid ) 
+	if ( F.AccelerationsValid && F.AccelerometersEnabled ) 
 	{
 		ReadAccelerations();
 	
@@ -274,10 +272,8 @@ void CompensateRollPitchGyros(void)
 		IntCorr[FB] = Limit1(IntCorr[FB], ANGLE_COMP_STEP);
 	}	
 	else
-	#endif // !SUPPRESS_ACC
 	{
 		IntCorr[LR] = IntCorr[FB] = Acc[LR] = Acc[FB] = 0; Acc[DU] = GRAVITY;
-		F.UsingAccComp = false;
 	}
 
 } // CompensateRollPitchGyros

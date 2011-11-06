@@ -63,7 +63,7 @@ void WriteStatsEE()
 	int16 Temp;
 
 	if ( P[ESCType] != ESCPPM )
-		for ( i = 0; i < NoOfI2CESCOutputs; i++ )
+		for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
@@ -106,11 +106,15 @@ void ShowStats(void)
 							TxVal32((int32)Stats[MaxROCS], 2, ' '); TxString("M/S\r\n");
 	}
 	
+	#ifdef INC_TEMPERATURE
 	if ( Stats[MinTempS] < INIT_MIN )
 	{
 		TxString("Ambient:  \t");TxVal32((int32)Stats[MinTempS], 1, ' '); 
 							TxVal32((int32)Stats[MaxTempS], 1, ' '); TxString("C\r\n");
 	}
+	#else
+		TxString("Ambient:  \tunknown\r\n");  
+	#endif // INC_TEMPERATURE
 
 	TxString("\r\nGPS\r\n");
 	TxString("Alt:      \t");TxVal32((int32)Stats[GPSAltitudeS], 2, ' '); TxString("M\r\n");

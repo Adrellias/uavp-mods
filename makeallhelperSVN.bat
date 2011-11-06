@@ -39,14 +39,16 @@ set L=
 if "%DBG%" == "TESTING"     		set D=-TEST
 if "%DBG%" == "SIMULATE"     		set D=-SIMULATOR
 if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
+if "%CFG%" == "HEXACOPTER"			set C=-HEXA
 if "%CFG%" == "TRICOPTER"           set C=-TRI
 if "%CFG%" == "HELICOPTER"			set C=-HELI
 if "%CFG%" == "VTCOPTER"			set C=-VT
 if "%CFG%" == "Y6COPTER"			set C=-Y6
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
+if "%CFG%" == "VTOL"				set C=-VTOL
 
-if "%BRD%" == "UAVXLIGHT"				set L=Light
+if "%BRD%" == "UAVXLIGHT"			set L=Light
 
 if "%DBG%" == "TESTING"				set C=
 

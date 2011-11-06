@@ -55,7 +55,7 @@ const rom char * CompassName[CompassUnknown+1] = {
 
 void ShowCompassType(void)
 {
-	TxString(&CompassName[CompassType]);
+	TxString(CompassName[CompassType]);
 } // ShowCompassType		
 
 int16 GetCompass()
@@ -221,7 +221,7 @@ int16 GetHMC5843Magnetometer(void) {
     static int16 CRoll, SRoll, CPitch, SPitch;
 	static int16 CompassVal;
 
-	F.CompassValid = ReadI2CString(HMC5843_ID, 0x03, b, 6);
+	F.CompassValid = ReadI2Ci16v(HMC5843_ID, 0x03, b, 3);
 
 	if( F.CompassValid ) 
 	{

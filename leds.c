@@ -119,22 +119,23 @@ void LEDChaser(void)
 //	#define LED_NO 		(uint8)2	// just AUX LEDs
 	#define LED_NO		(uint8)6	// all LEDs
 
-	if ( mSClock() > mS[LEDChaserUpdate] )
-	{
-		if ( F.HoldingAlt ) // zzz && F.NearLevel )
+	if ( F.NormalFlightMode )
+		if ( mSClock() > mS[LEDChaserUpdate] )
 		{
-			LEDShadow ^= LEDChase[LEDPattern];
-			if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;
-			LEDShadow |= LEDChase[LEDPattern];
-			SendLEDs();
+			if ( F.HoldingAlt ) // zzz && F.NearLevel )
+			{
+				LEDShadow ^= LEDChase[LEDPattern];
+				if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;
+				LEDShadow |= LEDChase[LEDPattern];
+				SendLEDs();
+			}
+			else
+			{
+				RestoreLEDs();
+				SendLEDs();
+			}
+		
+			mS[LEDChaserUpdate] = mSClock() + 50;
 		}
-		else
-		{
-			RestoreLEDs();
-			SendLEDs();
-		}
-	
-		mS[LEDChaserUpdate] = mSClock() + 50;
-	}
 } // LEDChaser
 

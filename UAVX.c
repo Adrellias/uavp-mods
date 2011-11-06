@@ -128,7 +128,6 @@ void main(void)
 						if ( StickThrottle < IdleThrottle )
 						{
 							SetGPSOrigin();
-							GetHeading();
 							DecayNavCorr(6);
 	    					if ( F.NewCommands )
 								F.LostModel = F.ForceFailsafe;
@@ -184,7 +183,7 @@ void main(void)
 					LEDChaser();
 
 					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
-
+ 
 					DoNavigation();
 					AltitudeHold();
 
@@ -205,25 +204,27 @@ void main(void)
 				if ( F.FailsafesEnabled )
 					DoFailsafe();
 
-			GetHeading();
-
+			if ( F.NormalFlightMode )
+				GetHeading();
+			
 			while ( WaitingForSync ) {};
-
-			PIDUpdate = mSClock() + PID_CYCLE_MS;
+			INTCONbits.TMR0IE = false;
+			WaitingForSync = true;
+			if ( F.NormalFlightMode )		
+				PIDUpdate = MilliSec + PID_CYCLE_MS;
+			else
+				PIDUpdate = MilliSec + MIN_PID_CYCLE_MS;
+			INTCONbits.TMR0IE = true;
 
 			GetGyroValues();
-			
 			DoControl();
-
-			MixAndLimitMotors();
-			MixAndLimitCam();
 			OutSignals();
 
-			GetTemperature(); 
-			CheckAlarms();
+			#ifndef TESTING
+			if ( F.NormalFlightMode ) 
+			#endif // !TESTING
+				CheckTelemetry();
 
-			CheckTelemetry();
-		
 		} // flight while armed
 	}
 

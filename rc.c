@@ -76,7 +76,7 @@ void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 
 	LastThrottle = RC[ThrottleRC];
 
-	for (c = 0 ; c < P[RxChannels] ; c++) 
+	for (c = 0 ; c < NoOfControls ; c++) 
 	{
 		i = Map[c];
 		#ifdef CLOCK_16MHZ
@@ -201,21 +201,34 @@ void UpdateControls(void)
 	
 	F.Ch5Active = NewCh5Active;
 
-	if (P[RxChannels] < 7 )
+	if ( NoOfControls < 7 )
+	{
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE
+		F.AccelerometersEnabled = true;
+	}
 	else
 	{
 		DesiredCamPitchTrim = RC[CamPitchRC] - RC_NEUTRAL;
 		NavSensitivity = RC[NavGainRC];
 		NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
+	
+		if ( F.NormalFlightMode )
+		{
+			F.AccelerometersEnabled = true;
+			F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
+		}
+		else
+		{
+			F.AccelerometersEnabled = NavSensitivity > (RC_MAXIMUM/4);
+			F.AltHoldEnabled = NavSensitivity > RC_NEUTRAL;
+		}
 	}
 
 	//_________________________________________________________________________________________
 
 	// Altitude Hold
-	
-	F.AltHoldEnabled = NavSensitivity > NAV_SENS_ALTHOLD_THRESHOLD;
+
 
 	if ( NavState == HoldingStation )
 	{ // Manual
@@ -275,7 +288,7 @@ void CaptureTrims(void)
 	// Trims are invalidated if Nav sensitivity is changed - Answer do not use trims ?
 	#ifndef TESTING
 	Trim[Roll] = Limit1(DesiredRoll, NAV_MAX_TRIM);
-	Trim[Yaw] = Limit1(DesiredPitch, NAV_MAX_TRIM);
+	Trim[Pitch] = Limit1(DesiredPitch, NAV_MAX_TRIM);
 	Trim[Yaw] = Limit1(DesiredYaw, NAV_MAX_TRIM);
 	#endif // TESTING
 

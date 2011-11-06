@@ -39,14 +39,16 @@ set L=
 if "%DBG%" == "TESTING"     		set D=-TEST
 if "%DBG%" == "SIMULATE"     		set D=-SIMULATOR
 if "%CFG%" == "QUADROCOPTER"        set C=-QUAD
+if "%CFG%" == "HEXACOPTER"			set C=-HEXA
 if "%CFG%" == "TRICOPTER"           set C=-TRI
 if "%CFG%" == "HELICOPTER"			set C=-HELI
 if "%CFG%" == "VTCOPTER"			set C=-VT
 if "%CFG%" == "Y6COPTER"			set C=-Y6
 if "%CFG%" == "AILERON"				set C=-AILERON
 if "%CFG%" == "ELEVON"				set C=-ELEVON
+if "%CFG%" == "VTOL"				set C=-VTOL
 
-if "%BRD%" == "UAVXLIGHT"				set L=Light
+if "%BRD%" == "UAVXLIGHT"			set L=Light
 
 if "%DBG%" == "TESTING"				set C=
 
@@ -76,19 +78,19 @@ for %%i in ( %CSRC% ) do %CC% -p=%PROC% /i"C:\MCC18\h" %%i.c -fo=%%i.o %CCMD%  -
 
 for %%i in ( %ASRC% ) do %AEXE%  %ACMD% >> log.lst
 
-%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V2.14gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
+%LEXE% %LCMD% %F% /u_CRUNTIME /z__MPLAB_BUILD=1 /W /o UAVX%L%-V2.878gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> log.lst 
 
 
 if %ERRORLEVEL% == 1 goto FAILED
 
-echo compiled - UAVX%L%-V2.14gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo compiled - UAVX%L%-V2.14gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo compiled - UAVX%L%-V2.878gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo compiled - UAVX%L%-V2.878gke-%E%%X%%R%%C%%D%%T%.hex >> gen.lst
 call makeclean.bat
 goto FINISH
 
 :FAILED
-echo failed - UAVX%L%-V2.14gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
-echo failed - UAVX%L%-V2.14gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
+echo failed - UAVX%L%-V2.878gke-%E%%PROC%%X%%R%%C%%D%%T%.hex
+echo failed - UAVX%L%-V2.878gke-%E%%PROC%%X%%R%%C%%D%%T%.hex >> gen.lst
 rem don't delete working files
 
 :FINISH

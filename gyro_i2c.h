@@ -45,29 +45,29 @@ boolean InvenSenseGyroActive(void);
 
 void BlockReadInvenSenseGyro(void)
 {	// Roll Right +, Pitch Up +, Yaw ACW +
-	F.GyroFailure = !ReadI2CString(INV_ID, INVGyroAddress, G.c, 6);
+	F.GyroFailure = !ReadI2Ci16v(INV_ID, INVGyroAddress, G, 3);
 	if ( F.GyroFailure ) 
 		Stats[GyroFailS]++;
 	else	
 		if ( P[SensorHint] == SFDOF9) 
 		{
-			GyroADC[Roll] = -G.i16[X];
-			GyroADC[Pitch] = G.i16[Y];
-			GyroADC[Yaw] = -G.i16[Z];
+			GyroADC[Roll] = -G[X];
+			GyroADC[Pitch] = G[Y];
+			GyroADC[Yaw] = -G[Z];
 		}
 		else
 			if ( P[SensorHint] == ITG3200Gyro )
 			{
-				GyroADC[Roll] = -G.i16[X];
-				GyroADC[Pitch] = G.i16[Y];
-				GyroADC[Yaw] = -G.i16[Z];
+				GyroADC[Roll] = -G[X];
+				GyroADC[Pitch] = G[Y];
+				GyroADC[Yaw] = -G[Z];
 			}
 			#ifdef INC_MPU6050
 			else
 			{ // MPU6050 I2C pins forward, components up
-				GyroADC[Roll] = -G.i16[Y];
-				GyroADC[Pitch] = -G.i16[X];
-				GyroADC[Yaw] = G.i16[Z];
+				GyroADC[Roll] = -G[Y];
+				GyroADC[Pitch] = -G[X];
+				GyroADC[Yaw] = G[Z];
 			}
 			#endif // INC_MPU6050
 

@@ -22,8 +22,13 @@
 
 #include "uavx.h"
 
+
 void GetTemperature(void);
 void InitTemperature(void);
+
+i16u AmbientTemperature;
+
+#ifdef INC_TEMPERATURE
 
 #define TMP100_MAX_ADC 	4095 		// 12 bits
 		
@@ -35,7 +40,7 @@ void InitTemperature(void);
 #define TMP100_HI		0x03 		// Alarm high limit
 #define TMP100_CFG		0b00000000	// 0.5 deg resolution continuous
 
-i16u AmbientTemperature;
+
 
 void GetTemperature(void)
 {
@@ -79,3 +84,17 @@ void InitTemperature(void)
 	GetTemperature();
 
 } // InitTemperature
+
+#else
+
+void GetTemperature(void)
+{
+
+} // GetTemperature
+
+void InitTemperature(void)
+{
+	AmbientTemperature.i16 = 0;
+} // InitTemperature
+
+#endif // INC_TEMPERATURE

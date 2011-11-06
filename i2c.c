@@ -52,7 +52,7 @@ void ShowI2CDeviceName(uint8);
 uint8 ScanI2CBus(void);
 uint8 ReadI2CByteAtAddr(uint8, uint8);
 void WriteI2CByteAtAddr(uint8, uint8, uint8);
-boolean ReadI2CString(uint8, uint8, uint8 *, uint8);
+boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8);
 boolean I2CResponse(uint8);
 
 #ifdef UAVX_HW
@@ -82,8 +82,8 @@ boolean I2CWaitClkHi(void)
 	static uint8 s;
 
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
-	s = 1;
-	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
+	s = 0;
+	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 16MHz
 		if( ++s == (uint8)0 )
 		{
 			Stats[I2CFailS]++;
@@ -228,9 +228,11 @@ IWerror:
 	return;
 } // WriteI2CByteAtAddr
 
-boolean ReadI2CString(uint8 d, uint8 cmd, uint8 *S, uint8 l)
+boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l)
 {
-	static uint8 b;
+	static uint8 b, c;
+	static uint8 S[16];
+	static i16u t;
 
 	I2CStart();
 	if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
@@ -239,24 +241,33 @@ boolean ReadI2CString(uint8 d, uint8 cmd, uint8 *S, uint8 l)
 
 	I2CStart();	
 		if( WriteI2CByte(d | 1) != I2C_ACK ) goto IRSerror;
-		for (b = 0; b < l; b++)
+		for (b = 0; b < l*2; b++)
 			if ( b < (l-1) )
 				S[b] = ReadI2CByte(I2C_ACK);
 			else
 				S[b] = ReadI2CByte(I2C_NACK);
 	I2CStop();
 
+	// fix endian!
+	c = 0;
+	for ( b = 0; b < l; b++)
+	{
+		t.b1 = S[c++];
+		t.b0 = S[c++];
+		v[b] = t.i16;
+	}
+	
 	return( true );
 
 IRSerror:
 	I2CStop();
 
 	for (b = 0; b < l; b++)
-		S[b] = 0;
+		v[b] = 0;
 
 	return(false);
 
-} // ReadI2CString
+} // ReadI2Ci16v
 
 boolean I2CResponse(uint8 d)
 {
@@ -500,14 +511,32 @@ void ConfigureESCs(void)
 	if ( (int8)P[ESCType] == ESCYGEI2C )		
 	{
 		TxString("\r\nProgram YGE ESCs\r\n");
-		for ( m = 0 ; m < NoOfI2CESCOutputs ; m++ )
+		for ( m = 0 ; m < NO_OF_I2C_ESCS ; m++ )
 		{
 			TxString("Connect ONLY ");
 			switch( m ) {
-				case 0 : TxString("Front"); break;
-				case 1 : TxString("Left");  break;
-				case 2 : TxString("Right"); break;
-				case 3 : TxString("Back"); break;
+			#ifdef Y6COPTER
+				case 0 : TxString("FrontT"); break;
+				case 1 : TxString("LeftT");  break;
+				case 2 : TxString("RightT"); break;
+				case 3 : TxString("FrontB"); break;
+				case 4 : TxString("LeftB"); break;
+				case 5 : TxString("RightB"); break;
+			#else
+				#ifdef HEXACOPTER
+					case 0 : TxString("Front"); break;
+					case 1 : TxString("LeftFront");  break;
+					case 2 : TxString("RightFront"); break;
+					case 3 : TxString("LeftBack"); break;
+					case 4 : TxString("RightBack"); break;
+					case 5 : TxString("Back"); break;
+				#else
+					case 0 : TxString("Front"); break;
+					case 1 : TxString("Left");  break;
+					case 2 : TxString("Right"); break;
+					case 3 : TxString("Back"); break;
+				#endif // HEXACOPTER
+			#endif // Y6COPTER
 			}
 			TxString(" ESC, then the CONTINUE button \r\n");
 			while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button

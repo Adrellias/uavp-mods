@@ -101,21 +101,26 @@ void AltitudeHold()
 
 	static int16 ActualThrottle;
 
-	GetBaroAltitude();
-	GetRangefinderAltitude();
-	CheckThrottleMoved();
-
-	if ( F.UsingRangefinderAlt )
+	if ( F.AltHoldEnabled || F.NormalFlightMode )
 	{
-		Altitude = RangefinderAltitude;	 
-		ROC = RangefinderROC;
+		GetBaroAltitude();
+		GetRangefinderAltitude();
+		CheckThrottleMoved();
+		
+		if ( F.UsingRangefinderAlt )
+		{
+			Altitude = RangefinderAltitude;	 
+			ROC = RangefinderROC;
+		}
+		else
+			if ( F.NewBaroValue )
+			{
+				Altitude = BaroRelAltitude;
+				ROC = BaroROC;
+			}
 	}
 	else
-		if ( F.NewBaroValue )
-		{
-			Altitude = BaroRelAltitude;
-			ROC = BaroROC;
-		}
+		Altitude = ROC = 0;	// for GS display
 			
 	if ( F.AltHoldEnabled )
 	{
@@ -182,7 +187,7 @@ void DoYawRate(void)
 { 	// Yaw gyro compensation using compass
 	static int16 Temp, HE;
 
-	if ( F.CompassValid )
+	if ( F.CompassValid && F.NormalFlightMode )
 	{
 		// + CCW
 		Temp = DesiredYaw - Trim[Yaw];
@@ -255,7 +260,7 @@ void GainSchedule(void)
 	{
 		// also density altitude?
 	
-		if ( P[Acro] > 0) // due to Foliage 2009 and Alexinparis 2010
+		if (( !F.NormalFlightMode ) && ( P[Acro] > 0)) // due to Foliage 2009 and Alexinparis 2010
 		{
 		 	AttDiff = CurrMaxRollPitch  - ATTITUDE_HOLD_LIMIT;
 			GS = (int32)GS * ( 2048L - (AttDiff * (int16)P[Acro]) );
@@ -488,11 +493,10 @@ void LightsAndSirens(void)
 	LEDRed_OFF;
 	LEDGreen_ON;
 
-	#ifdef SUPPRESS_ACC
-		LEDYellow_OFF;
-	#else
+	if ( F.NormalFlightMode )
 		LEDYellow_ON;
-	#endif // SUPPRESS_ACC
+	else
+		LEDYellow_OFF;
 
 	mS[LastBattery] = mSClock();
 	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;

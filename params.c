@@ -64,6 +64,17 @@ void ReadParametersEE(void)
 
 	if ( ParametersChanged )
 	{   // overkill if only a single parameter has changed but is not in flight loop
+
+		#ifdef CLOCK_40MHZ
+			#ifdef MULTICOPTER
+				F.NormalFlightMode = ParamSet == 1;
+			#else
+				F.NormalFlightMode = true;
+			#endif
+		#else
+			F.NormalFlightMode = true;
+		#endif // CLOCK_40MHZ
+
 		a = (ParamSet - 1)* MAX_PARAMETERS;	
 		for ( i = 0; i < MAX_PARAMETERS; i++)
 			P[i] = ReadEE(a + i);
@@ -72,7 +83,7 @@ void ReadParametersEE(void)
 		if ( P[ESCType] == ESCPPM )
 			TRISB = 0b00000000; // make outputs
 		else
-			for ( i = 0; i < NoOfPWMOutputs; i++ )
+			for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
 				ESCI2CFail[i] = 0;
 
 		InitGyros();
@@ -169,9 +180,6 @@ void ReadParametersEE(void)
 		F.ParametersValid = ParameterSanityCheck();
 
 		ParametersChanged = false;
-
-		ServoInterval = ( 24 + (PID_CYCLE_MS >> 1) ) / PID_CYCLE_MS;
-		ServoToggle = 0;
 	}
 	
 } // ReadParametersEE

@@ -54,7 +54,6 @@ near uint8 	ll, ss, tt, RxCh;
 near uint8 	RxCheckSum, GPSCheckSumChar, GPSTxCheckSum;
 near boolean WaitingForSync;
 
-near i24u 	ADCValue, Temp;
 #pragma udata
 
 int8	SignalCount;
@@ -217,6 +216,7 @@ void high_isr_handler(void)
 		else
 		{ // PollGPS in-lined to avoid EXPENSIVE context save and restore within irq
 			RxCh = RCREG;
+			if ( F.NormalFlightMode )
 			switch ( RxState ) {
 			case WaitCheckSum:
 				if (GPSCheckSumChar < (uint8)2)
@@ -299,6 +299,7 @@ void high_isr_handler(void)
 		#endif // CLOCK_40MHZ
 
 		MilliSec++;
+
 		WaitingForSync = MilliSec < PIDUpdate;
 
 		if ( F.Signal && (MilliSec > mS[RCSignalTimeout]) ) 
@@ -314,23 +315,6 @@ void high_isr_handler(void)
 				TxQ.Head = (TxQ.Head + 1) & TX_BUFF_MASK;
 			}
  
-		// Scan ADC ports even if using ITG-3200
-		if ( !ADCON0bits.GO)
-		{
-			ADCValue.b2 = ADRESH;
-			ADCValue.b1 = ADRESL;
-			ADCValue.b0 = 0;
-			
-			//	ADCVal[ADCChannel].v.w0 = 0;
-			ADCVal[ADCChannel].v.w1 = ADCValue.i2_1;
-
-			if ( ++ADCChannel > ADC_TOP_CHANNEL )
-				ADCChannel = 0;
-				
-			ADCON0 = ((ADCChannel << 2) & 0b00111100) | (ADCON0 & 0b11000011);
-			ADCON0bits.GO = true;
-		}
-
 		INTCONbits.TMR0IF = false;	
 	}
 

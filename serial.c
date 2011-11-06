@@ -293,8 +293,21 @@ void TxESCi16(int16 v)
 	static i16u Temp;
 
 	Temp.i16 = v;
+
+	if ((Temp.b0 == SOH)||(Temp.b0 == EOT)||(Temp.b0 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b0);
+	
+	if ((Temp.b1 == SOH)||(Temp.b1 == EOT)||(Temp.b1 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b1);
+
+/*
 	TxESCu8(Temp.b0);
 	TxESCu8(Temp.b1);
+	TxESCu8(Temp.b2);
+*/
+
 } // Sendi16
 
 void TxESCi24(int24 v)
@@ -302,9 +315,24 @@ void TxESCi24(int24 v)
 	static i24u Temp;
 
 	Temp.i24 = v;
+
+	if ((Temp.b0 == SOH)||(Temp.b0 == EOT)||(Temp.b0 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b0);
+	
+	if ((Temp.b1 == SOH)||(Temp.b1 == EOT)||(Temp.b1 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b1);
+
+	if ((Temp.b2 == SOH)||(Temp.b2 == EOT)||(Temp.b2 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b2);
+
+/*
 	TxESCu8(Temp.b0);
 	TxESCu8(Temp.b1);
 	TxESCu8(Temp.b2);
+*/
 } // Sendi16
 
 void TxESCi32(int32 v)
@@ -312,7 +340,25 @@ void TxESCi32(int32 v)
 	static i32u Temp;
 
 	Temp.i32 = v;
+
+	if ((Temp.b0 == SOH)||(Temp.b0 == EOT)||(Temp.b0 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b0);
+	
+	if ((Temp.b1 == SOH)||(Temp.b1 == EOT)||(Temp.b1 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b1);
+
+	if ((Temp.b2 == SOH)||(Temp.b2 == EOT)||(Temp.b2 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b2);
+	
+	if ((Temp.b3 == SOH)||(Temp.b3 == EOT)||(Temp.b3 == ESC))
+		TxChar(ESC);
+	TxChar(Temp.b1);
+/*
 	TxESCi16(Temp.w0);
 	TxESCi16(Temp.w1);
+*/
 } // TxESCi32
 
