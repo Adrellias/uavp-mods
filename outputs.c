@@ -122,13 +122,13 @@ void DoMulticopterMix(int16 CurrThrottle)
 			#else
 				#ifdef HEXACOPTER
 					Temp = SRS16(Pl, 1); 			
-					PWM[HFrontC] -= Pl;
-					PWM[HLeftBackC] += (Temp - Rl);
-					PWM[HRightBackC] += (Temp + Rl); 
+					PWM[HFrontC] += -Pl + Yl;
+					PWM[HLeftBackC] += (Temp - Rl) + Yl;
+					PWM[HRightBackC] += (Temp + Rl) + Yl; 
 						
-					PWM[HBackC] += Pl;
-					PWM[HLeftFrontC] += (Temp - Rl);
-					PWM[HRightFrontC] += (Temp + Rl); 
+					PWM[HBackC] += Pl - Yl;
+					PWM[HLeftFrontC] += (-Temp - Rl) - Yl;
+					PWM[HRightFrontC] += (-Temp + Rl) - Yl; 
 	
 					PWM[HFrontC] += Yl;
 					PWM[HRightBackC] += Yl;
@@ -195,7 +195,6 @@ void CheckDemand(int16 CurrThrottle)
 	}
 	else
 		MotorDemandRescale = false;	
-
 } // CheckDemand
 
 #endif // MULTICOPTER
@@ -298,7 +297,7 @@ void MixAndLimitCam(void)
 #ifdef CLOCK_40MHZ
 	#include "outputs_40.h"
 #else
-	#ifdef  MULTICOPTER
+	#ifdef MULTICOPTER
 		#include "outputs_copter.h"
 	#else
 		#include "outputs_conventional.h"

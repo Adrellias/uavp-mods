@@ -101,31 +101,36 @@ void AltitudeHold()
 
 	static int16 ActualThrottle;
 
-	if ( F.AltHoldEnabled || F.NormalFlightMode )
+	if ( SpareSlotTime && ( F.NormalFlightMode || F.AltHoldEnabled ) )
 	{
 		GetBaroAltitude();
-		GetRangefinderAltitude();
-		CheckThrottleMoved();
-		
-		if ( F.UsingRangefinderAlt )
+		if ( F.NewBaroValue )
 		{
-			Altitude = RangefinderAltitude;	 
-			ROC = RangefinderROC;
-		}
-		else
-			if ( F.NewBaroValue )
+			SpareSlotTime = false;
+
+			GetRangefinderAltitude();
+			CheckThrottleMoved();
+			
+			if ( F.UsingRangefinderAlt )
+			{
+				Altitude = RangefinderAltitude;	 
+				ROC = RangefinderROC;
+			}
+			else
 			{
 				Altitude = BaroRelAltitude;
 				ROC = BaroROC;
 			}
+		}
 	}
 	else
 		Altitude = ROC = 0;	// for GS display
 			
 	if ( F.AltHoldEnabled )
 	{
-		if ( F.NewBaroValue || F.UsingRangefinderAlt )
-		{		
+		if ( F.NewBaroValue )
+		{	
+			SpareSlotTime = false;	
 			if ( F.ForceFailsafe || (( NavState != HoldingStation ) && F.AllowNavAltitudeHold )) 
 			{  // Navigating - using CruiseThrottle
 				F.HoldingAlt = true;
@@ -153,31 +158,29 @@ void AltitudeHold()
 						}
 					#endif // !SIMULATE
 				}
+			F.NewBaroValue = false;
 		}	
 	}
 	else
 	{
+		F.NewBaroValue = false;
 		ROCIntE = 0;
 		AltComp = Decay1(AltComp);
 		F.HoldingAlt = false;
 	}
-
-	F.NewBaroValue = false;
-
 } // AltitudeHold
 
 void DoAttitudeAngle(uint8 a, uint8 c)
 {	// Caution: Angles are the opposite to the normal aircraft coordinate conventions
 	static int16 Temp;
 
-	#ifdef DEBUG_GYROS
-	Temp = RawAngle[a] + Rate[a];
-	RawAngle[a] = Limit1(Temp, ANGLE_LIMIT);
-	#endif // DEBUG_GYROS
-
-	Temp = Angle[a] + Rate[a];
-    Temp = Limit1(Temp, ANGLE_LIMIT);
-    Temp = Decay1(Temp);
+	#ifdef CLOCK_16MHZ
+		Temp = Angle[a] + Rate[a];
+	#else
+		Temp = Angle[a] + SRS16(Rate[a], 1);
+	#endif // CLOCK_16MHZ
+	Temp = Limit1(Temp, ANGLE_LIMIT);
+	Temp = Decay1(Temp);
 	Temp += IntCorr[c];			// last for accelerometer compensation
 	Angle[a] = Temp;
 
@@ -192,10 +195,7 @@ void DoYawRate(void)
 		// + CCW
 		Temp = DesiredYaw - Trim[Yaw];
 		if ( Abs(Temp) > COMPASS_MIDDLE ) // acquire new heading
-		{
 			DesiredHeading = Heading;
-			HE = 0;
-		}
 		else
 		{
 			HE = MinimumTurn(DesiredHeading - Heading);
@@ -204,12 +204,15 @@ void DoYawRate(void)
 			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
 		}
 	}
-	else
-		HE = 0;
 
-	Angle[Yaw] += Rate[Yaw];
+	#ifdef CLOCK_16MHZ
+		Angle[Yaw] += Rate[Yaw];
+	#else
+		Angle[Yaw] += SRS16(Rate[Yaw], 1);
+	#endif // CLOCK_16MHZ
+	
 	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
-	Angle[Yaw] = DecayX(Angle[Yaw], 2); 
+	Angle[Yaw] = DecayX(Angle[Yaw], 2);
 
 } // DoYawRate
 
@@ -328,10 +331,13 @@ void DoControl(void)
 
 	// My PI rate control 11/7/2011
 	
-	RateE[Roll]  = Rate[Roll] + ControlRoll + NavCorr[Roll] ; // may need relaive scaling for stick and gyro rate?
+	RateE[Roll]  = Rate[Roll] + ControlRoll + NavCorr[Roll] ; // may need relative scaling for stick and gyro rate?
 	Rl = SRS32((int32)RateE[Roll] * P[RollKp], 4); 
-	Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 4);
-	
+	#ifdef CLOCK_16MHZ 
+		Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 4);
+	#else
+		Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 3);
+	#endif // CLOCK_16MHZ	
 	Rl += Limit1(Temp, (int16)P[RollIntLimit]);
 	RateEp[Roll] = RateE[Roll];
 	
@@ -352,8 +358,12 @@ void DoControl(void)
 	// My PI rate control 11/7/2011
 	
 	RateE[Pitch] = Rate[Pitch] + ControlPitch + NavCorr[Pitch]; 
-	Pl = SRS32(RateE[Pitch] * P[PitchKp], 4); 
-	Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 4);
+	Pl = SRS32(RateE[Pitch] * P[PitchKp], 4);
+	#ifdef CLOCK_16MHZ 
+		Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 4);
+	#else
+		Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 3);
+	#endif // CLOCK_16MHZ
 	
 	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
 	RateEp[Pitch] = RateE[Pitch];
@@ -368,7 +378,14 @@ void DoControl(void)
 				
 	DoAttitudeAngle(Roll, LR);
 
-	Rl  = SRS32((int32)Rate[Roll] * P[RollKp] - (int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
+	Rl  = SRS32((int32)Rate[Roll] * P[RollKp], 5);
+
+	#ifdef CLOCK_16MHZ
+ 		Rl -= SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
+	#else
+		Rl -= SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 4);
+	#endif // CLOCK_16MHZ
+
 	Temp = SRS32((int32)Angle[Roll] * P[RollKi], 9);
 	Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
 
@@ -383,7 +400,13 @@ void DoControl(void)
 
 	DoAttitudeAngle(Pitch, FB);
 
-	Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp] - (int32)(Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
+	Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp], 5);
+	#ifdef CLOCK_16MHZ
+ 		Pl -= (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
+	#else
+		Pl -= (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 4);
+	#endif // CLOCK_16MHZ
+
 	Temp = SRS32((int32)Angle[Pitch] * P[PitchKi], 9);
 	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
 
@@ -445,6 +468,7 @@ void LightsAndSirens(void)
 	Ch5Timeout = mSClock() + 500; // mS.
 	do
 	{
+		SpareSlotTime = true; // for "tests"
 		ProcessCommand();
 		if( F.Signal )
 		{

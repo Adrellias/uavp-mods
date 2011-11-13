@@ -111,14 +111,13 @@
 
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
+#define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
+#define ANGLE_LIMIT				(7L*(1024*4)/5)
+	
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
-	#define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
-	#define ANGLE_LIMIT				(7L*(1024*4)/5)	
 #else
-	#define PID_CYCLE_MS			4 		// mS main PID loop time zzz adjust
-	#define RESCALE_TO_ACC 			25		//22		// (256/11.46)
-	#define ANGLE_LIMIT				(11L*(1024*4)/5) 
+	#define PID_CYCLE_MS			4 		// MUST BE HALF THAT OF 16HZ	
 #endif // CLOCK_16MHZ
 
 #define MIN_PID_CYCLE_MS			3
@@ -451,7 +450,7 @@ typedef struct { // GPS
 #ifdef CLOCK_16MHZ
 	#define	TMR0_1MS		0
 #else // CLOCK_40MHZ
-	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM
+	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM 
 #endif // CLOCK_16MHZ
 
 #define _PreScale0		16				// 1 6 TMR0 prescaler 
@@ -597,6 +596,7 @@ typedef union {
 enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
 extern int8 near State, NavState, FailState;
+extern boolean near SpareSlotTime;
 
 //______________________________________________________________________________________________
 
@@ -1028,7 +1028,7 @@ extern uint24 mSClock(void);
 
 enum { StartTime, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, AccTimeout, 
-	GPSTimeout, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, 
+	GPSTimeout, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, BatteryUpdate, 
   	TelemetryUpdate, NavActiveTime, BeeperUpdate, ArmedTimeout,
 	ThrottleUpdate, BaroUpdate, CompassUpdate};
 
@@ -1179,7 +1179,7 @@ extern const rom uint8 RxChMnem[];
 // outputs.c
 
 // The minimum value for PWM width is 1 for the pulse generators
-#define OUT_MAXIMUM			210	//222	//  to reduce Rx capture and servo pulse output interaction
+#define OUT_MAXIMUM			208	//210 222	//  to reduce Rx capture and servo pulse output interaction
 #define OUT_NEUTRAL			111			//  1.503mS @ 105 16MHz
 
 #define OUT_HOLGER_MAXIMUM	225
@@ -1215,7 +1215,11 @@ enum PWMTags {K1=0, K2, K3, K4, K5, K6};
 #if ( defined Y6COPTER ) | ( defined HEXACOPTER )
 	#define NO_OF_I2C_ESCS 	6
 #else
-	#define NO_OF_I2C_ESCS 	4
+	#if ( defined TRICOPTER )
+		#define NO_OF_I2C_ESCS 	2
+	#else
+		#define NO_OF_I2C_ESCS 	4
+	#endif
 #endif
 
 extern int16 PWM[6];
@@ -1435,7 +1439,7 @@ extern int16 Stats[];
 
 extern void SendPacketHeader(void);
 extern void SendPacketTrailer(void);
-extern void SendTelemetry(void);
+extern void DoTelemetry(void);
 extern void SendCycle(void);
 extern void SendControl(void);
 extern void SendMin(void);
@@ -1476,6 +1480,8 @@ extern i16u AmbientTemperature;
 
 // utils.c
 
+#define BATTERY_UPDATE_MS	1000
+
 extern void InitPorts(void);
 extern void InitPortsAndUSART(void);
 extern void InitMisc(void);
@@ -1488,8 +1494,8 @@ extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 extern void LPFilter16(int16*, i32u*, int16);
 extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
+extern void CheckBatteries(void);
 extern void CheckAlarms(void);
-extern void DoHouseKeeping(void);
 
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;

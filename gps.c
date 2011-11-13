@@ -166,7 +166,9 @@ void UpdateField(void)
 } // UpdateField
 
 void ParseGPGGASentence(void)
-{ 	// full position $GPGGA fix 
+{ 	// full position $GPGGA fix
+	// 0.745mS @ 16Mhz
+	// 0.29mS @ 40MHz 
 
     UpdateField();
     
@@ -222,7 +224,9 @@ void ParseGPGGASentence(void)
 } // ParseGPGGASentence
 
 void ParseGPRMCSentence() 
-{ // main current position and heading
+{ 	// main current position and heading
+	// 0.28mS @ 16MHz
+	// 0.1mS @ 40MHz
 
 	static i32u Temp32;
 
@@ -316,6 +320,9 @@ void SetGPSOrigin(void)
 
 void ParseGPSSentence(void)
 {
+	// 0.94mS @ 16MHz GPGGA
+	// 0.37mS @ 40MHz GPGGA
+
 	static i32u Temp32u;
 	static int24 MaxDiff, LongitudeDiff, LatitudeDiff;
 	static int24 GPSInterval;
@@ -405,7 +412,6 @@ void ParseGPSSentence(void)
 		}
 		
 		#else
-
 		if (F.NavValid )
 		{
 			GPSRelAltitude  = GPSAltitude - GPSOriginAltitude;
@@ -414,6 +420,7 @@ void ParseGPSSentence(void)
 			LongitudeDiff = GPSLongitude - GPSLongitudeP;
 
 			MaxDiff = (Abs(LatitudeDiff),Abs(LongitudeDiff));
+
 			if ( MaxDiff > GPS_OUTLIER_LIMIT )
 			{
 				Stats[BadS]++;
@@ -448,27 +455,34 @@ void ParseGPSSentence(void)
 
 void UpdateGPS(void)
 {
-	if ( F.PacketReceived )
-	{
-		LEDBlue_ON;
-		LEDRed_OFF;
-		F.PacketReceived = false;  
-		ParseGPSSentence(); // 3mS 18f2620 @ 40MHz
-		if ( F.GPSValid )
+	if ( SpareSlotTime )
+		if ( F.PacketReceived )
 		{
-			F.NavComputed = false;
-			mS[GPSTimeout] = mSClock() + GPS_TIMEOUT_MS;
+			SpareSlotTime = false;
+			LEDBlue_ON;
+			LEDRed_OFF;
+			F.PacketReceived = false;  
+			ParseGPSSentence(); // 3mS 18f2620 @ 40MHz
+			if ( F.GPSValid )
+			{
+				LEDRed_OFF;
+				F.NavComputed = false;
+				mS[GPSTimeout] = mSClock() + GPS_TIMEOUT_MS;
+			}
+			else
+				LEDRed_ON;
+			LEDBlue_OFF;
 		}
-	}
-	else
-		if( mSClock() > mS[GPSTimeout] )
-			F.GPSValid = false;
+		else
+		{
+			if( mSClock() > mS[GPSTimeout] )
+			{
+				F.GPSValid = false;
+				LEDRed_ON;
+			}
+			LEDBlue_OFF;
+		}
 
-	LEDBlue_OFF;
-	if ( F.GPSValid )
-		LEDRed_OFF;
-	else
-		LEDRed_ON;
 } // UpdateGPS
 
 void InitGPS(void)

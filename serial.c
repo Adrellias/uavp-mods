@@ -355,7 +355,7 @@ void TxESCi32(int32 v)
 	
 	if ((Temp.b3 == SOH)||(Temp.b3 == EOT)||(Temp.b3 == ESC))
 		TxChar(ESC);
-	TxChar(Temp.b1);
+	TxChar(Temp.b3);
 /*
 	TxESCi16(Temp.w0);
 	TxESCi16(Temp.w1);

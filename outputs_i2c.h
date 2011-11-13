@@ -35,12 +35,14 @@ void DoI2CESCs(void)
 
 	switch ( P[ESCType] ) {
 	case ESCX3D:
+		#if ( defined QUADROCOPTER | defined VTCOPTER )
 		ESCI2CStart();
 			r = WriteESCI2CByte(0x10); // one command, 4 data bytes - may not support 6
 			for ( m = 0 ; m < NO_OF_I2C_ESCS ; m++ )
 				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) ); 
 		ESCI2CStop();
 		ESCI2CFail[0] = r;
+		#endif // QUADROCOPTER | VTCOPTER
 		break;
 	case ESCLRCI2C:
 		#ifdef QUADROCOPTER

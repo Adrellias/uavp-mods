@@ -67,7 +67,6 @@ void SyncToTimer0AndDisableInterrupts(void)
 
 	while( !INTCONbits.TMR0IF ) ;		// now wait overflow
 	FastWriteTimer0(TMR0_1MS);	
-	INTCONbits.TMR0IF = false;			// quit TMR0 interrupt
 } // SyncToTimer0AndDisableInterrupts
 
 void ReceivingGPSOnly(boolean r)
@@ -101,7 +100,7 @@ void InitTimersAndInterrupts(void)
 	#ifdef CLOCK_16MHZ
 	OpenTimer0(TIMER_INT_OFF&T0_8BIT&T0_SOURCE_INT&T0_PS_1_16);
 	#else // CLOCK_40MHZ
-	OpenTimer0(TIMER_INT_OFF&T0_16BIT&T0_SOURCE_INT&T0_PS_1_16);	
+	OpenTimer0(TIMER_INT_OFF&T0_16BIT&T0_SOURCE_INT&T0_PS_1_16); 	
 	#endif // CLOCK_16MHZ
 
 	OpenTimer1(T1_16BIT_RW&TIMER_INT_OFF&T1_PS_1_8&T1_SYNC_EXT_ON&T1_SOURCE_CCP&T1_SOURCE_INT);
@@ -217,68 +216,68 @@ void high_isr_handler(void)
 		{ // PollGPS in-lined to avoid EXPENSIVE context save and restore within irq
 			RxCh = RCREG;
 			if ( F.NormalFlightMode )
-			switch ( RxState ) {
-			case WaitCheckSum:
-				if (GPSCheckSumChar < (uint8)2)
-				{
-					GPSTxCheckSum *= 16;
-					if ( RxCh >= 'A' )
-						GPSTxCheckSum += ( RxCh - ('A' - 10) );
-					else
-						GPSTxCheckSum += ( RxCh - '0' );
-		
-					GPSCheckSumChar++;
-				}
-				else
-				{
-					NMEA.length = ll;	
-					F.PacketReceived = GPSTxCheckSum == RxCheckSum;
-					RxState = WaitSentinel;
-				}
-				break;
-			case WaitBody: 
-				if ( RxCh == '*' )      
-				{
-					GPSCheckSumChar = GPSTxCheckSum = 0;
-					RxState = WaitCheckSum;
-				}
-				else         
-					if ( RxCh == '$' ) // abort partial Sentence 
+				switch ( RxState ) {
+				case WaitCheckSum:
+					if (GPSCheckSumChar < (uint8)2)
 					{
-						ll = tt = RxCheckSum = 0;
+						GPSTxCheckSum *= 16;
+						if ( RxCh >= 'A' )
+							GPSTxCheckSum += ( RxCh - ('A' - 10) );
+						else
+							GPSTxCheckSum += ( RxCh - '0' );
+			
+						GPSCheckSumChar++;
+					}
+					else
+					{
+						NMEA.length = ll;	
+						F.PacketReceived = GPSTxCheckSum == RxCheckSum;
+						RxState = WaitSentinel;
+					}
+					break;
+				case WaitBody: 
+					if ( RxCh == '*' )      
+					{
+						GPSCheckSumChar = GPSTxCheckSum = 0;
+						RxState = WaitCheckSum;
+					}
+					else         
+						if ( RxCh == '$' ) // abort partial Sentence 
+						{
+							ll = tt = RxCheckSum = 0;
+							RxState = WaitTag;
+						}
+						else
+						{
+							RxCheckSum ^= RxCh;
+							NMEA.s[ll++] = RxCh; 
+							if ( ll > (uint8)( GPSRXBUFFLENGTH-1 ) )
+								RxState = WaitSentinel;
+						}
+								
+					break;
+				case WaitTag:
+	            	RxCheckSum ^= RxCh;
+	            	while ( ( RxCh != NMEATags[ss][tt] ) && ( ss < MAX_NMEA_SENTENCES ) ) ss++;
+	           		if ( RxCh == NMEATags[ss][tt] )
+	                	if ( tt == (uint8)NMEA_TAG_INDEX ) 
+						{
+	                    	GPSPacketTag = ss;
+	                    	RxState = WaitBody;
+	                	} 
+						else
+	                    	tt++;
+	            	else
+	                	RxState = WaitSentinel;
+					break;
+				case WaitSentinel: // highest priority skipping unused sentence types
+					if ( RxCh == '$' )
+					{
+						ll = tt = ss = RxCheckSum = 0;
 						RxState = WaitTag;
 					}
-					else
-					{
-						RxCheckSum ^= RxCh;
-						NMEA.s[ll++] = RxCh; 
-						if ( ll > (uint8)( GPSRXBUFFLENGTH-1 ) )
-							RxState = WaitSentinel;
-					}
-							
-				break;
-			case WaitTag:
-            	RxCheckSum ^= RxCh;
-            	while ( ( RxCh != NMEATags[ss][tt] ) && ( ss < MAX_NMEA_SENTENCES ) ) ss++;
-           		if ( RxCh == NMEATags[ss][tt] )
-                	if ( tt == (uint8)NMEA_TAG_INDEX ) 
-					{
-                    	GPSPacketTag = ss;
-                    	RxState = WaitBody;
-                	} 
-					else
-                    	tt++;
-            	else
-                	RxState = WaitSentinel;
-				break;
-			case WaitSentinel: // highest priority skipping unused sentence types
-				if ( RxCh == '$' )
-				{
-					ll = tt = ss = RxCheckSum = 0;
-					RxState = WaitTag;
-				}
-				break;	
-		    } 
+					break;	
+			    } 
 		}
 		#ifndef USE_SENSOR_TRACE  // not used for testing - make space!
 		if ( Armed && ( P[TelemetryType] == GPSTelemetry) ) // piggyback GPS telemetry on GPS Rx

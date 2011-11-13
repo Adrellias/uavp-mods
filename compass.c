@@ -71,13 +71,15 @@ int16 GetCompass()
  
 void GetHeading(void)
 {
-	static int16 HeadingChange, Temp;
+	static int16 NewHeading, HeadingChange, Temp;
 	
-	#ifdef SIMULATE
+	if ( SpareSlotTime && F.NormalFlightMode && ( mSClock() >= mS[CompassUpdate] ))
+	{
+		SpareSlotTime = false;
+		mS[CompassUpdate] = mSClock() + COMPASS_TIME_MS;
 
-		if ( mSClock() > mS[CompassUpdate] )
-		{
-			mS[CompassUpdate] += COMPASS_TIME_MS;
+		#ifdef SIMULATE
+
 			if ( State == InFlight )
 			{
 				#ifdef  NAV_WING
@@ -96,29 +98,30 @@ void GetHeading(void)
 
 		MagHeading = FakeMagHeading;
 
-	#else
+		#else
 
 		if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
 			MagHeading = GetCompass();
 		else
 			MagHeading = 0;
 
-	#endif // SIMULATE
+		#endif // SIMULATE
 
-	Heading = Make2Pi(MagHeading - CompassOffset);
-
-	HeadingChange = Abs( Heading - HeadingValF.iw1 );
-	if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
-		HeadingValF.iw1 = Heading;
-	else
-		if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
-		{
-		     Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
-		     Stats[CompassFailS]++;
-		}
-
-	LPFilter16(&Heading, &HeadingValF, YawFilterA);
-	Heading = Make2Pi(Heading);
+		Heading = Make2Pi(MagHeading - CompassOffset);
+	
+		HeadingChange = Abs( Heading - HeadingValF.iw1 );
+		if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
+			HeadingValF.iw1 = Heading;
+		else
+			if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
+			{
+			     Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
+			     Stats[CompassFailS]++;
+			}
+	
+		LPFilter16(&Heading, &HeadingValF, YawFilterA*(COMPASS_TIME_MS/PID_CYCLE_MS));
+		Heading = Make2Pi(Heading);
+	}	
 
 } // GetHeading
 
@@ -543,6 +546,7 @@ boolean HMC6352CompassActive(void)
 {
 	F.CompassValid = I2CResponse(HMC6352_ID);
 	return(F.CompassValid);
+
 } // HMC6352CompassActive
 
 

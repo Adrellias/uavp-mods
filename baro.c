@@ -120,7 +120,7 @@ void ReadFreescaleBaro(void)
 {
 	static int16 B[4];
 
-	mS[BaroUpdate] += BARO_UPDATE_MS;
+	mS[BaroUpdate] = mSClock()+ BARO_UPDATE_MS;
 
 	F.BaroAltitudeValid = ReadI2Ci16v(ADS7823_ID, ADS7823_CMD,  B, 4);
 	if ( F.BaroAltitudeValid )
@@ -249,6 +249,8 @@ void InitBoschBarometer(void);
 #define BOSCH_PRESS_TIME_MS			38
 #define BOSCH_PRESS_TEMP_TIME_MS	BARO_UPDATE_MS	// MUST BE 20Hz pressure and temp time + overheads 	
 
+uint8 BaroPressureCycles;
+
 void StartBoschBaroADC(boolean ReadPressure)
 {
 	static uint8 TempOrPress;
@@ -256,7 +258,7 @@ void StartBoschBaroADC(boolean ReadPressure)
 	if ( ReadPressure )
 	{
 		TempOrPress = BOSCH_PRESS;
-		mS[BaroUpdate] = mSClock() + BOSCH_PRESS_TIME_MS;
+		mS[BaroUpdate] = mSClock() + BARO_UPDATE_MS; // reading pressure every cycle and temp every 1Sec. BOSCH_PRESS_TIME_MS;
 	}
 	else
 	{
@@ -273,9 +275,17 @@ void StartBoschBaroADC(boolean ReadPressure)
 
 void ReadBoschBaro(void)
 {
-	// Possible I2C protocol error - split read of ADC
-	BaroVal.b1 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_MSB);
-	BaroVal.b0 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_LSB);
+	static uint8 r;
+
+	#define BOSCH_SPLIT_READ
+
+	#ifdef BOSCH_SPLIT_READ
+		// Possible I2C protocol error - split read of ADC
+		BaroVal.b1 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_MSB);
+		BaroVal.b0 = ReadI2CByteAtAddr(BOSCH_ID, BOSCH_ADC_LSB);
+	#else
+		F.BaroAltitudeValid = ReadI2Ci16v(BOSCH_ID, BOSCH_ADC_MSB, BaroVal.i16, 1);
+	#endif // BOSCH_SPLIT_READ
 } // ReadBoschBaro
 
 int24 BoschToCm(int24 CP) {
@@ -311,11 +321,7 @@ void GetBoschBaroAltitude(void)
 			if ( AcquiringPressure )
 			{
 				BaroPressure = (int24)BaroVal.u16;
-				AcquiringPressure = false;
-			}
-			else
-			{
-				BaroTemperature = (int24)BaroVal.u16;
+				
 				CompBaroPressure = CompensatedBoschPressure(BaroPressure, BaroTemperature);
 
 				// decreasing pressure is increase in altitude negate and rescale to decimetre altitude
@@ -326,8 +332,16 @@ void GetBoschBaroAltitude(void)
 
 				BaroRelAltitude = SlewLimit(BaroRelAltitudeP, BaroRelAltitude, BARO_SLEW_LIMIT_CM);
 				BaroRelAltitudeP = BaroRelAltitude;
-	
+				if ( BaroPressureCycles-- <= 0 )
+				{
+					AcquiringPressure = false;
+					BaroPressureCycles = 1000L/BARO_UPDATE_MS;
+				}	
 				F.NewBaroValue = true;
+			}
+			else
+			{
+				BaroTemperature = (int24)BaroVal.u16;			
 				AcquiringPressure = true;			
 			}
 		else
@@ -335,10 +349,9 @@ void GetBoschBaroAltitude(void)
 			{
 				AcquiringPressure = true;
 				Stats[BaroFailS]++;
-			}	
+			}
 		StartBoschBaroADC(AcquiringPressure);
-	}
-			
+	}			
 } // GetBoschBaroAltitude
 
 boolean IsBoschBaroActive(void)
@@ -518,7 +531,7 @@ void GetBaroAltitude(void)
 
 		if ( mSClock() >= mS[BaroUpdate])
 		{
-			mS[BaroUpdate] += BARO_UPDATE_MS;
+			mS[BaroUpdate] = mSClock() + BARO_UPDATE_MS;
 
 			if ( State == InFlight )
 				FakeBaroRelAltitude += (DesiredThrottle - CruiseThrottle + AltComp * 2 );
@@ -565,6 +578,7 @@ void InitBarometer(void)
 {
 	BaroRelAltitude = CompBaroPressure = OriginBaroPressure = SimulateCycles = BaroROC = BaroROCp = 0;
 	BaroType = BaroUnknown;
+	BaroPressureCycles = 0;
 	AltCF = AltF[0] = AltF[1] = AltF[2] = 0;
 
 	F.BaroAltitudeValid = true; // optimistic

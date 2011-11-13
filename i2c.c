@@ -22,26 +22,6 @@
 
 #include "uavx.h"
 
-#define I2C_IN			1
-#define I2C_OUT			0
-
-// These routine need much better tailoring to the I2C bus spec.
-// 16MHz 0.25uS/Cycle
-// 40MHz 0.1uS/Cycle
-
-#ifdef CLOCK_16MHZ
-	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()
-	#define	I2C_DELAY_2US		Delay10TCY()
-	#define I2C_DELAY2			Delay1TCY()		
-#else // CLOCK_40MHZ
-	#define	I2C_DELAY_5US		Delay10TCYx(5)
-	#define	I2C_DELAY_2US		Delay10TCYx(2)	
-	// ~102KHz (Compass limit!)
-	#define I2C_DELAY2		Delay10TCYx(1);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY()
-	// ~210KHz
-	//#define I2C_DELAY2	
-#endif // CLOCK_16MHZ
-
 void InitI2C(void);
 void I2CStart(void);
 void I2CStop(void);
@@ -55,6 +35,19 @@ void WriteI2CByteAtAddr(uint8, uint8, uint8);
 boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8);
 boolean I2CResponse(uint8);
 
+#define I2C_IN			1
+#define I2C_OUT			0
+
+// These routine need much better tailoring to the I2C bus spec.
+// 16MHz 0.25uS/Cycle
+// 40MHz 0.1uS/Cycle
+
+#ifdef CLOCK_16MHZ
+	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()	
+#else // CLOCK_40MHZ
+	#define	I2C_DELAY_5US		Delay10TCYx(5)	
+#endif // CLOCK_16MHZ
+
 #ifdef UAVX_HW
 	#define I2C_SDA_SW			PORTCbits.RC4
 	#define I2C_DIO_SW			TRISCbits.TRISC4
@@ -67,10 +60,10 @@ boolean I2CResponse(uint8);
 	#define I2C_CIO_SW			TRISBbits.TRISB7
 #endif // UAVX_HW
 
-#define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DELAY2;I2C_DIO_SW=I2C_OUT;I2C_DELAY2;}
+#define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DIO_SW=I2C_OUT;} 
 #define I2C_DATA_FLOAT	{I2C_DIO_SW=I2C_IN;}
-#define I2C_CLK_LOW		{I2C_SCL_SW=0;I2C_DELAY2;I2C_CIO_SW=I2C_OUT;I2C_DELAY2;}
-#define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;I2C_DELAY2;} 
+#define I2C_CLK_LOW		{I2C_SCL_SW=0;I2C_CIO_SW=I2C_OUT;}
+#define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;}
 
 void InitI2C(void)
 {
@@ -81,6 +74,7 @@ boolean I2CWaitClkHi(void)
 {
 	static uint8 s;
 
+	Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY(); // tSU:DAT + call
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 0;
 	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 16MHz
@@ -96,10 +90,10 @@ void I2CStart(void)
 {
 	static boolean r;
 	
-	I2C_DATA_FLOAT;
+	I2C_DATA_FLOAT; // should be floating after previous TBuf
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
-	I2C_DELAY_5US;
+	Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY(); // tHD:STA
 	I2C_CLK_LOW;
 } // I2CStart
 
@@ -109,9 +103,10 @@ void I2CStop(void)
 
 	I2C_DATA_LOW;
 	r = I2CWaitClkHi();
+	Delay1TCY();Delay1TCY();Delay1TCY(); // tsu:STO
 	I2C_DATA_FLOAT;
 
-	I2C_DELAY_5US;
+	Delay10TCYx(13); // TBuf
 
 } // I2CStop 
 
@@ -128,7 +123,6 @@ uint8 ReadI2CByte(uint8 r)
 			d <<= 1;
 			if( I2C_SDA_SW ) d |= 1;
 			I2C_CLK_LOW;
-			I2C_DELAY_2US;
  		}
 		else
 		{
@@ -138,9 +132,7 @@ uint8 ReadI2CByte(uint8 r)
 	} while ( --s );
 
 	I2C_SDA_SW = r;
-	I2C_DELAY2;
 	I2C_DIO_SW = I2C_OUT;
-	I2C_DELAY2;
 										
 	if( I2CWaitClkHi() )
 	{
@@ -531,10 +523,15 @@ void ConfigureESCs(void)
 					case 4 : TxString("RightBack"); break;
 					case 5 : TxString("Back"); break;
 				#else
-					case 0 : TxString("Front"); break;
-					case 1 : TxString("Left");  break;
-					case 2 : TxString("Right"); break;
-					case 3 : TxString("Back"); break;
+					#ifdef TRICOPTER
+						case 1 : TxString("Left");  break;
+						case 2 : TxString("Right"); break;
+					#else
+						case 0 : TxString("Front"); break;
+						case 1 : TxString("Left");  break;
+						case 2 : TxString("Right"); break;
+						case 3 : TxString("Back"); break;
+					#endif // TRICOPTER
 				#endif // HEXACOPTER
 			#endif // Y6COPTER
 			}

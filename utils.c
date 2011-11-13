@@ -32,7 +32,6 @@ int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 void LPFilter16(int16*, i32u*, int16);
 void LPFilter24(int24* i, i32u* iF, int16 FilterA);
-void DoHouseKeeping(void);
 
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
@@ -137,65 +136,80 @@ void DoStartingBeepsWithOutput(uint8 b)
 	DoBeep100mSWithOutput(8,0);
 } // DoStartingBeeps
 
+void CheckBatteries(void)
+{
+	static uint24 Now;
+	static int16 Temp;
+
+	Now = mSClock();
+
+	if (( Now >= mS[BatteryUpdate] ) && SpareSlotTime )
+	{
+		mS[BatteryUpdate] = Now + BATTERY_UPDATE_MS;
+		SpareSlotTime = false;
+		//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
+		BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
+	
+		BatteryChargeADC += BatteryCurrentADC * (Now - mS[LastBattery]);
+		mS[LastBattery] = Now;
+		BatteryChargeUsedmAH = CURRENT_SENSOR_MAX * (BatteryChargeADC/3686400L); // 1024*1000*3600
+	
+		Temp = ADC(ADCBattVoltsChan);
+		BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
+		F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
+	}
+} // CheckBatteries
+
 static int16 BeeperOffTime = 100;
 static int16 BeeperOnTime = 100;
 
 void CheckAlarms(void)
 {
-	static int16 Temp;
-
-	//No spare ADC channels yet. Temp = ADC(ADCBattCurrentChan);
-	BatteryCurrentADC  = CurrThrottle * THROTTLE_CURRENT_SCALE; // Mock Sensor
-
-	BatteryChargeADC += BatteryCurrentADC * (mSClock() - mS[LastBattery]);
-	mS[LastBattery] = mSClock();
-	BatteryChargeUsedmAH = CURRENT_SENSOR_MAX * (BatteryChargeADC/3686400L); // 1024*1000*3600
-
-	Temp = ADC(ADCBattVoltsChan);
-	BatteryVoltsADC  = SoftFilter(BatteryVoltsADC, Temp);
-	F.LowBatt = (BatteryVoltsADC < BatteryVoltsLimitADC ) & 1;
-
-	F.BeeperInUse = F.LowBatt || F.LostModel  || (State == Shutdown);
-
-	if ( F.BeeperInUse )
+	if ( SpareSlotTime )
 	{
-		if( F.LowBatt ) 
+		SpareSlotTime = false;
+		F.BeeperInUse = F.LowBatt || F.LostModel  || (State == Shutdown);
+	
+		if ( F.BeeperInUse )
 		{
-			BeeperOffTime = 600;
-			BeeperOnTime = 600;
-		}	
-		else
-			if ( State == Shutdown )
+			if( F.LowBatt ) 
 			{
-				BeeperOffTime = 4750;
-				BeeperOnTime = 250;
-			}
-			else
-				if ( F.LostModel )
-				{
-					BeeperOffTime = 125;
-					BeeperOnTime = 125;		
-				}		
-
-		if ( mSClock() > mS[BeeperUpdate] )
-			if ( BEEPER_IS_ON )
-			{
-				mS[BeeperUpdate] = mSClock() + BeeperOffTime;
-				Beeper_OFF;
-				LEDRed_OFF;					
-			}
-			else
-			{
-				mS[BeeperUpdate] = mSClock() + BeeperOnTime;
-				Beeper_ON;
-				LEDRed_ON;		
+				BeeperOffTime = 600;
+				BeeperOnTime = 600;
 			}	
-	}	
-	#ifdef NAV_ACQUIRE_BEEPER
-	else
-		if ( (State == InFlight) && (!F.AcquireNewPosition) && (mSClock() > mS[BeeperTimeout]) )
-			Beeper_OFF;
-	#endif // NAV_ACQUIRE_BEEPER 
+			else
+				if ( State == Shutdown )
+				{
+					BeeperOffTime = 4750;
+					BeeperOnTime = 250;
+				}
+				else
+					if ( F.LostModel )
+					{
+						BeeperOffTime = 125;
+						BeeperOnTime = 125;		
+					}		
+	
+			if ( mSClock() > mS[BeeperUpdate] )
+				if ( BEEPER_IS_ON )
+				{
+					mS[BeeperUpdate] = mSClock() + BeeperOffTime;
+					Beeper_OFF;
+					LEDRed_OFF;					
+				}
+				else
+				{
+					mS[BeeperUpdate] = mSClock() + BeeperOnTime;
+					Beeper_ON;
+					LEDRed_ON;		
+				}	
+		}	
+		#ifdef NAV_ACQUIRE_BEEPER
+		else
+			if ( (State == InFlight) && (!F.AcquireNewPosition) && (mSClock() > mS[BeeperTimeout]) )
+				Beeper_OFF;
+		#endif // NAV_ACQUIRE_BEEPER 
+	}
 
 } // CheckAlarms
 
@@ -255,7 +269,3 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA)
 
 } // LPFilter24
 
-void DoHouseKeeping(void)
-{ // must be less than 650uS@16MHz / 830uS@40MHz
-	CheckAlarms();
-} // DoHouseKeping

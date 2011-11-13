@@ -224,7 +224,10 @@ void DoCompScaling(void)
 } // DoCompScaling
 
 void Navigate(int32 NavLatitude, int32 NavLongitude )
-{	// F.GPSValid must be true immediately prior to entry	
+{	// 1.9mS @ 16MHz
+	// 0.8mS @ 40MHz
+
+	// F.GPSValid must be true immediately prior to entry	
 	// This routine does not point the quadrocopter at the destination
 	// waypoint. It simply rolls/pitches towards the destination
 	// cos/sin/arctan lookup tables are used for speed.
@@ -243,23 +246,25 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static i24u Temp24;
 	static int16 NewCorr;
 
+	SpareSlotTime = false;
+
 	DoPolarOrientation();
-
+	
 	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
-
+	
 	Temp24.i24 = (int24)EffNavSensitivity * NAV_MAX_ROLL_PITCH;
 	NavAttitudeLimit = Temp24.i2_1; //  ~ divide by RC_MAXIMUM
 	NavAttitudeLimit = Limit(NavAttitudeLimit, 0, NAV_MAX_ROLL_PITCH);
-
+	
 	DesiredLatitude = NavLatitude; // for telemetry tracking
 	DesiredLongitude = NavLongitude;
-
+	
 	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
 	LongitudeDiff = Temp32.i3_1;
 	LatitudeDiff = DesiredLatitude - GPSLatitude;
-
+	
 	WayHeading = Make2Pi(int32atan2((int32)LongitudeDiff, (int32)LatitudeDiff));
-
+	
 	MaxDiff = Max(Abs(LongitudeDiff), Abs(LatitudeDiff));
 	if ( MaxDiff < NavProximityRadius )
 	{
@@ -269,20 +274,20 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	}
 	else
 		F.WayPointAchieved = F.WayPointCentred = false;
-
+	
 	if ( F.AttitudeHold && ( NavSensitivity > NAV_SENS_THRESHOLD ) && !F.WayPointCentred )
 	{
 		SinHeading = int16sin(Heading);
 		CosHeading = int16cos(Heading);
-		
+			
 		Temp32.i32 = -LatitudeDiff * SinHeading + LongitudeDiff * CosHeading;
 		NavPosE[Roll] = Temp32.i3_1;
-	
+		
 		Temp32.i32 = -LatitudeDiff * CosHeading - LongitudeDiff * SinHeading;
 		NavPosE[Pitch] = Temp32.i3_1; 
-
+	
 		#ifdef NAV_WING
-		
+			
 			NavCorr[Pitch] = 0; 
 			// Just use simple rudder only for now.
 			if ( !F.WayPointAchieved )
@@ -292,16 +297,16 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				NavCorr[Yaw] = Limit1(NavCorr[Yaw], (int16)P[NavYawLimit]); // gently!
 				//zzz Roll as well at 25%
 			}
-
+	
 		#else // MULTICOPTER
-
+	
 			// revert to original simpler version from UAVP->UAVX transition
-			
+				
 			// Roll & Pitch
-
+	
 			if ( MaxDiff > NAV_CLOSING_RADIUS )
 				DoCompScaling();
-				
+					
 			if ( StartingNav )
 			{
 				for ( a = 0; a < (uint8)2 ; a++ )
@@ -311,7 +316,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 				}
 				StartingNav = false;
 			}
-
+	
 			for ( a = 0; a < (uint8)2 ; a++ )
 			{
 				if ( MaxDiff > NAV_CLOSING_RADIUS )
@@ -324,9 +329,9 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 					NavP = Limit1(NavPosE[a], NAV_CLOSING_RADIUS) * NavAttitudeLimit;  
 					NavP = SRS32(NavP, NAV_CLOSING_RADIUS_SHIFT); // shift is the effective closing radius in GPS units
 				}
-
+	
 				#ifdef USE_BACK_INT_LIMIT
-
+	
 					NavI = NavIntE[a];
 					if ( NavNotSaturated[a] )
 					{	
@@ -336,32 +341,32 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 					}
 					else
 						DecayX(NavIntE[a],1);
-
+	
 				#else
-
+	
 					NavI = NavIntE[a];
 					NavI += SRS32(NavP * (int16)P[NavKi], 4);
 					NavI =  Limit1(NavI,(int16)P[NavIntLimit]);
 					NavIntE[a] = NavI;
-
+	
 				#endif // USE_BACK_INT_LIMIT
-				
+					
 				Diff = NavPosE[a] - NavPosEp[a];
 				NavVel = MediumFilter((int32)NavVelp[a], Diff);
 				NavD = SRS32(NavVel * (int16)P[NavKd], 6);
 				NavD = Limit1(NavD, NavAttitudeLimit);
-
+	
 				NewCorr = NavP + NavI - NavD;
-
-			  	NewCorr = SlewLimit(NavCorrp[a], NewCorr, NavSlewLimit);
-			  	NavCorr[a] = Limit1(NewCorr, NavAttitudeLimit);
+	
+				 NewCorr = SlewLimit(NavCorrp[a], NewCorr, NavSlewLimit);
+				  NavCorr[a] = Limit1(NewCorr, NavAttitudeLimit);
 				NavNotSaturated[a] = NavCorr[a] == NewCorr;				
-
-			  	NavCorrp[a] = NavCorr[a];
+	
+				 	NavCorrp[a] = NavCorr[a];
 				NavPosEp[a] = NavPosE[a];
 				NavVelp[a] = NavVel;
 			}
-	
+		
 			// Yaw
 			if ( F.AllowTurnToWP && !F.WayPointAchieved )
 			{
@@ -372,11 +377,11 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 			}
 			else
 				NavCorr[Yaw] = 0;
-
+	
 		#endif // NAV_WING
 	}	
 	else
-    #endif // !TESTING
+	#endif // !TESTING
 		DecayNavCorr(6);
 
 	F.NavComputed = true;
@@ -394,7 +399,7 @@ void DoNavigation(void)
 	{
 		F.LostModel = F.ForceFailsafe = false;
 
-		if ( !F.NavComputed )
+		if (( !F.NavComputed ) && SpareSlotTime )
 			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
 			case Touchdown:
 				Navigate(OriginLatitude, OriginLongitude);
@@ -532,7 +537,6 @@ void DoNavigation(void)
 	#endif // ENABLE_STICK_CHANGE_FAILSAFE
 		else 
 			DecayNavCorr(6);
-
 
 	F.NewCommands = false;	// Navigate modifies Desired Roll, Pitch and Yaw values.
 

@@ -30,6 +30,7 @@ Flags 	F;
 uint8 p;
 #pragma udata access statevars
 int8 near State, NavState, FailState;
+boolean near SpareSlotTime;
 #pragma udata
 
 void main(void)
@@ -82,8 +83,10 @@ void main(void)
 		{ // no command processing while the Quadrocopter is armed
 	
 			ReceivingGPSOnly(true); 
+			SpareSlotTime = true;
 
 			UpdateGPS();
+		
 			if ( F.RCNewValues )
 				UpdateControls();
 
@@ -122,6 +125,7 @@ void main(void)
 					break;
 				case Landed:
 					DesiredThrottle = 0;
+					GetBaroAltitude();
 					if ( mSClock() > mS[ArmedTimeout] )
 						DoShutdown();
 					else	
@@ -152,6 +156,7 @@ void main(void)
 						}						
 					break;
 				case Landing:
+					GetBaroAltitude();
 					if ( StickThrottle > IdleThrottle )
 					{
 						DesiredThrottle = 0;
@@ -173,18 +178,20 @@ void main(void)
 					break;
 				case Shutdown:
 					// wait until arming switch is cycled
+					GetBaroAltitude();
 					NavCorr[Roll] = NavCorr[Pitch] = 0;
 					F.LostModel = true;
 					DesiredRoll = DesiredPitch = DesiredYaw = AltComp = 0;
 					StopMotors();
 					break;
 				case InFlight:
-					F.MotorsArmed = true;		
+					F.MotorsArmed = true;
+		
 					LEDChaser();
 
 					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
  
-					DoNavigation();
+					DoNavigation();				
 					AltitudeHold();
 
 					if ( StickThrottle < IdleThrottle )
@@ -206,24 +213,27 @@ void main(void)
 
 			if ( F.NormalFlightMode )
 				GetHeading();
-			
+	
+			#ifndef TESTING
+				if ( F.AccelerometersEnabled )
+			#endif // !TESTING
+					CheckTelemetry();
+
+			CheckBatteries();
+			CheckAlarms();
+	
 			while ( WaitingForSync ) {};
-			INTCONbits.TMR0IE = false;
+			DisableInterrupts; // protect 1mS clock
 			WaitingForSync = true;
 			if ( F.NormalFlightMode )		
 				PIDUpdate = MilliSec + PID_CYCLE_MS;
 			else
 				PIDUpdate = MilliSec + MIN_PID_CYCLE_MS;
-			INTCONbits.TMR0IE = true;
+			EnableInterrupts;
 
 			GetGyroValues();
 			DoControl();
-			OutSignals();
-
-			#ifndef TESTING
-			if ( F.NormalFlightMode ) 
-			#endif // !TESTING
-				CheckTelemetry();
+			OutSignals();		
 
 		} // flight while armed
 	}

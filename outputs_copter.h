@@ -49,21 +49,17 @@ void OutSignals(void)
 	MixAndLimitMotors();
 	MixAndLimitCam();
 
-	DoHouseKeeping();
-
 	#else
 
 	// Save TMR0 and reset
 	DisableInterrupts;
-	INTCONbits.TMR0IE = false;
 	SaveClockmS = MilliSec;
 	GetTimer0;
 	SaveTimer0.u16 = Timer0.u16;
 	FastWriteTimer0(TMR0_1MS);
-	INTCONbits.TMR0IF = false;
 
 	// dead timing code to reduce pre-pulse to 1mS - caution
-	Delay10TCYx(12); // 2.5uS per click
+	Delay10TCYx(12); // 2.5uS per click 
 
 	EnableInterrupts;
 
@@ -86,8 +82,6 @@ void OutSignals(void)
 		PWM3 = PWMLimit(PWM[K4]);	
 		PWM4 = PWMLimit(PWM[K5]);
 		PWM5 = PWMLimit(PWM[K6]);
-
-		DoHouseKeeping();
 
 		SyncToTimer0AndDisableInterrupts();
 
@@ -141,9 +135,9 @@ OS009:
 OS010:
 		_endasm
 
-		Delay1TCY(); 
-		Delay1TCY(); 
-		Delay1TCY();  
+	//	Delay1TCY(); 
+	//	Delay1TCY(); 
+	//	Delay1TCY();  
 
 		_asm				
 		GOTO	OS005
@@ -180,8 +174,6 @@ OS006:
 		MixAndLimitCam();
 
 		DoI2CESCs();
-
-		DoHouseKeeping();
 	}
 
 	if ( ServoUpdate <= 0 )
@@ -238,7 +230,7 @@ OS002:
 		else
 			MilliSec = SaveClockmS;
 
-	INTCONbits.TMR0IE = true;
+//	INTCONbits.TMR0IE = true;
 	EnableInterrupts;
 
 	if ( ServoUpdate <=0 )

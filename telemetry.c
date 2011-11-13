@@ -22,7 +22,7 @@
 
 void SendPacketHeader(void);
 void SendPacketTrailer(void);
-void SendTelemetry(void);
+void CheckTelemetry(void);
 void SendCycle(void);
 void SendControl(void);
 void SendMinPacket(void);
@@ -39,23 +39,21 @@ uint8 UAVXCurrPacketTag;
 
 void CheckTelemetry(void) 
 {
-	#ifdef USE_SENSOR_TRACE // not used for testing - make space!
-
-	SensorTrace();
-
-	#else
-
-	if ( mSClock() > mS[TelemetryUpdate] )		
+	if ( ( mSClock() >= mS[TelemetryUpdate] ) && SpareSlotTime )
+	{				
 		switch ( P[TelemetryType] ) {
 		case UAVXTelemetry:
-			mS[TelemetryUpdate] = mSClock() + UAVX_TEL_INTERVAL_MS; 
+			SpareSlotTime = false;
+			mS[TelemetryUpdate] = mSClock() + UAVX_TEL_INTERVAL_MS;
 			SendCycle(); 	
 			break;
 		case UAVXMinTelemetry:
+			SpareSlotTime = false;
 			mS[TelemetryUpdate] = mSClock() + UAVX_MIN_TEL_INTERVAL_MS; 
 			SendMinPacket(); 	
 			break;
 		case UAVXControlTelemetry:
+			SpareSlotTime = false;
 			mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TEL_INTERVAL_MS; 
 			SendControlPacket(); 	
 			break;
@@ -63,58 +61,16 @@ void CheckTelemetry(void)
 			// abandoned
 			mS[TelemetryUpdate] = mSClock() + 0x7fffff;	
 			break;
-		case CustomTelemetry: 
+		case CustomTelemetry:
+			SpareSlotTime = false; 
 			mS[TelemetryUpdate] = mSClock() + CUSTOM_TEL_INTERVAL_MS;
 			SendCustom(); 
 			break;
 		case GPSTelemetry: break;
 		}
-	#endif // !USE_SENSOR_TRACE // not used for testing - make space! 
-} // CheckTelemetry
-
-#ifdef USE_SENSOR_TRACE
-
-void SensorTrace(void)
-{
-	if (( DesiredThrottle > 20 ) && ( mSClock() > mS[TelemetryUpdate] )) 
-	{
-		mS[TelemetryUpdate] = mSClock() + UAVX_CONTROL_TEL_INTERVAL_MS;
-
-		F.TxToBuffer = false; // direct to USART
-
-		TxValH16(Heading); TxChar(';'); //1
-
-		TxValH16(BaroRelAltitude); TxChar(';'); //2
-		TxValH16(RangefinderAltitude); TxChar(';'); //3
-		TxValH16(0); TxChar(';'); //4
-			
-		TxValH16(DesiredThrottle); TxChar(';'); //5
-		TxValH16(DesiredRoll); TxChar(';'); //6
-		TxValH16(DesiredPitch); TxChar(';'); //7
-		TxValH16(DesiredYaw); TxChar(';'); //8
-
-		TxValH16(Rate[Roll]); TxChar(';'); //9
-		TxValH16(Rate[Pitch]); TxChar(';'); //10
-		TxValH16(Rate[Yaw]); TxChar(';'); //11
-
-		TxValH16(Angle[Roll]); TxChar(';'); //12
-		TxValH16(Angle[Pitch]); TxChar(';'); //13
-		TxValH16(Angle[Yaw]); TxChar(';'); //14
-
-		TxValH16(Acc[LR]); TxChar(';'); //15
-		TxValH16(Acc[FB]); TxChar(';'); //16
-		TxValH16(Acc[DU]); TxChar(';'); //17
-
-		TxValH16(0); TxChar(';'); //18
-		TxValH16(0); TxChar(';'); //19
-		TxValH16(0); TxChar(';'); //20
-		TxValH16(AltComp); TxChar(';'); //21
-		TxNextLine();
 	}
+} // DoTelemetry
 
-} // SensorTrace
-
-#else
 
 #define NAV_STATS_INTERLEAVE	10
 static int8 StatsNavAlternate = 0; 
@@ -152,13 +108,8 @@ void ShowAttitude(void) {
 	TxESCi16(DesiredPitch);
 	TxESCi16(DesiredYaw);
 
-#ifdef DEBUG_GYROS
-	TxESCi16(RawAngle[Roll]);
-	TxESCi16(RawAngle[Pitch]);
-#else
 	TxESCi16(Rate[Roll]);
 	TxESCi16(Rate[Pitch]);
-#endif // DEBUG_GYROS
 
 	TxESCi16(Rate[Yaw]);
 
@@ -199,8 +150,7 @@ void SendFlightPacket(void) {
 	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 //	TxESCu8((uint8)Limit(PWM[b],0,255));
-		TxESCu8(PWM[b] & 255);
+	 	TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 
@@ -222,8 +172,7 @@ void SendControlPacket(void){
 	TxESCu8(UAVXAirframe);
 
 	for ( b = 0; b < 6; b++ ) // motor/servo channels
-	 //zzz	TxESCu8((uint8)Limit(PWM[b],0,255));
-TxESCu8(PWM[b] & 255);
+		TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 
@@ -360,7 +309,9 @@ void SendParameters(uint8 s) {
 	SendParamPacket(0, MAX_PARAMETERS);
 } // SendParameters
 
-void SendCycle(void) {// 800uS at 40MHz?
+void SendCycle(void) 
+{	// 
+	// 0.8mS at 40MHz
 	
 	switch ( UAVXCurrPacketTag ) {
 	case UAVXFlightPacketTag:
@@ -404,7 +355,6 @@ void SendCustom(void) {
 	F.TxToBuffer = false;
 } // SendCustom
 
-#endif // USE_SENSOR_TRACE
 
 
 

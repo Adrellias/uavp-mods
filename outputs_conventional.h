@@ -46,8 +46,6 @@ void OutSignals(void)
 	PWM4 = PWMLimit(PWM[K5]);
 	PWM5 = PWMLimit(PWM[K6]);
 
-	DoHouseKeeping();
-
 	#else
 
 	if ( --ServoUpdate <= 0 )
@@ -55,12 +53,10 @@ void OutSignals(void)
 		ServoUpdate = SERVO_INTERVAL;						
 		// Save TMR0 and reset
 		DisableInterrupts;
-		INTCONbits.TMR0IE = false;
 		SaveClockmS = MilliSec;
 		GetTimer0;
 		SaveTimer0.u16 = Timer0.u16;
 		FastWriteTimer0(TMR0_1MS);
-		INTCONbits.TMR0IF = false;
 
 		// dead timing code to reduce pre-pulse to 1mS - caution
 		Delay10TCYx(12); // 2.5uS per click
@@ -84,8 +80,6 @@ void OutSignals(void)
 		PWM3 = PWMLimit(PWM[K4]);	
 		PWM4 = PWMLimit(PWM[K5]);
 		PWM5 = PWMLimit(PWM[K6]);
-
-		DoHouseKeeping();
 
 		SyncToTimer0AndDisableInterrupts();
 		
@@ -173,7 +167,7 @@ OS002:
 		
 		MilliSec = SaveClockmS + 3;
 		
-		INTCONbits.TMR0IE = true;
+//		INTCONbits.TMR0IE = true;
 		EnableInterrupts;
 	}
 		
