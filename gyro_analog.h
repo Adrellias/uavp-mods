@@ -98,7 +98,7 @@ void GyroAnalogTest(void)
 	else
 		{ lv = 20; hv = 30;}
 	
-	v = ADC(ADCYawChan);
+	v = A[ADCYawChan];
 	TxString("Yaw:  \t");
 	CheckGyroFault(v, lv, hv);	
 	
