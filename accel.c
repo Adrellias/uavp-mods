@@ -258,15 +258,9 @@ void InitAccelerometers(void)
 		#endif // PREFER_LISL
 
 	if( F.AccelerationsValid )
-	{
-		LEDYellow_ON;
 		GetNeutralAccelerations();
-	}
 	else
-	{
-		LEDYellow_OFF;
 		F.AccFailure = true;
-	}
 } // InitAccelerometers
 
 //________________________________________________________________________________________________
@@ -655,9 +649,15 @@ void ReadLISLAcc()
 		A.c[4] = ReadLISLNext();
 		A.c[5] = ReadLISLNext();
 		SPI_CS = DSEL_LISL;	// end transmission
-		AccADC[LR] = A.i16[X];
-		AccADC[DU] = A.i16[Y];
-		AccADC[FB] = A.i16[Z];
+		#ifdef FLAT_LISL_ACC
+			AccADC[LR] = A.i16[X];
+			AccADC[FB] = -A.i16[Y];
+			AccADC[DU] = A.i16[Z];
+		#else
+			AccADC[LR] = A.i16[X];
+			AccADC[DU] = A.i16[Y];
+			AccADC[FB] = A.i16[Z];
+		#endif //FLAT_LISL_ACC
 	}
 	else
 	{

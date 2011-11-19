@@ -42,12 +42,6 @@ boolean I2CResponse(uint8);
 // 16MHz 0.25uS/Cycle
 // 40MHz 0.1uS/Cycle
 
-#ifdef CLOCK_16MHZ
-	#define	I2C_DELAY_5US		Delay10TCY();Delay10TCY()	
-#else // CLOCK_40MHZ
-	#define	I2C_DELAY_5US		Delay10TCYx(5)	
-#endif // CLOCK_16MHZ
-
 #ifdef UAVX_HW
 	#define I2C_SDA_SW			PORTCbits.RC4
 	#define I2C_DIO_SW			TRISCbits.TRISC4
@@ -74,7 +68,7 @@ boolean I2CWaitClkHi(void)
 {
 	static uint8 s;
 
-	Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY(); // tSU:DAT + call
+	Delay1TCY();Delay1TCY();//Delay1TCY();Delay1TCY(); // tSU:DAT + call
 	I2C_CLK_FLOAT;		// set SCL to input, output a high
 	s = 0;
 	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 16MHz
@@ -106,7 +100,7 @@ void I2CStop(void)
 	Delay1TCY();Delay1TCY();Delay1TCY(); // tsu:STO
 	I2C_DATA_FLOAT;
 
-	Delay10TCYx(13); // TBuf
+	Delay10TCYx(2); // TBuf
 
 } // I2CStop 
 
@@ -300,6 +294,7 @@ boolean ESCWaitClkHi(void)
 {
 	static uint8 s;
 
+	Delay1TCY();Delay1TCY();Delay1TCY(); // TSU:DAT + Call
 	ESC_CLK_FLOAT;
 	s = 1;						
 	while( !ESC_SCL )
@@ -315,7 +310,7 @@ void ESCI2CStart(void)
 	ESC_DATA_FLOAT;
 	r = ESCWaitClkHi();
 	ESC_DATA_LOW;
-	I2C_DELAY_5US;		
+	Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY(); // tHD:STA		
 	ESC_CLK_LOW;				
 } // ESCI2CStart
 
@@ -323,9 +318,10 @@ void ESCI2CStop(void)
 {
 	ESC_DATA_LOW;
 	ESCWaitClkHi();
+	Delay1TCY();Delay1TCY();Delay1TCY(); // tsu:STO
 	ESC_DATA_FLOAT;
 
-    I2C_DELAY_5US;
+    Delay10TCYx(2); // TBuf
 
 } // ESCI2CStop
 

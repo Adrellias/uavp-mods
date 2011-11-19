@@ -20,6 +20,7 @@
 
 #include "uavx.h"
 
+void LightsAndSirens(void);
 void InitPortsAndUSART(void);
 void InitMisc(void);
 void Delay1mS(int16);
@@ -36,6 +37,83 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 int32 BatteryChargeADC, BatteryCurrent;
+
+int8 RCStart = RC_INIT_FRAMES;
+boolean	FirstPass;
+
+void LightsAndSirens(void)
+{
+	static int24 Ch5Timeout;
+
+	LEDYellow_TOG;
+	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
+
+	Beeper_OFF;
+	Ch5Timeout = mSClock() + 500; // mS.
+	do
+	{
+		SpareSlotTime = true; // for "tests"
+		ProcessCommand();
+		GetHeading();
+		GetBaroAltitude();
+		if( F.Signal )
+		{
+			LEDGreen_ON;
+			if( F.RCNewValues )
+			{
+				UpdateControls();
+				if ( --RCStart == 0 ) // wait until RC filters etc. have settled
+				{
+					UpdateParamSetChoice();
+					MixAndLimitCam();
+					RCStart = 1;
+				}
+				InitialThrottle = StickThrottle;
+				StickThrottle = DesiredThrottle = 0; 
+				OutSignals(); // synced to New RC signals
+				if( mSClock() > (uint24)Ch5Timeout )
+				{
+					if ( F.Ch5Active || !F.ParametersValid )
+					{
+						Beeper_TOG;					
+						LEDRed_TOG;
+					}
+					else
+						if ( Armed )
+							LEDRed_TOG;
+							
+					Ch5Timeout += 500;
+				}	
+			}
+		}
+		else
+		{
+			LEDRed_ON;
+			LEDGreen_OFF;
+		}	
+		ReadParametersEE();	
+	}
+	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
+		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
+			
+	FirstPass = false;
+
+	Beeper_OFF;
+	LEDRed_OFF;
+	LEDGreen_ON;
+
+	if ( F.AccelerationsValid )
+		LEDYellow_ON;
+	else
+		LEDYellow_OFF;
+
+	mS[LastBattery] = mSClock();
+	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
+	PIDUpdate = mSClock() + PID_CYCLE_MS;
+	F.LostModel = false;
+	FailState = MonitoringRx;
+
+} // LightsAndSirens
 
 void InitPortsAndUSART(void)
 {
@@ -81,6 +159,9 @@ void InitMisc(void)
 	#ifdef SIMULATE
 	F.Simulation = true;
 	#endif // SIMULATE
+
+//	YawFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
+//	HeadingFilterA	= ( COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_COMPASS_HZ*8 ) + COMPASS_TIME_MS );
 
 	BatteryChargeADC = 0;
 
@@ -247,6 +328,8 @@ int32 SlewLimit(int32 Old, int32 New, int32 Slew)
   return(( New < Low ) ? Low : (( New > High ) ? High : New));
 } // SlewLimit
 
+/* abandon filters in favour of simple weighted averaging on last two samples
+
 void LPFilter16(int16* i, i32u* iF, int16 FilterA)
 {
 	static i24u Temp;
@@ -269,3 +352,7 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA)
 
 } // LPFilter24
 
+LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
+
+*/
+

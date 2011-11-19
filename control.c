@@ -30,7 +30,6 @@ void GainSchedule(void);
 void DoControl(void);
 
 void CheckThrottleMoved(void);
-void LightsAndSirens(void);
 void InitControl(void);
 
 #pragma udata access motorvars	
@@ -56,7 +55,6 @@ int16 AccAltComp, AltComp, BaroROC, BaroROCp, RangefinderROC, ROC, ROCIntE, MinR
 
 int32 GS;
 
-boolean	FirstPass;
 int8 BeepTick = 0;
 
 void DoAltitudeHold(void)
@@ -188,16 +186,20 @@ void DoAttitudeAngle(uint8 a, uint8 c)
 
 void DoYawRate(void)
 { 	// Yaw gyro compensation using compass
-	static int16 Temp, HE;
+	static int16 HE;
 
 	if ( F.CompassValid && F.NormalFlightMode )
 	{
 		// + CCW
-		Temp = DesiredYaw - Trim[Yaw];
-		if ( Abs(Temp) > COMPASS_MIDDLE ) // acquire new heading
+		if ( Hold[Yaw] > COMPASS_MIDDLE ) // acquire new heading
+		{
+			RawYawRateP = Rate[Yaw];
 			DesiredHeading = Heading;
+		}
 		else
 		{
+			Rate[Yaw] = YawFilter(RawYawRateP, Rate[Yaw]);
+			RawYawRateP = Rate[Yaw];
 			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
@@ -220,16 +222,8 @@ void DoOrientationTransform(void)
 {
 	static i24u Temp;
 
-	if ( F.UsingPolar )
-	{
-		OSO = OSin[PolarOrientation];
-		OCO = OCos[PolarOrientation];
-	}
-	else
-	{
-		OSO = OSin[Orientation];
-		OCO = OCos[Orientation];
-	}
+	OSO = OSin[Orientation];
+	OCO = OCos[Orientation];
 
 	if ( !F.NavigationActive )
 		NavCorr[Roll] = NavCorr[Pitch] = NavCorr[Yaw] = 0;
@@ -285,7 +279,7 @@ void GainSchedule(void)
 
 void DoControl(void)
 {
-	static int16 Temp;
+	static int32 Temp;
 	static i32u Temp32;
 	static i24u Temp24;
 
@@ -296,239 +290,149 @@ void DoControl(void)
 
 	#ifdef SIMULATE
 
-	FakeDesiredRoll = ControlRoll + NavCorr[Roll];
-	FakeDesiredPitch = ControlPitch + NavCorr[Pitch];
-	FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
-	Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 32, 16);
-	Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 32, 16);
-	Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 8);
-	Rl = -FakeDesiredRoll;
-	Pl = -FakeDesiredPitch;
-	Yl = -DesiredYaw;
-
-	CameraRollAngle = Angle[Roll];
-	CameraPitchAngle = Angle[Pitch];
+		FakeDesiredRoll = ControlRoll + NavCorr[Roll];
+		FakeDesiredPitch = ControlPitch + NavCorr[Pitch];
+		FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
+		Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 32, 16);
+		Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 32, 16);
+		Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 8);
+		Rl = -FakeDesiredRoll;
+		Pl = -FakeDesiredPitch;
+		Yl = -DesiredYaw;
+	
+		CameraRollAngle = Angle[Roll];
+		CameraPitchAngle = Angle[Pitch];
 	 
     #else
 
-	#ifdef EXPERIMENTAL		// define is set in uavx.h
+		DoAttitudeAngle(Roll, LR);
+		DoAttitudeAngle(Pitch, FB);
 
-//	#define P_RATE
-
-	// Removed GS modifiers
-
-	// Roll
+		#define D_LIMIT 32
+	
+		#ifdef EXPERIMENTAL		// define is set in uavx.h
+	
+			#include "exp_control.h"
+	
+		#else // DEFAULT
 				
-	DoAttitudeAngle(Roll, LR);
+			if ( F.UsingAltControl )
+			{ 	// Angle - No gain scheduling for now 
 
-	#ifdef P_RATE
+				// Roll
+				RateE[Roll] = SRS32(((ControlRoll + NavCorr[Roll]) * RC_STICK_ANGLE_SCALE - Angle[Roll]) * P[RollKp], 5) - Rate[Roll];
 
-	// My P rate control testing if there is an OL pole s = 0 in OLTF 8/7/2011
-	// The idea is keep Greg's code only changing ControlRoll divided by 16 then multiplied Kp
-	Rl = SRS32(((int32)Rate[Roll] + ControlRoll + NavCorr[Roll]) * P[RollKp], 4); 
+				Rl =  SRS32(RateE[Roll] * P[RollKi], 7);
 
-    #else // PI_RATE
+				#ifdef CLOCK_16MHZ
+			 		Temp = SRS32((int32)(RateE[Roll] - RateEp[Roll]) * P[RollKd], 1);
+				#else
+					Temp = (int32)(Rate[Roll] - RateEp[Roll]) * P[RollKd];
+				#endif // CLOCK_16MHZ
+				Temp = Limit1(Temp, D_LIMIT);
+				Rl -= Temp;
+				Rl = SRS16(Rl, 2);
 
-	// My PI rate control 11/7/2011
+				// Pitch
+
+				// Roll
+				RateE[Pitch] = SRS32(((ControlPitch + NavCorr[Pitch]) * RC_STICK_ANGLE_SCALE - Angle[Pitch]) * P[PitchKp], 5) - Rate[Pitch];
+
+				Pl =  SRS32(RateE[Pitch] * P[PitchKi], 7);
+
+				#ifdef CLOCK_16MHZ
+			 		Temp = SRS32((int32)(RateE[Pitch] - RateEp[Pitch]) * P[Pitch], 1);
+				#else
+					Temp = (int32)(Rate[Pitch] - RateEp[Pitch]) * P[PitchKd];
+				#endif // CLOCK_16MHZ
+				Temp = Limit1(Temp, D_LIMIT);
+				Pl -= Temp;
+				Pl = SRS16(Pl, 2);
+			}
+			else
+			{	// Rate - Wolf's UAVP Original
+
+				GainSchedule();
+
+				// Roll
+
+				Rl  = SRS32((int32)Rate[Roll] * P[RollKp], 5);			
+				#ifdef CLOCK_16MHZ
+			 		Temp = SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
+				#else
+					Temp = SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 4);
+				#endif // CLOCK_16MHZ
+				Temp = Limit1(Temp, D_LIMIT);
+				Rl -= Temp;	
+		
+				Temp = SRS32((int32)Angle[Roll] * P[RollKi], 9);
+				Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
+			
+				Temp24.i24 = (int24)Rl * GS;
+				Rl = Temp24.i2_1;
+
+				// Pitch
+			
+				Rl -= (ControlRoll + NavCorr[Roll]);
+
+				Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp], 5);
+				#ifdef CLOCK_16MHZ
+			 		Temp = (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
+				#else
+					Temp = (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 4);
+				#endif // CLOCK_16MHZ
+				Temp = Limit1(Temp, D_LIMIT);
+				Pl -= Temp;	
+			
+				Temp = SRS32((int32)Angle[Pitch] * P[PitchKi], 9);
+				Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
+
+				Temp24.i24 = (int24)Pl * GS;
+				Pl = Temp24.i2_1;
+			
+				Pl -= ( ControlPitch + NavCorr[Pitch]);
+			}
+
+			Ratep[Roll] = Rate[Roll];
+			Ratep[Pitch] = Rate[Pitch];
 	
-	RateE[Roll]  = Rate[Roll] + ControlRoll + NavCorr[Roll] ; // may need relative scaling for stick and gyro rate?
-	Rl = SRS32((int32)RateE[Roll] * P[RollKp], 4); 
-	#ifdef CLOCK_16MHZ 
-		Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 4);
-	#else
-		Temp = SRS32(((int32)RateE[Roll] + RateEp[Roll]) * P[RollKi], 3);
-	#endif // CLOCK_16MHZ	
-	Rl += Limit1(Temp, (int16)P[RollIntLimit]);
-	RateEp[Roll] = RateE[Roll];
+		#endif // EXPERIMENTAL
 	
-	#endif // PI_RATE
-
-	// Pitch
-
-	DoAttitudeAngle(Pitch, FB);
-
-	#ifdef P_RATE
-
-    // My P rate control testing if there is an OL pole s = 0 in OLTF 8/7/2011
-	// The idea is keep Greg's code only changing Controlpitch divided by 16 then multiplied Kp
-	Pl = SRS32(((int32)Rate[Pitch] + ControlRoll + NavCorr[Pitch]) * P[PitchKp], 4);
+		// Yaw - rate control
 	
-	#else // PI_RATE
-
-	// My PI rate control 11/7/2011
+		#ifdef NAV_WING
 	
-	RateE[Pitch] = Rate[Pitch] + ControlPitch + NavCorr[Pitch]; 
-	Pl = SRS32(RateE[Pitch] * P[PitchKp], 4);
-	#ifdef CLOCK_16MHZ 
-		Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 4);
-	#else
-		Temp = SRS32(((int32)RateE[Pitch] + RateEp[Pitch]) * P[PitchKi], 3);
-	#endif // CLOCK_16MHZ
+			Yl = DesiredYaw + NavCorr[Yaw];
 	
-	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
-	RateEp[Pitch] = RateE[Pitch];
-	
-	#endif // PI_RATE
-
-	#else // DEFAULT
-
-	GainSchedule(); 
-
-	// Roll
-				
-	DoAttitudeAngle(Roll, LR);
-
-	Rl  = SRS32((int32)Rate[Roll] * P[RollKp], 5);
-
-	#ifdef CLOCK_16MHZ
- 		Rl -= SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
-	#else
-		Rl -= SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 4);
-	#endif // CLOCK_16MHZ
-
-	Temp = SRS32((int32)Angle[Roll] * P[RollKi], 9);
-	Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
-
-	Temp24.i24 = (int24)Rl * GS;
-	Rl = Temp24.i2_1;
-
-	Rl -= (ControlRoll + NavCorr[Roll]);
-
-	Ratep[Roll] = Rate[Roll];
-
-	// Pitch
-
-	DoAttitudeAngle(Pitch, FB);
-
-	Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp], 5);
-	#ifdef CLOCK_16MHZ
- 		Pl -= (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
-	#else
-		Pl -= (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 4);
-	#endif // CLOCK_16MHZ
-
-	Temp = SRS32((int32)Angle[Pitch] * P[PitchKi], 9);
-	Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
-
-	Temp24.i24 = (int24)Pl * GS;
-	Pl = Temp24.i2_1;
-
-	Pl -= ( ControlPitch + NavCorr[Pitch]);
-
-	Ratep[Pitch] = Rate[Pitch];
-
-	#endif // EXPERIMENTAL
-
-	// Yaw - rate control
-
-	#ifdef NAV_WING
-
-		Yl = DesiredYaw + NavCorr[Yaw];
-
-	#else
-	
-		DoYawRate();
-	
-		RateE[Yaw] = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
-		Yl  = SRS16( RateE[Yaw] * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
-	
-		Ratep[Yaw] = Rate[Yaw];
-	
-		#ifdef TRICOPTER
-			Yl = SlewLimit(Ylp, Yl, 2);
-			Ylp = Yl;
-			Yl = Limit1(Yl,(int16)P[YawLimit]);
 		#else
-			Yl = Limit1(Yl, (int16)P[YawLimit]);
-		#endif // TRICOPTER
-
-	#endif // NAV_WING
-
-	Temp24.i24 = Angle[Pitch] * OSO + Angle[Roll] * OCO;
-	CameraRollAngle = Temp24.i2_1;
-	Temp24.i24 = Angle[Pitch] * OCO - Angle[Roll] * OSO;
-	CameraPitchAngle = Temp24.i2_1;
+		
+			DoYawRate();
+		
+			RateE[Yaw] = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
+			Yl  = SRS16( RateE[Yaw] * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
+		
+			Ratep[Yaw] = Rate[Yaw];
+		
+			#ifdef TRICOPTER
+				Yl = SlewLimit(Ylp, Yl, 2);
+				Ylp = Yl;
+				Yl = Limit1(Yl,(int16)P[YawLimit]);
+			#else
+				Yl = Limit1(Yl, (int16)P[YawLimit]);
+			#endif // TRICOPTER
+	
+		#endif // NAV_WING
+	
+		Temp24.i24 = Angle[Pitch] * OSO + Angle[Roll] * OCO;
+		CameraRollAngle = Temp24.i2_1;
+		Temp24.i24 = Angle[Pitch] * OCO - Angle[Roll] * OSO;
+		CameraPitchAngle = Temp24.i2_1;
 
 	#endif // SIMULATE	
 
 	F.NearLevel = Max(Abs(Angle[Roll]), Abs(Angle[Pitch])) < NAV_RTH_LOCKOUT;
 
 } // DoControl
-
-static int8 RCStart = RC_INIT_FRAMES;
-
-void LightsAndSirens(void)
-{
-	static int24 Ch5Timeout;
-
-	LEDYellow_TOG;
-	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
-
-	Beeper_OFF;
-	Ch5Timeout = mSClock() + 500; // mS.
-	do
-	{
-		SpareSlotTime = true; // for "tests"
-		ProcessCommand();
-		if( F.Signal )
-		{
-			LEDGreen_ON;
-			if( F.RCNewValues )
-			{
-				UpdateControls();
-				if ( --RCStart == 0 ) // wait until RC filters etc. have settled
-				{
-					UpdateParamSetChoice();
-					MixAndLimitCam();
-					RCStart = 1;
-				}
-				GetBaroAltitude();
-				InitialThrottle = StickThrottle;
-				StickThrottle = DesiredThrottle = 0; 
-				OutSignals(); // synced to New RC signals
-				if( mSClock() > (uint24)Ch5Timeout )
-				{
-					if ( F.Ch5Active || !F.ParametersValid )
-					{
-						Beeper_TOG;					
-						LEDRed_TOG;
-					}
-					else
-						if ( Armed )
-							LEDRed_TOG;
-							
-					Ch5Timeout += 500;
-				}	
-			}
-		}
-		else
-		{
-			LEDRed_ON;
-			LEDGreen_OFF;
-		}	
-		ReadParametersEE();	
-	}
-	while( (!F.Signal) || (Armed && FirstPass) || F.Ch5Active || F.GyroFailure || 
-		( InitialThrottle >= RC_THRES_START ) || (!F.ParametersValid)  );
-			
-	FirstPass = false;
-
-	Beeper_OFF;
-	LEDRed_OFF;
-	LEDGreen_ON;
-
-	if ( F.NormalFlightMode )
-		LEDYellow_ON;
-	else
-		LEDYellow_OFF;
-
-	mS[LastBattery] = mSClock();
-	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
-	PIDUpdate = mSClock() + PID_CYCLE_MS;
-	F.LostModel = false;
-	FailState = MonitoringRx;
-
-} // LightsAndSirens
 
 void InitControl(void)
 {

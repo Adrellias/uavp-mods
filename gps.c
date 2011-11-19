@@ -455,7 +455,7 @@ void ParseGPSSentence(void)
 
 void UpdateGPS(void)
 {
-	if ( SpareSlotTime )
+	if ( SpareSlotTime && F.NormalFlightMode )
 		if ( F.PacketReceived )
 		{
 			SpareSlotTime = false;

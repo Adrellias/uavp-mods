@@ -30,8 +30,6 @@ void BatteryTest(void);
 
 void DoLEDs(void)
 {
-	if ( F.AccelerationsValid  ) LEDYellow_ON; else LEDYellow_OFF;
-
 	if( F.Signal )
 	{
 		LEDRed_OFF;

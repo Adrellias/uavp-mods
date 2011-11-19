@@ -34,6 +34,7 @@ int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
 int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 int16 ThrLow, ThrHigh, ThrNeutral;
+int16 Hold[3];
 
 void DoRxPolarity(void)
 {
@@ -167,7 +168,6 @@ void CheckSticksHaveChanged(void)
 
 void UpdateControls(void)
 {
-	static int16 HoldRoll, HoldPitch, RollPitchScale;
 	static boolean NewCh5Active;
 
 	F.RCNewValues = false;
@@ -250,13 +250,14 @@ void UpdateControls(void)
 	DesiredPitch = RC[PitchRC] - RC_NEUTRAL;		
 	DesiredYaw = RC[YawRC] - RC_NEUTRAL;
 
-	AdaptiveYawFilterA(); // increase cutoff frquency with increased yaw stick
 						
-	HoldRoll = DesiredRoll - Trim[Roll];
-	HoldRoll = Abs(HoldRoll);
-	HoldPitch = DesiredPitch - Trim[Pitch];
-	HoldPitch = Abs(HoldPitch);
-	CurrMaxRollPitch = Max(HoldRoll, HoldPitch);
+	Hold[Roll] = DesiredRoll - Trim[Roll];
+	Hold[Roll] = Abs(Hold[Roll]);
+	Hold[Pitch] = DesiredPitch - Trim[Pitch];
+	Hold[Pitch] = Abs(Hold[Pitch]);
+	Hold[Yaw] = DesiredYaw - Trim[Yaw];
+	Hold[Yaw] = Abs(Hold[Yaw]);
+	CurrMaxRollPitch = Max(Hold[Roll], Hold[Pitch]);
 		
 	if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
 		if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )

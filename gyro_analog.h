@@ -40,7 +40,6 @@ void GetAnalogGyroValues(void)
 void InitAnalogGyros(void)
 {
 	// nothing to be done for analog gyros - could check nominal midpoints?
-	YawRateF.i32 = 0;
 	F.GyroFailure = false;
 } // InitGyros
 

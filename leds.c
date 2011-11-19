@@ -70,7 +70,7 @@ void SendLEDs(void) // 39.3 uS @ 40MHz
 {
 	static int8	i, s;
 
-	if ( F.AccelerometersEnabled && ( LEDShadow != LEDShadowp ))
+	if ( LEDShadow != LEDShadowp )
 	{
 		i = LEDShadow;
 		SPI_CS = DSEL_LISL;	
@@ -119,10 +119,10 @@ void LEDChaser(void)
 //	#define LED_NO 		(uint8)2	// just AUX LEDs
 	#define LED_NO		(uint8)6	// all LEDs
 
-	if ( mSClock() > mS[LEDChaserUpdate] ) 
+	if ( mSClock() > mS[LEDChaserUpdate] )
 	{
-		mS[LEDChaserUpdate] = mSClock() + 100;
-		if ( F.HoldingAlt ) // zzz && F.NearLevel )
+		mS[LEDChaserUpdate] = mSClock() + 60;
+		if ( F.HoldingAlt ) 
 		{
 			LEDShadow ^= LEDChase[LEDPattern];
 			if ( LEDPattern < LED_NO ) LEDPattern++; else LEDPattern = 0;
@@ -132,7 +132,10 @@ void LEDChaser(void)
 		else
 		{
 			RestoreLEDs();
-			SendLEDs();
+			if ( F.AccelerationsValid && F.AccelerometersEnabled )
+				LEDYellow_ON;
+			else
+				LEDYellow_OFF;
 		}			
 	}
 } // LEDChaser

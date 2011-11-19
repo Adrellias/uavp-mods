@@ -45,8 +45,7 @@ void InitHMC6352Compass(void);
 boolean HMC6352CompassActive(void);
 
 i24u 	Compass;
-i32u 	HeadingValF;
-int16 	MagHeading, Heading, DesiredHeading, CompassOffset;
+int16 	MagHeading, Heading, HeadingP, DesiredHeading, CompassOffset;
 int8 	CompassType;
 
 const rom char * CompassName[CompassUnknown+1] = {
@@ -109,18 +108,18 @@ void GetHeading(void)
 
 		Heading = Make2Pi(MagHeading - CompassOffset);
 	
-		HeadingChange = Abs( Heading - HeadingValF.iw1 );
-		if ( HeadingChange > MILLIPI )// wrap 0 -> TwoPI
-			HeadingValF.iw1 = Heading;
-		else
+		HeadingChange = Abs( Heading - HeadingP );
+		if (( HeadingChange <= MILLIPI ) && ( Hold[Yaw] <= COMPASS_MIDDLE ))			// wrap 0 -> TwoPI
+		{
 			if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
 			{
-			     Heading = SlewLimit(HeadingValF.iw1, Heading, COMPASS_MAX_SLEW);    
+			     Heading = SlewLimit(HeadingP, Heading, COMPASS_MAX_SLEW);    
 			     Stats[CompassFailS]++;
 			}
-	
-		LPFilter16(&Heading, &HeadingValF, YawFilterA*(COMPASS_TIME_MS/PID_CYCLE_MS));
-		Heading = Make2Pi(Heading);
+			Heading = HeadingFilter(HeadingP, Heading);
+			Heading = Make2Pi(Heading);
+		}
+		HeadingP = Heading;
 	}	
 
 } // GetHeading
@@ -141,8 +140,7 @@ void InitHeading(void)
 {
 
 	MagHeading = GetCompass();
-	Heading = Make2Pi( MagHeading - CompassOffset );
-	HeadingValF.iw1 = Heading; 
+	Heading = HeadingP = Make2Pi( MagHeading - CompassOffset );
 
 	#ifdef SIMULATE
 		FakeMagHeading = Heading = 0;
@@ -481,8 +479,8 @@ void DoTestHMC6352Compass(void)
 
 	TxNextLine();
 
-	for ( i = 0; i < (uint8)200; i++) // settle filter 
-    	GetHeading();
+//	for ( i = 0; i < (uint8)200; i++) // settle filter 
+//zzz    	GetHeading();
 
     TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);
     TxString(" deg (Compass)\r\n");

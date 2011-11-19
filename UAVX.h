@@ -3,6 +3,8 @@
 //#define PREFER_LISL				// use old legacy acc first
 //#define PREFER_HMC5843			// use magnetometer first
 
+//#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
+
 //#define INC_BMA180				// include BMA180 accelerometer code
 #define INC_ADXL345				// include ADXL345 accelerometer code
 #define INC_MPU6050				// include MPU6050 accelerometer/gyros
@@ -103,7 +105,8 @@
 
 // Filters
 
-#define FILT_YAW_HZ					10		// Hz must be less than 10Hz
+#define YawFilter		MediumFilter
+#define HeadingFilter	MediumFilter
 
 // Timeouts and Update Intervals
 
@@ -136,6 +139,7 @@
 #define	ALT_DESCENT_UPDATE_MS		1000L	// mS time between throttle reduction clicks in failsafe descent without baro	
 
 #define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
+#define RC_STICK_ANGLE_SCALE		32L		// convert stick to desired "angle"
 
 #define THROTTLE_LOW_DELAY_MS		1000L	// mS. that motor runs at idle after the throttle is closed
 #define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
@@ -194,7 +198,6 @@
 #define NAV_CEILING					120L	// 400 feet
 #define NAV_MAX_NEUTRAL_RADIUS		3L		// Metres also minimum closing radius
 #define NAV_MAX_RADIUS				99L		// Metres
-#define NAV_POLAR_RADIUS			10L		// Polar coordinates arm outside this distance from origin
 #define NAV_CLOSING_RADIUS_SHIFT	9		// Using shift to avoid division 
 #define NAV_CLOSING_RADIUS			((int32)1<<NAV_CLOSING_RADIUS_SHIFT) // GPS units ~54 per metre
 
@@ -359,7 +362,7 @@ typedef union {
 		uint16 w1;
 	};
 	struct {
-		int16 pad1;
+		int16 iw0;
 		int16 iw1;
 	};
 	
@@ -569,7 +572,7 @@ typedef union {
 		CompassValid:1,
 		CompassMissRead:1,
 
-		UsingPolarCoordinates:1,
+		UsingAltControl:1,
 		ReceivingGPS:1,
 		PacketReceived:1,
 		NavComputed:1,
@@ -587,7 +590,6 @@ typedef union {
 		RFInInches:1,
 		FirstArmed:1,
 		HaveGPRMC:1,
-		UsingPolar:1,
 
 		NormalFlightMode:1;	
 		};
@@ -676,7 +678,6 @@ extern void InitADC(void);
 extern void DoShutdown(void);
 extern void DecayNavCorr(uint8);
 extern void FailsafeHoldPosition(void);
-extern void DoPolarOrientation(void);
 extern void DoCompScaling(void);
 extern void Navigate(int32, int32);
 extern void SetDesiredAltitude(int24);
@@ -706,7 +707,7 @@ extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
 extern int16 WayHeading;
-extern int16 NavPolarRadius, NavClosingRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude; 
+extern int16 NavClosingRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude; 
 extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
@@ -836,8 +837,7 @@ extern void InitHMC6352Compass(void);
 extern boolean HMC6352CompassActive(void);
 
 extern i24u Compass;
-extern i32u HeadingValF;
-extern int16 MagHeading, Heading, DesiredHeading, CompassOffset;
+extern int16 MagHeading, Heading, HeadingP, DesiredHeading, CompassOffset;
 extern int8 CompassType;
 
 //______________________________________________________________________________________________
@@ -857,8 +857,6 @@ extern void DoYawRate(void);
 extern void DoOrientationTransform(void);
 extern void GainSchedule(void);
 extern void DoControl(void);
-
-extern void LightsAndSirens(void);
 extern void InitControl(void);
 
 extern near int16 Rl, Pl, Yl;
@@ -880,8 +878,6 @@ extern int24 DesiredAltitude, Altitude, Altitudep;
 extern int16 AccAltComp, AltComp, BaroROC, BaroROCp, RangefinderROC, ROC, ROCIntE, MinROCCmpS;
 
 extern int32 GS;
-
-extern boolean FirstPass;
 
 //______________________________________________________________________________________________
 
@@ -978,8 +974,7 @@ extern void InitInvenSenseGyro(void);
 extern boolean InvenSenseGyroActive(void);
 
 extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
-extern i32u YawRateF;
-extern int16 YawFilterA;
+extern int16 RawYawRateP;
 extern int8 GyroType;
 extern int16 G[];
 
@@ -1339,8 +1334,8 @@ enum Params { // MAX 64
 #define UseFailsafe 			5
 #define	UseFailsafeMask		0x20
 
-#define UsePolar 			6
-#define	UsePolarMask		0x40
+#define UseAltControl 			6
+#define	UseAltControlMask		0x40
 
 // bit 7 unusable in UAVPSet
 
@@ -1352,7 +1347,7 @@ extern const int8 DefaultParams[MAX_PARAMETERS][2];
 extern const uint8 ESCLimits [];
 
 extern int16 OSin[], OCos[];
-extern int8 Orientation, PolarOrientation;
+extern int8 Orientation;
 
 extern uint8 ParamSet;
 extern boolean ParametersChanged, SaveAllowTurnToWP;
@@ -1387,6 +1382,7 @@ extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
 extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
+extern int16 Hold[];
 
 //__________________________________________________________________________________________
 
@@ -1482,6 +1478,7 @@ extern i16u AmbientTemperature;
 
 #define BATTERY_UPDATE_MS	1000
 
+extern void LightsAndSirens(void);
 extern void InitPorts(void);
 extern void InitPortsAndUSART(void);
 extern void InitMisc(void);
@@ -1492,13 +1489,15 @@ extern void DoStartingBeepsWithOutput(uint8);
 extern int32 SlewLimit(int32, int32, int32);
 extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
-extern void LPFilter16(int16*, i32u*, int16);
-extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
+//extern void LPFilter16(int16*, i32u*, int16);
+//extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 extern void CheckBatteries(void);
 extern void CheckAlarms(void);
 
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;
+
+extern boolean FirstPass;
 
 //______________________________________________________________________________________________
 

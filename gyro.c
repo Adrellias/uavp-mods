@@ -22,7 +22,6 @@
 
 #include "uavx.h"
 
-void AdaptiveYawFilterA(void);
 void ShowGyroType(void);
 void CompensateRollPitchGyros(void);
 void GetGyroValues(void);
@@ -33,8 +32,7 @@ void GyroTest(void);
 void InitGyros(void);
 
 int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
-i32u YawRateF;
-int16 YawFilterA;
+int16 RawYawRateP;
 int8 GyroType;
 int16 G[3];
 
@@ -53,11 +51,6 @@ void ShowGyroType(void)
 {
 	TxString(GyroName[P[SensorHint]]);
 } // ShowGyroType
-
-void AdaptiveYawFilterA(void)
-{ 
-	YawFilterA = 5 + Abs(DesiredYaw);
-} // AdaptiveYawFilterA
 
 void GetGyroValues(void)
 {
@@ -119,8 +112,6 @@ void CalculateGyroRates(void)
 	Rate[Pitch] = PitchT.i2_1;
 	Rate[Yaw] = YawT.i2_1;
 
-    LPFilter16(&Rate[Yaw], &YawRateF, YawFilterA);
-
 } // CalculateGyroRates
 
 void ErectGyros(void)
@@ -148,6 +139,8 @@ void ErectGyros(void)
 		GyroNeutral[g] = (int16)SRS32( Av[g], 5); // InvenSense is signed
 		Rate[g] =  Ratep[g] = Angle[g] = RawAngle[g] = 0;
 	}
+
+	RawYawRateP = 0;
  
 	LEDRed_OFF;
 

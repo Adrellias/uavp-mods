@@ -24,7 +24,6 @@
 
 void DoShutdown(void);
 void DecayNavCorr(uint8);
-void DoPolarOrientation(void);
 void DoCompScaling(void);
 void Navigate(int32, int32);
 void SetDesiredAltitude(int24);
@@ -90,7 +89,7 @@ int32 	WPLatitude, WPLongitude;
 int24 	WPLoiter;
 int16	WayHeading;
 
-int16 	NavPolarRadius, NavProximityRadius, NavNeutralRadius, NavProximityAltitude;
+int16 	NavProximityRadius, NavNeutralRadius, NavProximityAltitude;
 uint24 	NavRTHTimeoutmS;
 
 int16 	NavSensitivity, RollPitchMax;
@@ -170,42 +169,6 @@ void AcquireHoldPosition(void)
 	NavState = HoldingStation;
 } // AcquireHoldPosition
 
-void DoPolarOrientation(void)
-{
-	static int32 EastDiff, NorthDiff, Radius;
-	static int16 DesiredRelativeHeading;
-	static int16 P;
-	static i32u Temp32;
-
-	#ifndef TESTING
-	F.UsingPolar = F.UsingPolarCoordinates && F.NavValid && ( NavState == HoldingStation );
-	
-	if ( F.UsingPolar ) // needs rethink - probably arm using RTH switch
-	{
-		Temp32.i32 = (OriginLongitude - GPSLongitude) * GPSLongitudeCorrection;
-		EastDiff = Temp32.i3_1;
-		NorthDiff = OriginLatitude - GPSLatitude;
-	
-		Radius = Max(Abs(EastDiff), Abs(NorthDiff));
-		if ( Radius > NavPolarRadius )
-		{ 
-			DesiredRelativeHeading = Make2Pi(int32atan2((int32)EastDiff, (int32)NorthDiff) - MILLIPI - Heading );
-		
-			P = ( (int24)DesiredRelativeHeading * 24L + HALFMILLIPI )/ MILLIPI + Orientation;
-		
-			while ( P > 24 ) P -=24;
-			while ( P < 0 ) P +=24;	
-		}
-		else
-			P = 0; 
-	}
-	else
-	#endif // !TESTING
-		P = 0;
-
-	PolarOrientation = P;
-	
-} // DoPolarOrientation
 
 void DoCompScaling(void)
 {
@@ -247,8 +210,6 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 	static int16 NewCorr;
 
 	SpareSlotTime = false;
-
-	DoPolarOrientation();
 	
 	EffNavSensitivity = NavSensitivity - NAV_SENS_THRESHOLD;
 	
@@ -758,8 +719,6 @@ void InitNavigation(void)
 	else
 		CurrWP = 1;
 	GetWayPointEE(0);
-
-	NavPolarRadius = ConvertMToGPS(NAV_POLAR_RADIUS);
 
 } // InitNavigation
 

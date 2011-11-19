@@ -54,7 +54,7 @@ int8 P[MAX_PARAMETERS];
 #pragma udata orient
 int16 OSin[48], OCos[48];
 #pragma udata
-int8 Orientation , PolarOrientation;
+int8 Orientation;
 uint8 UAVXAirframe;
 
 void ReadParametersEE(void)
@@ -67,7 +67,7 @@ void ReadParametersEE(void)
 
 		#ifdef CLOCK_40MHZ
 			#ifdef MULTICOPTER
-				F.NormalFlightMode = ParamSet == 1;
+				F.NormalFlightMode = ParamSet == (uint8)1;
 			#else
 				F.NormalFlightMode = true;
 			#endif
@@ -100,7 +100,7 @@ void ReadParametersEE(void)
 		}
 
 		F.UsingPositionHoldLock = ( (P[ConfigBits] & UsePositionHoldLockMask ) != 0);
-		F.UsingPolarCoordinates = ( (P[ConfigBits] & UsePolarMask ) != 0);
+		F.UsingAltControl = ( (P[ConfigBits] & UseAltControlMask ) != 0);
 
 		#ifdef SIMULATE
 			P[PercentCruiseThr] = 35;
