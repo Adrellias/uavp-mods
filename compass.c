@@ -93,9 +93,8 @@ void GetHeading(void)
 				
 				FakeMagHeading = Make2Pi((int16)FakeMagHeading);
 			}
-		}
 
-		MagHeading = FakeMagHeading;
+			MagHeading = FakeMagHeading;	
 
 		#else
 

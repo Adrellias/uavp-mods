@@ -315,7 +315,8 @@ void DoControl(void)
 			#include "exp_control.h"
 	
 		#else // DEFAULT
-				
+		
+		#ifndef TESTING		
 			if ( F.UsingAltControl )
 			{ 	// Angle - No gain scheduling for now 
 
@@ -350,6 +351,7 @@ void DoControl(void)
 				Pl = SRS16(Pl, 2);
 			}
 			else
+			#endif // !TESTING	
 			{	// Rate - Wolf's UAVP Original
 
 				GainSchedule();
