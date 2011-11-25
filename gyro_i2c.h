@@ -51,23 +51,23 @@ void BlockReadInvenSenseGyro(void)
 	else	
 		if ( P[SensorHint] == SFDOF9) 
 		{
-			GyroADC[Roll] = -G[X];
-			GyroADC[Pitch] = G[Y];
-			GyroADC[Yaw] = -G[Z];
+			A[Roll].GyroADC = G[X];
+			A[Pitch].GyroADC = -G[Y];
+			A[Yaw].GyroADC = -G[Z];
 		}
 		else
 			if ( P[SensorHint] == ITG3200Gyro )
 			{
-				GyroADC[Roll] = -G[X];
-				GyroADC[Pitch] = G[Y];
-				GyroADC[Yaw] = -G[Z];
+				A[Roll].GyroADC = G[X];
+				A[Pitch].GyroADC = -G[Y];
+				A[Yaw].GyroADC = -G[Z];
 			}
 			#ifdef INC_MPU6050
 			else
 			{ // MPU6050 I2C pins forward, components up
-				GyroADC[Roll] = -G[Y];
-				GyroADC[Pitch] = -G[X];
-				GyroADC[Yaw] = G[Z];
+				A[Roll].GyroADC = G[Y];
+				A[Pitch].GyroADC = G[X];
+				A[Yaw].GyroADC = G[Z];
 			}
 			#endif // INC_MPU6050
 

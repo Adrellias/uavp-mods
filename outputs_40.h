@@ -181,7 +181,7 @@ OS006:
 		MixAndLimitMotors();
 		MixAndLimitCam();
 	
-		DoI2CESCs(); // no camera servos for now - check how long this takes zzz
+		DoI2CESCs(); // no camera servos for now - check how long this takes
 	}
 	
 	#endif // SIMULATE | TESTING

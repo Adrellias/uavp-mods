@@ -59,11 +59,30 @@ uint8 UAVXAirframe;
 
 void ReadParametersEE(void)
 {
-	int8 i,b;
+	static int8 i,b;
 	static uint16 a;
 
 	if ( ParametersChanged )
 	{   // overkill if only a single parameter has changed but is not in flight loop
+
+		A[Roll].Kp = P[RollKp];
+		A[Roll].Ki = P[RollKi];
+		A[Roll].Kd = P[RollKd];
+		A[Roll].IntLimit = P[RollIntLimit];
+		A[Roll].AccOffset = (int16)P[MiddleLR];
+		
+		A[Pitch].Kp = P[PitchKp];
+		A[Pitch].Ki = P[PitchKi];
+		A[Pitch].Kd = P[PitchKd];
+		A[Pitch].IntLimit = P[PitchIntLimit];
+		A[Pitch].AccOffset = (int16)P[MiddleFB];
+		
+		A[Yaw].Kp = P[YawKp];
+		A[Yaw].Ki = P[YawKi];
+		//A[Yaw].Kd = P[YawKd];
+		A[Yaw].Limiter = P[YawLimit];
+		A[Yaw].IntLimit = P[YawIntLimit] * 256;
+		A[Yaw].AccOffset = (int16)P[MiddleDU];
 
 		#ifdef CLOCK_40MHZ
 			#ifdef MULTICOPTER
@@ -109,8 +128,6 @@ void ReadParametersEE(void)
 
 		IdleThrottle = Limit((int16)P[PercentIdleThr], 10, 20); // 10-25%
 		IdleThrottle = FromPercent(IdleThrottle, RC_MAXIMUM);
-
-		YawIntLimit256 = (int16)P[YawIntLimit] * 256L;
 	 
 		NavSlewLimit = Limit(P[NavSlew], 1, 4); 
 		NavSlewLimit = ConvertMToGPS(NavSlewLimit); 
@@ -186,8 +203,8 @@ void ReadParametersEE(void)
 
 void WriteParametersEE(uint8 s)
 {
-	int8 p;
-	uint16 addr;
+	static int8 p;
+	static uint16 addr;
 	
 	addr = (s - 1)* MAX_PARAMETERS;
 
@@ -197,7 +214,7 @@ void WriteParametersEE(uint8 s)
 
 void UseDefaultParameters(void)
 { // loads a representative set of initial parameters as a base for tuning
-	uint16 p;
+	static uint16 p;
 
 	for ( p = 0; p < (uint16)MAX_EEPROM; p++ )
 		WriteEE( p,  0xff);
@@ -219,21 +236,21 @@ void UpdateParamSetChoice(void)
 {
 	#define STICK_WINDOW 30
 
-	uint8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP;
-	int8 Selector;
+	static uint8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP;
+	static int8 Selector;
 
 	NewParamSet = ParamSet;
 	NewAllowNavAltitudeHold = F.AllowNavAltitudeHold;
 	NewAllowTurnToWP = F.AllowTurnToWP;
 
 	if ( F.UsingTxMode2 )
-		Selector = DesiredRoll;
+		Selector = A[Roll].Desired;
 	else
-		Selector = -DesiredYaw;
+		Selector = -A[Yaw].Desired;
 
-	if ( (Abs(DesiredPitch) > STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW) )
+	if ( (Abs(A[Pitch].Desired) > STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW) )
 	{
-		if ( DesiredPitch > STICK_WINDOW ) // bottom
+		if ( A[Pitch].Desired > STICK_WINDOW ) // bottom
 		{
 			if ( Selector < -STICK_WINDOW ) // left
 			{ // bottom left
@@ -248,7 +265,7 @@ void UpdateParamSetChoice(void)
 				}
 		}		
 		else
-			if ( DesiredPitch < -STICK_WINDOW ) // top
+			if ( A[Pitch].Desired < -STICK_WINDOW ) // top
 			{		
 				if ( Selector < -STICK_WINDOW ) // left
 				{
@@ -280,9 +297,9 @@ void UpdateParamSetChoice(void)
 	}
 
 	if ( F.UsingTxMode2 )
-		Selector = -DesiredYaw;
+		Selector = -A[Yaw].Desired;
 	else
-		Selector = DesiredRoll;
+		Selector = A[Roll].Desired;
 
 	if ( (Abs(RC[ThrottleRC]) < STICK_WINDOW) && (Abs(Selector) > STICK_WINDOW ) )
 	{
@@ -309,13 +326,9 @@ void UpdateParamSetChoice(void)
 
 boolean ParameterSanityCheck(void)
 {
-	static boolean Fail;
-
-	Fail = 	(P[RollKp] == 0) || 
-			(P[PitchKp] == 0) || 
-			(P[YawKp] == 0);
-
-	return ( !Fail );
+	return ((P[RollKp] != 0) &&
+			(P[PitchKp]!= 0) &&
+			(P[YawKp] != 0) );
 } // ParameterSanityCheck
 
 void InitParameters(void)

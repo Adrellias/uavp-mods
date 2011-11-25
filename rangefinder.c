@@ -56,8 +56,6 @@ void GetRangefinderAltitude(void)
 
 void InitRangefinder(void)
 {
-	#ifndef UAVXLITE
-
 	static int16 Temp;
 
 	#ifdef SIMULATE
@@ -68,7 +66,5 @@ void InitRangefinder(void)
 		RangefinderAltitudeP =0;
 		GetRangefinderAltitude();
 	#endif // SIMULATE
-
-	#endif // !UAVXLITE
 
 } // InitRangefinder

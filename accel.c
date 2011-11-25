@@ -50,13 +50,7 @@ void InitLISLAcc(void);
 boolean LISLAccActive(void);
 void ReadLISLAcc(void);
 
-#pragma udata accs
-int16	AccADC[3];
-int16	IntCorr[3];
-int8	AccNeutral[3];
-int16	Acc[3];
 int8 	AccType;
-#pragma udata
 
 const rom char * AccName[AccUnknown+1] = 
 		{"LIS3L","ADXL345","BMA180","MPU6050","Unknown"};
@@ -68,6 +62,7 @@ void ShowAccType(void)
 
 void ReadAccelerations(void)
 {
+	// X/Forward FB Acc sense to simplify gyro comp code
 	switch ( AccType ) {
 	case LISLAcc:
 		ReadLISLAcc();
@@ -98,32 +93,34 @@ void GetNeutralAccelerations(void)
 	// this routine is called ONLY ONCE while booting
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
-	static uint8 i;
+	static uint8 i, a;
 	static int16 Temp[3];
 
 	// already done in caller program
-	Temp[LR] = Temp[FB] = Temp[DU] = 0;
+	Temp[Roll] = Temp[Pitch] = Temp[Yaw] = 0;
 	if ( F.AccelerationsValid )
 	{
 		for ( i = 16; i; i--)
 		{
 			ReadAccelerations();
 
-			Temp[LR] += AccADC[LR];
-			Temp[DU] += AccADC[DU];
-			Temp[FB] += AccADC[FB];
+			Temp[Roll] += A[Roll].AccADC;
+			Temp[Pitch] += A[Pitch].AccADC;
+			Temp[Yaw] += A[Yaw].AccADC;
+
+			Delay1mS(10);
 		}	
 	
-		Temp[LR] = SRS16(Temp[LR], 4);
-		Temp[FB] = SRS16(Temp[FB], 4);
-		Temp[DU] = SRS16(Temp[DU], 4);
+		Temp[Roll] = SRS16(Temp[Roll], 4);
+		Temp[Pitch] = SRS16(Temp[Pitch], 4);
+		Temp[Yaw] = SRS16(Temp[Yaw], 4);
 	
-		AccNeutral[LR] = Limit1(Temp[LR], 99);
-		AccNeutral[FB] = Limit1(Temp[FB], 99);
-		AccNeutral[DU] = Limit1(Temp[DU] - 1024, 99); // -1g
+		A[Roll].AccBias = Limit1(Temp[Roll], 99);
+		A[Pitch].AccBias = Limit1(Temp[Pitch], 99);
+		A[Yaw].AccBias = Limit1(Temp[Yaw] - 1024, 99); // -1g
 	}
 	else
-		AccNeutral[LR] = AccNeutral[FB] = AccNeutral[DU] = 0;
+		A[Roll].AccBias = A[Pitch].AccBias = A[Yaw].AccBias = 0;
 
 } // GetNeutralAccelerations
 
@@ -131,7 +128,7 @@ void GetNeutralAccelerations(void)
 
 void AccelerometerTest(void)
 {
-	int16 Mag;
+	static int16 Mag;
 
 	TxString("\r\n");
 	ShowAccType();
@@ -144,26 +141,26 @@ void AccelerometerTest(void)
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
-		TxVal32((int32)AccADC[LR], 0, 0);
-		if ( Abs((AccADC[LR])) > 128 )
+		TxVal32((int32)A[Roll].AccADC, 0, 0);
+		if ( Abs((A[Roll].AccADC)) > 128 )
 			TxString(" fault?");
 		TxNextLine();
 
 		TxString("\tF->B: \t");	
-		TxVal32((int32)AccADC[FB], 0, 0);
-		if ( Abs((AccADC[FB])) > 128 )
+		TxVal32((int32)A[Pitch].AccADC, 0, 0);
+		if ( Abs((A[Pitch].AccADC)) > 128 )
 			TxString(" fault?");	
 		TxNextLine();
 
 		TxString("\tD->U:    \t");
 	
-		TxVal32((int32)AccADC[DU], 0, 0);
-		if ( ( AccADC[DU] < 896 ) || ( AccADC[DU] > 1152 ) )
+		TxVal32((int32)A[Yaw].AccADC, 0, 0);
+		if ( ( A[Yaw].AccADC < 896 ) || ( A[Yaw].AccADC > 1152 ) )
 			TxString(" fault?");	
 		TxNextLine();
 
-		TxString("\tAccMag:    \t");
-		Mag = int32sqrt(Sqr((int24)AccADC[LR])+Sqr((int24)AccADC[FB])+Sqr((int24)AccADC[DU]));
+		TxString("\t|Mag|:   \t");
+		Mag = int32sqrt(Sqr((int24)A[Roll].AccADC)+Sqr((int24)A[Pitch].AccADC)+Sqr((int24)A[Yaw].AccADC));
 		TxVal32((int32)Mag, 0, 0);
 		TxNextLine();
 	}
@@ -175,11 +172,11 @@ void AccelerometerTest(void)
 
 void InitAccelerometers(void)
 {
-	uint8 a;
+	static uint8 a;
 
-	for ( a = 0; a<(uint8)3; a++)
-		AccNeutral[a] = AccADC[a] = 0;
-	AccADC[DU] = GRAVITY;
+	for ( a = Roll; a<=(uint8)Yaw; a++)
+		A[a].AccBias = A[a].AccADC = 0;
+	A[Yaw].AccADC = GRAVITY;
 
 		#ifdef PREFER_LISL
 	
@@ -271,32 +268,32 @@ boolean ADXL345AccActive(void);
 
 void ReadADXL345Acc(void) 
 {
-	static int16 A[3];
+	static int16 G[3];
 
-	if ( ReadI2Ci16v(ADXL345_ID, 0x32, A, 3) ) 
+	if ( ReadI2Ci16v(ADXL345_ID, 0x32, G, 3) ) 
 	{
 		if ( P[SensorHint] == SFDOF9)
 		{
 			// SparkFun 9DOF breakouts pins forward components up
-			AccADC[LR] = -A[X]; 		
-		    AccADC[DU] = A[Z]; 	
-		    AccADC[FB] = A[Y]; 
+			A[Roll].AccADC = -G[X]; 		
+		    A[Pitch].AccADC = G[Y];
+		    A[Yaw].AccADC = G[Z]; 	 
 		}
 		else
 		{
 			// SparkFun 6DOF & ITG3200 breakouts pins forward components up    	
-			AccADC[LR] = A[Y]; 		
-		    AccADC[DU] = A[Z]; 	
-		    AccADC[FB] = A[X]; 
+			A[Roll].AccADC = G[Y]; 			     	
+		    A[Pitch].AccADC = G[X]; 
+			A[Yaw].AccADC = G[Z];
 		}
 		
-		AccADC[LR] *= 5; 		
-		AccADC[DU] *= 5; 	
-		AccADC[FB] *= 5;
+		A[Roll].AccADC *= 5; 			
+		A[Pitch].AccADC *= 5;
+		A[Yaw].AccADC *= 5; 
 	}
 	else
 	{
-		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY;
+		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range
@@ -341,18 +338,18 @@ boolean MPU6050AccActive(void);
 
 void ReadMPU6050Acc(void) 
 {
-	static int16 A[3];
+	static int16 ADC[3];
 
-	if ( ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, A, 3) ) 
+	if ( ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, ADC, 3) ) 
 	{
 		// QuadroUFO 	
-		AccADC[LR] = A[Y]; 
-		AccADC[DU] = A[Z];
-		AccADC[FB] = A[X];
+		A[Roll].AccADC = ADC[Y]; 
+		A[Yaw].AccADC = ADC[Z];
+		A[Pitch].AccADC = ADC[X];
 	}
 	else
 	{
-		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY_MPU6050;
+		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY_MPU6050;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range
@@ -430,17 +427,17 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-	static int16 A[3];
+	static int16 ADC[3];
 
 	if ( ReadI2Ci16v(BMA180_ID, BMA180_ACCXLSB, A, 3) )
 	{
-		AccADC[LR] = A[0]; 
-		AccADC[DU] = A[2]; 
-		AccADC[FB] = A[1];
+		A[Roll].AccADC = ADC[X]; 
+		A[Pitch].AccADC = ADC[Y];
+		A[Yaw].AccADC = ADC[Z]; 
 	}
 	else
 	{
-		AccADC[FB] = AccADC[LR] = 0; AccADC[DU] = GRAVITY;
+		A[Pitch].AccADC = A[Roll].AccADC = 0; A[Yaw].AccADC = GRAVITY;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range
@@ -454,7 +451,6 @@ void ReadBMA180Acc(void)
 void InitBMA180Acc() {
 	
 	uint8 i, bw, range, ee_w;
-	int16 AccLR, AccDU, AccFB;
 
 	// if connected correctly, ID register should be 3
 //	if(read(ID) != 3)
@@ -635,33 +631,33 @@ boolean LISLAccActive(void)
 
 void ReadLISLAcc()
 {
-	static charint16x4u A;
+	static charint16x4u L;
 
 //	while( (ReadLISL(LISL_STATUS + LISL_READ) & 0x08) == (uint8)0 );
 
 	F.AccelerationsValid = ReadLISL(LISL_WHOAMI + LISL_READ) == (uint8)0x3a; // Acc still there?
 	if ( F.AccelerationsValid ) 
 	{
-		A.c[0] = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
-		A.c[1] = ReadLISLNext();
-		A.c[2] = ReadLISLNext();
-		A.c[3] = ReadLISLNext();
-		A.c[4] = ReadLISLNext();
-		A.c[5] = ReadLISLNext();
+		L.c[0] = ReadLISL(LISL_OUTX_L + LISL_INCR_ADDR + LISL_READ);
+		L.c[1] = ReadLISLNext();
+		L.c[2] = ReadLISLNext();
+		L.c[3] = ReadLISLNext();
+		L.c[4] = ReadLISLNext();
+		L.c[5] = ReadLISLNext();
 		SPI_CS = DSEL_LISL;	// end transmission
 		#ifdef FLAT_LISL_ACC
-			AccADC[LR] = A.i16[X];
-			AccADC[FB] = -A.i16[Y];
-			AccADC[DU] = A.i16[Z];
+			A[Roll].AccADC = L.i16[X];
+			A[Pitch].AccADC = -L.i16[Y];
+			A[Yaw].AccADC = L.i16[Z];
 		#else
-			AccADC[LR] = A.i16[X];
-			AccADC[DU] = A.i16[Y];
-			AccADC[FB] = A.i16[Z];
+			A[Roll].AccADC = L.i16[X];
+			A[Pitch].AccADC = L.i16[Z];
+			A[Yaw].AccADC = L.i16[Y];
 		#endif //FLAT_LISL_ACC
 	}
 	else
 	{
-		AccADC[LR] = AccADC[FB] = 0; AccADC[DU] = GRAVITY_LISL;
+		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY_LISL;
 		if ( State == InFlight )
 		{
 			Stats[AccFailS]++;	// data over run - acc out of range

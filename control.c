@@ -23,7 +23,7 @@
 void DoAltitudeHold(void);
 int24 AltitudeCF(int24);
 void AltitudeHold(void);
-void DoAttitudeAngle(uint8, uint8);
+void DoAttitudeAngle(AxisStruct *);
 void DoYawRate(void);
 void DoOrientationTransform(void);
 void GainSchedule(void);
@@ -32,22 +32,21 @@ void DoControl(void);
 void CheckThrottleMoved(void);
 void InitControl(void);
 
-#pragma udata access motorvars	
-near int16 Rl, Pl, Yl;
+#pragma udata axisvars			
+AxisStruct A[3];
 #pragma udata
-			
-int16 Angle[3], RawAngle[3];		
-int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;
+		
+int16 CameraAngle[3];
 
 int16 Ylp;				
 int24 OSO, OCO;
 
+int32 AngleE, RateE;
 int16 YawRateIntE;
 int16 HoldYaw;
 int16 YawIntLimit256;
-int16 RateE[3], RateEp[3];
 
-int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
+int16 CurrMaxRollPitch;
 
 int16 AttitudeHoldResetCount;
 int24 DesiredAltitude, Altitude, Altitudep; 
@@ -168,19 +167,22 @@ void AltitudeHold()
 	}
 } // AltitudeHold
 
-void DoAttitudeAngle(uint8 a, uint8 c)
-{	// Caution: Angles are the opposite to the normal aircraft coordinate conventions
+void DoAttitudeAngle(AxisStruct *C)
+{	
+	// Angles and rates are normal aircraft coordinate conventions
+	// X/Forward axis reversed for Acc to simplify compensation
+	
 	static int16 Temp;
 
 	#ifdef CLOCK_16MHZ
-		Temp = Angle[a] + Rate[a];
+		Temp = C->Angle + C->Rate;
 	#else
-		Temp = Angle[a] + SRS16(Rate[a], 1);
+		Temp = C->Angle + SRS16(C->Rate, 1);
 	#endif // CLOCK_16MHZ
-	Temp = Limit1(Temp, ANGLE_LIMIT);
+	Temp = Limit1(Temp, ANGLE_LIMIT); // zzz turn off comp above this angle?
 	Temp = Decay1(Temp);
-	Temp += IntCorr[c];			// last for accelerometer compensation
-	Angle[a] = Temp;
+	Temp -= C->AngleCorr;			// last for accelerometer compensation
+	C->Angle = Temp;
 
 } // DoAttitudeAngle
 
@@ -191,32 +193,51 @@ void DoYawRate(void)
 	if ( F.CompassValid && F.NormalFlightMode )
 	{
 		// + CCW
-		if ( Hold[Yaw] > COMPASS_MIDDLE ) // acquire new heading
+		if ( A[Yaw].Hold > COMPASS_MIDDLE ) // acquire new heading
 		{
-			RawYawRateP = Rate[Yaw];
+			RawYawRateP = A[Yaw].Rate;
 			DesiredHeading = Heading;
 		}
 		else
 		{
-			Rate[Yaw] = YawFilter(RawYawRateP, Rate[Yaw]);
-			RawYawRateP = Rate[Yaw];
+			A[Yaw].Rate = YawFilter(RawYawRateP, A[Yaw].Rate);
+			RawYawRateP = A[Yaw].Rate;
 			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
-			Rate[Yaw] -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
+			A[Yaw].Rate -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
 		}
 	}
 
 	#ifdef CLOCK_16MHZ
-		Angle[Yaw] += Rate[Yaw];
+		A[Yaw].Angle += A[Yaw].Rate;
 	#else
-		Angle[Yaw] += SRS16(Rate[Yaw], 1);
+		A[Yaw].Angle += SRS16(A[Yaw].Rate, 1);
 	#endif // CLOCK_16MHZ
 	
-	Angle[Yaw] = Limit1(Angle[Yaw], YawIntLimit256);
-	Angle[Yaw] = DecayX(Angle[Yaw], 2);
+	A[Yaw].Angle = Limit1(A[Yaw].Angle, A[Yaw].IntLimit );
+	A[Yaw].Angle = DecayX(A[Yaw].Angle, 2);
 
 } // DoYawRate
+
+void YawControl(void)
+{
+	static int16 RateE, Temp;
+	
+	DoYawRate();
+		
+	RateE = A[Yaw].Rate + ( A[Yaw].Desired + A[Yaw].NavCorr );
+	Temp  = SRS16( RateE * (int16)A[Yaw].Kp + SRS16( A[Yaw].Angle * A[Yaw].Ki, 4), 4);
+		
+	#if defined TRICOPTER
+		Temp = SlewLimit(A[Yaw].Outp, Temp, 2);				
+		A[Yaw].Outp = Temp;
+		A[Yaw].Out = Limit1(Temp,(int16)P[YawLimit]);
+	#else
+		A[Yaw].Out = Limit1(Temp, (int16)P[YawLimit]);
+	#endif // TRICOPTER
+
+} // YawControl
 
 void DoOrientationTransform(void)
 {
@@ -226,15 +247,15 @@ void DoOrientationTransform(void)
 	OCO = OCos[Orientation];
 
 	if ( !F.NavigationActive )
-		NavCorr[Roll] = NavCorr[Pitch] = NavCorr[Yaw] = 0;
+		A[Roll].NavCorr = A[Pitch].NavCorr = A[Yaw].NavCorr = 0;
 
 	// -PS+RC
-	Temp.i24 = -DesiredPitch * OSO + DesiredRoll * OCO;
-	ControlRoll = Temp.i2_1;
+	Temp.i24 = -A[Pitch].Desired * OSO + A[Roll].Desired * OCO;
+	A[Roll].Control = Temp.i2_1;
 		
 	// PC+RS
-	Temp.i24 = DesiredPitch * OCO + DesiredRoll * OSO;
-	ControlPitch = Temp.i2_1; 
+	Temp.i24 = A[Pitch].Desired * OCO + A[Roll].Desired * OSO;
+	A[Pitch].Control = Temp.i2_1; 
 
 } // DoOrientationTransform
 
@@ -277,175 +298,76 @@ void GainSchedule(void)
 
 #endif
 
+#include "exp_control.h"
+
 void DoControl(void)
 {
-	static int32 Temp;
-	static i32u Temp32;
+	static int16 Temp;
 	static i24u Temp24;
+	static i32u Temp32;
+	static uint8 a;
+	static AxisStruct *C;
 
 	CalculateGyroRates();
 	CompensateRollPitchGyros();	
 
 	DoOrientationTransform();
 
-	#ifdef SIMULATE
+	#if defined SIMULATE
 
-		FakeDesiredRoll = ControlRoll + NavCorr[Roll];
-		FakeDesiredPitch = ControlPitch + NavCorr[Pitch];
-		FakeDesiredYaw =  DesiredYaw + NavCorr[Yaw];
-		Angle[Roll] = SlewLimit(Angle[Roll], -FakeDesiredRoll * 32, 16);
-		Angle[Pitch] = SlewLimit(Angle[Pitch], -FakeDesiredPitch * 32, 16);
-		Angle[Yaw] = SlewLimit(Angle[Yaw], FakeDesiredYaw, 8);
-		Rl = -FakeDesiredRoll;
-		Pl = -FakeDesiredPitch;
-		Yl = -DesiredYaw;
+		for ( a = Roll; a<=(uint8)Yaw; a++ )
+		{
+			C = &A[a];
+			C->Control += C->NavCorr;
+			C->FakeDesired = C->Control;
+			C->Angle = SlewLimit(C->Angle, -C->FakeDesired * 32, 16);
+			C->Out = -C->FakeDesired;
+		}
+
+		A[Yaw].Angle = SlewLimit(A[Yaw].Angle, A[Yaw].FakeDesired, 8);
+		A[Yaw].Out = -A[Yaw].Desired;
 	
-		CameraRollAngle = Angle[Roll];
-		CameraPitchAngle = Angle[Pitch];
+		CameraAngle[Roll] = A[Roll].Angle;
+		CameraAngle[Pitch] = A[Pitch].Angle;
 	 
     #else
 
-		DoAttitudeAngle(Roll, LR);
-		DoAttitudeAngle(Pitch, FB);
+		GainSchedule();
 
-		#define D_LIMIT 32
-	
-		#ifdef EXPERIMENTAL		// define is set in uavx.h
-	
-			#include "exp_control.h"
-	
-		#else // DEFAULT
-		
-		#ifndef TESTING		
-			if ( F.UsingAltControl )
-			{ 	// Angle - No gain scheduling for now 
-
-				// Roll
-				RateE[Roll] = SRS32(((ControlRoll + NavCorr[Roll]) * RC_STICK_ANGLE_SCALE - Angle[Roll]) * P[RollKp], 5) - Rate[Roll];
-
-				Rl =  SRS32(RateE[Roll] * P[RollKi], 7);
-
-				#ifdef CLOCK_16MHZ
-			 		Temp = SRS32((int32)(RateE[Roll] - RateEp[Roll]) * P[RollKd], 1);
-				#else
-					Temp = (int32)(Rate[Roll] - RateEp[Roll]) * P[RollKd];
-				#endif // CLOCK_16MHZ
-				Temp = Limit1(Temp, D_LIMIT);
-				Rl -= Temp;
-				Rl = SRS16(Rl, 2);
-
-				// Pitch
-
-				// Roll
-				RateE[Pitch] = SRS32(((ControlPitch + NavCorr[Pitch]) * RC_STICK_ANGLE_SCALE - Angle[Pitch]) * P[PitchKp], 5) - Rate[Pitch];
-
-				Pl =  SRS32(RateE[Pitch] * P[PitchKi], 7);
-
-				#ifdef CLOCK_16MHZ
-			 		Temp = SRS32((int32)(RateE[Pitch] - RateEp[Pitch]) * P[Pitch], 1);
-				#else
-					Temp = (int32)(Rate[Pitch] - RateEp[Pitch]) * P[PitchKd];
-				#endif // CLOCK_16MHZ
-				Temp = Limit1(Temp, D_LIMIT);
-				Pl -= Temp;
-				Pl = SRS16(Pl, 2);
-			}
+		for ( a = Roll; a<=(uint8)Pitch; a++)
+		{
+			C = &A[a];
+			DoAttitudeAngle(C);
+			C->Control += C->NavCorr;
+			
+			if ( F.UsingAltControl && F.NormalFlightMode )	
+				CONTROLLER(C);
 			else
-			#endif // !TESTING	
-			{	// Rate - Wolf's UAVP Original
-
-				GainSchedule();
-
-				// Roll
-
-				Rl  = SRS32((int32)Rate[Roll] * P[RollKp], 5);			
-				#ifdef CLOCK_16MHZ
-			 		Temp = SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 5);
-				#else
-					Temp = SRS32((int32)(Rate[Roll] - Ratep[Roll]) * P[RollKd], 4);
-				#endif // CLOCK_16MHZ
-				Temp = Limit1(Temp, D_LIMIT);
-				Rl -= Temp;	
-		
-				Temp = SRS32((int32)Angle[Roll] * P[RollKi], 9);
-				Rl += Limit1(Temp, (int16)P[RollIntLimit]); 
+				Do_Wolf_Rate(C);
+		}			
 			
-				Temp24.i24 = (int24)Rl * GS;
-				Rl = Temp24.i2_1;
+		YawControl();
+	
+	#endif // SIMULATE
 
-				// Pitch
-			
-				Rl -= (ControlRoll + NavCorr[Roll]);
-
-				Pl  = SRS32((int32)Rate[Pitch] * P[PitchKp], 5);
-				#ifdef CLOCK_16MHZ
-			 		Temp = (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 5);
-				#else
-					Temp = (int32)((Rate[Pitch] - Ratep[Pitch]) * P[PitchKd], 4);
-				#endif // CLOCK_16MHZ
-				Temp = Limit1(Temp, D_LIMIT);
-				Pl -= Temp;	
-			
-				Temp = SRS32((int32)Angle[Pitch] * P[PitchKi], 9);
-				Pl += Limit1(Temp, (int16)P[PitchIntLimit]);
-
-				Temp24.i24 = (int24)Pl * GS;
-				Pl = Temp24.i2_1;
-			
-				Pl -= ( ControlPitch + NavCorr[Pitch]);
-			}
-
-			Ratep[Roll] = Rate[Roll];
-			Ratep[Pitch] = Rate[Pitch];
-	
-		#endif // EXPERIMENTAL
-	
-		// Yaw - rate control
-	
-		#ifdef NAV_WING
-	
-			Yl = DesiredYaw + NavCorr[Yaw];
-	
-		#else
-		
-			DoYawRate();
-		
-			RateE[Yaw] = Rate[Yaw] + ( DesiredYaw + NavCorr[Yaw] );
-			Yl  = SRS16( RateE[Yaw] * (int16)P[YawKp] + SRS16( Angle[Yaw] * P[YawKi], 4), 4);
-		
-			Ratep[Yaw] = Rate[Yaw];
-		
-			#ifdef TRICOPTER
-				Yl = SlewLimit(Ylp, Yl, 2);
-				Ylp = Yl;
-				Yl = Limit1(Yl,(int16)P[YawLimit]);
-			#else
-				Yl = Limit1(Yl, (int16)P[YawLimit]);
-			#endif // TRICOPTER
-	
-		#endif // NAV_WING
-	
-		Temp24.i24 = Angle[Pitch] * OSO + Angle[Roll] * OCO;
-		CameraRollAngle = Temp24.i2_1;
-		Temp24.i24 = Angle[Pitch] * OCO - Angle[Roll] * OSO;
-		CameraPitchAngle = Temp24.i2_1;
-
-	#endif // SIMULATE	
-
-	F.NearLevel = Max(Abs(Angle[Roll]), Abs(Angle[Pitch])) < NAV_RTH_LOCKOUT;
+	F.NearLevel = Max(Abs(A[Roll].Angle), Abs(A[Pitch].Angle)) < NAV_RTH_LOCKOUT;
+	Rl = A[Roll].Out; Pl = A[Pitch].Out; Yl = A[Yaw].Out;
 
 } // DoControl
 
 void InitControl(void)
 {
-	uint8 a;
+	static uint8 a;
+	static AxisStruct *C;
 
-	CameraRollAngle = CameraPitchAngle = 0;
 	Ylp = AltComp = ROCIntE = 0;
 	YawRateIntE = 0;
 
-	for ( a = 0; a <(uint8)3; a++)
-		RateEp[a] = Ratep[a] = 0;
+	for ( a = Roll; a<=(uint8)Yaw; a++)
+	{
+		C = &A[a];
+		C->Outp = C->RateEp = C->Ratep = C->RateIntE = 0;
+	}
 
 } // InitControl
 

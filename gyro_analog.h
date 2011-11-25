@@ -21,19 +21,20 @@
 // Analog Gyros
 
 void GetAnalogGyroValues(void)
-{ 
+{
+	// change of sign to get to normal aircraft sense 
 	if ( GyroType == IDG300Gyro ) // 500 Deg/Sec
 	{
-		GyroADC[Roll] = ADC(IDGADCRollChan);
-		GyroADC[Pitch] = ADC(IDGADCPitchChan);
+		A[Roll].GyroADC = ADC(IDGADCRollChan);
+		A[Pitch].GyroADC = -ADC(IDGADCPitchChan);
 	}
 	else
 	{
-		GyroADC[Roll] = ADC(NonIDGADCRollChan);
-		GyroADC[Pitch] = ADC(NonIDGADCPitchChan);
+		A[Roll].GyroADC = -ADC(NonIDGADCRollChan);
+		A[Pitch].GyroADC = -ADC(NonIDGADCPitchChan);
 	}
 
-	GyroADC[Yaw] = ADC(ADCYawChan);
+	A[Yaw].GyroADC = ADC(ADCYawChan);
 
 } // GetAnalogGyroValues
 

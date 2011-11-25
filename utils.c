@@ -147,7 +147,7 @@ void InitPortsAndUSART(void)
 
 void InitMisc(void)
 {
-	int8 i;
+	static int8 i;
 
 	State = Starting;				// For trace preconditions
 	
@@ -209,7 +209,7 @@ void DoBeep100mSWithOutput(uint8 t, uint8 d)
 
 void DoStartingBeepsWithOutput(uint8 b)
 {
-	uint8 i;
+	static uint8 i;
 
 	for ( i = 0; i < b; i++ )
 		DoBeep100mSWithOutput(2, 8);

@@ -63,7 +63,7 @@ void main(void)
 	InitTemperature();
 	InitBarometer();
 
-	ShowSetup(true);
+	ShowSetup();
 
 	FirstPass = true;
 	
@@ -179,9 +179,9 @@ void main(void)
 				case Shutdown:
 					// wait until arming switch is cycled
 					GetBaroAltitude();
-					NavCorr[Roll] = NavCorr[Pitch] = 0;
+					A[Roll].NavCorr = A[Pitch].NavCorr = 0;
 					F.LostModel = true;
-					DesiredRoll = DesiredPitch = DesiredYaw = AltComp = 0;
+					A[Roll].Desired = A[Pitch].Desired = A[Yaw].Desired = AltComp = 0;
 					StopMotors();
 					break;
 				case InFlight:

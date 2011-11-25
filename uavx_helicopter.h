@@ -17,7 +17,8 @@
 
 //    You should have received a copy of the GNU General Public License along with this program.  
 //    If not, see http://www.gnu.org/licenses/
-	
+
+	#pragma idata paramdefaults	
 	const int8 DefaultParams[MAX_PARAMETERS][2] = {
 	{-20,0},			// RollKp, 			01
 	{-10,0},	 		// RollKi,			02
@@ -96,5 +97,6 @@
 	{0,0},	
 	{0,0}						
 	};
+	#pragma idata
 
 

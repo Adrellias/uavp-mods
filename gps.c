@@ -37,10 +37,7 @@ void InitGPS(void);
 void UpdateGPS(void);
 
 // Defines
-// Moving average of coordinates - Kalman Estimator probably needed
-//#define GPSFilter NoFilter
-#define GPSFilter SoftFilter				
-//#define GPSFilter MediumFilter
+// Moving average of coordinates needed - or Kalman Estimator probably
 
 #define GPSVelocityFilter SoftFilterU		// done after position filter
 
@@ -253,12 +250,17 @@ void ParseGPRMCSentence()
         	GPSLongitude = -GPSLongitude;
 
         UpdateField();   // Groundspeed (Knots)
-		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 3372L;//  5.144444 dMPS/Kt
+		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 13L;//  5.144444 dMPS/Kt
 		GPSVel = Temp32.i3_1;
 
         UpdateField();   // True course made good (Degrees)
-		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 11438L; // MilliRadians 3142/18000; 
-		GPSHeading = Temp32.i3_1;
+		if ( GPSVel > 10 )
+		{ 
+			Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 45L; // MilliRadians 3142/18000; 
+			GPSHeading = Temp32.i3_1;
+		}
+		else
+			GPSHeading = 0;
       	/*
         UpdateField();   //UDate
 
@@ -328,12 +330,13 @@ void ParseGPSSentence(void)
 	static int24 GPSInterval;
 
 	#ifdef SIMULATE
-		static int16 CosH, SinH, A;
-	
-		#define FAKE_NORTH_WIND 	0L
-		#define FAKE_EAST_WIND 		0L
-	    #define SCALE_VEL			6  // was 5
+		static int16 CosH, SinH, H;
 	#endif // SIMULATE
+	
+	#define FAKE_NORTH_WIND 	0L
+	#define FAKE_EAST_WIND 		0L
+	#define SCALE_VEL			6  // was 5
+
 
 	cc = 0;
 	nll = NMEA.length;
@@ -387,14 +390,14 @@ void ParseGPSSentence(void)
 //	Temp32.i32 = (DesiredLongitude - GPSLongitude) * GPSLongitudeCorrection;
 //	LongitudeDiff = Temp32.i3_1;
 	
-				FakeGPSLongitude -= SRS32((int32)FakeDesiredPitch * SinH * 256 / GPSLongitudeCorrection, SCALE_VEL);
-				FakeGPSLatitude -= SRS32((int32)FakeDesiredPitch * CosH, SCALE_VEL);
+				FakeGPSLongitude -= SRS32((int32)A[Pitch].FakeDesired * SinH * 256 / GPSLongitudeCorrection, SCALE_VEL);
+				FakeGPSLatitude -= SRS32((int32)A[Pitch].FakeDesired * CosH, SCALE_VEL);
 									
-				A = Make2Pi(Heading + HALFMILLIPI);
-				CosH = int16cos(A);
-				SinH = int16sin(A);
-				FakeGPSLongitude += SRS32((int32)FakeDesiredRoll * SinH  * 256 / GPSLongitudeCorrection, SCALE_VEL);
-				FakeGPSLatitude += SRS32((int32)FakeDesiredRoll * CosH, SCALE_VEL);
+				H = Make2Pi(Heading + HALFMILLIPI);
+				CosH = int16cos(H);
+				SinH = int16sin(H);
+				FakeGPSLongitude += SRS32((int32)A[Roll].FakeDesired * SinH  * 256 / GPSLongitudeCorrection, SCALE_VEL);
+				FakeGPSLatitude += SRS32((int32)A[Roll].FakeDesired * CosH, SCALE_VEL);
 
 			#endif // NAV_WING
 

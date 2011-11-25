@@ -82,19 +82,19 @@ void GetHeading(void)
 			if ( State == InFlight )
 			{
 				#ifdef  NAV_WING
-					Temp = SRS16( FakeDesiredYaw - FakeDesiredRoll, 1);	
-					if ( Abs(FakeDesiredYaw - FakeDesiredRoll) > 5 )
+					Temp = SRS16( A[Yaw].FakeDesired - A[Roll].FakeDesired, 1);	
+					if ( Abs(A[Yaw].FakeDesired - A[Roll].FakeDesired) > 5 )
 						FakeMagHeading -= Limit1(Temp, NAV_MAX_FAKE_COMPASS_SLEW);
 				#else
-					Temp = FakeDesiredYaw * 5; // ~90 deg/sec
-					if ( Abs(FakeDesiredYaw) > 5 )
+					Temp = A[Yaw].FakeDesired * 5; // ~90 deg/sec
+					if ( Abs(A[Yaw].FakeDesired) > 5 )
 						FakeMagHeading -= Limit1(Temp, NAV_MAX_FAKE_COMPASS_SLEW);				
 				#endif // NAV_WING
 				
 				FakeMagHeading = Make2Pi((int16)FakeMagHeading);
 			}
 
-			MagHeading = FakeMagHeading;	
+		MagHeading = FakeMagHeading;
 
 		#else
 
@@ -108,7 +108,7 @@ void GetHeading(void)
 		Heading = Make2Pi(MagHeading - CompassOffset);
 	
 		HeadingChange = Abs( Heading - HeadingP );
-		if (( HeadingChange <= MILLIPI ) && ( Hold[Yaw] <= COMPASS_MIDDLE ))			// wrap 0 -> TwoPI
+		if (( HeadingChange <= MILLIPI ) && ( A[Yaw].Hold <= COMPASS_MIDDLE ))			// wrap 0 -> TwoPI
 		{
 			if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
 			{
@@ -248,10 +248,10 @@ int16 GetHMC5843Magnetometer(void) {
 	
 			// UNFORTUNATELY THE ANGLE ESTIMATES ARE NOT VALID FOR THE PIC VERSION
 			// AS THEY ARE NOT BOUNDED BY +/- Pi
-		    CRoll = int16cos(Angle[Roll]);
-		    SRoll = int16sin(Angle[Roll]);
-		    CPitch = int16cos(Angle[Pitch]);
-		    SPitch = int16sin(Angle[Pitch]);
+		    CRoll = int16cos(A[Roll].Angle);
+		    SRoll = int16sin(A[Roll].Angle);
+		    CPitch = int16cos(A[Pitch].Angle);
+		    SPitch = int16sin(A[Pitch].Angle);
 
 			// Tilt compensated Magnetic field X:
 			Temp.i32 = (int32)Mag[1] * SRoll * SPitch + (int32)Mag[2] * CRoll * SPitch;
@@ -285,8 +285,8 @@ void CalibrateHMC5843Magnetometer(void) {
 } // CalibrateHMC5843Magnetometer
 
 void DoTestHMC5843Magnetometer(void) {
-	int32 Temp;
-	uint8 i;
+	static int32 Temp;
+	static uint8 i;
 
     TxString("\r\nCompass test (HMC5843)\r\n\r\n");
 
@@ -365,7 +365,7 @@ void GetHMC6352Parameters(void)
 {
 	#ifdef FULL_TEST
 
-	uint8 r;
+	static uint8 r;
 
 	I2CStart();
 		WriteI2CByte(HMC6352_ID);
@@ -404,10 +404,10 @@ void GetHMC6352Parameters(void)
 
 void DoTestHMC6352Compass(void)
 {
-	uint16 v, prev;
-	int16 Temp;
-	uint8 i;
-	boolean r;
+	static uint16 v, prev;
+	static int16 Temp;
+	static uint8 i;
+	static boolean r;
 
 	TxString("\r\nCompass test (HMC6352)\r\n");
 

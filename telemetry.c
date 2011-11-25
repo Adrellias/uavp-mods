@@ -104,22 +104,22 @@ void SendPacketTrailer(void) {
 
 void ShowAttitude(void) {
 
-	TxESCi16(DesiredRoll);
-	TxESCi16(DesiredPitch);
-	TxESCi16(DesiredYaw);
+	TxESCi16(A[Roll].Desired);
+	TxESCi16(A[Pitch].Desired);
+	TxESCi16(A[Yaw].Desired);
 
-	TxESCi16(Rate[Roll]);
-	TxESCi16(Rate[Pitch]);
+	TxESCi16(A[Roll].Rate);
+	TxESCi16(A[Pitch].Rate);
 
-	TxESCi16(Rate[Yaw]);
+	TxESCi16(A[Yaw].Rate);
 
-	TxESCi16(Angle[Roll]);
-	TxESCi16(Angle[Pitch]);
-	TxESCi16(Angle[Yaw]); // heading error
+	TxESCi16(A[Roll].Angle);
+	TxESCi16(A[Pitch].Angle);
+	TxESCi16(A[Yaw].Angle); // heading error
 
-	TxESCi16(Acc[LR]);
-    TxESCi16(Acc[FB]);
-	TxESCi16(Acc[DU]);
+	TxESCi16(A[Roll].Acc);
+    TxESCi16(A[Pitch].Acc);
+	TxESCi16(A[Yaw].Acc);
 
 } // ShowAttitude
 
@@ -144,8 +144,8 @@ void SendFlightPacket(void) {
 
 	ShowAttitude();
 
-	TxESCi8((int8)IntCorr[LR]);
-	TxESCi8((int8)IntCorr[FB]);
+	TxESCi8((int8)A[Roll].AngleCorr);
+	TxESCi8((int8)A[Pitch].AngleCorr);
 	TxESCi8((int8)AccAltComp);
 	TxESCi8((int8)AltComp);
 
@@ -221,9 +221,9 @@ void SendNavPacket(void){
 	TxESCi32(GPSMissionTime);
 
 	TxESCu8(NavSensitivity);
-	TxESCi8(NavCorr[Roll]);
-	TxESCi8(NavCorr[Pitch]);
-	TxESCi8(NavCorr[Yaw]);
+	TxESCi8(A[Roll].NavCorr);
+	TxESCi8(A[Pitch].NavCorr);
+	TxESCi8(A[Yaw].NavCorr);
 
 	SendPacketTrailer();
 
@@ -267,8 +267,8 @@ void SendMinPacket(void)
 	TxESCi16(BatteryCurrentADC);
 	TxESCi16(BatteryChargeUsedmAH);	
 
-	TxESCi16(Angle[Roll]);
-	TxESCi16(Angle[Pitch]);
+	TxESCi16(A[Roll].Angle);
+	TxESCi16(A[Pitch].Angle);
 		
 	TxESCi24(BaroRelAltitude);
 	TxESCi16(RangefinderAltitude); 		

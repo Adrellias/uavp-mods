@@ -44,8 +44,8 @@ void DoLEDs(void)
 
 void ReceiverTest(void)
 {
-	int8 s;
-	uint16 v;
+	static int8 s;
+	static uint16 v;
 
 	TxString("\r\nRx: ");
 	ShowRxSetup();
@@ -87,7 +87,7 @@ void ReceiverTest(void)
 		TxVal32(( PPM[s].i16 * 8L + 5L ) / 10L, 3, 0);
 		TxChar(HT);
 		TxVal32(((int32)PPM[s].i16*100L + 625L ) / 1250L, 0, '%');
-		if( ( PPM[s].i16 < 0 ) || ( PPM[s].i16 > 1250 ) ) 
+		if ( ( PPM[s].i16 < 0 ) || ( PPM[s].i16 > 1250 ) ) 
 			TxString(" FAIL");
 
 		#endif // CLOCK_16MHZ
@@ -114,8 +114,8 @@ void ReceiverTest(void)
 
 void PowerOutput(int8 d)
 {
-	int8 s;
-	uint8 m;
+	static int8 s;
+	static uint8 m;
 
 	m = 1 << d;
 	for( s=0; s < 10; s++ )	// 10 flashes (count MUST be even!)
@@ -128,8 +128,8 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
-	int8 s, m;
-	uint8 mask, LEDSave;
+	static int8 s, m;
+	static uint8 mask, LEDSave;
 
 	LEDSave = LEDShadow;
 	LEDShadow  = 0;
@@ -180,7 +180,7 @@ void LEDsAndBuzzer(void)
 
 void BatteryTest(void)
 {
-	int32 v;
+	static int32 v;
 
 	TxString("\r\nBattery test\r\n");
 

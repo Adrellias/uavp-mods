@@ -24,8 +24,8 @@
 
 void TxString(const rom uint8*);
 void TxChar(uint8);
-void TxValU(uint8);
-void TxValS(int8);
+void TxValU(uint16);
+void TxValS(int16);
 void TxNextLine(void);
 void TxNibble(uint8);
 void TxValH(uint8);
@@ -34,7 +34,7 @@ uint8 RxChar(void);
 uint8 PollRxChar(void);
 uint8 RxChar(void);
 uint8 RxNumU(void);
-int8 RxNumS(void);
+int16 RxNumS(void);
 void TxVal32(int32, int8, uint8);
 void TxChar(uint8);
 void TxESCu8(uint8);
@@ -74,7 +74,7 @@ void TxChar(uint8 ch)
 	}
 } // TxChar
 
-void TxValU(uint8 v)
+void TxValU(uint16 v)
 {	
 	// UAVPSet requires 3 digits exactly ( 000 to 999 )
 	TxChar((v / 100) + '0');
@@ -86,9 +86,9 @@ void TxValU(uint8 v)
 	TxChar(v + '0');
 } // TxValU
 
-void TxValS(int8 v)
+void TxValS(int16 v)
 {
-	// UAVPSet requires sign and 3 digits exactly (-999 to 999)
+	// UAVPSet requires sign and 3 digits exactly (-999 to +999)
 	if( v < 0 )
 	{
 		TxChar('-');	// send sign
@@ -170,35 +170,33 @@ uint8 RxChar(void)
 
 uint8 RxNumU(void)
 {
-	// UAVPSet sends 2 digits
-	static uint8 ch, n;
+	// UAVPSet sends 2 digits for parameter tags
+	static uint8 ch, i, n;
 
 	n = 0;
-	do
-		ch = PollRxChar();
-	while( (ch < '0') || (ch > '9') );
-	n = (ch - '0') * 10;
-	do
-		ch = PollRxChar();
-	while( (ch < '0') || (ch > '9') );
-	n += ch - '0';
+	for ( i = 0; i<(uint8)2; i++)
+	{
+		do
+			ch = PollRxChar();
+		while( (ch < '0') || (ch > '9') );
+		n = n * 10 + (ch - '0');
+	}
+
 	return(n);
 } // RxNumU
 
-
-int8 RxNumS(void)
+int16 RxNumS(void)
 {
-	// UAVPSet sends sign and 2 digits
-	static uint8 ch;
-	static int8 n;
+	// UAVPSet V7 onwards sends sign and 3 digits
+	static uint8 ch, i;
+	static int16 n;
 	static boolean Neg;
-	n = 0;
 
 	Neg = false;
 	do
 		ch = PollRxChar();
-	while( ((ch < '0') || (ch > '9')) &&
-           (ch != '-') );
+	while( ((ch < '0') || (ch > '9')) && (ch != '-') );
+
 	if( ch == '-' )
 	{
 		Neg = true;
@@ -206,14 +204,18 @@ int8 RxNumS(void)
 			ch = PollRxChar();
 		while( (ch < '0') || (ch > '9') );
 	}
-	n = (ch - '0') * 10;
+	n = ch - '0';
 
-	do
-		ch = PollRxChar();
-	while( (ch < '0') || (ch > '9') );
-	n += ch - '0';
-	if( Neg )
-		n = -n;
+	for ( i = 0; i<(uint8)2; i++ )
+	{
+		do
+			ch = PollRxChar();
+		while( (ch < '0') || (ch > '9') );
+		n  = n*10 + (ch - '0');
+	}
+
+	if( Neg ) n = -n;
+
 	return(n);
 } // RxNumS
 

@@ -1,4 +1,15 @@
 
+#define PI_P_ANGLE
+//#define MING_P_RATE
+//#define MING_PI_RATE
+
+#ifdef PI_P_ANGLE
+	#define CONTROLLER	Do_PI_P_Angle
+#elif MING_P_RATE
+	#define CONTROLLER	Do_Ming_P_Rate
+#else
+	#define CONTROLLER	Do_Ming_PI_Rate
+#endif
 
 //#define PREFER_LISL				// use old legacy acc first
 //#define PREFER_HMC5843			// use magnetometer first
@@ -37,10 +48,10 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
-	#define SIMULATE
+	//#define SIMULATE
 	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
@@ -75,31 +86,23 @@
 	#endif
 #endif
 
-#ifdef QUADROCOPTER
+#if defined QUADROCOPTER
 	#define AF_TYPE QuadAF
-#endif
-#ifdef TRICOPTER
+#elif defined TRICOPTER
 	#define AF_TYPE TriAF
-#endif
-#ifdef VTCOPTER
+#elif defined VTCOPTER
 	#define AF_TYPE VAF
-#endif
-#ifdef Y6COPTER
+#elif defined Y6COPTER
 	#define AF_TYPE Y6AF
-#endif
-#ifdef HEXACOPTER
+#elif defined HEXACOPTER
 	#define AF_TYPE HexAF
-#endif
-#ifdef VTOL
+#elif defined VTOL
 	#define AF_TYPE VTOLAF
-#endif
-#ifdef HELICOPTER
+#elif defined HELICOPTER
 	#define AF_TYPE HeliAF
-#endif
-#ifdef ELEVON
+#elif defined ELEVON
 	#define AF_TYPE ElevAF
-#endif
-#ifdef AILERON
+#elif defined AILERON
 	#define AF_TYPE AilAF
 #endif
 
@@ -115,7 +118,7 @@
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
 #define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
-#define ANGLE_LIMIT				(7L*(1024*4)/5)
+#define ANGLE_LIMIT				(78L*40L)
 	
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
@@ -402,6 +405,24 @@ typedef struct { // GPS
 	int32 LatDiff[NAVQ_MASK], LonDiff[NAVQ_MASK];
 	} int32Q;
 
+typedef struct {
+	// from Parameter Sets
+	int16 IntLimit, Limiter;
+	int8 Kp, Ki, Kd;
+	// run time
+	int16 Trim, Hold; 
+	int16 Desired, FakeDesired;
+	int16 FirstGyroADC, GyroADC, GyroBias;
+	int16 Angle, AngleIntE;	
+	int16 Rate, Ratep, RateEp, RateIntE;
+	int16 Acc, AccADC, AccBias, AccOffset;
+	int8 AngleCorr;
+	int16 Control;
+	int16 NavCorr, NavIntE;
+	int32 NavPosE, NavVel;
+	int16 Out, Outp;	
+} AxisStruct;
+
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
 #define Clear(S,b) 			((uint8)(S&=(~(1<<b))))
@@ -435,7 +456,9 @@ typedef struct { // GPS
 #define VerySoftFilter(O,N) 	(SRS16((O)+(N)*3, 2))
 #define SoftFilter(O,N) 		(SRS16((O)+(N), 1))
 #define MediumFilter(O,N) 		(SRS16((O)*3+(N), 2))
+#define MediumFilter32(O,N) 	(SRS32((int32)(O)*3+(N), 2))
 #define HardFilter(O,N) 		(SRS16((O)*7+(N), 3))
+#define HardFilter32(O,N) 		(SRS32((int32)(O)*7+(N), 3))
 
 // Unsigned
 #define VerySoftFilterU(O,N)	(((O)+(N)*3+2)>>2)
@@ -645,11 +668,6 @@ extern void InitLISLAcc(void);
 extern boolean LISLAccActive(void);
 extern void ReadLISLAcc(void);
 
-extern int16 AccADC[3];
-extern int16 IntCorr[3];
-extern int8 AccNeutral[3];
-extern int16 Acc[3];
-extern charint16x4u A;
 extern int8 AccType;
 
 //______________________________________________________________________________________________
@@ -698,7 +716,7 @@ enum NavStates { HoldingStation, ReturningHome, AtHome, Descending, Touchdown, N
 enum FailStates { MonitoringRx, Aborting, Terminating, Terminated, RxTerminate };
 
 #ifdef SIMULATE
-extern int16 FakeDesiredPitch, FakeDesiredRoll, FakeDesiredYaw, FakeMagHeading;
+extern int16 FakeMagHeading;
 #endif // SIMULATE
 
 extern WayPoint WP;
@@ -711,8 +729,6 @@ extern int16 NavClosingRadius, NavProximityRadius, NavNeutralRadius, NavProximit
 extern uint24 NavRTHTimeoutmS;
 extern int16 NavSensitivity, RollPitchMax;
 extern int16 DescentComp;
-extern int16 NavCorr[], NavCorrp[], NavIntE[];
-extern int32 NavPosE[], NavPosEp[], NavVelp[];
 extern int32 NavScale[];
 extern int16 NavSlewLimit;
 
@@ -846,30 +862,28 @@ extern int8 CompassType;
 
 enum Attitudes { Roll, Pitch, Yaw };
 enum Sensors {X, Y, Z};
-enum Directions { FB, LR, DU };
+enum Directions { LR, FB, DU }; // Roll, Pitch & Yaw
 
 extern void DoAltitudeHold(void);
 extern void UpdateAltitudeSource(void);
 extern void AltitudeHold(void);
 
-extern void DoAttitudeAngle(uint8, uint8);
+extern void DoAttitudeAngle(AxisStruct *);
 extern void DoYawRate(void);
 extern void DoOrientationTransform(void);
 extern void GainSchedule(void);
 extern void DoControl(void);
 extern void InitControl(void);
 
-extern near int16 Rl, Pl, Yl;
-
-extern int16 Angle[3], RawAngle[3];		
-extern int16 CameraRollAngle, CameraPitchAngle, CameraRollAnglep, CameraPitchAnglep;				
+extern AxisStruct A[3];
+	
+extern int16 CameraAngle[3];				
 extern int24 OSO, OCO;
 extern int16 Ylp;
 
 extern int16 YawRateIntE;
 extern int16 HoldYaw;
 extern int16 YawIntLimit256;
-extern int16 RateE[3], RateEp[3];
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
@@ -951,8 +965,6 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, 
 		ITG3200Gyro, SFDOF6, SFDOF9, MPU6050, FreeIMU, Drotek, IRSensors, GyroUnknown }; 
 
-extern int16 Grav[], Dyn[]; // zzz
-
 extern void AdaptiveYawFilterA(void);
 extern void ShowGyroType(void);
 extern void CompensateRollPitchGyros(void);
@@ -973,7 +985,6 @@ extern void BlockReadInvensenseGyro(void);
 extern void InitInvenSenseGyro(void);
 extern boolean InvenSenseGyroActive(void);
 
-extern int16 Rate[3], Ratep[3], GyroNeutral[3], FirstGyroADC[3], GyroADC[3];
 extern int16 RawYawRateP;
 extern int8 GyroType;
 extern int16 G[];
@@ -1160,7 +1171,7 @@ extern int32 int32sqrt(int32);
 
 extern void ShowPrompt(void);
 extern void ShowRxSetup(void);
-extern void ShowSetup(boolean);
+extern void ShowSetup(void);
 extern void ProcessCommand(void);
 
 extern const rom uint8 SerHello[];
@@ -1224,6 +1235,7 @@ extern int16 CurrThrottle;
 extern int8 ServoInterval;
 
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
+extern near int16 Rl, Pl, Yl;
 
 extern int16 ESCMax;
 
@@ -1380,9 +1392,8 @@ extern int8 Map[], RMap[];
 extern boolean PPMPosPolarity;
 extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
-extern int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
+extern int16 DesiredCamPitchTrim;
 extern int16 ThrLow, ThrHigh, ThrNeutral;
-extern int16 Hold[];
 
 //__________________________________________________________________________________________
 
@@ -1390,8 +1401,8 @@ extern int16 Hold[];
 
 extern void TxString(const rom uint8*);
 extern void TxChar(uint8);
-extern void TxValU(uint8);
-extern void TxValS(int8);
+extern void TxValU(uint16);
+extern void TxValS(int16);
 extern void TxNextLine(void);
 extern void TxNibble(uint8);
 extern void TxValH(uint8);
@@ -1399,7 +1410,7 @@ extern void TxValH16(uint16);
 extern uint8 PollRxChar(void);
 extern uint8 RxChar(void);
 extern uint8 RxNumU(void);
-extern int8 RxNumS(void);
+extern int16 RxNumS(void);
 extern void TxVal32(int32, int8, uint8);
 extern void SendByte(uint8);
 extern void TxESCu8(uint8);

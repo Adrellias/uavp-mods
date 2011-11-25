@@ -22,7 +22,7 @@
 
 void ShowPrompt(void);
 void ShowRxSetup(void);
-void ShowSetup(boolean);
+void ShowSetup(void);
 void ProcessCommand(void);
 
 #ifdef TESTING
@@ -30,26 +30,24 @@ const rom uint8 SerHello[] = "UAVX TEST " Version
 #else
 const rom uint8 SerHello[] = "UAVX " Version 							 
 #endif // TESTING
-
  							  " Copyright 2008 G.K. Egan & 2007 W. Mahringer\r\n"
 							  "This is FREE SOFTWARE and comes with ABSOLUTELY NO WARRANTY "
 							  "see http://www.gnu.org/licenses/!\r\n";
-
 #pragma idata
 
 #pragma idata menuhelp
 const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#ifdef TESTING
 
-	"A..Accelerometer test\r\n"
+	"A..Acc test\r\n"
 //	"B..Load UAVX hex file\r\n"
 	"C..Compass test\r\n"
-	"D..Load default parameter set\r\n"
+	"D..Load default param set\r\n"
 	"G..Gyro test\r\n"
-	"H..Barometer/Rangefinder test\r\n"
+	"H..Baro/RF test\r\n"
 	"I..I2C bus scan\r\n"
-	"K..Calibrate Compass\r\n"
-//	"M..Modify parameters\r\n"
+	"K..Cal Compass\r\n"
+//	"M..Modify params\r\n"
 	"P..Rx test\r\n"
 	"S..Setup\r\n"
 	"T..All LEDs and buzzer test\r\n"
@@ -60,7 +58,7 @@ const rom uint8 SerHelp[] = "\r\nCommands:\r\n"
 	#else
 
 //	"B..Load UAVX hex file\r\n"
-	"D..Load default parameter set\r\n"
+	"D..Load default param set\r\n"
 	"S..Setup\r\n"
 	"V..Battery test\r\n"
 	"X..Flight stats\r\n"
@@ -87,23 +85,22 @@ void ShowRxSetup(void)
 		TxString("Odd Rx Channels PPM");
 } // ShowRxSetup
 
+#pragma idata airframenames
 const rom char * AFName[AFUnknown+1] = {
 		"QUAD","TRI","VT","Y6","HELI","ELEVON","AILERON","Hexacopter","VTOL","Unknown"
 		};
+#pragma idata
 
 void ShowAFType(void)
 {
 	TxString(AFName[AF_TYPE]);
 } // ShowAFType
 
-void ShowSetup(boolean h)
+void ShowSetup(void)
 {
 	int8 i, NoOfChannels;
 
 	TxNextLine();
-	if( h )
-		ParamSet = 1;	
-
 	TxString(SerHello);
 
 	#ifdef EXPERIMENTAL
@@ -238,10 +235,9 @@ void ShowSetup(boolean h)
 
 void ProcessCommand(void)
 {
-	static int8  p;
 	static uint8 ch;
-	static uint16 addrbase, curraddr;
-	static int8 d;
+	static int8 p, d;
+	static int16 dd;
 
 	if ( !Armed )
 	{
@@ -266,7 +262,7 @@ void ProcessCommand(void)
 				TxString("\r\nParameter list for set #");	// do not change (UAVPset!)
 				TxChar('0' + ParamSet);
 				ReadParametersEE();
-				for(p = 0; p < MAX_PARAMETERS; p++)
+				for( p = 0; p < MAX_PARAMETERS; p++)
 				{
 					TxString("\r\nRegister ");
 					TxValU((uint8)(p+1));
@@ -280,15 +276,9 @@ void ProcessCommand(void)
 				LEDBlue_ON;
 				TxString("\r\nRegister ");
 				p = (uint16)(RxNumU()-1);
-				// Attempts to block use of old versions of UAVPSet not compatible with UAVX
-				// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
-				if ( p < (MAX_PARAMETERS-1) )
-					F.ParametersValid = false;
-				else
-					if ( p == (MAX_PARAMETERS-1) )
-						F.ParametersValid = true; 	// ALL parameters must be written 
 				TxString(" = ");
-				d = RxNumS();
+				dd = RxNumS();
+				d = Limit(dd, -128, 127);
 				if ( p < MAX_PARAMETERS )
 				{
 					// Keep RAM based set up to date.
@@ -305,19 +295,28 @@ void ProcessCommand(void)
 					}
 					ParametersChanged = true;
 				}
+				else
+					ParametersChanged = true;
+				// Attempts to block use of old versions of UAVPSet not compatible with UAVX
+				// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
+				if ( p < (MAX_PARAMETERS-1) )
+					F.ParametersValid = false;
+				else
+					if ( p == (MAX_PARAMETERS-1) )
+						F.ParametersValid = true; 	// ALL parameters must be written 
 				LEDBlue_OFF;
 				ShowPrompt();
 				break;
 			case 'N' :	// neutral values
 				GetNeutralAccelerations();
 				TxString("\r\nNeutral    R:");
-				TxValS(AccNeutral[LR]);
+				TxValS(A[Roll].AccBias);
 		
 				TxString("    P:");
-				TxValS(AccNeutral[FB]);
+				TxValS(A[Pitch].AccBias);
 		
 				TxString("   V:");	
-				TxValS(AccNeutral[DU]);
+				TxValS(A[Yaw].AccBias);
 				ShowPrompt();
 				break;
 			case 'Z' : // set Paramset
@@ -346,7 +345,7 @@ void ProcessCommand(void)
 				ShowPrompt();
 				break;
 			case 'S' :	// show status
-				ShowSetup(false);
+				ShowSetup();
 				break;
 			case 'X' :	// flight stats
 				ShowStats();

@@ -30,11 +30,10 @@ void CheckThrottleMoved(void);
 int8 Map[CONTROLS], RMap[CONTROLS];
 boolean PPMPosPolarity;
 
-int16 RC[CONTROLS], RCp[CONTROLS], Trim[3];
+int16 RC[CONTROLS], RCp[CONTROLS];
 int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
-int16 DesiredRoll, DesiredPitch, DesiredYaw, DesiredCamPitchTrim;
+int16 DesiredCamPitchTrim;
 int16 ThrLow, ThrHigh, ThrNeutral;
-int16 Hold[3];
 
 void DoRxPolarity(void)
 {
@@ -46,7 +45,7 @@ void DoRxPolarity(void)
 
 void InitRC(void)
 {
-	int8 c, q;
+	static int8 c, q;
 
 	DoRxPolarity();
 
@@ -64,8 +63,8 @@ void InitRC(void)
 		Map[c] = RMap[c] = c;
 	}
 	RC[ThrottleRC] = RCp[ThrottleRC] = 0; 
-	DesiredRoll = DesiredPitch = DesiredYaw = DesiredThrottle = StickThrottle = 0;
-	Trim[Roll] = Trim[Pitch] = Trim[Yaw] = 0; 
+	A[Roll].Desired = A[Pitch].Desired = A[Yaw].Desired = DesiredThrottle = StickThrottle = 0;
+	A[Roll].Trim = A[Pitch].Trim = A[Yaw].Trim = 0; 
 	PPM_Index = PrevEdge = RCGlitches = 0;
 } // InitRC
 
@@ -246,18 +245,18 @@ void UpdateControls(void)
 			
 	// Attitude
 		
-	DesiredRoll = RC[RollRC] - RC_NEUTRAL;
-	DesiredPitch = RC[PitchRC] - RC_NEUTRAL;		
-	DesiredYaw = RC[YawRC] - RC_NEUTRAL;
+	A[Roll].Desired = RC[RollRC] - RC_NEUTRAL;
+	A[Pitch].Desired = RC[PitchRC] - RC_NEUTRAL;		
+	A[Yaw].Desired = RC[YawRC] - RC_NEUTRAL;
 
 						
-	Hold[Roll] = DesiredRoll - Trim[Roll];
-	Hold[Roll] = Abs(Hold[Roll]);
-	Hold[Pitch] = DesiredPitch - Trim[Pitch];
-	Hold[Pitch] = Abs(Hold[Pitch]);
-	Hold[Yaw] = DesiredYaw - Trim[Yaw];
-	Hold[Yaw] = Abs(Hold[Yaw]);
-	CurrMaxRollPitch = Max(Hold[Roll], Hold[Pitch]);
+	A[Roll].Hold = A[Roll].Desired - A[Roll].Trim;
+	A[Roll].Hold = Abs(A[Roll].Hold);
+	A[Pitch].Hold = A[Pitch].Desired - A[Pitch].Trim;
+	A[Pitch].Hold = Abs(A[Pitch].Hold);
+	A[Yaw].Hold = A[Yaw].Desired - A[Yaw].Trim;
+	A[Yaw].Hold = Abs(A[Yaw].Hold);
+	CurrMaxRollPitch = Max(A[Roll].Hold, A[Pitch].Hold);
 		
 	if ( CurrMaxRollPitch > ATTITUDE_HOLD_LIMIT )
 		if ( AttitudeHoldResetCount > ATTITUDE_HOLD_RESET_INTERVAL )
@@ -288,9 +287,9 @@ void CaptureTrims(void)
 { 	// only used in detecting movement from neutral in hold GPS position
 	// Trims are invalidated if Nav sensitivity is changed - Answer do not use trims ?
 	#ifndef TESTING
-	Trim[Roll] = Limit1(DesiredRoll, NAV_MAX_TRIM);
-	Trim[Pitch] = Limit1(DesiredPitch, NAV_MAX_TRIM);
-	Trim[Yaw] = Limit1(DesiredYaw, NAV_MAX_TRIM);
+	A[Roll].Trim = Limit1(A[Roll].Desired, NAV_MAX_TRIM);
+	A[Pitch].Trim = Limit1(A[Pitch].Desired, NAV_MAX_TRIM);
+	A[Yaw].Trim = Limit1(A[Yaw].Desired, NAV_MAX_TRIM);
 	#endif // TESTING
 
 	HoldYaw = 0;

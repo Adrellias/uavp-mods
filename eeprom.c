@@ -64,8 +64,8 @@ int32 Read32EE(uint16 a)
 
 void WriteEE(uint16 a, int8 d)
 {
-	int8 rd;
-	uint8 IntsWereEnabled;
+	static int8 rd;
+	static uint8 IntsWereEnabled;
 	
 	rd = ReadEE(a);
 	if ( rd != d )						// avoid redundant writes

@@ -33,7 +33,7 @@ int16 	Stats[MAX_STATS];
 
 void ZeroStats(void)
 {
-	int8 s;
+	static int8 s;
 
 	for (s = 0 ; s < MAX_STATS; s++ )
 		Stats[s] = 0;
@@ -51,7 +51,7 @@ void ZeroStats(void)
 
 void ReadStatsEE(void)
 {
-	int8 s;
+	static int8 s;
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Stats[s] = Read16EE(STATS_ADDR_EE + s*2);
@@ -59,8 +59,8 @@ void ReadStatsEE(void)
 
 void WriteStatsEE()
 {
-	int8 s, i;
-	int16 Temp;
+	static int8 s, i;
+	static int16 Temp;
 
 	if ( P[ESCType] != ESCPPM )
 		for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
