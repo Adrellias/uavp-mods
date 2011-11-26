@@ -94,29 +94,32 @@ void GetHeading(void)
 				FakeMagHeading = Make2Pi((int16)FakeMagHeading);
 			}
 
-		MagHeading = FakeMagHeading;
+			MagHeading = FakeMagHeading;
 
 		#else
 
-		if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
-			MagHeading = GetCompass();
-		else
-			MagHeading = 0;
+			if( F.CompassValid ) // continuous mode but Compass only updates avery 50mS
+				MagHeading = GetCompass();
+			else
+				MagHeading = 0;
 
 		#endif // SIMULATE
 
 		Heading = Make2Pi(MagHeading - CompassOffset);
 	
-		HeadingChange = Abs( Heading - HeadingP );
-		if (( HeadingChange <= MILLIPI ) && ( A[Yaw].Hold <= COMPASS_MIDDLE ))			// wrap 0 -> TwoPI
-		{
-			if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
+		if ( A[Yaw].Hold <= COMPASS_MIDDLE )
+		{	
+			HeadingChange = Abs( Heading - HeadingP );
+			if ( HeadingChange < MILLIPI )		
 			{
-			     Heading = SlewLimit(HeadingP, Heading, COMPASS_MAX_SLEW);    
-			     Stats[CompassFailS]++;
+				if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
+				{
+				     Heading = SlewLimit(HeadingP, Heading, COMPASS_MAX_SLEW);    
+				     Stats[CompassFailS]++;
+				}
+				Heading = HeadingFilter(HeadingP, Heading);
+				Heading = Make2Pi(Heading);
 			}
-			Heading = HeadingFilter(HeadingP, Heading);
-			Heading = Make2Pi(Heading);
 		}
 		HeadingP = Heading;
 	}	

@@ -160,9 +160,6 @@ void InitMisc(void)
 	F.Simulation = true;
 	#endif // SIMULATE
 
-//	YawFilterA = ( PID_CYCLE_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_YAW_HZ ) + PID_CYCLE_MS );
-//	HeadingFilterA	= ( COMPASS_TIME_MS * 256L) / ( 1000L / ( 6L * (int24) FILT_COMPASS_HZ*8 ) + COMPASS_TIME_MS );
-
 	BatteryChargeADC = 0;
 
 	ThrNeutral = ThrLow = ThrHigh = MAXINT16;
