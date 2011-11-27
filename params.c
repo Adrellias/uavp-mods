@@ -65,6 +65,10 @@ void ReadParametersEE(void)
 	if ( ParametersChanged )
 	{   // overkill if only a single parameter has changed but is not in flight loop
 
+		a = (ParamSet - 1)* MAX_PARAMETERS;	
+		for ( i = 0; i < MAX_PARAMETERS; i++)
+			P[i] = ReadEE(a + i);
+
 		A[Roll].Kp = P[RollKp];
 		A[Roll].Ki = P[RollKi];
 		A[Roll].Kd = P[RollKd];
@@ -93,10 +97,6 @@ void ReadParametersEE(void)
 		#else
 			F.NormalFlightMode = true;
 		#endif // CLOCK_40MHZ
-
-		a = (ParamSet - 1)* MAX_PARAMETERS;	
-		for ( i = 0; i < MAX_PARAMETERS; i++)
-			P[i] = ReadEE(a + i);
 
 		ESCMax = ESCLimits[P[ESCType]];
 		if ( P[ESCType] == ESCPPM )
