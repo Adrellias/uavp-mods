@@ -140,6 +140,7 @@
 #define ARMED_TIMEOUT_MS			150000L	// mS. automatic disarming if armed for this long and landed
 
 #define	ALT_DESCENT_UPDATE_MS		1000L	// mS time between throttle reduction clicks in failsafe descent without baro	
+#define ALT_DESCENT_STEP			5		// Stick units
 
 #define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
 #define RC_STICK_ANGLE_SCALE		32L		// convert stick to desired "angle"

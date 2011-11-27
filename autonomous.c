@@ -140,19 +140,25 @@ void DoFailsafeLanding(void)
 	}
 	else
 	{
+		DesiredThrottle = CruiseThrottle - DescentComp;
 		if ( mSClock() > mS[DescentUpdate] )
 		{
 			mS[DescentUpdate] = mSClock() + ALT_DESCENT_UPDATE_MS;
-			DesiredThrottle = CruiseThrottle - DescentComp;
 			if ( DesiredThrottle < IdleThrottle )
-				StopMotors();
+				DoShutdown();
 			else
-				if ( DescentComp < CruiseThrottle )
-					DescentComp++;		
+				DescentComp += ALT_DESCENT_STEP;		
 		}
 	}
 
 } // DoFailsafeLanding
+
+void DoForcedFailsafe(void)
+{
+	F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
+	F.LostModel = true;
+	DoFailsafeLanding();
+} // DoForcedFailsafe
 
 void AcquireHoldPosition(void)
 {
@@ -359,7 +365,7 @@ void DoNavigation(void)
 		F.LostModel = F.ForceFailsafe = false;
 
 		if (( !F.NavComputed ) && SpareSlotTime )
-			switch ( NavState ) { // most case last - switches in C18 are IF chains not branch tables!
+			switch ( NavState ) { // most frequent case last - switches in C18 are IF chains not branch tables!
 			case Touchdown:
 				Navigate(OriginLatitude, OriginLongitude);
 				DoFailsafeLanding();
@@ -470,6 +476,7 @@ void DoNavigation(void)
 				Navigate(HoldLatitude, HoldLongitude);
 			
 				if ( F.NavValid ) // zzz && F.NearLevel )  // Origin must be valid for ANY navigation!
+				{
 					if ( F.Navigate )
 					{
 						GetWayPointEE(CurrWP); // resume from previous WP
@@ -481,18 +488,23 @@ void DoNavigation(void)
 						{
 							SetDesiredAltitude((int16)P[NavRTHAlt]*100);
 							NavState = ReturningHome;
-						}														
+						}
+				}
+				else
+					if ( F. ReturnHome )
+					{ // force a false origin
+						OriginLatitude = HoldLatitude;
+						OriginLongitude = HoldLongitude;
+						SetDesiredAltitude((int16)P[NavRTHAlt]*100);
+						NavState = AtHome;
+					}										
 				break;
 			} // switch NavState
 	}
 	#ifdef ENABLE_STICK_CHANGE_FAILSAFE
 	else 
-    	if ( F.ForceFailsafe && F.NewCommands  && ( StickThrottle >= IdleThrottle ) )
-		{
-			F.AltHoldEnabled = F.AllowNavAltitudeHold = true;
-			F.LostModel = true;
-			DoFailsafeLanding();
-		}
+    	if ( F.ForceFailsafe ) //&& F.NewCommands  && ( StickThrottle >= IdleThrottle ) )
+			DoForcedFailsafe();
 	#endif // ENABLE_STICK_CHANGE_FAILSAFE
 		else 
 			DecayNavCorr(6);
@@ -552,8 +564,19 @@ void DoFailsafe(void)
 				LEDRed_ON;
 	
 				mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-				NavState = Descending;
-				FailState = Terminating;
+				if ( DesiredThrottle > IdleThrottle )
+				{
+					DescentComp = CruiseThrottle - DesiredThrottle;
+					if ( DescentComp < 1 ) DescentComp = 1;
+					NavState = Descending;
+					FailState = Terminating;
+				}
+				else
+				{
+					NavState = Descending;
+					FailState = Terminated;
+					DoShutdown();
+				}
 			}
 			else
 				CheckFailsafeAbort();		

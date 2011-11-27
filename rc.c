@@ -136,7 +136,7 @@ void CheckSticksHaveChanged(void)
 					{
 						Beeper_OFF;
 						F.LostModel = false;
-						DescentComp = 0;
+						DescentComp = 1;
 					}
 				}
 			}
@@ -148,7 +148,7 @@ void CheckSticksHaveChanged(void)
 						//Stats[RCFailsafesS]++;
 						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
 						mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
-						DescentComp = 0; // for no Baro case
+						DescentComp = 1; // for no Baro case
 						F.ForceFailsafe = true;
 					}
 				}

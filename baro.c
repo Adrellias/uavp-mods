@@ -441,7 +441,7 @@ int24 AltitudeCF(int24 Alt)
    	Temp.i32 = AltF[2] * 256 + AltF[0];
 	AltF[2] = Temp.i3_1;
 
-  	AltF[1] =  AltF[2] + AltD * 2 * TauCF; // ABANDON ACC TOO NOISY  -(Acc[DU] - 1024) * BaroAccScale; 
+  	AltF[1] = AltF[2] + AltD * 2 * TauCF; // ABANDON ACC TOO NOISY  -(Acc[DU] - 1024) * BaroAccScale; 
  	Temp.i32 = AltCF * 256 + AltF[1];
 	AltCF = Temp.i3_1;
 

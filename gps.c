@@ -254,13 +254,9 @@ void ParseGPRMCSentence()
 		GPSVel = Temp32.i3_1;
 
         UpdateField();   // True course made good (Degrees)
-		if ( GPSVel > 10 )
-		{ 
-			Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 45L; // MilliRadians 3142/18000; 
-			GPSHeading = Temp32.i3_1;
-		}
-		else
-			GPSHeading = 0;
+		Temp32.i32 = ((int32)ConvertInt(lo, hi-3) * 100L + ConvertInt(hi-1, hi)) * 45L; // MilliRadians 3142/18000; 
+		GPSHeading = Temp32.i3_1;
+
       	/*
         UpdateField();   //UDate
 

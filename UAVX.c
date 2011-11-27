@@ -201,7 +201,6 @@ void main(void)
 						RestoreLEDs();
 						State = Landing;
 					}
-
 					break;
 				} // Switch State
 				mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
