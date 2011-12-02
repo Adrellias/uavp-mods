@@ -110,18 +110,20 @@ void DecayNavCorr(uint8 d)
 	StartingNav = true;
 } // DecayNavCorr
 
+void SetDesiredAltitude(int24 NewDesiredAltitude) // cm
+{
+	ROCIntE = 0;
+	DesiredAltitude = NewDesiredAltitude;
+} // SetDesiredAltitude
+
+#ifndef TESTING
+
 void FailsafeHoldPosition(void)
 {
 	A[Roll].Desired = A[Pitch].Desired = A[Yaw].Desired = 0;
 	if ( F.GPSValid && F.CompassValid && F.AccelerationsValid ) 
 		Navigate(HoldLatitude, HoldLongitude);
 } // FailsafeHoldPosition
-
-void SetDesiredAltitude(int24 NewDesiredAltitude) // cm
-{
-	ROCIntE = 0;
-	DesiredAltitude = NewDesiredAltitude;
-} // SetDesiredAltitude
 
 void DoFailsafeLanding(void)
 { // InTheAir micro switch RC0 Pin 11 to ground when landed
@@ -188,6 +190,8 @@ void DoCompScaling(void)
 		NavScale[Pitch] = 256;
 	}		
 } // DoCompScaling
+
+#endif // !TESTING
 
 void Navigate(int32 NavLatitude, int32 NavLongitude )
 {	// 1.9mS @ 16MHz
@@ -607,6 +611,8 @@ void DoFailsafe(void)
 void UAVXNavCommand(void)
 { 	// NavPlan adapted from ArduPilot ConfigTool GUI - quadrocopter must be disarmed
 
+	#ifndef TESTING
+
 	static int16 b;
 	static uint8 c, d, csum;
 
@@ -668,10 +674,15 @@ void UAVXNavCommand(void)
 	} // switch
 
 	LEDBlue_OFF;
+
+	#endif // !TESTING
+
 } // UAVXNavCommand
 
 void GetWayPointEE(int8 wp)
 { 
+	#ifndef TESTING
+
 	static uint16 w;
 	
 	if ( wp > NoOfWayPoints )
@@ -697,10 +708,11 @@ void GetWayPointEE(int8 wp)
 		WPLoiter = (int16)ReadEE(w + 10) * 1000L; // mS
 	}
 
+	#endif // !TESTING
+
 	F.WayPointCentred =  F.WayPointAchieved = false;
 
 } // GetWaypointEE
-
 
 void InitNavigation(void)
 {

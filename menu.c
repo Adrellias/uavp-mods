@@ -25,6 +25,8 @@ void ShowRxSetup(void);
 void ShowSetup(void);
 void ProcessCommand(void);
 
+int8 PTemp[64];
+
 #ifdef TESTING
 const rom uint8 SerHello[] = "UAVX TEST " Version 
 #else
@@ -134,14 +136,15 @@ void ShowSetup(void)
 		TxString("deg CW from K1 motor(s)\r\n");
 	#endif // MULTICOPTER
 
-	TxString("Accelerometers: ");
+	ShowGyroType(P[SensorHint]);
+	TxString(" { Accs ");
 	ShowAccType();	
 	if ( F.AccelerationsValid )
-		TxString(" ONLINE\r\n");
+		TxString(" ONLINE");
 	else
-		TxString(" FAILED\r\n");
-	
-	TxString("Gyros: "); ShowGyroType(); TxNextLine();
+		TxString(" FAILED");	
+	TxString(" }{ Gyros "); ShowGyroType(GyroType);
+	TxString("}\r\n");
 
 	TxString("Motor ESCs: ");	
 	ShowESCType();
@@ -239,6 +242,7 @@ void ProcessCommand(void)
 	static int8 p, d;
 	static int16 dd;
 
+
 	if ( !Armed )
 	{
 		ch = PollRxChar();
@@ -279,31 +283,25 @@ void ProcessCommand(void)
 				TxString(" = ");
 				dd = RxNumS();
 				d = Limit(dd, -128, 127);
-				if ( p < MAX_PARAMETERS )
+				PTemp[p] = d;
+				if ( p == (MAX_PARAMETERS-1))
 				{
-					// Keep RAM based set up to date.
-					if( ParamSet == (uint8)1 )
-					{
-						WriteEE(p, d);
-						if ( DefaultParams[p][1] )
-							WriteEE(MAX_PARAMETERS + p, d);
-					}
-					else
-					{
-						if ( !DefaultParams[p][1] )
-							WriteEE(MAX_PARAMETERS + p, d);
-					}
+					for (p = 0; p<MAX_PARAMETERS;p++)
+						if( ParamSet == (uint8)1 )
+						{
+							WriteEE(p, PTemp[p]);
+							if ( DefaultParams[p][1] )
+								WriteEE(MAX_PARAMETERS + p, PTemp[p]);
+						}
+						else
+						{
+							if ( !DefaultParams[p][1] )
+								WriteEE(MAX_PARAMETERS + p, PTemp[p]);
+						}
+
+					F.ParametersValid = true; 	// ALL parameters must be written 
 					ParametersChanged = true;
 				}
-				else
-					ParametersChanged = true;
-				// Attempts to block use of old versions of UAVPSet not compatible with UAVX
-				// assumes parameters are written sequentially from 0..(MAX_PARAMETERS-1)
-				if ( p < (MAX_PARAMETERS-1) )
-					F.ParametersValid = false;
-				else
-					if ( p == (MAX_PARAMETERS-1) )
-						F.ParametersValid = true; 	// ALL parameters must be written 
 				LEDBlue_OFF;
 				ShowPrompt();
 				break;
@@ -333,15 +331,16 @@ void ProcessCommand(void)
 				//ShowPrompt();
 				break;
 			case 'R':	// receiver values
-				TxString("\r\nT:");TxValU(ToPercent(RC[ThrottleRC], RC_MAXIMUM));
-				TxString(",R:");TxValS(ToPercent(((RC[RollRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",P:");TxValS(ToPercent(((RC[PitchRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",Y:");TxValS(ToPercent(((RC[YawRC]- RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",5:");TxValU(ToPercent(RC[RTHRC], RC_MAXIMUM));
-				TxString(",6:");TxValS(ToPercent(((RC[CamPitchRC] - RC_NEUTRAL) * 2L), RC_MAXIMUM));
-				TxString(",7:");TxValU(ToPercent(RC[NavGainRC], RC_MAXIMUM));
-				TxString(",8:");TxValU(ToPercent(RC[Ch8RC], RC_MAXIMUM));
-				TxString(",9:");TxValU(ToPercent(RC[Ch9RC], RC_MAXIMUM));
+				TxString("\r\nT:");TxValU(RC[ThrottleRC]);
+				TxString(",R:");TxValU(RC[RollRC]);
+				TxString(",P:");TxValU(RC[PitchRC]);
+				TxString(",Y:");TxValU(RC[YawRC]);
+				TxString(",5:");TxValU(RC[RTHRC]);
+				TxString(",6:");TxValU(RC[CamPitchRC]);
+				TxString(",7:");TxValU(RC[NavGainRC]);
+				TxString(",8:");TxValU(RC[Ch8RC]);
+				TxString(",9:");TxValU(RC[Ch9RC]);
+				TxString(",X:");TxValU(RC_MAXIMUM);
 				ShowPrompt();
 				break;
 			case 'S' :	// show status

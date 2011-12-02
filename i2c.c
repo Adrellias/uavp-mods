@@ -32,7 +32,7 @@ void ShowI2CDeviceName(uint8);
 uint8 ScanI2CBus(void);
 uint8 ReadI2CByteAtAddr(uint8, uint8);
 void WriteI2CByteAtAddr(uint8, uint8, uint8);
-boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8);
+boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8, boolean);
 boolean I2CResponse(uint8);
 
 #define I2C_IN			1
@@ -83,7 +83,7 @@ boolean I2CWaitClkHi(void)
 void I2CStart(void)
 {
 	static boolean r;
-	
+
 	I2C_DATA_FLOAT; // should be floating after previous TBuf
 	r = I2CWaitClkHi();
 	I2C_DATA_LOW;
@@ -127,7 +127,7 @@ uint8 ReadI2CByte(uint8 r)
 
 	I2C_SDA_SW = r;
 	I2C_DIO_SW = I2C_OUT;
-										
+									
 	if( I2CWaitClkHi() )
 	{
 		I2C_CLK_LOW;
@@ -214,33 +214,47 @@ IWerror:
 	return;
 } // WriteI2CByteAtAddr
 
-boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l)
+boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
 {
 	static uint8 b, c;
 	static uint8 S[16];
 	static i16u t;
 
+//	#define LONG_I2C
+
+	#ifdef LONG_I2C
+
+	for ( b = 0; b<l*2; b++)
+		S[b] = ReadI2CByteAtAddr(d, cmd+b);
+
+	#else
+
 	I2CStart();
-	if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
-
-	if( WriteI2CByte(cmd) != I2C_ACK ) goto IRSerror;
-
+		if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
+		if( WriteI2CByte(cmd) != I2C_ACK ) goto IRSerror;
 	I2CStart();	
 		if( WriteI2CByte(d | 1) != I2C_ACK ) goto IRSerror;
 		for (b = 0; b < l*2; b++)
-			if ( b < (l-1) )
+		{
+			if ( b < (l*2-1) )
 				S[b] = ReadI2CByte(I2C_ACK);
 			else
 				S[b] = ReadI2CByte(I2C_NACK);
+
+		}
 	I2CStop();
+
+	#endif // LONG_I2C
 
 	// fix endian!
 	c = 0;
 	for ( b = 0; b < l; b++)
 	{
-		t.b1 = S[c++];
-		t.b0 = S[c++];
-		v[b] = t.i16;
+		if ( h )
+			v[b] = ((int16)(S[c])<<8) | S[c+1];
+		else
+			v[b] = ((int16)(S[c+1])<<8) | S[c];
+		c += 2;
 	}
 	
 	return( true );

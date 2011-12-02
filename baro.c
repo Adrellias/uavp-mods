@@ -122,13 +122,11 @@ void ReadFreescaleBaro(void)
 
 	mS[BaroUpdate] = mSClock()+ BARO_UPDATE_MS;
 
-	F.BaroAltitudeValid = ReadI2Ci16v(ADS7823_ID, ADS7823_CMD,  B, 4);
+	F.BaroAltitudeValid = ReadI2Ci16v(ADS7823_ID, ADS7823_CMD,  B, 4, true);
 	if ( F.BaroAltitudeValid )
 	{	
 		BaroVal.u16 = B[0] + B[1] + B[2] + B[3];
-		#ifndef JIM_MPX_INVERT
 		BaroVal.u16 = (uint16)16380 - BaroVal.u16; // inverting op-amp
-		#endif // !JIM_MPX_INVERT
 	}
 	else
 	{	
@@ -447,6 +445,7 @@ int24 AltitudeCF(int24 Alt)
 
 	BaroROC = ( AltCF - AltCFp) * ALT_UPDATE_HZ; 
 	BaroROC = MediumFilter(BaroROCp, BaroROC);
+	BaroROC = Limit1(BaroROC, 800);
 	// BaroROC = HardFilter(BaroROCp, BaroROC);
 	BaroROCp = BaroROC;
 
@@ -472,7 +471,7 @@ void BaroTest(void)
 
 	TxString("Type:\t"); ShowBaroType();
 	
-	TxString("Init Retries:\t");
+	TxString("\r\nInit Retries:\t");
 	TxVal32((int32)BaroRetries - 2, 0, ' '); // alway minimum of 2
 	if ( BaroRetries >= BARO_INIT_RETRIES )
 		TxString(" FAILED Init.\r\n");
@@ -513,9 +512,11 @@ void BaroTest(void)
 		else
 			TxString("no rangefinder\r\n");
 		
+		#ifdef INC_TEMPERATURE
 		TxString("\r\nAmbient :\t");
 		TxVal32((int32)AmbientTemperature.i16, 1, ' ');
 		TxString("C\r\n");
+		#endif // INC_TEMPERATURE
 	}
 	else
 		TxString("FAIL\r\n");

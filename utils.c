@@ -55,6 +55,7 @@ void LightsAndSirens(void)
 		SpareSlotTime = true; // for "tests"
 		ProcessCommand();
 		GetHeading();
+		SpareSlotTime = true; // for "tests"
 		GetBaroAltitude();
 		if( F.Signal )
 		{
@@ -353,3 +354,4 @@ LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
 
 */
 
+

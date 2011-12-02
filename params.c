@@ -72,12 +72,14 @@ void ReadParametersEE(void)
 		A[Roll].Kp = P[RollKp];
 		A[Roll].Ki = P[RollKi];
 		A[Roll].Kd = P[RollKd];
+		A[Roll].Kp2 = P[RollKp2];
 		A[Roll].IntLimit = P[RollIntLimit];
 		A[Roll].AccOffset = (int16)P[MiddleLR];
 		
 		A[Pitch].Kp = P[PitchKp];
 		A[Pitch].Ki = P[PitchKi];
 		A[Pitch].Kd = P[PitchKd];
+		A[Pitch].Kp2 = P[PitchKp2];
 		A[Pitch].IntLimit = P[PitchIntLimit];
 		A[Pitch].AccOffset = (int16)P[MiddleFB];
 		
@@ -88,15 +90,19 @@ void ReadParametersEE(void)
 		A[Yaw].IntLimit = P[YawIntLimit] * 256;
 		A[Yaw].AccOffset = (int16)P[MiddleDU];
 
-		#ifdef CLOCK_40MHZ
-			#ifdef MULTICOPTER
-				F.NormalFlightMode = ParamSet == (uint8)1;
+		#ifdef TESTING
+			F.NormalFlightMode = true;
+		#else
+			#ifdef CLOCK_40MHZ
+				#ifdef MULTICOPTER
+					F.NormalFlightMode = ParamSet == (uint8)1;
+				#else
+					F.NormalFlightMode = true;
+				#endif
 			#else
 				F.NormalFlightMode = true;
-			#endif
-		#else
-			F.NormalFlightMode = true;
-		#endif // CLOCK_40MHZ
+			#endif // CLOCK_40MHZ
+		#endif // TESTING
 
 		ESCMax = ESCLimits[P[ESCType]];
 		if ( P[ESCType] == ESCPPM )
@@ -352,9 +358,9 @@ void InitParameters(void)
 	if ( ( ReadEE((uint16)RxChannels) == -1 ) || (ReadEE(MAX_PARAMETERS + (uint16)RxChannels) == -1 ) )
 		UseDefaultParameters();
 
+	ParametersChanged = true;
 	ParamSet = 1;
 	ReadParametersEE();
-	ParametersChanged = true;
 
 	ALL_LEDS_OFF;  
 } // InitParameters

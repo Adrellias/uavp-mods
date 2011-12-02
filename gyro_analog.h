@@ -67,7 +67,7 @@ void GyroAnalogTest(void)
 		A[c] = ((int24)ADC(c) * 50L + 512L)/1024L;
 
 	TxString("\r\n");
-	ShowGyroType();
+	ShowGyroType(GyroType);
 	TxString(" - Gyro Test\r\n");
 	if ( (GyroType == IDG300Gyro ) || (GyroType == LY530Gyro ) ) // 3V gyros
 		{ lv = 10; hv = 20;}

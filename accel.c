@@ -25,6 +25,7 @@
 #include "MPU6050.h"
 
 void ShowAccType(void);
+void AccFailure(void);
 void ReadAccelerations(void);
 void GetNeutralAccelerations(void);
 void AccelerometerTest(void);
@@ -50,7 +51,8 @@ void InitLISLAcc(void);
 boolean LISLAccActive(void);
 void ReadLISLAcc(void);
 
-int8 	AccType;
+int16 RawAcc[3];
+int8 AccType;
 
 const rom char * AccName[AccUnknown+1] = 
 		{"LIS3L","ADXL345","BMA180","MPU6050","Unknown"};
@@ -60,31 +62,66 @@ void ShowAccType(void)
 	TxString(AccName[AccType]);
 } // ShowAccType
 
+void AccFailure(void)
+{
+	if ( State == InFlight )
+	{
+		Stats[AccFailS]++;	
+		F.AccFailure = true;
+	}
+} // AccFailure
+
 void ReadAccelerations(void)
 {
 	// X/Forward FB Acc sense to simplify gyro comp code
-	switch ( AccType ) {
-	case LISLAcc:
-		ReadLISLAcc();
-		break;
-	#ifdef INC_ADXL345
-	case ADXL345Acc:
+	switch ( P[SensorHint] ) {
+	case SFDOF6:
 		ReadADXL345Acc();
+		A[Roll].AccADC = RawAcc[Y] * 5; 			     	
+		A[Pitch].AccADC = RawAcc[X] * 5; 
+		A[Yaw].AccADC = RawAcc[Z] * 5;
 		break;
-	#endif // INC_ADXL345
-	#ifdef INC_BMA180
-	case BMA180Acc:
+	case SFDOF9: 
+		ReadADXL345Acc();
+		A[Roll].AccADC = -RawAcc[X] * 5; 		
+	  	A[Pitch].AccADC = RawAcc[Y] * 5;
+		A[Yaw].AccADC = RawAcc[Z] * 5; 
+		break;
+	case FreeIMU:
 		ReadBMA180Acc();
+		A[Roll].AccADC = RawAcc[Y]; 
+		A[Pitch].AccADC = RawAcc[X];
+		A[Yaw].AccADC = RawAcc[Z];
 		break;
-	#endif // INC_BMA180
+	case Drotek:
+		ReadBMA180Acc();
+		A[Roll].AccADC = RawAcc[Y]; 
+		A[Pitch].AccADC = RawAcc[X];
+		A[Yaw].AccADC = RawAcc[Z];
+		break;
 	#ifdef INC_MPU6050
-	case MPU6050Acc:
-		ReadMPU6050Acc();
+	case MPU6050:
+		ReadMPU6050Acc();// QuadroUFO 	
+		A[Roll].AccADC = -SRS16(RawAcc[X], 3); 
+		A[Yaw].AccADC = SRS16(RawAcc[Z], 3);
+		A[Pitch].AccADC = SRS16(RawAcc[Y], 3);
 		break;
 	#endif // INC_MPU6050
+	case ITG3200Gyro: // Use LISL
 	default:
+		ReadLISLAcc();
+		#ifdef FLAT_LISL_ACC
+			A[Roll].AccADC = RawAcc[X];
+			A[Pitch].AccADC = -RawAcc[Y];
+			A[Yaw].AccADC = RawAcc[Z];
+		#else
+			A[Roll].AccADC = RawAcc[X];
+			A[Pitch].AccADC = RawAcc[Z];
+			A[Yaw].AccADC = RawAcc[Y];
+		#endif //FLAT_LISL_ACC
+
 		break;
-	} // Switch
+	} // switch
 
 } // ReadAccelerations
 
@@ -124,6 +161,60 @@ void GetNeutralAccelerations(void)
 
 } // GetNeutralAccelerations
 
+void InitAccelerometers(void)
+{
+	static uint8 a;
+
+	for ( a = Roll; a<=(uint8)Yaw; a++)
+		A[a].AccBias = A[a].AccADC = 0;
+	A[Yaw].AccADC = GRAVITY;
+
+	AccType = AccUnknown;
+
+	switch ( P[SensorHint]){
+	case SFDOF6: // ITG3200
+	case SFDOF9:
+		if ( ADXL345AccActive() )
+		{
+			AccType = ADXL345Acc;
+			InitADXL345Acc();
+		}
+		break;
+	case FreeIMU:
+	case Drotek:
+		if ( BMA180AccActive() )
+		{
+			AccType = BMA180Acc;
+			InitBMA180Acc();
+		}
+		break;
+	#ifdef INC_MPU6050
+	case MPU6050:
+		INV_ID = INV_ID_MPU6050;
+		if ( MPU6050AccActive() )
+		{
+			AccType = MPU6050Acc;
+			InitMPU6050Acc();
+		}
+		break;
+	#endif // INC_MPU6050
+	case ITG3200Gyro:
+	default:	
+		if ( LISLAccActive() )
+		{
+			AccType = LISLAcc;
+			InitLISLAcc();
+		}
+		break;
+	}
+
+	if( F.AccelerationsValid )
+		GetNeutralAccelerations();
+	else
+		F.AccFailure = true;
+
+} // InitAccelerometers
+
 #ifdef TESTING
 
 void AccelerometerTest(void)
@@ -133,9 +224,8 @@ void AccelerometerTest(void)
 	TxString("\r\n");
 	ShowAccType();
 	TxString(" - Accelerometer test:\r\n");
-	TxString("Read once - no averaging (1024 = 1G)\r\n");
+	TxString("Read once - no averaging (1G ~= 1024)\r\n");
 
-	InitAccelerometers();
 	if( F.AccelerationsValid )
 	{
 		ReadAccelerations();
@@ -170,96 +260,6 @@ void AccelerometerTest(void)
 
 #endif // TESTING
 
-void InitAccelerometers(void)
-{
-	static uint8 a;
-
-	for ( a = Roll; a<=(uint8)Yaw; a++)
-		A[a].AccBias = A[a].AccADC = 0;
-	A[Yaw].AccADC = GRAVITY;
-
-		#ifdef PREFER_LISL
-	
-		if ( LISLAccActive() )
-		{
-			AccType = LISLAcc;
-			InitLISLAcc();
-		}
-		else
-			#ifdef INC_ADXL345
-			if ( ADXL345AccActive() )
-			{
-				AccType = ADXL345Acc;
-				InitADXL345Acc();
-			}		
-			else
-			#endif // INC_ADXL345
-				#ifdef INC_BMA180
-				if ( BMA180AccActive() )
-				{
-					AccType = BMA180Acc;
-					InitBMA180Acc();
-				}
-				else
-				#endif // INC_BMA180
-					#ifdef INC_MPU6050
-					if ( MPU6050AccActive() )
-					{
-						AccType = MPU6050Acc;
-						InitMPU6050Acc();
-					}
-					else
-					#endif // INC_MPU6050
-					{
-						AccType = AccUnknown;
-						F.AccelerationsValid = false;
-					}
-		
-		#else
-	
-		#ifdef INC_ADXL345
-		if ( ADXL345AccActive() )
-		{
-			AccType = ADXL345Acc;
-			InitADXL345Acc();
-		}		
-		else
-		#endif // INC_ADXL345
-			#ifdef INC_BMA180
-			if ( BMA180AccActive() )
-			{
-				AccType = BMA180Acc;
-				InitBMA180Acc();
-			}
-			else
-			#endif // INC_BMA180
-				#ifdef INC_MPU6050
-				if ( MPU6050AccActive() )
-				{
-					AccType = MPU6050Acc;
-					InitMPU6050Acc();
-				}
-				else
-				#endif // INC_MPU6050
-					if ( LISLAccActive() )
-					{
-						AccType = LISLAcc;
-						InitLISLAcc();
-					}
-					else
-					{
-						AccType = AccUnknown;
-						F.AccelerationsValid = false;
-					}
-	
-		#endif // PREFER_LISL
-
-	if( F.AccelerationsValid )
-		GetNeutralAccelerations();
-	else
-		F.AccFailure = true;
-} // InitAccelerometers
-
 //________________________________________________________________________________________________
 
 #ifdef INC_ADXL345
@@ -268,56 +268,25 @@ boolean ADXL345AccActive(void);
 
 void ReadADXL345Acc(void) 
 {
-	static int16 G[3];
-
-	if ( ReadI2Ci16v(ADXL345_ID, 0x32, G, 3) ) 
-	{
-		if ( P[SensorHint] == SFDOF9)
-		{
-			// SparkFun 9DOF breakouts pins forward components up
-			A[Roll].AccADC = -G[X]; 		
-		    A[Pitch].AccADC = G[Y];
-		    A[Yaw].AccADC = G[Z]; 	 
-		}
-		else
-		{
-			// SparkFun 6DOF & ITG3200 breakouts pins forward components up    	
-			A[Roll].AccADC = G[Y]; 			     	
-		    A[Pitch].AccADC = G[X]; 
-			A[Yaw].AccADC = G[Z];
-		}
-		
-		A[Roll].AccADC *= 5; 			
-		A[Pitch].AccADC *= 5;
-		A[Yaw].AccADC *= 5; 
-	}
-	else
-	{
-		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY;
-		if ( State == InFlight )
-		{
-			Stats[AccFailS]++;	// data over run - acc out of range
-			// use neutral values!!!!
-			F.AccFailure = true;
-		}
-	}
+	if ( !ReadI2Ci16v(ADXL345_ID, 0x32, RawAcc, 3, false) ) 
+		AccFailure();
 
 } // ReadADXL345Acc
 
 void InitADXL345Acc() {
 
-	uint8 i;
-	int16 AccLR, AccDU, AccFB;
+	static uint8 i;
+	static int16 AccLR, AccDU, AccFB;
 
 	WriteI2CByteAtAddr(ADXL345_ID, 0x2D, 0x08);  // measurement mode
     Delay1mS(5);
-	WriteI2CByteAtAddr(ADXL345_ID, 0x31, 0x08);  // full resolution, 2g
+	WriteI2CByteAtAddr(ADXL345_ID, 0x31, 0x0B);  // full resolution, 2g
     Delay1mS(5);
 	WriteI2CByteAtAddr(ADXL345_ID, 0x2C,
 	    //0x0C);  	// 400Hz
 		//0x0b);	// 200Hz 
 	  	0x0a); 	// 100Hz 
-	  	//WriteI2CByte(0x09); 	// 50Hz
+	  	//0x09); 	// 50Hz
     Delay1mS(5);
 
 } // InitADXL345Acc
@@ -340,43 +309,31 @@ void ReadMPU6050Acc(void)
 {
 	static int16 ADC[3];
 
-	if ( ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, ADC, 3) ) 
-	{
-		// QuadroUFO 	
-		A[Roll].AccADC = ADC[Y]; 
-		A[Yaw].AccADC = ADC[Z];
-		A[Pitch].AccADC = ADC[X];
-	}
-	else
-	{
-		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY_MPU6050;
-		if ( State == InFlight )
-		{
-			Stats[AccFailS]++;	// data over run - acc out of range
-			// use neutral values!!!!
-			F.AccFailure = true;
-		}
-	}
+	if ( !ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, RawAcc, 3, true) ) 
+		AccFailure();
 
 } // ReadMPU6050Acc
 
 void InitMPU6050Acc() {
 
-	InitInvenSenseGyro();
+	WriteI2CByteAtAddr(MPU6050_ID,MPU6050_PWR_MGMT_1, 0xc0); // Reset to defaults
+	Delay1mS(50);
+	WriteI2CByteAtAddr(MPU6050_ID,MPU6050_SMPLRT_DIV, 0x00); // continuous update
+	WriteI2CByteAtAddr(MPU6050_ID,MPU6050_GYRO_CONFIG, 0b00011001);	// 188Hz, 2000deg/S
+	WriteI2CByteAtAddr(MPU6050_ID,MPU6050_INT_ENABLE, 0b00000000);	// no interrupts
+	WriteI2CByteAtAddr(MPU6050_ID,MPU6050_PWR_MGMT_1, 0b00000001);	// X Gyro as Clock Ref.
 
 	WriteI2CByteAtAddr(MPU6050_ID, MPU6050_ACC_CONFIG, 
-			0 // 2G
-			//1 << 3 // 4G
-			//2 << 3 // 8G
-			//3 << 3 // 16G 
-			//| 1 // 2.5Hz
-			//| 2 // 2.5Hz
-			| 3 // 1.25Hz
-			//| 4 // 0.63Hz
-			//| 7 // 0.63Hz
-			);
-
-    Delay1mS(5);
+				0 // 2G
+				//1 << 3 // 4G
+				//2 << 3 // 8G
+				//3 << 3 // 16G 
+				//| 1 // 2.5Hz
+				//| 2 // 2.5Hz
+				| 3 // 1.25Hz
+				//| 4 // 0.63Hz
+				//| 7 // 0.63Hz
+				);
 
 } // InitMPU6050Acc
 
@@ -427,24 +384,8 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-	static int16 ADC[3];
-
-	if ( ReadI2Ci16v(BMA180_ID, BMA180_ACCXLSB, A, 3) )
-	{
-		A[Roll].AccADC = ADC[X]; 
-		A[Pitch].AccADC = ADC[Y];
-		A[Yaw].AccADC = ADC[Z]; 
-	}
-	else
-	{
-		A[Pitch].AccADC = A[Roll].AccADC = 0; A[Yaw].AccADC = GRAVITY;
-		if ( State == InFlight )
-		{
-			Stats[AccFailS]++;	// data over run - acc out of range
-			// use neutral values!!!!
-			F.AccFailure = true;
-		}
-	}
+	if ( !ReadI2Ci16v(BMA180_ID, BMA180_ACCXLSB, RawAcc, 3, false) )
+		AccFailure();
 
 } // ReadBMA180Acc
 
@@ -616,7 +557,7 @@ void InitLISLAcc(void)
 		F.AccelerationsValid = true;
 	}
 	else
-		F.AccFailure = true;
+		AccFailure();
 } // InitLISLAcc
 
 boolean LISLAccActive(void)
@@ -645,27 +586,13 @@ void ReadLISLAcc()
 		L.c[4] = ReadLISLNext();
 		L.c[5] = ReadLISLNext();
 		SPI_CS = DSEL_LISL;	// end transmission
-		#ifdef FLAT_LISL_ACC
-			A[Roll].AccADC = L.i16[X];
-			A[Pitch].AccADC = -L.i16[Y];
-			A[Yaw].AccADC = L.i16[Z];
-		#else
-			A[Roll].AccADC = L.i16[X];
-			A[Pitch].AccADC = L.i16[Z];
-			A[Yaw].AccADC = L.i16[Y];
-		#endif //FLAT_LISL_ACC
+
+		RawAcc[X] = L.i16[X];
+		RawAcc[Y] = L.i16[Y];
+		RawAcc[Z] = L.i16[Z];
 	}
 	else
-	{
-		A[Roll].AccADC = A[Pitch].AccADC = 0; A[Yaw].AccADC = GRAVITY_LISL;
-		if ( State == InFlight )
-		{
-			Stats[AccFailS]++;	// data over run - acc out of range
-			// use neutral values!!!!
-			F.AccFailure = true;
-		}
-	}
-
+		AccFailure();
 } // ReadLISLAcc
 
 

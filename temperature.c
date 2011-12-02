@@ -40,14 +40,12 @@ i16u AmbientTemperature;
 #define TMP100_HI		0x03 		// Alarm high limit
 #define TMP100_CFG		0b00000000	// 0.5 deg resolution continuous
 
-
-
 void GetTemperature(void)
 {
 	I2CStart();
-	if( WriteI2CByte(TMP100_RD) != I2C_ACK ) goto Terror;
-	AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
-	AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
+		if( WriteI2CByte(TMP100_RD) != I2C_ACK ) goto Terror;
+		AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
+		AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
 	I2CStop();
 
 	// Top 9 bits 0.5C res. scale to 0.1C

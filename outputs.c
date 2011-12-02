@@ -46,7 +46,7 @@ int16 ESCMax;
 
 #pragma idata escnames
 const rom char * ESCName[ESCUnknown+1] = {
-		"PPM","Holger","X3D I2C","YGE I2C","LRC I2C","Unknown"
+		"PPM","Holger","X3D I2C","YGE I2C","LRC I2C","Unk"
 		};
 #pragma idata
 

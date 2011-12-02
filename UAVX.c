@@ -43,18 +43,17 @@ void main(void)
 	InitMisc();
 	InitADC();
 	InitI2C();
-	InitParameters();
-	ReadStatsEE();		
+	ReadStatsEE();	
 	InitRC();
 	InitMotors();
 
     EnableInterrupts;
 
 	LEDYellow_ON;
-	Delay100mSWithOutput(5);	// let all the sensors startup
+	Delay1mS(500);
 
-	InitAccelerometers();
-	InitGyros();
+	InitParameters(); // inits Acc/Gyros
+
 	InitCompass();
 	InitHeading();
 	InitRangefinder();
@@ -230,7 +229,6 @@ void main(void)
 				PIDUpdate = MilliSec + MIN_PID_CYCLE_MS;
 			EnableInterrupts;
 
-			GetGyroValues();
 			DoControl();
 			OutSignals();		
 

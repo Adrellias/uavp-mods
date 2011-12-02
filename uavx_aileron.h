@@ -91,9 +91,9 @@
 	{12,true},			// NavYawLimit		58
 	{50,0},				// Balance			59
 	{9,true},			// RxAux4Ch			60
-	{0,0},				// 60 - 64 unused currently	
+	{35,0},				// RollKp2			61
 
-	{0,0},	
+	{35,0},				// PitchKp2			62
 	{0,0},	
 	{0,0}						
 	};

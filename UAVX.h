@@ -11,18 +11,15 @@
 	#define CONTROLLER	Do_Ming_PI_Rate
 #endif
 
-//#define PREFER_LISL				// use old legacy acc first
-//#define PREFER_HMC5843			// use magnetometer first
+#define HMC5843_FULL			// compensation for pitch/roll
 
 //#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
 
-//#define INC_BMA180				// include BMA180 accelerometer code
+#define INC_BMA180				// include BMA180 accelerometer code
 #define INC_ADXL345				// include ADXL345 accelerometer code
 #define INC_MPU6050				// include MPU6050 accelerometer/gyros
 
 //#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
-
-//#define JIM_MPX_INVERT		// early version of MPX baro
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -48,7 +45,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
@@ -409,12 +406,12 @@ typedef struct { // GPS
 typedef struct {
 	// from Parameter Sets
 	int16 IntLimit, Limiter;
-	int8 Kp, Ki, Kd;
+	int8 Kp, Ki, Kd, Kp2;
 	// run time
 	int16 Trim, Hold; 
 	int16 Desired, FakeDesired;
 	int16 FirstGyroADC, GyroADC, GyroBias;
-	int16 Angle, AngleIntE;	
+	int16 Angle, AngleE, AngleIntE;	
 	int16 Rate, Ratep, RateEp, RateIntE;
 	int16 Acc, AccADC, AccBias, AccOffset;
 	int8 AngleCorr;
@@ -523,6 +520,10 @@ typedef struct {
 #define STATS_ADDR_EE	 	( PARAMS_ADDR_EE + (MAX_PARAMETERS *2) )
 #define MAX_STATS			32 //64
 
+#define SETTINGS_ADDR_EE	(STATS_ADDR_EE + (MAX_STATS * 2) )
+#define MAG_BIAS_ADDR_EE	SETTINGS_ADDR_EE
+#define MAX_SETTINGS		64
+
 // uses second Page of EEPROM
 #define NAV_ADDR_EE			256L
 // 0 - 8 not used
@@ -615,7 +616,8 @@ typedef union {
 		FirstArmed:1,
 		HaveGPRMC:1,
 
-		NormalFlightMode:1;	
+		NormalFlightMode:1,
+		MPU6050Initialised:1;	
 		};
 } Flags;
 
@@ -670,6 +672,7 @@ extern boolean LISLAccActive(void);
 extern void ReadLISLAcc(void);
 
 extern int8 AccType;
+extern int16 RawAcc[];
 
 //______________________________________________________________________________________________
 
@@ -967,7 +970,7 @@ enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro
 		ITG3200Gyro, SFDOF6, SFDOF9, MPU6050, FreeIMU, Drotek, IRSensors, GyroUnknown }; 
 
 extern void AdaptiveYawFilterA(void);
-extern void ShowGyroType(void);
+extern void ShowGyroType(uint8);
 extern void CompensateRollPitchGyros(void);
 extern void GetGyroValues(void);
 extern void CalculateGyroRates(void);
@@ -979,6 +982,7 @@ extern void InitGyros(void);
 #define INV_ID_3DOF 	0xD2
 #define INV_ID_6DOF 	0xD0
 #define INV_ID_MPU6050	MPU6050_ID
+
 extern uint8 INV_ID, INVGyroAddress, INVAccAddress;
 
 extern void InvenSenseViewRegisters(void);
@@ -988,7 +992,16 @@ extern boolean InvenSenseGyroActive(void);
 
 extern int16 RawYawRateP;
 extern int8 GyroType;
-extern int16 G[];
+extern int16 RawGyro[];
+
+//______________________________________________________________________________________________
+
+// inertial.c
+
+extern void InitInertial(void);
+extern void DoInertial(void);
+
+
 
 //______________________________________________________________________________________________
 
@@ -1084,7 +1097,7 @@ extern uint8 WriteI2CByte(uint8);
 extern uint8 ReadI2CByte(uint8);
 extern uint8 ReadI2CByteAtAddr(uint8, uint8);
 extern void WriteI2CByteAtAddr(uint8, uint8, uint8);
-extern boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8);
+extern boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8, boolean);
 extern void ShowI2CDeviceName(uint8);
 extern uint8 ScanI2CBus(void);
 extern boolean I2CResponse(uint8);
@@ -1322,9 +1335,11 @@ enum Params { // MAX 64
 	Orient,				// 57
 	NavYawLimit,		// 58
 	Balance,			// 59
-	RxAux4Ch
+	RxAux4Ch,			// 60
+	RollKp2,			// 61
+	PitchKp2			// 62
 	
-	// 60 - 64 unused currently
+	// 63 - 64 unused currently
 	};
 
 #define UsePositionHoldLock 0

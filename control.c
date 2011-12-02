@@ -308,8 +308,9 @@ void DoControl(void)
 	static uint8 a;
 	static AxisStruct *C;
 
+	GetGyroValues();
 	CalculateGyroRates();
-	CompensateRollPitchGyros();	
+	CompensateRollPitchGyros();
 
 	DoOrientationTransform();
 
@@ -340,7 +341,7 @@ void DoControl(void)
 			DoAttitudeAngle(C);
 			C->Control += C->NavCorr;
 			
-			if ( F.UsingAltControl && F.NormalFlightMode )	
+			if ( F.UsingAltControl )	
 				CONTROLLER(C);
 			else
 				Do_Wolf_Rate(C);
