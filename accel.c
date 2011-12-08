@@ -53,6 +53,7 @@ void ReadLISLAcc(void);
 
 int16 RawAcc[3];
 int8 AccType;
+uint8 BMA180_ID;
 
 const rom char * AccName[AccUnknown+1] = 
 		{"LIS3L","ADXL345","BMA180","MPU6050","Unknown"};
@@ -75,6 +76,7 @@ void ReadAccelerations(void)
 {
 	// X/Forward FB Acc sense to simplify gyro comp code
 	switch ( P[SensorHint] ) {
+	#ifdef INC_ADXL345
 	case SFDOF6:
 		ReadADXL345Acc();
 		A[Roll].AccADC = RawAcc[Y] * 5; 			     	
@@ -87,18 +89,16 @@ void ReadAccelerations(void)
 	  	A[Pitch].AccADC = RawAcc[Y] * 5;
 		A[Yaw].AccADC = RawAcc[Z] * 5; 
 		break;
+	#endif // INC_ADXL345
+	#ifdef INC_BMA180
 	case FreeIMU:
-		ReadBMA180Acc();
-		A[Roll].AccADC = RawAcc[Y]; 
-		A[Pitch].AccADC = RawAcc[X];
-		A[Yaw].AccADC = RawAcc[Z];
-		break;
 	case Drotek:
 		ReadBMA180Acc();
-		A[Roll].AccADC = RawAcc[Y]; 
-		A[Pitch].AccADC = RawAcc[X];
-		A[Yaw].AccADC = RawAcc[Z];
+		A[Roll].AccADC = SRS16(RawAcc[Y], 3); 
+		A[Pitch].AccADC = SRS16(RawAcc[X], 3);
+		A[Yaw].AccADC = SRS16(RawAcc[Z], 3);
 		break;
+	#endif // INC_BMA180
 	#ifdef INC_MPU6050
 	case MPU6050:
 		ReadMPU6050Acc();// QuadroUFO 	
@@ -131,7 +131,7 @@ void GetNeutralAccelerations(void)
 	// and averages accelerations over 16 samples.
 	// Puts values in Neutralxxx registers.
 	static uint8 i, a;
-	static int16 Temp[3];
+	static int16 Temp[3], b;
 
 	// already done in caller program
 	Temp[Roll] = Temp[Pitch] = Temp[Yaw] = 0;
@@ -140,21 +140,20 @@ void GetNeutralAccelerations(void)
 		for ( i = 16; i; i--)
 		{
 			ReadAccelerations();
-
-			Temp[Roll] += A[Roll].AccADC;
-			Temp[Pitch] += A[Pitch].AccADC;
-			Temp[Yaw] += A[Yaw].AccADC;
+			for ( a = LR; a<=(uint8)DU; a++ )
+				Temp[a] += A[a].AccADC;
 
 			Delay1mS(10);
 		}	
 	
-		Temp[Roll] = SRS16(Temp[Roll], 4);
-		Temp[Pitch] = SRS16(Temp[Pitch], 4);
-		Temp[Yaw] = SRS16(Temp[Yaw], 4);
-	
-		A[Roll].AccBias = Limit1(Temp[Roll], 99);
-		A[Pitch].AccBias = Limit1(Temp[Pitch], 99);
-		A[Yaw].AccBias = Limit1(Temp[Yaw] - 1024, 99); // -1g
+		Temp[Yaw] -= 16*1024;
+
+		for ( a = LR; a<=(uint8)DU; a++ )
+		{
+			b = Temp[a];
+			b = SRS32(b, 4);	
+			A[a].AccBias = Limit1(b, 99);
+		}
 	}
 	else
 		A[Roll].AccBias = A[Pitch].AccBias = A[Yaw].AccBias = 0;
@@ -172,6 +171,7 @@ void InitAccelerometers(void)
 	AccType = AccUnknown;
 
 	switch ( P[SensorHint]){
+	#ifdef INC_ADXL345
 	case SFDOF6: // ITG3200
 	case SFDOF9:
 		if ( ADXL345AccActive() )
@@ -180,6 +180,8 @@ void InitAccelerometers(void)
 			InitADXL345Acc();
 		}
 		break;
+	#endif // ADXL345
+	#ifdef INC_BMA180
 	case FreeIMU:
 	case Drotek:
 		if ( BMA180AccActive() )
@@ -188,6 +190,7 @@ void InitAccelerometers(void)
 			InitBMA180Acc();
 		}
 		break;
+	#endif // INC_BMA180
 	#ifdef INC_MPU6050
 	case MPU6050:
 		INV_ID = INV_ID_MPU6050;
@@ -413,10 +416,17 @@ void InitBMA180Acc() {
 
 boolean BMA180AccActive(void) {
 
-    I2CStart();
-		WriteI2CByte(BMA180_ID);
-	    F.AccelerationsValid =  ReadI2CByte(I2C_NACK) == BMA180_Version; 
-    I2CStop();
+	BMA180_ID = BMA180_ID_0x08;
+    if ( I2CResponse(BMA180_ID) )
+		F.AccelerationsValid = true;
+	else
+	{
+		BMA180_ID = BMA180_ID_0x82;
+		if ( I2CResponse(BMA180_ID) )
+			F.AccelerationsValid = true;
+		else
+			F.AccelerationsValid = false;
+	}
 
     return( F.AccelerationsValid );
 

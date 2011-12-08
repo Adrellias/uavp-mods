@@ -61,6 +61,7 @@ int16 Make2Pi(int16 A)
 {
 	while ( A < 0 ) A += TWOMILLIPI;
 	while ( A >= TWOMILLIPI ) A -= TWOMILLIPI;
+	A = Limit(A, 0, TWOMILLIPI); // just in case!
 	return( A );
 } // Make2Pi
 
@@ -68,6 +69,7 @@ int16 MakePi(int16 A)
 {
 	while ( A < -MILLIPI ) A += TWOMILLIPI;
 	while ( A >= MILLIPI ) A -= TWOMILLIPI;
+	A = Limit(A, MILLIPI, MILLIPI); // just in case!
 	return( A );
 } // MakePi
 

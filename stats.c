@@ -35,6 +35,8 @@ void ZeroStats(void)
 {
 	static int8 s;
 
+	AccCorrAv = NoAccCorr = 0;
+
 	for (s = 0 ; s < MAX_STATS; s++ )
 		Stats[s] = 0;
 
@@ -62,6 +64,8 @@ void WriteStatsEE()
 	static int8 s, i;
 	static int16 Temp;
 
+	Stats[AccCorrAvS] = AccCorrAv/NoAccCorr;
+
 	if ( P[ESCType] != ESCPPM )
 		for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
 			Stats[ESCI2CFailS] += ESCI2CFail[i];
@@ -77,14 +81,17 @@ void WriteStatsEE()
 
 void ShowStats(void)
 {
-	TxString("\r\nFlight Statistics\r\n");
+	TxString("\r\nFlight Stats\r\n");
 
 	if ( Stats[BadS] != 0 )
 	{
 		TxString("Misc(gke):     \t");TxVal32((int32)Stats[BadS],0,' '); TxVal32((int32)Stats[BadNumS],0,' ');TxNextLine();
 	}
 
-	TxString("\r\nSensor/Rx Failures (Count)\r\n");
+	TxString("\r\nAcc Corr Av.:\t");
+	TxVal32(Stats[AccCorrAvS], 0, 0);
+
+	TxString("\r\n\r\nSensor/Rx Fails (Count)\r\n");
 	TxString("I2CBus:\t");TxVal32((int32)Stats[I2CFailS],0,0); TxNextLine();
 	TxString("GPS:   \t");TxVal32((int32)Stats[GPSInvalidS],0,0); TxNextLine();
 	TxString("Acc:   \t");TxVal32((int32)Stats[AccFailS], 0, 0); TxNextLine();
@@ -135,9 +142,9 @@ void ShowStats(void)
 	}
 
 	if ( Stats[NavValidS] )
-		TxString("Navigation ENABLED\r\n");	
+		TxString("Nav ENABLED\r\n");	
 	else
-		TxString("Navigation DISABLED (No fix at launch)\r\n");
+		TxString("Nav DISABLED (No fix at launch)\r\n");
 } // ShowStats
 
 

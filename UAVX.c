@@ -42,7 +42,7 @@ void main(void)
 
 	InitMisc();
 	InitADC();
-	InitI2C();
+	InitI2C(); // selects 400KHz
 	ReadStatsEE();	
 	InitRC();
 	InitMotors();
@@ -63,6 +63,9 @@ void main(void)
 	InitBarometer();
 
 	ShowSetup();
+
+while (1)
+DoControl();
 
 	FirstPass = true;
 	
@@ -109,8 +112,10 @@ void main(void)
 
 					DesiredThrottle = 0;
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
-					ZeroStats();
 					InitBarometer(); // try to get launch alt as close as possible.
+					ZeroStats();
+					WriteMagCalEE();
+
 					DoStartingBeepsWithOutput(3);
 
 					//SendParameters(0);
@@ -171,6 +176,7 @@ void main(void)
 							F.MotorsArmed = false;
 							Stats[RCGlitchesS] = RCGlitches - Stats[RCGlitchesS];	
 							WriteStatsEE();
+							WriteMagCalEE();
 							mS[ArmedTimeout] = mSClock() + ARMED_TIMEOUT_MS;
 							State = Landed;
 						}

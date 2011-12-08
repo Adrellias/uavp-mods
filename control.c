@@ -172,17 +172,17 @@ void DoAttitudeAngle(AxisStruct *C)
 	// Angles and rates are normal aircraft coordinate conventions
 	// X/Forward axis reversed for Acc to simplify compensation
 	
-	static int16 Temp;
+	static int16 a;
 
 	#ifdef CLOCK_16MHZ
-		Temp = C->Angle + C->Rate;
+		a = C->Angle + C->Rate;
 	#else
-		Temp = C->Angle + SRS16(C->Rate, 1);
+		a = C->Angle + SRS16(C->Rate, 1);
 	#endif // CLOCK_16MHZ
-	Temp = Limit1(Temp, ANGLE_LIMIT); // zzz turn off comp above this angle?
-	Temp = Decay1(Temp);
-	Temp -= C->AngleCorr;			// last for accelerometer compensation
-	C->Angle = Temp;
+	a = Limit1(a, ANGLE_LIMIT_DEG); // turn off comp above this angle?
+	a = Decay1(a);
+	a -= C->AngleCorr;			// last for accelerometer compensation
+	C->Angle = a;
 
 } // DoAttitudeAngle
 
@@ -328,8 +328,8 @@ void DoControl(void)
 		A[Yaw].Angle = SlewLimit(A[Yaw].Angle, A[Yaw].FakeDesired, 8);
 		A[Yaw].Out = -A[Yaw].Desired;
 	
-		CameraAngle[Roll] = A[Roll].Angle;
-		CameraAngle[Pitch] = A[Pitch].Angle;
+	//	CameraAngle[Roll] = A[Roll].Angle;
+	//	CameraAngle[Pitch] = A[Pitch].Angle;
 	 
     #else
 

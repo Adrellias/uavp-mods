@@ -52,6 +52,8 @@ int32 AltF[3] = { 0, 0, 0};
 
 // -----------------------------------------------------------
 
+#ifdef INC_MPX4115
+
 // Freescale ex Motorola MPX4115 Barometer with ADS7823 12bit ADC
 
 void SetFreescaleMCP4725(int16);
@@ -217,6 +219,8 @@ void InitFreescaleBarometer(void)
 
 } // InitFreescaleBarometer
 
+#endif // INC_MPX4115
+
 // -----------------------------------------------------------
 
 // Bosch SMD500 and BMP085 Barometers
@@ -330,7 +334,7 @@ void GetBoschBaroAltitude(void)
 
 				BaroRelAltitude = SlewLimit(BaroRelAltitudeP, BaroRelAltitude, BARO_SLEW_LIMIT_CM);
 				BaroRelAltitudeP = BaroRelAltitude;
-				if ( BaroPressureCycles-- <= 0 )
+				if ( BaroPressureCycles-- <= (uint8)0 )
 				{
 					AcquiringPressure = false;
 					BaroPressureCycles = 1000L/BARO_UPDATE_MS;
@@ -478,6 +482,8 @@ void BaroTest(void)
 	else
 		TxNextLine();
 
+	#ifdef INC_MPX4115
+
 	if ( BaroType == BaroMPX4115 )
 	{
 		TxString("Range   :\t");		
@@ -490,6 +496,8 @@ void BaroTest(void)
 			TxString(" Bad climb or descent range - offset adjustment?");
 		TxNextLine();
 	}
+
+	#endif // INC_MPX4115
 
 	if ( F.BaroAltitudeValid ) 
 	{	
@@ -549,9 +557,11 @@ void GetBaroAltitude(void)
 
 	#else
 
+		#ifdef INC_MPX4115
 		if ( BaroType == BaroMPX4115 )
 			GetFreescaleBaroAltitude();
 		else
+		#endif // INC_MPX4115
 			GetBoschBaroAltitude();
 	
 		if ( F.NewBaroValue )
@@ -584,9 +594,11 @@ void InitBarometer(void)
 
 	F.BaroAltitudeValid = true; // optimistic
 
+	#ifdef INC_MPX4115
 	if ( IsFreescaleBaroActive() )	
 		InitFreescaleBarometer();
 	else
+	#endif // INC_MPX4115
 		if ( IsBoschBaroActive() )
 			InitBoschBarometer();
 		else	

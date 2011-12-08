@@ -259,11 +259,14 @@ void MixAndLimitMotors(void)
 
 } // MixAndLimitMotors
 
+
 void MixAndLimitCam(void)
 {
 	#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
 		// NO CAMERA
 	#else
+
+	#ifndef SIMULATE
 
 	static i24u Temp24;
 	static int32 NewCamRoll, NewCamPitch;
@@ -286,6 +289,12 @@ void MixAndLimitCam(void)
 	NewCamPitch = Temp24.i2_1 + SRS16(DesiredCamPitchTrim * 3, 1);
 	NewCamPitch = PWMSense[CamPitchC] * NewCamPitch + OUT_NEUTRAL; 
 	PWM[CamPitchC] = SlewLimit( PWM[CamPitchC], NewCamPitch, 2);
+
+	#else
+
+	PWM[CamPitchC] = PWM[CamRollC] = OUT_NEUTRAL;
+
+	#endif // SIMULATE
 
 	#endif // !(Y6COPTER | HEXACOPTER }
 

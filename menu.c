@@ -79,10 +79,13 @@ void ShowPrompt(void)
 void ShowRxSetup(void)
 {
 	if ( F.UsingSerialPPM )
+	{
+		TxString("Serial PPM frame (");
 		if ( PPMPosPolarity )
-			TxString("Serial PPM frame (Pos. Polarity)");
+			TxString("Pos. Polarity)");
 		else
-			TxString("Serial PPM frame (Neg. Polarity)");
+			TxString("Neg. Polarity)");
+	}
 	else
 		TxString("Odd Rx Channels PPM");
 } // ShowRxSetup
@@ -163,50 +166,48 @@ void ShowSetup(void)
 	TxString("Tx/Rx: ");
 	ShowRxSetup();
 	if ( F.UsingTxMode2 )
-		TxString(" Tx Mode 2");
+		TxString("Tx Mode 2");
 	else
-		TxString(" Tx Mode 1");
+		TxString("Tx Mode 1");
 	TxNextLine();
 
 	TxString("Param set: "); // must be exactly this string as UAVPSet expects it
 	TxChar('0' + ParamSet);	
 	TxNextLine();
 
-	TxString("\r\nNav:\r\n");
+	TxString("\r\nNav:\r\n\tAutoland ");
 	if ( F.UsingRTHAutoDescend )
-		TxString("\tAutoland ENABLED\r\n");
+		TxString("ENABLED\r\n");
 	else
-		TxString("\tAutoland disabled\r\n");
+		TxString("disabled\r\n");
 
 	if ( F.AllowTurnToWP )
 		TxString("\tTurn toward WP\r\n");
 	else
 		TxString("\tHold heading\r\n");
 
-	if ( F.AllowNavAltitudeHold )
-		TxString("\tAllow Nav Alt Hold\r\n");
-	else
-		TxString("\tManual Nav Alt Hold CAUTION\r\n");
+	if ( !F.AllowNavAltitudeHold )
+		TxString("\tAlt Hold Manual CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
 	if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
 	{
-		TxString("\tODD CHANNEL INPUT selected but EVEN number used - reduced to ");
+		TxString("\tODD CH INP selected but EVEN number used - reduced to ");
 		TxVal32(NoOfChannels,0,0);
 		TxNextLine();
 	}
 	if ( !F.FailsafesEnabled )
-		TxString("\tYOU have chosen to DISABLE Failsafes\r\n");
+		TxString("\tYOU have DISABLED Failsafes\r\n");
 
 	#ifdef TESTING
-		TxString("\tTEST VERSION - No Motors\r\n");
+		TxString("\tTEST VER. - No Motors\r\n");
 	#endif // TESTING
 
 	if ( !F.ParametersValid )
-		TxString("\tINVALID flight parameters (PID)!\r\n");
+		TxString("\tINVALID flight params (PID)!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
-		TxString("\tBarometer OFFLINE\r\n");
+		TxString("\tBaro. OFFLINE\r\n");
 	if ( BaroRetries >= BARO_INIT_RETRIES )
 		TxString("\tBaro Init: FAILED\r\n");
 
@@ -217,7 +218,7 @@ void ShowSetup(void)
 		TxString("\tGyro FAILURE\r\n");
 
 	if ( !F.AccelerationsValid )
-		TxString("\tAccelerometers OFFLINE\r\n");
+		TxString("\tAccs. OFFLINE\r\n");
 
 	if ( !F.CompassValid )
 		TxString("\tCompass OFFLINE\r\n");
@@ -228,7 +229,7 @@ void ShowSetup(void)
 		TxString("\tUAVX is armed - DISARM!\r\n");
 
 	if ( F.Navigate || F.ReturnHome )
-		TxString("\tNavigate/RTH is selected - DESELECT!\r\n");
+		TxString("\tNav/RTH is selected - DESELECT!\r\n");
 
 	if ( InitialThrottle >= RC_THRES_START )
 		TxString("\tThrottle may be open - CLOSE!\r\n");

@@ -52,8 +52,8 @@ void LightsAndSirens(void)
 	Ch5Timeout = mSClock() + 500; // mS.
 	do
 	{
-		SpareSlotTime = true; // for "tests"
 		ProcessCommand();
+		SpareSlotTime = true; // for "tests"
 		GetHeading();
 		SpareSlotTime = true; // for "tests"
 		GetBaroAltitude();
@@ -66,7 +66,6 @@ void LightsAndSirens(void)
 				if ( --RCStart == 0 ) // wait until RC filters etc. have settled
 				{
 					UpdateParamSetChoice();
-					MixAndLimitCam();
 					RCStart = 1;
 				}
 				InitialThrottle = StickThrottle;
@@ -353,5 +352,8 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA)
 LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
 
 */
-
+int32 Abs(int32 n)
+{
+	return(n<0 ? -n : n);
+} // Abs
 

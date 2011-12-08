@@ -32,11 +32,11 @@ void CalibrateCompass(void);
 void InitHeading(void);
 void InitCompass(void);
 
-int16 GetHMC5843Magentometer(void);
-void DoTestHMC5843Magnetometer(void);
-void CalibrateHMC5843Magnetometer(void);
-void InitHMC5843Magnetometer(void);
-boolean HMC5843CompassActive(void);
+int16 GetHMC58X3Magentometer(void);
+void DoTestHMC58X3Magnetometer(void);
+void CalibrateHMC58X3Magnetometer(void);
+void InitHMC58X3Magnetometer(void);
+boolean HMC58X3CompassActive(void);
 
 int16 GetHMC6352Compass(void);
 void DoTestHMC6352Compass(void);
@@ -47,9 +47,10 @@ boolean HMC6352CompassActive(void);
 i24u 	Compass;
 int16 	MagHeading, Heading, HeadingP, DesiredHeading, CompassOffset;
 int8 	CompassType;
+int8 	MagRetries;
 
 const rom char * CompassName[CompassUnknown+1] = {
-		"HMC5843","HMC6352","None"
+		"HMC58X3","HMC6352","None"
 		};
 
 void ShowCompassType(void)
@@ -59,12 +60,14 @@ void ShowCompassType(void)
 
 int16 GetCompass()
 {
-	if ( CompassType == HMC6352Compass )
-		return (GetHMC6352Compass());
+	if ( CompassType == HMC58X3Magnetometer )
+		return (GetHMC58X3Magnetometer());
 	else
-		if ( CompassType == HMC5843Magnetometer )
-			return (GetHMC5843Magnetometer());
+		#ifdef INC_HMC6352
+		if ( CompassType == HMC6352Compass )
+			return (GetHMC6352Compass());
 		else
+		#endif // INC_HMC6352
 			return(0);	
 } // GetCompass
  
@@ -113,16 +116,12 @@ void GetHeading(void)
 			if ( HeadingChange < MILLIPI )		
 			{
 				if (( HeadingChange > COMPASS_MAX_SLEW ) && ( State == InFlight )) 
-				{
 				     Heading = SlewLimit(HeadingP, Heading, COMPASS_MAX_SLEW);    
-				     Stats[CompassFailS]++;
-				}
 				Heading = HeadingFilter(HeadingP, Heading);
 				Heading = Make2Pi(Heading);
 			}
 		}
 		HeadingP = Heading;
-	
 	}	
 
 } // GetHeading
@@ -141,7 +140,6 @@ int16 MinimumTurn(int16 A ) {
 
 void InitHeading(void)
 {
-
 	MagHeading = GetCompass();
 	Heading = HeadingP = Make2Pi( MagHeading - CompassOffset );
 
@@ -154,37 +152,22 @@ void InitHeading(void)
 
 void InitCompass(void)
 {
-#ifdef PREFER_HMC5843
-	if ( HMC5843MagnetometerActive() )
+	if ( HMC58X3MagnetometerActive() )
 	{
-		CompassType = HMC5843Magnetometer;
-		InitHMC5843Magnetometer();
+		CompassType = HMC58X3Magnetometer;
+		InitHMC58X3Magnetometer();
 	}
 	else
+		#ifdef INC_HMC6352
 		if ( HMC6352CompassActive() )
 		{
 			CompassType = HMC6352Compass;
 			InitHMC6352Compass();
 		}
 		else
-			CompassType = CompassUnknown;
-#else
-	if ( HMC6352CompassActive() )
-	{
-		CompassType = HMC6352Compass;
-		InitHMC6352Compass();
-	}
-	else
-		if ( HMC5843MagnetometerActive() )
-		{
-			CompassType = HMC5843Magnetometer;
-			InitHMC5843Magnetometer();
-		}
-		else
+		#endif // INC_HMC6352
 			CompassType = CompassUnknown;
 
-
-#endif // PREFER_HMC5843
 } // InitCompass
 
 #ifdef TESTING 
@@ -192,164 +175,203 @@ void InitCompass(void)
 void DoCompassTest(void)
 {
 	TxString("\r\nCompass test (");
-	if ( CompassType == HMC6352Compass )
-		DoTestHMC6352Compass();
+	
+	if ( CompassType == HMC58X3Magnetometer )
+		DoTestHMC58X3Magnetometer();
 	else
-		if ( CompassType == HMC5843Magnetometer )
-			DoTestHMC5843Magnetometer();
+		#ifdef INC_HMC6352
+		if ( CompassType == HMC6352Compass )
+			DoTestHMC6352Compass();
 		else
+		#endif // INC_HMC6352
 			TxString("not installed?)\r\n");
 } // DoCompassTest
 
 void CalibrateCompass(void)
 {
-	if ( CompassType == HMC6352Compass )
-		CalibrateHMC6352Compass();
+	if ( CompassType == HMC58X3Magnetometer )
+		CalibrateHMC58X3Magnetometer();
+	#ifdef INC_HMC6352
 	else
-		if ( CompassType == HMC5843Magnetometer )
-			CalibrateHMC5843Magnetometer();
+		if ( CompassType == HMC6352Compass )
+			CalibrateHMC6352Compass();
+	#endif // INC_HMC6352
 } // CalibrateCompass
 
 #endif // TESTING
 //________________________________________________________________________________________
 
-// HMC5843 3 Axis Magnetometer
+// HMC58X3 3 Axis Magnetometer
 
-int16 Mag[3], MagBias[3];
-uint8 HMC5843_ID;
+MagStruct Mag[3];
+uint8 HMC58X3_ID;
 
-int16 GetHMC5843Magnetometer(void) {
+#define HMC58X3_CONFIG_A	0x00
+#define HMC58X3_CONFIG_B	0x01
+#define HMC58X3_MODE		0x02
+#define HMC58X3_DATA		0x03
+#define HMC58X3_STATUS		0x09
 
-    static int16 b[3];
+int16 GetHMC58X3Magnetometer(void) {
+
+	static int16 b[3];
 	static i32u Temp;
-    static uint8 r;
+    static uint8 a, r;
     static int16 mx, my;
-    static int16 ARoll, APitch, CRoll, SRoll, CPitch, SPitch;
+    static int16 MRoll, MPitch, CRoll, SRoll, CPitch, SPitch;
 	static int16 CompassVal;
+	static MagStruct * M;
 
-	F.CompassValid = ReadI2Ci16v(HMC5843_ID, 0x03, b, 3, true);
+	F.CompassValid = ReadI2Ci16v(HMC58X3_ID, HMC58X3_DATA, b, 3, true);
 
-	if( F.CompassValid ) 
-	{	
-		if( P[SensorHint] == SFDOF9 )
+	if( F.CompassValid )//&& !((b[X]==b[Y])&&(b[Y]==b[Z]))) 
+	{
+		for ( a = X; a<=(uint8)Z; a++ )
 		{
-			// SparkFun 9DOF Sensor Stick
-		    Mag[LR] = b[0];     // Y axis (internal sensor x axis)
-		    Mag[FB] = -b[1];    // X axis (internal sensor y axis)
-		    Mag[DU] = -b[2];    // Z axis
-		}
-		else
-		{
-			// another alignment :).
-		    Mag[LR] = b[0];     // Y axis (internal sensor x axis)
-		    Mag[FB] = -b[1];    // X axis (internal sensor y axis)
-		    Mag[DU] = -b[2];    // Z axis
+			M = &Mag[a];
+			M->G = b[a];
+			M->Min = Min(M->Min, b[a]);
+			M->Max = Max(M->Max, b[a]);	
+			M->G -= SRS16(M->Max + M->Min, 1);
 		}
 	
-		#ifdef HMC5843_FULL
-	
-			Mag[LR] -= MagBias[LR];
-			Mag[FB] -= MagBias[FB];
-			Mag[DU] -= MagBias[DU];
-	
-			ARoll = SRS16(A[Roll].Angle, 2); // internal angles to milliradian ~0.224
-			APitch = SRS16(A[Pitch].Angle, 2); 
+		// Compass X right, Y forward, Z up
+		#ifdef HMC58X3_FULL
 
-		    CRoll = int16cos(ARoll);
-		    SRoll = int16sin(ARoll);
-		    CPitch = int16cos(APitch);
-		    SPitch = int16sin(APitch);
+			switch ( P[SensorHint] ) { // pitch up and roll LEFT!
+			case FreeIMU:
+				MRoll = A[Roll].Angle;
+				MPitch = A[Pitch].Angle;
+				break;
+			case Drotek:
+				MRoll = A[Roll].Angle;
+				MPitch = -A[Pitch].Angle;
+				break;
+			default: // SF Magnetometer sub for HMC6352
+				MRoll = A[Roll].Angle;
+				MPitch = A[Pitch].Angle;
+				break;
+			} // switch	
 
+			MRoll = SRS16(MRoll, 2); // internal angles to milliradian 78*180/3142 = 4.46
+			MPitch = SRS16(MPitch, 2); 
+
+		    CRoll = int16cos(MRoll);
+		    SRoll = int16sin(MRoll);
+		    CPitch = int16cos(MPitch);
+		    SPitch = int16sin(MPitch);	
+	
 			// Tilt compensated Magnetic field X:
-			Temp.i32 = (int32)Mag[1] * SRoll * SPitch + (int32)Mag[2] * CRoll * SPitch;
-			Temp.i32 = (int24)Mag[0] * CPitch + Temp.i3_1;
+			Temp.i32 = (int32)Mag[Y].G * SPitch * SRoll + (int32)Mag[Z].G * CPitch * SRoll;
+			Temp.i32 = (int24)Mag[X].G * CRoll + Temp.i3_1;
 			mx = Temp.i3_1;
 			
 			// Tilt compensated Magnetic field Y:
-			Temp.i32 =  (int24)Mag[1] * CRoll - (int24)Mag[2] * SRoll;
+			Temp.i32 =  (int24)Mag[Y].G * CPitch - (int24)Mag[Z].G * SPitch;
 			my = Temp.i3_1;
 
 		    // Magnetic Heading
-		    CompassVal = int32atan2( -my, mx );
+		    CompassVal = int32atan2( my, mx );
 	
 		#else
 	
-	    	CompassVal = int32atan2( -Mag[1], Mag[0] );
+	    	CompassVal = int32atan2( Mag[Y].G, Mag[X].G );
 	
-		#endif // HMC5843_FULL
+		#endif // HMC58X3_FULL
 	}
 	else
-		CompassVal = 0;
+		Stats[CompassFailS]++;
 
 	return ( CompassVal );
 
-} // GetHMC5843Magnetometer
+} // GetHMC58X3Magnetometer
+
+void WriteMagCalEE(void)
+{
+	static uint8 a;
+	static MagStruct * M;
+
+	if ( CompassType == HMC58X3Magnetometer )
+		for ( a = X; a<=(uint8)Z; a++)
+		{
+			M = &Mag[a];
+			Write16EE(MAG_BIAS_ADDR_EE + (a*4), M->Min);
+			Write16EE(MAG_BIAS_ADDR_EE + (a*4+2), M->Max);
+		}
+} // WriteMagCalEE
+
+void ReadMagCalEE(void)
+{
+	static uint8 a;
+	static MagStruct * M;
+
+	if ( CompassType == HMC58X3Magnetometer )
+		for ( a = X; a<=(uint8)Z; a++)
+		{
+			M = &Mag[a];
+			M->Min = Read16EE(MAG_BIAS_ADDR_EE + (a*4));
+			M->Max = Read16EE(MAG_BIAS_ADDR_EE + (a*4+2));
+		}
+} // ReadMagCalEE
 
 #ifdef TESTING
 
-void CalibrateHMC5843Magnetometer(void) {
+void CalibrateHMC58X3Magnetometer(void) {
 
-	static int16 i, v;
 	static uint8 a;
-	static int16 MagMin[3], MagMax[3];
+	static int16 b[3];
+	static boolean r;
+	static MagStruct * M;
 
-	#ifdef HMC5843_FULL
-
-	TxString("\r\nRotate in ALL directions - Press the CONTINUE button (x) to FINISH\r\n");
-
-	for ( a = LR; a<=(uint8)DU; a++)
-		MagMin[a] = MagMax[a] = 0;
-
-	while( PollRxChar() != 'x' );
+	TxString("\r\n");
+	ShowCompassType();
+	TxString(" - Reset Bias\r\n");
+	for ( a = X; a<=(uint8)Z; a++)
 	{
-		v = GetHMC5843Magnetometer();
-		for ( a = LR; a<=(uint8)DU; a++)
-		{
-			MagMin[a] = Min(Mag[a], MagMin[a]);
-			MagMax[a] = Max(Mag[a], MagMax[a]);
-		}
-		Delay1mS(50);
+		M = &Mag[a];
+		M->Max = 850;
+		M->Min = -850;
 	}
-	
-	for ( a = LR; a<=(uint8)DU; a++)
-	{
-		MagBias[a] = SRS16(MagMax[a] - MagMin[a], 1);
-		Write16EE(MAG_BIAS_ADDR_EE + (a*2), MagBias[a]);
-	}
+		
+	WriteMagCalEE();
 
-	TxString("\r\nCalibration complete\r\n");
-	
-	#else
+	DoTestHMC58X3Magnetometer();
+				
+} // CalibrateHMC58X3Magnetometer
 
-	TxString("\r\nNo Calibration\r\n");
-
-	#endif // HMC5843_FULL
-	
-} // CalibrateHMC5843Magnetometer
-
-void DoTestHMC5843Magnetometer(void) 
+void DoTestHMC58X3Magnetometer(void) 
 {
 	static int32 Temp;
-	static uint8 i;
+	static uint8 a, i, status;
+	static MagStruct * M;
 
-    TxString("HMC5843)\r\n\r\n");
+	ShowCompassType();
 
+	status = ReadI2CByteAtAddr(HMC58X3_ID,HMC58X3_STATUS);
 	MagHeading = GetCompass();
 	Heading = Make2Pi( MagHeading - CompassOffset );
 
 	if ( F.CompassValid )
 	{
-	    TxString("Mag :\t");
-	    TxVal32(Mag[LR], 0, HT);
-		TxVal32(Mag[FB], 0, HT);
-	    TxVal32(Mag[DU], 0, HT);
-		TxNextLine();
-	
-		TxString("Bias:\t");
-	    TxVal32(MagBias[LR], 0, HT);
-	    TxVal32(MagBias[FB], 0, HT);
-	    TxVal32(MagBias[DU], 0, HT);
-	    TxNextLine();
+		TxString("\r\n\r\nStatus:\t0x");
+		TxValH(status);
+		TxString("\r\nRetries:\t");
+		TxVal32(MagRetries - 1 ,0,0);
+		
+	    TxString("\r\n\t\tMag \tMin \tMax \tBias \tRef.\r\n");
+		for ( a = X; a<=(uint8)Z; a++ )
+		{
+			M = &Mag[a];
+			TxChar(HT);
+			TxChar(a+'X');
+			TxString(":\t");
+		    TxVal32(M->G, 0, HT);
+			TxVal32(M->Min, 0, HT);
+			TxVal32(M->Max, 0, HT);
+			TxVal32(SRS16(M->Max + M->Min, 1), 0, HT);
+			TxVal32(M->Scale, 0, HT);
+		    TxNextLine();
+		}
 	
 	    TxVal32(ConvertMPiToDDeg(MagHeading), 1, 0);
 	    TxString(" deg (Compass)\r\n");
@@ -357,60 +379,94 @@ void DoTestHMC5843Magnetometer(void)
 	    TxString(" deg (True)\r\n");
 	}
 	else
-		TxString("Fail\r\n");
+		TxString(" Fail)\r\n");
 
-} // DoHMC5843Test
+} // DoHMC58X3Test
 
 #endif // TESTING
 
-void InitHMC5843Magnetometer(void) 
+void InitHMC58X3Magnetometer(void) 
 {
 	static uint8 a;
+	static MagStruct * M;
+	static int16 C[3];
+	static boolean r;
+	
+	MagRetries = 0;
 
-    Delay1mS(COMPASS_TIME_MS);
-	WriteI2CByteAtAddr(HMC5843_ID, 0x02, 0x00); // Set continuous mode (default to 10Hz)
-	Delay1mS(COMPASS_TIME_MS);
+	do {
 
-	for ( a = LR; a<=(uint8)DU; a++)
-		MagBias[a] =Read16EE(MAG_BIAS_ADDR_EE+(a*2));
+		Delay1mS(100);
+	
+		WriteI2CByteAtAddr(HMC58X3_ID, HMC58X3_CONFIG_A, 0b00010001); // 10Hz normal mode
+		WriteI2CByteAtAddr(HMC58X3_ID, HMC58X3_MODE, 0b00010101); 
+	
+		Delay1mS(10);
+	
+		r = ReadI2Ci16v(HMC58X3_ID, HMC58X3_DATA, C, 3, true);
+	
+		for ( a = X; a<=(uint8)Z; a++)
+			Mag[a].Scale = C[a];
+	
+		Delay1mS(10);
+	
+		WriteI2CByteAtAddr(HMC58X3_ID, HMC58X3_CONFIG_A, 0b00010100); // 20Hz normal mode
+		WriteI2CByteAtAddr(HMC58X3_ID, HMC58X3_CONFIG_B, 0b00100000); // default gain
+		WriteI2CByteAtAddr(HMC58X3_ID, HMC58X3_MODE, 0x00); // Set continuous mode (default to 10Hz)
 
-} // InitHMC5843Magnetometer
+		Delay1mS(100);
 
-boolean HMC5843MagnetometerActive(void) 
+	} while ( (++MagRetries < MAG_INIT_RETRIES) && (C[X] == C[Y]) && (C[Y] == C[Z]) );
+
+	F.CompassValid = MagRetries < MAG_INIT_RETRIES;
+
+	mS[CompassUpdate] = mSClock();
+
+	ReadMagCalEE();
+
+} // InitHMC58X3Magnetometer
+
+boolean HMC58X3MagnetometerActive(void) 
 {
-	HMC5843_ID = HMC5843_3DOF;
+	HMC58X3_ID = HMC58X3_3DOF;
 
-	F.CompassValid = I2CResponse(HMC5843_ID);
+	F.CompassValid = I2CResponse(HMC58X3_ID);
 	if ( !F.CompassValid )
 	{
-		HMC5843_ID = HMC5843_9DOF;
-	  	F.CompassValid = I2CResponse(HMC5843_ID);
+		HMC58X3_ID = HMC58X3_9DOF;
+	  	F.CompassValid = I2CResponse(HMC58X3_ID);
 	}
 
 	return (F.CompassValid);
-} //  HMC5843MagnetometerActive
+} //  HMC58X3MagnetometerActive
 
 //________________________________________________________________________________________
+
+#ifdef INC_HMC6352
 
 // HMC6352 Bosch Compass
 
 void WriteHMC6352Command(uint8 c)
 {
+	UseI2C100KHz = true;
 	I2CStart(); // Do Bridge Offset Set/Reset now
 		WriteI2CByte(HMC6352_ID);
 		WriteI2CByte(c);
 	I2CStop();
+	UseI2C100KHz = false;
 } // WriteHMC6352Command
 
 int16 GetHMC6352Compass(void)
 {
 	static i16u CompassVal;
 
+	UseI2C100KHz = true;
 	I2CStart();
 		F.CompassMissRead = WriteI2CByte(HMC6352_ID+1) != I2C_ACK; 
 		CompassVal.b1 = ReadI2CByte(I2C_ACK);
 		CompassVal.b0 = ReadI2CByte(I2C_NACK);
 	I2CStop();
+	UseI2C100KHz = false;
 
 	return ( ConvertDDegToMPi( CompassVal.i16 ) );
 } // GetHMC6352Compass
@@ -427,6 +483,7 @@ void GetHMC6352Parameters(void)
 
 	static uint8 r;
 
+	UseI2C100KHz = true;
 	I2CStart();
 		WriteI2CByte(HMC6352_ID);
 		WriteI2CByte('G');
@@ -456,6 +513,8 @@ void GetHMC6352Parameters(void)
 		I2CStop();
 	}
 
+	UseI2C100KHz = false;
+
 	Delay1mS(7);
 
 	#endif // FULL_TEST
@@ -471,6 +530,8 @@ void DoTestHMC6352Compass(void)
 
 	TxString("HMC6352)\r\n");
 
+	UseI2C100KHz = true;
+
 	#ifdef FULL_TEST
 	I2CStart();
 		WriteI2CByte(HMC6352_ID);
@@ -478,6 +539,8 @@ void DoTestHMC6352Compass(void)
 		WriteI2CByte(0x74);
 		WriteI2CByte(TEST_COMP_OPMODE);
 	I2CStop();
+
+	UseI2C100KHz = false;
 
 	Delay1mS(1);
 
@@ -580,6 +643,7 @@ void InitHMC6352Compass(void)
 		#define COMP_OPMODE 0b01110010
 	#endif // SUPPRESS_COMPASS_SR
 
+	UseI2C100KHz = true;
 	// Set device to Compass mode 
 	I2CStart();
 		WriteI2CByte(HMC6352_ID);
@@ -587,6 +651,7 @@ void InitHMC6352Compass(void)
 		WriteI2CByte(0x74);
 		WriteI2CByte(COMP_OPMODE);
 	I2CStop();
+	UseI2C100KHz = false;
 
 	Delay1mS(1);
 
@@ -601,10 +666,14 @@ void InitHMC6352Compass(void)
 
 boolean HMC6352CompassActive(void) 
 {
+	UseI2C100KHz = true;
 	F.CompassValid = I2CResponse(HMC6352_ID);
+	UseI2C100KHz = false;
 	return(F.CompassValid);
 
 } // HMC6352CompassActive
+
+#endif // INC_HMC6352
 
 
 

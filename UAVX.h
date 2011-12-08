@@ -11,15 +11,22 @@
 	#define CONTROLLER	Do_Ming_PI_Rate
 #endif
 
-#define HMC5843_FULL			// compensation for pitch/roll
-
-//#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
+#define DEG_TO_ANGLE_UNITS		78L	// very approximate - needs measuring
+#define MAX_BANK_ANGLE_DEG		30L
 
 #define INC_BMA180				// include BMA180 accelerometer code
-#define INC_ADXL345				// include ADXL345 accelerometer code
+#define INC_ADXL345			// include ADXL345 accelerometer code
 #define INC_MPU6050				// include MPU6050 accelerometer/gyros
+//#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
 
-//#define DEBUG_GYROS			// puts out raw angles in telemetry for comparison with comp. values
+//#define HMC58X3_FULL			// compensation for pitch/roll
+
+#define INC_HMC6352
+#ifdef INC_HMC6352
+	#define USE_I2C100KHZ
+#endif // INC_HMC6352
+
+//#define INC_MPX4115				// Steve's proto
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -45,7 +52,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
@@ -63,8 +70,8 @@
 
 //________________________________________________________________________________________________
 
-#ifdef TESTING
-	//#define USE_SENSOR_TRACE		// use sensor trace through UAVPSet	
+#if ( defined SIMULATE | defined TESTING )
+	#define USE_LIMIT_MACRO		// squeek some more space
 #endif
 
 // Airframe
@@ -115,7 +122,7 @@
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
 #define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
-#define ANGLE_LIMIT				(78L*40L)
+#define ANGLE_LIMIT_DEG				(DEG_TO_ANGLE_UNITS*60L)	// push out to ~60degrees
 	
 #ifdef CLOCK_16MHZ
 	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
@@ -421,6 +428,10 @@ typedef struct {
 	int16 Out, Outp;	
 } AxisStruct;
 
+typedef struct {
+	int16 G, Max, Min, Scale;
+} MagStruct;
+
 // Macros
 #define Set(S,b) 			((uint8)(S|=(1<<b)))
 #define Clear(S,b) 			((uint8)(S&=(~(1<<b))))
@@ -428,7 +439,7 @@ typedef struct {
 #define IsClear(S,b) 		((uint8)(!(S>>b)&1))
 #define Invert(S,b) 		((uint8)(S^=(1<<b)))
 
-#define Abs(i)				(((i)<0) ? -(i) : (i))
+//#define Abs(i)				(((i)<0) ? -(i) : (i))
 #define Sign(i)				(((i)<0) ? -1 : 1)
 #define Sqr(r)				( r * r )
 
@@ -441,6 +452,7 @@ typedef struct {
 
 // To speed up NMEA sentence processing 
 // must have a positive argument
+
 #define ConvertDDegToMPi(d) (((int32)d * 3574L)>>11)
 #define ConvertMPiToDDeg(d) (((int32)d * 2048L)/3574L)
 
@@ -654,8 +666,11 @@ extern void ReadMPU6050Acc(void);
 extern void InitMPU6050Acc(void);
 extern boolean MPU6050AccActive(void);
 
-#define BMA180_ID          	0x08
+#define BMA180_ID_0x08          	0x08
+#define BMA180_ID_0x82          	0x82
 #define GRAVITY_BMA180 		1024 // zzz
+
+extern uint8 BMA180_ID;
 
 extern void ReadBMA180Acc(void);
 extern void InitBMA180Acc(void);
@@ -819,7 +834,9 @@ extern int24 FakeBaroRelAltitude;
 
 #define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
 
-enum CompassTypes { HMC5843Magnetometer, HMC6352Compass, CompassUnknown };
+#define MAG_INIT_RETRIES	10
+
+enum CompassTypes { HMC58X3Magnetometer, HMC6352Compass, CompassUnknown };
 
 extern void ShowCompassType(void);
 extern int16 GetCompass(void);
@@ -833,18 +850,20 @@ extern void InitCompass(void);
 extern void DoCompassTest(void);
 extern void CalibrateCompass(void);
 
-// HMC5843 Bosch Magnetometer
+// HMC58X3 Bosch Magnetometer
 
-#define HMC5843_3DOF    0x3C       
-#define HMC5843_9DOF 	0x1E
+#define HMC58X3_3DOF    0x3C       
+#define HMC58X3_9DOF 	0x1E
 
-extern int16 GetHMC5843Magnetometer(void);
-extern void DoTestHMC5843Magnetometer(void);
-extern void CalibrateHMC5843Magnetometer(void);
-extern void InitHMC5843Magnetometer(void);
-extern boolean HMC5843MagnetometerActive(void);
+extern int16 GetHMC58X3Magnetometer(void);
+extern void DoTestHMC58X3Magnetometer(void);
+extern void CalibrateHMC58X3Magnetometer(void);
+extern void InitHMC58X3Magnetometer(void);
+extern boolean HMC58X3MagnetometerActive(void);
+extern void ReadMagCalEE(void);
+extern void WriteMagCalEE(void);
 
-extern uint8 HMC5843_ID;
+extern uint8 HMC58X3_ID;
 
 // HMC6352 Bosch Compass
 
@@ -859,6 +878,7 @@ extern boolean HMC6352CompassActive(void);
 extern i24u Compass;
 extern int16 MagHeading, Heading, HeadingP, DesiredHeading, CompassOffset;
 extern int8 CompassType;
+extern int8 MagRetries;
 
 //______________________________________________________________________________________________
 
@@ -993,6 +1013,7 @@ extern boolean InvenSenseGyroActive(void);
 extern int16 RawYawRateP;
 extern int8 GyroType;
 extern int16 RawGyro[];
+extern int32 AccCorrAv, NoAccCorr;
 
 //______________________________________________________________________________________________
 
@@ -1109,6 +1130,8 @@ extern uint8 WriteESCI2CByte(uint8);
 
 extern void ProgramSlaveAddress(uint8);
 extern void ConfigureESCs(void);
+
+extern boolean UseI2C100KHz;
 
 //______________________________________________________________________________________________
 
@@ -1452,7 +1475,7 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinROCS, MaxROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS, BadNumS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS, BadNumS, AccCorrAvS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 
@@ -1520,7 +1543,7 @@ extern int16 DecayX(int16, int16);
 //extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
 extern void CheckBatteries(void);
 extern void CheckAlarms(void);
-
+extern int32 Abs(int32);
 extern int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
 extern int32 BatteryChargeADC, BatteryCurrent;
 

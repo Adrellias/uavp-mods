@@ -33,6 +33,7 @@ void InitGyros(void);
 int16 RawYawRateP;
 int8 GyroType;
 int16 RawGyro[3];
+int32 AccCorrAv, NoAccCorr;
 
 #include "MPU6050.h"
 
@@ -109,7 +110,7 @@ void ErectGyros(void)
 	static int8 i, g;
 	static int32 Av[3];
 
-	for ( g = 0; g < (int8)3; g++ )	
+	for ( g = Roll; g <= (uint8)Yaw; g++ )	
 		Av[g] = 0;
 
     for ( i = 32; i ; i-- )
@@ -119,15 +120,14 @@ void ErectGyros(void)
 
 		GetGyroValues();
 
-		Av[Roll] += A[Roll].GyroADC;
-		Av[Pitch] += A[Pitch].GyroADC;	
-		Av[Yaw] += A[Yaw].GyroADC;
+		for ( g = Roll; g <= (uint8)Yaw; g++ )
+			Av[g] += A[g].GyroADC;
 	}
 	
-	for ( g = 0; g < (int8)3; g++ )
+	for ( g = Roll; g <= (uint8)Yaw; g++ )
 	{
 		A[g].GyroBias = (int16)SRS32( Av[g], 5); // InvenSense is signed
-		A[g].Rate =  A[g].Ratep = A[g].Angle = 0;
+		A[g].Rate = A[g].Ratep = A[g].Angle = 0;
 	}
 
 	RawYawRateP = 0;
@@ -162,18 +162,26 @@ void CompensateRollPitchGyros(void)
 			NewAcc = C->AccADC - C->AccOffset; 
 			C->Acc = AccFilter(C->Acc, NewAcc);
 
-			Temp.i32 = (int32)C->Angle * RESCALE_TO_ACC; // avoid shift  32/256 = 0.125 @ 16MHz
+			Temp.i32 = (int32)C->Angle * P[AccTrack]; // avoid shift  32/256 = 0.125 @ 16MHz
 			Grav = Temp.i3_1;
 			Dyn = 0; //A[a].Rate;
 	
 			NewCorr = SRS32(C->Acc + Grav + Dyn, 3); 
+
+			if ( (State == InFlight) && (Abs(C->Angle > 10 * DEG_TO_ANGLE_UNITS)) )
+			{
+				AccCorrAv += Abs(NewCorr);
+				NoAccCorr++;
+			}
+
 			NewCorr = Limit1(NewCorr, ANGLE_COMP_STEP);
 			C->AngleCorr = MediumFilter(C->AngleCorr,NewCorr); 
 		}
 	}	
 	else
 	{
-		A[Roll].AngleCorr = A[Pitch].AngleCorr = A[Roll].Acc = A[Pitch].Acc = 0; A[Yaw].Acc = GRAVITY;
+		A[Roll].AngleCorr = A[Roll].Acc = A[Pitch].AngleCorr = A[Yaw].Acc = 0;
+		A[Yaw].Acc = GRAVITY;
 	}
 
 } // CompensateRollPitchGyros
@@ -265,6 +273,7 @@ void InitGyros(void)
 		GyroType = P[SensorHint];
 		break;
 	} // switch
+
 } // InitGyros
 
 #ifdef TESTING

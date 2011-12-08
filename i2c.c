@@ -38,6 +38,8 @@ boolean I2CResponse(uint8);
 #define I2C_IN			1
 #define I2C_OUT			0
 
+boolean UseI2C100KHz;
+
 // These routine need much better tailoring to the I2C bus spec.
 // 16MHz 0.25uS/Cycle
 // 40MHz 0.1uS/Cycle
@@ -54,15 +56,181 @@ boolean I2CResponse(uint8);
 	#define I2C_CIO_SW			TRISBbits.TRISB7
 #endif // UAVX_HW
 
-#define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DIO_SW=I2C_OUT;} 
+#ifdef CLOCK_16MHZ
+	#define T_LOW_STA		//if(UseI2C100KHz){Delay10TCYx(2);}	
+	#define T_HD_STA		if(UseI2C100KHz)Delay10TCYx(2);else{Delay1TCY();Delay1TCY();}	// 4.0/0.6uS
+	#define T_HD_DAT		//if(UseI2C100KHz)Delay10TCYx(5)	// 5.0/0.0uS
+	#define T_SU_DAT									// 250/100nS
+
+	#define T_HIGH_R		if(UseI2C100KHz){Delay1TCY();}	// 4.0/0.6uS	
+	#define T_LOW_R			if(UseI2C100KHz){Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.7/1.3uS
+	#define T_HIGH_W		if(UseI2C100KHz){Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.0/0.6uS
+	#define T_LOW_W			if(UseI2C100KHz){Delay1TCY();}	// 4.7/1.3uS
+
+	#define T_HIGH_ACK_R	if(UseI2C100KHz){Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}		
+	#define T_HIGH_ACK_W	if(UseI2C100KHz){}
+	#define T_LOW_STP		if(UseI2C100KHz){Delay10TCYx(1);}	
+	#define T_SU_STO		if(UseI2C100KHz){Delay10TCYx(2);}
+	#define T_BUF			Delay10TCYx(2)
+#else
+	#define T_LOW_STA		if(UseI2C100KHz){Delay10TCYx(2);}	
+	#define T_HD_STA		if(UseI2C100KHz){Delay10TCYx(2);}else{Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.0/0.6uS
+	#define T_HD_DAT		if(UseI2C100KHz)Delay10TCYx(5)	// 5.0/0.0uS
+	#define T_SU_DAT									// 250/100nS
+
+	#define T_HIGH_R		if(UseI2C100KHz){Delay10TCYx(2);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.0/0.6uS	
+	#define T_LOW_R			if(UseI2C100KHz){Delay10TCYx(3);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.7/1.3uS
+	#define T_HIGH_W		if(UseI2C100KHz){Delay10TCYx(3);Delay1TCY();Delay1TCY();}	// 4.0/0.6uS
+	#define T_LOW_W			if(UseI2C100KHz){Delay10TCYx(2);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}	// 4.7/1.3uS
+
+	#define T_HIGH_ACK_R	if(UseI2C100KHz){Delay10TCYx(3);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}		
+	#define T_HIGH_ACK_W	if(UseI2C100KHz){Delay10TCYx(2);Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}
+	#define T_LOW_STP		if(UseI2C100KHz){Delay10TCYx(2);}	
+	#define T_SU_STO		if(UseI2C100KHz){Delay10TCYx(3);}else{Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();Delay1TCY();}
+	#define T_BUF			Delay10TCYx(5)
+#endif // CLOCK_16MHZ
+
+#define I2C_DATA_LOW	{I2C_SDA_SW=0;I2C_DIO_SW=I2C_OUT;}
 #define I2C_DATA_FLOAT	{I2C_DIO_SW=I2C_IN;}
 #define I2C_CLK_LOW		{I2C_SCL_SW=0;I2C_CIO_SW=I2C_OUT;}
-#define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;}
+#define I2C_CLK_FLOAT	{I2C_CIO_SW=I2C_IN;} 
 
 void InitI2C(void)
 {
-	// null for SW I2C
+	UseI2C100KHz = false;
 } // InitI2C
+
+#ifdef USE_I2C100KHZ
+
+boolean I2CWaitClkHi(void)
+{
+	static uint8 s;
+
+	Delay1TCY(); // setup
+	Delay1TCY();
+	Delay1TCY();
+
+	I2C_CLK_FLOAT;		// set SCL to input, output a high
+	s = 1;
+	while( !I2C_SCL_SW )	// timeout wraparound through 255 to 0 0.5mS @ 40MHz
+		if( ++s == (uint8)0 )
+		{
+			Stats[I2CFailS]++;
+			return (false);
+		}
+	return( true );
+} // I2CWaitClkHi
+
+void I2CStart(void)
+{
+	static boolean r;
+	
+	I2C_DATA_FLOAT;
+	r = I2CWaitClkHi();
+	I2C_DATA_LOW;
+	T_HD_STA;
+	I2C_CLK_LOW;
+	T_LOW_STA;
+
+} // I2CStart
+
+void I2CStop(void)
+{
+	static boolean r;
+
+	T_LOW_STP;
+	I2C_DATA_LOW;
+	r = I2CWaitClkHi();
+	T_SU_STO;
+	I2C_DATA_FLOAT;
+
+	T_BUF;
+
+} // I2CStop 
+
+uint8 ReadI2CByte(uint8 r)
+{
+	static uint8 s, d;
+
+	I2C_DATA_FLOAT;
+	d = 0;
+	s = 8;
+	do {
+		if( I2CWaitClkHi() )
+		{ 
+			d <<= 1;
+			if( I2C_SDA_SW ) d |= 1;
+			T_HIGH_R;
+			I2C_CLK_LOW;
+			T_LOW_R;
+ 		}
+		else
+		{
+			Stats[I2CFailS]++;
+			return(false);
+		}
+	} while ( --s );
+
+	I2C_SDA_SW = r;
+	I2C_DIO_SW = I2C_OUT;
+										
+	if( I2CWaitClkHi() )
+	{
+		T_HIGH_ACK_R;
+		I2C_CLK_LOW;
+		return(d);
+	}
+	else
+	{
+		Stats[I2CFailS]++;
+		return(false);
+	}
+	
+} // ReadI2CByte
+
+uint8 WriteI2CByte(uint8 d)
+{
+	static uint8 s, dd;
+
+	dd = d;  // a little faster
+	s = 8;
+	do {
+		if( dd & 0x80 )
+			I2C_DATA_FLOAT
+		else
+			I2C_DATA_LOW
+	
+		if( I2CWaitClkHi() )
+		{ 	
+			T_HIGH_W;
+			I2C_CLK_LOW;
+			T_LOW_W;
+			dd <<= 1;
+		}
+		else
+		{
+			Stats[I2CFailS]++;
+			return(I2C_NACK);
+		}
+	} while ( --s );
+
+	I2C_DATA_FLOAT;
+	if( I2CWaitClkHi() )
+		s = I2C_SDA_SW;
+	else
+	{
+		Stats[I2CFailS]++;
+		return(I2C_NACK);
+	}	
+	T_HIGH_ACK_W;
+	I2C_CLK_LOW;
+
+	return(s);
+} // WriteI2CByte
+
+#else
+
+// Squeek out to 333KHz if there are no 100KHz devices installed
 
 boolean I2CWaitClkHi(void)
 {
@@ -178,6 +346,8 @@ uint8 WriteI2CByte(uint8 d)
 
 	return(s);
 } // WriteI2CByte
+
+#endif // USE_I2C100KHZ
 
 uint8 ReadI2CByteAtAddr(uint8 d, uint8 address)
 {
@@ -381,7 +551,10 @@ void ShowI2CDeviceName(uint8 d) {
         case ADXL345_ID:
             TxString("ADXL345 (SF-6&9DOF)");
             break;
-        case BMA180_ID:
+        case BMA180_ID_0x82:
+            TxString("BMA180 Acc");
+            break;
+        case BMA180_ID_0x08:
             TxString("BMA180 Acc");
             break;
         case INV_ID_3DOF:
@@ -390,11 +563,11 @@ void ShowI2CDeviceName(uint8 d) {
         case INV_ID_6DOF:
             TxString("ITG3200 Gyro (SF-6&9DOF)");
             break;
-        case HMC5843_3DOF:
-            TxString("HMC5843 Mag");
+        case HMC58X3_3DOF:
+            TxString("HMC58X3 Mag");
             break;
-        case HMC5843_9DOF:
-            TxString("HMC5843 Mag (SF-9DOF)");
+        case HMC58X3_9DOF:
+            TxString("HMC58X3 Mag (SF-9DOF)");
             break;
     //    case MPU6050_ID:
     //        TxString("MPU6050");
@@ -428,6 +601,7 @@ uint8 ScanI2CBus(void)
 
 	d = 0;
 
+	UseI2C100KHz = true;
 	TxString("Sensor Bus\r\n");
 	for ( s = 0x10 ; s <= 0xf6 ; s += 2 )
 	{
@@ -441,6 +615,7 @@ uint8 ScanI2CBus(void)
 		}
 		Delay1mS(2);
 	}
+	UseI2C100KHz = false;
 
 /*
 
