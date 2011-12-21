@@ -118,7 +118,7 @@ void OutSignals(void)
 OS005:
 		MOVF	SHADOWB,0,1	
 		MOVWF	PORTB,0
-		ANDLW	0x3f		// zzz does this muck up I2C?		
+		ANDLW	0x3f		
 		
 		BZ		OS006
 					

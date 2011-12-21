@@ -31,7 +31,7 @@ void GyroTest(void);
 void InitGyros(void);
 
 int16 RawYawRateP;
-int8 GyroType;
+uint8 GyroType;
 int16 RawGyro[3];
 int32 AccCorrAv, NoAccCorr;
 
@@ -43,7 +43,7 @@ int32 AccCorrAv, NoAccCorr;
 #pragma idata gyronames
 const rom char * GyroName[GyroUnknown+1] ={
 		"MLX90609","ADXRS613/150","IDG300","ST-AY530","ADXRS610/300",
-		"ITG3200","ITG3200 SF-DOF6","ITG3200 SF-9DOF","MPU6050","ITG3200 FreeIMU","ITG3200 Drotek","IR Sensors",
+		"ITG3200","SF-DOF6","SF-9DOF","MPU6050","FreeIMU","Drotek","IR Sensors",
 		"Unknown"
 		};
 #pragma idata
@@ -107,10 +107,10 @@ void CalculateGyroRates(void)
 
 void ErectGyros(void)
 {
-	static int8 i, g;
+	static uint8 i, g;
 	static int32 Av[3];
 
-	for ( g = Roll; g <= (uint8)Yaw; g++ )	
+	for ( g = Roll; g <=(uint8)Yaw; g++ )	
 		Av[g] = 0;
 
     for ( i = 32; i ; i-- )
@@ -209,8 +209,8 @@ void GetGyroValues(void)
 		break;
 	case FreeIMU:
 		BlockReadInvenSenseGyro();
-		A[Roll].GyroADC = RawGyro[X]; // not done yet
-		A[Pitch].GyroADC = -RawGyro[Y];
+		A[Roll].GyroADC = -RawGyro[Y]; // not done yet
+		A[Pitch].GyroADC = -RawGyro[X];
 		A[Yaw].GyroADC = -RawGyro[Z];
 		break;
 	case Drotek:
@@ -249,7 +249,7 @@ void InitGyros(void)
 	case SFDOF9:
 	case FreeIMU:
 	case Drotek:
-		INV_ID = INV_ID_6DOF;
+		INV_ID = INV_ID_3DOF;
 		INVGyroAddress = INV_GX_H;
 		if (InvenSenseGyroActive())
 		{

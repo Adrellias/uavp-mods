@@ -114,11 +114,11 @@ void ReceiverTest(void)
 
 void PowerOutput(int8 d)
 {
-	static int8 s;
+	static uint8 s;
 	static uint8 m;
 
 	m = 1 << d;
-	for( s=0; s < 10; s++ )	// 10 flashes (count MUST be even!)
+	for( s=0; s < (uint8)10; s++ )	// 10 flashes (count MUST be even!)
 	{
 		LEDShadow ^= m;
 		SendLEDs();
@@ -128,8 +128,7 @@ void PowerOutput(int8 d)
 
 void LEDsAndBuzzer(void)
 {
-	static int8 s, m;
-	static uint8 mask, LEDSave;
+	static uint8 s, m, mask, LEDSave;
 
 	LEDSave = LEDShadow;
 	LEDShadow  = 0;
@@ -137,7 +136,7 @@ void LEDsAndBuzzer(void)
 
 	TxString("\r\nOutput test\r\n");
 	mask = (uint8)1;
-	for ( m = 1; m <= 8; m++ )		
+	for ( m = 1; m <= (uint8)8; m++ )		
 	{
 		TxChar(m+'0');
 		TxString(":\t");
@@ -154,7 +153,7 @@ void LEDsAndBuzzer(void)
 		TxString("\tPress the CONTINUE button (x) to continue\r\n");	
 		while( PollRxChar() != 'x' ); // UAVPSet uses 'x' for CONTINUE button
 
-		for( s = 0; s < 10; s++ )	// 10 flashes (count MUST be even!)
+		for( s = 0; s < (uint8)10; s++ )	// 10 flashes (count MUST be even!)
 		{
 			LEDShadow ^= mask;
 			SendLEDs();

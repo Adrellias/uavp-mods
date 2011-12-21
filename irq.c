@@ -44,7 +44,7 @@ volatile uint24 PIDUpdate;
 #pragma udata access isrvars
 near volatile uint24 MilliSec;
 near i16u 	PPM[CONTROLS];
-near int8 	PPM_Index, NoOfControls;
+near uint8 	PPM_Index, NoOfControls;
 near int24 	PrevEdge, CurrEdge;
 near i16u 	Width, Timer0;
 near int24 	PauseTime;
@@ -93,7 +93,7 @@ void ReceivingGPSOnly(boolean r)
 
 void InitTimersAndInterrupts(void)
 {
-	static int8 i, j;
+	static uint8 i;
 
 	#ifdef CLOCK_16MHZ
 	OpenTimer0(TIMER_INT_OFF&T0_8BIT&T0_SOURCE_INT&T0_PS_1_16);
@@ -109,7 +109,7 @@ void InitTimersAndInterrupts(void)
 	TxQ.Head = TxQ.Tail = RxCheckSum = 0;
 
 	MilliSec = 0;
-	for (i = StartTime; i<= CompassUpdate; i++)
+	for (i = StartTime; i<= (uint8)CompassUpdate; i++)
 		mS[i] = 0;
 
 	INTCONbits.PEIE = true;	

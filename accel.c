@@ -42,6 +42,7 @@ boolean MPU6050AccActive(void);
 void ReadBMA180Acc(void);
 void InitBMA180Acc(void);
 boolean BMA180AccActive(void);
+void ShowBMA180State(void);
 
 void SendCommand(int8);
 uint8 ReadLISL(uint8);
@@ -52,7 +53,7 @@ boolean LISLAccActive(void);
 void ReadLISLAcc(void);
 
 int16 RawAcc[3];
-int8 AccType;
+uint8 AccType;
 uint8 BMA180_ID;
 
 const rom char * AccName[AccUnknown+1] = 
@@ -92,11 +93,15 @@ void ReadAccelerations(void)
 	#endif // INC_ADXL345
 	#ifdef INC_BMA180
 	case FreeIMU:
+		ReadBMA180Acc();
+		A[Roll].AccADC = -SRS16(RawAcc[X], 4); 
+		A[Pitch].AccADC = SRS16(RawAcc[Y], 4);
+		A[Yaw].AccADC = SRS16(RawAcc[Z], 4);
 	case Drotek:
 		ReadBMA180Acc();
-		A[Roll].AccADC = SRS16(RawAcc[Y], 3); 
-		A[Pitch].AccADC = SRS16(RawAcc[X], 3);
-		A[Yaw].AccADC = SRS16(RawAcc[Z], 3);
+		A[Roll].AccADC = SRS16(RawAcc[Y], 4); 
+		A[Pitch].AccADC = SRS16(RawAcc[X], 4);
+		A[Yaw].AccADC = SRS16(RawAcc[Z], 4);
 		break;
 	#endif // INC_BMA180
 	#ifdef INC_MPU6050
@@ -231,6 +236,9 @@ void AccelerometerTest(void)
 
 	if( F.AccelerationsValid )
 	{
+		if ( AccType == BMA180Acc )
+			ShowBMA180State();
+	
 		ReadAccelerations();
 	
 		TxString("\tL->R: \t");
@@ -287,8 +295,8 @@ void InitADXL345Acc() {
     Delay1mS(5);
 	WriteI2CByteAtAddr(ADXL345_ID, 0x2C,
 	    //0x0C);  	// 400Hz
-		//0x0b);	// 200Hz 
-	  	0x0a); 	// 100Hz 
+		0x0b);	// 200Hz 
+	  	//0x0a); 	// 100Hz 
 	  	//0x09); 	// 50Hz
     Delay1mS(5);
 
@@ -333,7 +341,7 @@ void InitMPU6050Acc() {
 				//3 << 3 // 16G 
 				//| 1 // 2.5Hz
 				//| 2 // 2.5Hz
-				| 3 // 1.25Hz
+				| 3 // 1.25Hz	
 				//| 4 // 0.63Hz
 				//| 7 // 0.63Hz
 				);
@@ -357,12 +365,14 @@ boolean MPU6050AccActive(void)
 // 0 1g, 1 1.5g, 2 2g, 3 3g, 4 4g, 5 8g, 6 16g
 // 0 19Hz, 1 20, 2 40, 3 75, 4 150, 5 300, 6 600, 7 1200Hz 
 
-#define BMA180_RANGE	5
+#define BMA180_RANGE	2
 #define BMA180_BW 		4
 
 #define BMA180_Version 0x01
 #define BMA180_ACCXLSB 0x02
 #define BMA180_TEMPERATURE 0x08
+
+#define BMA180_RESET 	0x10
 #define BMA180_STATREG1 0x09
 #define BMA180_STATREG2 0x0A
 #define BMA180_STATREG3 0x0B
@@ -371,7 +381,7 @@ boolean MPU6050AccActive(void)
 #define BMA180_CTRLREG1 0x0E
 #define BMA180_CTRLREG2 0x0F
 
-#define BMA180_BWTCS 0x20
+#define BMA180_BWTCS 0x20		// bandwidth
 #define BMA180_CTRLREG3 0x21
 
 #define BMA180_HILOWNFO 0x25
@@ -381,7 +391,7 @@ boolean MPU6050AccActive(void)
 #define BMA180_tco_y 0x2F
 #define BMA180_tco_z 0x30
 
-#define BMA180_OLSB1 0x35
+#define BMA180_OLSB1 0x35		// setting range
 
 boolean BMA180AccActive(void);
 
@@ -400,23 +410,27 @@ void InitBMA180Acc() {
 //	if(read(ID) != 3)
 //		return -1;
 
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_RESET, 0); 
+
 	ee_w = ReadI2CByteAtAddr(BMA180_ID, BMA180_CTRLREG0);
 	ee_w |= 0x10;
-	WriteI2CByteAtAddr(BMA180_ID, BMA180_CTRLREG0, ee_w); // Have to set ee_w to write any other registers
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_CTRLREG0, ee_w); // write enable registers
 
 	bw = ReadI2CByteAtAddr(BMA180_ID, BMA180_BWTCS);
-	bw |= (BMA180_BW << 4) &~0xF0;
-	WriteI2CByteAtAddr(BMA180_ID, BMA180_BWTCS, bw); // Keep tcs<3:0> in BWTCS, but write new BW	
+	bw &= ~0xF0;
+	bw |= BMA180_BW << 4;
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_BWTCS, bw); // set BW	
 		
 	range = ReadI2CByteAtAddr(BMA180_ID, BMA180_OLSB1);
-	range |= (BMA180_RANGE<<1) & ~0x0E;
-	WriteI2CByteAtAddr(BMA180_ID, BMA180_OLSB1, range); //Write new range data, keep other bits the same
+	range &= ~0x0E;
+	range |= BMA180_RANGE<<1;
+	WriteI2CByteAtAddr(BMA180_ID, BMA180_OLSB1, range); // set range
 
 } // InitBMA180Acc
 
 boolean BMA180AccActive(void) {
 
-	BMA180_ID = BMA180_ID_0x08;
+	BMA180_ID = BMA180_ID_0x80;
     if ( I2CResponse(BMA180_ID) )
 		F.AccelerationsValid = true;
 	else
@@ -431,6 +445,26 @@ boolean BMA180AccActive(void) {
     return( F.AccelerationsValid );
 
 } // BMA180AccActive
+
+#ifdef TESTING
+
+void ShowBMA180State(void)
+{
+	#ifdef FULL_ACC_TEST
+
+	static uint8 bw, range;
+	bw = ReadI2CByteAtAddr(BMA180_ID, BMA180_BWTCS);		
+	range = ReadI2CByteAtAddr(BMA180_ID, BMA180_OLSB1);
+	TxString("\r\n\tBW:\t");
+	TxVal32((bw>>4) & 0x0f,0,HT);
+	TxString("Range:\t");
+	TxVal32((range>>1) & 0x07,0,0);
+	TxNextLine();
+
+	#endif // FULL_ACC_TEST
+} // ShowBMA180State
+
+#endif // TESTING
 
 #endif // INC_BMA180
 
@@ -499,7 +533,7 @@ uint8 ReadLISL(uint8 c)
 {
 	static uint8 d;
 
-	SPI_SDA = 1;	//zzz // very important!! really!! LIS3L likes it
+	SPI_SDA = 1; // very important!! really!! LIS3L likes it
 	SendCommand(c);
 	SPI_IO = RD_SPI;	// SDA is input
 	d = ReadLISLNext();

@@ -29,7 +29,7 @@
 Flags 	F;
 uint8 p;
 #pragma udata access statevars
-int8 near State, NavState, FailState;
+uint8 near State, NavState, FailState;
 boolean near SpareSlotTime;
 #pragma udata
 
@@ -63,9 +63,6 @@ void main(void)
 	InitBarometer();
 
 	ShowSetup();
-
-while (1)
-DoControl();
 
 	FirstPass = true;
 	
@@ -112,7 +109,7 @@ DoControl();
 
 					DesiredThrottle = 0;
 					ErectGyros();				// DO NOT MOVE AIRCRAFT!
-					InitBarometer(); // try to get launch alt as close as possible.
+					InitBarometer(); 			// try to get launch alt as close as possible.
 					ZeroStats();
 					WriteMagCalEE();
 
@@ -197,7 +194,7 @@ DoControl();
 					DesiredThrottle = SlewLimit(DesiredThrottle, StickThrottle, 1);
  
 					DoNavigation();				
-					AltitudeHold();
+					AltitudeHold(); // includes GetBaroAltitude
 
 					if ( StickThrottle < IdleThrottle )
 					{

@@ -75,45 +75,6 @@ boolean InvenSenseGyroActive(void)
 	return ( !F.GyroFailure );
 } // InvenSenseGyroActive
 
-/*
-
-void GyroInvenSenseTest(void)
-{
-	TxString("\r\nInvenSense 3 axis I2C Gyro Test\r\n");
-
-	GetGyroValues();
-
-	TxString("\tRoll:     \t");TxVal32(A[Roll].GyroADC,0,0);
-	TxString("\r\n\tPitch:\t");TxVal32(A[Pitch].GyroADC,0,0);
-	TxString("\r\n\tYaw:  \t");TxVal32(A[Yaw].GyroADC,0,0);
-	TxNextLine();
-
-	#ifdef FULL_TEST
-	if ( GyroType == MPU6050 )
-	{
-		// no test yet!
-		TxNextLine();
-	}
-	else
-	{
-		TxString("WHO_AM_I  \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_WHO)); TxNextLine();
-	//	Delay1mS(1000);
-		TxString("SMPLRT_DIV\t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_SMPL)); TxNextLine();
-		TxString("DLPF_FS   \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_DLPF)); TxNextLine();
-		TxString("INT_CFG   \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_INT_C)); TxNextLine();
-		TxString("INT_STATUS\t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_INT_S)); TxNextLine();
-		TxString("TEMP      \t"); TxVal32((ReadI2CByteAtAddr(INV_ID,INV_TMP_H)<<8) | ReadI2CByteAtAddr(INV_ID,INV_TMP_L),0,0); TxNextLine();
-		TxString("GYRO_X    \t"); TxVal32(((int16)ReadI2CByteAtAddr(INV_ID,INV_GX_H)<<8) | ReadI2CByteAtAddr(INV_ID,INV_GX_L),0,0); TxNextLine();
-		TxString("GYRO_Y    \t"); TxVal32(((int16)ReadI2CByteAtAddr(INV_ID,INV_GY_H)<<8) | ReadI2CByteAtAddr(INV_ID,INV_GY_L),0,0); TxNextLine();
-		TxString("GYRO_Z    \t"); TxVal32(((int16)ReadI2CByteAtAddr(INV_ID,INV_GZ_H)<<8) | ReadI2CByteAtAddr(INV_ID,INV_GZ_L),0,0); TxNextLine();
-		TxString("PWR_MGM   \t"); TxValH(ReadI2CByteAtAddr(INV_ID,INV_PWR_M)); TxNextLine();
-	}
-	#endif // FULL_TEST
-	TxString("\r\nTest OK\r\n");
-
-} // GyroInvenSenseTest
-
-*/
 
 
 

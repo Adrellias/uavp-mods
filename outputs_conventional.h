@@ -25,8 +25,7 @@ void OutSignals(void)
 	// there is just sufficient time for one remaining interrupt latency before disabling 
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
 	// remaining time AND conditionally disabling the interupt. 
-	static int8 m;
-	static uint8 s, r, d;
+
 	static i16u SaveTimer0;
 	static uint24 SaveClockmS;
 	static int8 ServoUpdate;

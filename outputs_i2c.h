@@ -25,7 +25,7 @@ void T580ESCs(uint8, uint8, uint8, uint8);
 
 void DoI2CESCs(void)
 {
-	static int8 m;
+	static uint8 m;
 	static uint8 r;
 
 	// in X3D and Holger-Mode, K2 (left motor) is SDA, K3 (right) is SCL.
@@ -38,7 +38,7 @@ void DoI2CESCs(void)
 		#if ( defined QUADROCOPTER | defined VTCOPTER )
 		ESCI2CStart();
 			r = WriteESCI2CByte(0x10); // one command, 4 data bytes - may not support 6
-			for ( m = 0 ; m < NO_OF_I2C_ESCS ; m++ )
+			for ( m = 0 ; m < (uint8)NO_OF_I2C_ESCS ; m++ )
 				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) ); 
 		ESCI2CStop();
 		ESCI2CFail[0] = r;

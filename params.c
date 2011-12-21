@@ -111,6 +111,7 @@ void ReadParametersEE(void)
 			for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
 				ESCI2CFail[i] = 0;
 
+		InitCompass();
 		InitGyros();
 		InitAccelerometers();
 

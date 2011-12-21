@@ -63,8 +63,8 @@ int32	HoldLatitude, HoldLongitude;
 int16 	GPSLongitudeCorrection;
 int16	GPSHeading;
 int16 	GPSVel, GPSVelP;
-int8 	GPSNoOfSats;
-int8 	GPSFix;
+uint8 	GPSNoOfSats;
+uint8 	GPSFix;
 int16 	GPSHDilute;
 #pragma udata
 

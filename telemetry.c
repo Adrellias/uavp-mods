@@ -124,13 +124,13 @@ void ShowAttitude(void) {
 } // ShowAttitude
 
 void SendFlightPacket(void) {
-	static int8 b;
+	static uint8 b;
 
 	SendPacketHeader();
 
 	TxESCu8(UAVXFlightPacketTag);
 	TxESCu8(48 + TELEMETRY_FLAG_BYTES);
-	for ( b = 0; b < TELEMETRY_FLAG_BYTES; b++ )
+	for ( b = 0; b < (uint8)TELEMETRY_FLAG_BYTES; b++ )
 		TxESCu8(F.AllFlags[b]); 
 		
 	TxESCu8(State);	
@@ -158,7 +158,7 @@ void SendFlightPacket(void) {
 } // SendFlightPacket
 
 void SendControlPacket(void){
-	static int8 b;
+	static uint8 b;
 
 	SendPacketHeader();
 
@@ -171,7 +171,7 @@ void SendControlPacket(void){
 
 	TxESCu8(UAVXAirframe);
 
-	for ( b = 0; b < 6; b++ ) // motor/servo channels
+	for ( b = 0; b < (uint8)6; b++ ) // motor/servo channels
 		TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
@@ -250,13 +250,13 @@ void SendStatsPacket(void)
 
 void SendMinPacket(void)
 {
-	static int8 b;
+	static uint8 b;
 
 	SendPacketHeader();
 
 	TxESCu8(UAVXMinPacketTag);
 	TxESCu8(33 + TELEMETRY_FLAG_BYTES);
-	for ( b = 0; b < TELEMETRY_FLAG_BYTES; b++ )
+	for ( b = 0; b < (uint8)TELEMETRY_FLAG_BYTES; b++ )
 		TxESCu8(F.AllFlags[b]); 
 		
 	TxESCu8(State);	

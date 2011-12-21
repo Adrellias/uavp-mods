@@ -80,7 +80,7 @@ typedef union {
 uint8 BufferEE[256];
 #pragma udata
 		
-int8 	CurrWP;
+uint8 	CurrWP;
 int8 	NoOfWayPoints;
 int16	WPAltitude;
 int32 	WPLatitude, WPLongitude;

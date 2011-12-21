@@ -147,11 +147,11 @@ void InitPortsAndUSART(void)
 
 void InitMisc(void)
 {
-	static int8 i;
+	static uint8 i;
 
 	State = Starting;				// For trace preconditions
 	
-	for ( i = 0; i < FLAG_BYTES ; i++ )
+	for ( i = 0; i < (uint8)FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
  
 	F.ParametersValid = F.AcquireNewPosition = F.AllowNavAltitudeHold = true;
@@ -318,7 +318,7 @@ int16 DecayX(int16 i, int16 d)
 
 int32 SlewLimit(int32 Old, int32 New, int32 Slew)
 {
-  int32 Low, High;
+  static int32 Low, High;
   
   Low = Old - Slew;
   High = Old + Slew; 

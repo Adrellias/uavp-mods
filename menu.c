@@ -92,7 +92,7 @@ void ShowRxSetup(void)
 
 #pragma idata airframenames
 const rom char * AFName[AFUnknown+1] = {
-		"QUAD","TRI","VT","Y6","HELI","ELEVON","AILERON","Hexacopter","VTOL","Unknown"
+		"QUAD","TRI","VT","Y6","HELI","ELEV","AIL","Hexa","VTOL","Unknown"
 		};
 #pragma idata
 
@@ -103,7 +103,7 @@ void ShowAFType(void)
 
 void ShowSetup(void)
 {
-	int8 i, NoOfChannels;
+	static int8 i, NoOfChannels;
 
 	TxNextLine();
 	TxString(SerHello);
@@ -139,17 +139,18 @@ void ShowSetup(void)
 		TxString("deg CW from K1 motor(s)\r\n");
 	#endif // MULTICOPTER
 
+	TxString("Hint: ");
 	ShowGyroType(P[SensorHint]);
-	TxString(" { Accs ");
+	TxString("\r\nAccs: ");
 	ShowAccType();	
 	if ( F.AccelerationsValid )
-		TxString(" ONLINE");
+		TxString(" OK");
 	else
-		TxString(" FAILED");	
-	TxString(" }{ Gyros "); ShowGyroType(GyroType);
-	TxString("}\r\n");
+		TxString(" Fail");	
+	TxString("\r\nGyros: "); 
+	ShowGyroType(GyroType);
 
-	TxString("Motor ESCs: ");	
+	TxString("\r\nESCs: ");	
 	ShowESCType();
 	if ( P[ESCType] != ESCPPM )
 	{
@@ -161,28 +162,25 @@ void ShowSetup(void)
 				TxString(" OK");
 		TxString(" }");
 	}	
-	TxNextLine();
 	
-	TxString("Tx/Rx: ");
+	TxString("\r\nTx/Rx: ");
 	ShowRxSetup();
 	if ( F.UsingTxMode2 )
 		TxString("Tx Mode 2");
 	else
 		TxString("Tx Mode 1");
-	TxNextLine();
 
-	TxString("Param set: "); // must be exactly this string as UAVPSet expects it
+	TxString("\r\nParam set: "); // must be exactly this string as UAVPSet expects it
 	TxChar('0' + ParamSet);	
-	TxNextLine();
 
-	TxString("\r\nNav:\r\n\tAutoland ");
+	TxString("\r\n\r\nNav:\r\n\tAutoland ");
 	if ( F.UsingRTHAutoDescend )
 		TxString("ENABLED\r\n");
 	else
 		TxString("disabled\r\n");
 
 	if ( F.AllowTurnToWP )
-		TxString("\tTurn toward WP\r\n");
+		TxString("\tTurn to WP\r\n");
 	else
 		TxString("\tHold heading\r\n");
 
@@ -192,7 +190,7 @@ void ShowSetup(void)
 	TxString("\r\nALARM (if any):\r\n");
 	if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
 	{
-		TxString("\tODD CH INP selected but EVEN number used - reduced to ");
+		TxString("\tODD Ch Inp selected, EVEN number used - reduced to ");
 		TxVal32(NoOfChannels,0,0);
 		TxNextLine();
 	}
@@ -207,15 +205,15 @@ void ShowSetup(void)
 		TxString("\tINVALID flight params (PID)!\r\n");
 	
 	if ( !F.BaroAltitudeValid )
-		TxString("\tBaro. OFFLINE\r\n");
+		TxString("\tBaro. FAIL\r\n");
 	if ( BaroRetries >= BARO_INIT_RETRIES )
-		TxString("\tBaro Init: FAILED\r\n");
+		TxString("\tBaro Init FAILED\r\n");
 
 	if ( !F.RangefinderAltitudeValid )
 		TxString("\tRangefinder OFFLINE\r\n");
 
 	if ( F.GyroFailure )
-		TxString("\tGyro FAILURE\r\n");
+		TxString("\tGyro FAIL\r\n");
 
 	if ( !F.AccelerationsValid )
 		TxString("\tAccs. OFFLINE\r\n");
@@ -229,10 +227,10 @@ void ShowSetup(void)
 		TxString("\tUAVX is armed - DISARM!\r\n");
 
 	if ( F.Navigate || F.ReturnHome )
-		TxString("\tNav/RTH is selected - DESELECT!\r\n");
+		TxString("\tNav/RTH selected - DESELECT!\r\n");
 
 	if ( InitialThrottle >= RC_THRES_START )
-		TxString("\tThrottle may be open - CLOSE!\r\n");
+		TxString("\tClose Throttle!\r\n");
 	
 	ShowPrompt();
 } // ShowSetup

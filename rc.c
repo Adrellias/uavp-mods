@@ -27,7 +27,7 @@ void UpdateControls(void);
 void CaptureTrims(void);
 void CheckThrottleMoved(void);
 
-int8 Map[CONTROLS], RMap[CONTROLS];
+uint8 Map[CONTROLS], RMap[CONTROLS];
 boolean PPMPosPolarity;
 
 int16 RC[CONTROLS], RCp[CONTROLS];
@@ -45,7 +45,7 @@ void DoRxPolarity(void)
 
 void InitRC(void)
 {
-	static int8 c, q;
+	static uint8 c;
 
 	DoRxPolarity();
 
@@ -56,7 +56,7 @@ void InitRC(void)
 	SignalCount = -RC_GOOD_BUCKET_MAX;
 	F.Signal = F.RCNewValues = false;
 	
-	for (c = 0; c < CONTROLS; c++)
+	for (c = 0; c < (uint8)CONTROLS; c++)
 	{
 		PPM[c].i16 = 0;
 		RC[c] = RCp[c] = 0;
@@ -70,13 +70,13 @@ void InitRC(void)
 
 void MapRC(void) // re-arrange arithmetic reduces from 736uS to 207uS @ 40MHz
 {  // re-maps captured PPM to Rx channel sequence
-	static int8 c, i;
+	static uint8 c, i;
 	static int16 LastThrottle, Temp;
 	static i32u Temp2;
 
 	LastThrottle = RC[ThrottleRC];
 
-	for (c = 0 ; c < NoOfControls ; c++) 
+	for (c = 0 ; c < (uint8)NoOfControls ; c++) 
 	{
 		i = Map[c];
 		#ifdef CLOCK_16MHZ

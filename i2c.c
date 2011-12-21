@@ -390,15 +390,6 @@ boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
 	static uint8 S[16];
 	static i16u t;
 
-//	#define LONG_I2C
-
-	#ifdef LONG_I2C
-
-	for ( b = 0; b<l*2; b++)
-		S[b] = ReadI2CByteAtAddr(d, cmd+b);
-
-	#else
-
 	I2CStart();
 		if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
 		if( WriteI2CByte(cmd) != I2C_ACK ) goto IRSerror;
@@ -413,8 +404,6 @@ boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
 
 		}
 	I2CStop();
-
-	#endif // LONG_I2C
 
 	// fix endian!
 	c = 0;
@@ -554,7 +543,7 @@ void ShowI2CDeviceName(uint8 d) {
         case BMA180_ID_0x82:
             TxString("BMA180 Acc");
             break;
-        case BMA180_ID_0x08:
+        case BMA180_ID_0x80:
             TxString("BMA180 Acc");
             break;
         case INV_ID_3DOF:
@@ -582,7 +571,7 @@ void ShowI2CDeviceName(uint8 d) {
             TxString("MCP4725 DAC");
             break;
         case BOSCH_ID:
-            TxString("Bosch Baro");
+            TxString("Bosch/MS  Baro");
             break;
         case TMP100_ID:
             TxString("TMP100 Temp");

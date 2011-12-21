@@ -35,7 +35,6 @@ int16 PWM[6];
 int16 PWMSense[6];
 int16 ESCI2CFail[NO_OF_I2C_ESCS];
 int16 CurrThrottle;
-int8 ServoInterval;
 
 #pragma udata access motorvars	
 near int16 Rl, Pl, Yl;
@@ -278,7 +277,7 @@ void MixAndLimitCam(void)
 	Temp24.i24 = A[Pitch].Angle * OCO - A[Roll].Angle * OSO;
 	CameraAngle[Pitch] = Temp24.i2_1;
 
-// zzz this where we lose the resolution say 20/256 so need camera gimbal gearing if ~12.
+	// zzz this where we lose the resolution say 20/256 so need camera gimbal gearing if ~12.
 
 	Temp24.i24 = (int24)CameraAngle[Roll] * P[CamRollKp];
 	NewCamRoll = Temp24.i2_1 + (int16)P[CamRollTrim];

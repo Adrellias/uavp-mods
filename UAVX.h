@@ -14,20 +14,20 @@
 #define DEG_TO_ANGLE_UNITS		78L	// very approximate - needs measuring
 #define MAX_BANK_ANGLE_DEG		30L
 
-#define INC_BMA180				// include BMA180 accelerometer code
-#define INC_ADXL345			// include ADXL345 accelerometer code
-#define INC_MPU6050				// include MPU6050 accelerometer/gyros
 //#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
-
-//#define HMC58X3_FULL			// compensation for pitch/roll
 
 #define INC_HMC6352
 #ifdef INC_HMC6352
 	#define USE_I2C100KHZ
 #endif // INC_HMC6352
 
-//#define INC_MPX4115				// Steve's proto
+#define INC_MS5611				// FreeIMU etc.
+#define INC_BMA180				// include BMA180 accelerometer code
+#define INC_ADXL345				// include ADXL345 accelerometer code SF6DOF/9DOF
 
+#ifndef VTCOPTER				// Desperate for space!!!!!
+	#define INC_MPU6050				// include MPU6050 accelerometer/gyros
+#endif 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
 // ===============================================================================================
@@ -56,7 +56,7 @@
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
-	#define QUADROCOPTER
+	//#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define HEXACOPTER
@@ -73,6 +73,12 @@
 #if ( defined SIMULATE | defined TESTING )
 	#define USE_LIMIT_MACRO		// squeek some more space
 #endif
+
+#ifdef FULL_TEST
+	#define FULL_BARO_TEST
+	//#define FULL_ACC_TEST
+	//#define FULL_COMPASS_TEST
+#endif // FULL_TEST
 
 // Airframe
 
@@ -635,7 +641,7 @@ typedef union {
 
 enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
-extern int8 near State, NavState, FailState;
+extern uint8 near State, NavState, FailState;
 extern boolean near SpareSlotTime;
 
 //______________________________________________________________________________________________
@@ -653,30 +659,25 @@ extern void AccelerometerTest(void);
 extern void InitAccelerometers(void);
 
 #define ADXL345_ID          0xa6
-#define GRAVITY_ADXL345	 	200
 
 extern void ReadADXL345Acc(void);
 void InitADXL345Acc(void);
 extern boolean ADXL345AccActive(void);
 
 #define MPU6050_ID     		0xd0		//0x68
-#define GRAVITY_MPU6050 	1024 // zzz
 
 extern void ReadMPU6050Acc(void);
 extern void InitMPU6050Acc(void);
 extern boolean MPU6050AccActive(void);
 
-#define BMA180_ID_0x08          	0x08
+#define BMA180_ID_0x80          	0x80
 #define BMA180_ID_0x82          	0x82
-#define GRAVITY_BMA180 		1024 // zzz
 
 extern uint8 BMA180_ID;
 
 extern void ReadBMA180Acc(void);
 extern void InitBMA180Acc(void);
 extern boolean BMA180AccActive(void);
-
-#define GRAVITY_LISL		1024
 
 extern void SendCommand(int8);
 extern uint8 ReadLISL(uint8);
@@ -686,7 +687,7 @@ extern void InitLISLAcc(void);
 extern boolean LISLAccActive(void);
 extern void ReadLISLAcc(void);
 
-extern int8 AccType;
+extern uint8 AccType;
 extern int16 RawAcc[];
 
 //______________________________________________________________________________________________
@@ -739,7 +740,7 @@ extern int16 FakeMagHeading;
 #endif // SIMULATE
 
 extern WayPoint WP;
-extern int8 CurrWP;
+extern uint8 CurrWP;
 extern int8 NoOfWayPoints;
 extern int16 WPAltitude;
 extern int32 WPLatitude, WPLongitude;
@@ -758,47 +759,35 @@ extern int16 NavSlewLimit;
 #define BARO_SANITY_CHECK_CM	((BARO_SANITY_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
 #define BARO_SLEW_LIMIT_CM		((BARO_SLEW_LIMIT_CMPS*BARO_UPDATE_MS)/1000L)
 
-#define BARO_INIT_RETRIES	10	// max number of initialisation retries
+#define BARO_INIT_RETRIES		20	// max number of initialisation retries
 
-enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroUnknown };
+enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroMS5611, BaroUnknown };
 
 // Freescale Baro
 
-#define MCP4725_MAX	 	4095 	// 12 bits
-
-#define ADS7823_TIME_MS	50		// 20Hz
-#define ADS7823_MAX	 	4095 	// 12 bits
 #define ADS7823_ID		0x90 	// ADS7823 ADC
-#define ADS7823_WR		0x90 	// ADS7823 ADC
-#define ADS7823_RD		0x91 	// ADS7823 ADC
-#define ADS7823_CMD		0x00
-
 #define MCP4725_ID		0xC8
-#define MCP4725_WR		MCP4725_ID
-
-#define MCP4725_RD		(MCP4725_ID+1)
-#define MCP4725_CMD		0x40 	// write to DAC registor in next 2 bytes
-#define MCP4725_EPROM	0x60    // write to DAC registor and eprom
 
 extern void SetFreescaleMCP4725(int16);
 extern void SetFreescaleOffset(void);
 extern void ReadFreescaleBaro(void);
-extern int24 FreescaleToCm(int24);
 extern void GetFreescaleBaroAltitude(void);
 extern boolean IsFreescaleBaroActive(void);
 extern void InitFreescaleBarometer(void);
 
+// Measurement Specialities Baro
+
+#define MS5611_ID	0xee
+
+extern void ReadMS5611Baro(void);
+extern boolean IsMS5611BaroActive(void);	
+
 // Bosch Baro
 
-#define BOSCH_ID			0xee
+#define BOSCH_ID	0xee
 
-extern void StartBoschBaroADC(boolean);
 extern void ReadBoschBaro(void);
-extern int24 BoschToCm(int24);
-extern int24 CompensatedBoschPressure(uint16, uint16);
-extern void GetBoschBaroAltitude(void);
 extern boolean IsBoschBaroActive(void);
-extern void InitBoschBarometer(void);
 
 extern int24 AltitudeCF(int24);
 extern void GetBaroAltitude(void);
@@ -806,15 +795,22 @@ extern void InitBarometer(void);
 
 extern void ShowBaroType(void);
 extern void BaroTest(void);
+extern void ReadI2CBaro(void);
+extern int24 CompensatedPressure(uint24, uint24);
+extern int24 BaroToCm(void);
+extern void InitI2CBarometer(void);
+extern void StartI2CBaroADC(boolean);
+extern void GetI2CBaroAltitude(void);
 
-extern int32 OriginBaroPressure, CompBaroPressure;
-extern uint16 BaroPressure, BaroTemperature;
+extern const uint8 BaroError[];
+extern int32 OriginBaroTemperature, OriginBaroPressure;
+extern uint32 BaroPressure, BaroTemperature;
 extern boolean AcquiringPressure;
 extern int24 BaroRelAltitude;
-extern i16u	BaroVal;
-extern int8 BaroType;
+extern i24u	BaroVal;
+extern uint8 BaroType;
 extern int16 AltitudeUpdateRate;
-extern int8	BaroRetries;
+extern int16 BaroRetries;
 extern int24 AltCF;
 extern int16 TauCF;
 extern int32 AltF[];
@@ -836,7 +832,7 @@ extern int24 FakeBaroRelAltitude;
 
 #define MAG_INIT_RETRIES	10
 
-enum CompassTypes { HMC58X3Magnetometer, HMC6352Compass, CompassUnknown };
+enum CompassTypes { HMC5883Magnetometer, HMC5843Magnetometer, HMC6352Compass, CompassUnknown };
 
 extern void ShowCompassType(void);
 extern int16 GetCompass(void);
@@ -877,8 +873,8 @@ extern boolean HMC6352CompassActive(void);
 
 extern i24u Compass;
 extern int16 MagHeading, Heading, HeadingP, DesiredHeading, CompassOffset;
-extern int8 CompassType;
-extern int8 MagRetries;
+extern uint8 CompassType;
+extern uint8 MagRetries;
 
 //______________________________________________________________________________________________
 
@@ -971,8 +967,8 @@ extern int32 LatitudeP, LongitudeP, HoldLatitude, HoldLongitude;
 extern int16 GPSLongitudeCorrection;
 extern int16 GPSHeading;
 extern int16 GPSVel;
-extern int8 GPSNoOfSats;
-extern int8 GPSFix;
+extern uint8 GPSNoOfSats;
+extern uint8 GPSFix;
 extern int16 GPSHDilute;
 extern uint8 nll, cc, lo, hi;
 extern boolean EmptyField;
@@ -1011,7 +1007,7 @@ extern void InitInvenSenseGyro(void);
 extern boolean InvenSenseGyroActive(void);
 
 extern int16 RawYawRateP;
-extern int8 GyroType;
+extern uint8 GyroType;
 extern int16 RawGyro[];
 extern int32 AccCorrAv, NoAccCorr;
 
@@ -1080,7 +1076,7 @@ extern volatile uint24 PIDUpdate;
 
 extern volatile near uint24 	MilliSec;
 extern near i16u 	PPM[CONTROLS];
-extern near int8 	PPM_Index, NoOfControls;
+extern near uint8 	PPM_Index, NoOfControls;
 extern near int24 	PrevEdge, CurrEdge;
 extern near i16u 	Width, Timer0;
 extern near int24 	PauseTime;
@@ -1269,7 +1265,6 @@ extern int16 PWM[6];
 extern int16 PWMSense[6];
 extern int16 ESCI2CFail[NO_OF_I2C_ESCS];
 extern int16 CurrThrottle;
-extern int8 ServoInterval;
 
 extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
 extern near int16 Rl, Pl, Yl;
@@ -1427,7 +1422,7 @@ extern void UpdateControls(void);
 extern void CaptureTrims(void);
 extern void CheckThrottleMoved(void);
 
-extern int8 Map[], RMap[];
+extern uint8 Map[], RMap[];
 extern boolean PPMPosPolarity;
 extern int16 RC[], RCp[], Trim[];
 extern int16 CruiseThrottle, NewCruiseThrottle, MaxCruiseThrottle, DesiredThrottle, IdleThrottle, InitialThrottle, StickThrottle;
