@@ -161,7 +161,7 @@ int24 AltitudeCF(int24 Alt)
 } // AltitudeCF
 
 const rom char * BaroName[BaroUnknown+1] = {
-		"BMP085","SMD500","MPX4115","MS5611", "No Baro?"
+		"BMP085","SMD500","MPX4115","MS5611", "None/unsupported"
 		};		
 
 void ShowBaroType(void)
@@ -255,8 +255,6 @@ void BaroTest(void)
 
 void GetBaroAltitude(void)
 {
-	static int24 Temp;
-
 	#ifdef SIMULATE
 
 		if ( mSClock() >= mS[BaroUpdate])
@@ -291,14 +289,8 @@ void GetBaroAltitude(void)
 	
 			if ( State == InFlight ) 
 			{
-				if ( BaroRelAltitude > Stats[BaroRelAltitudeS] )
-					Stats[BaroRelAltitudeS] = BaroRelAltitude;
-	
-				if ( BaroROC > Stats[MaxROCS] )
-						Stats[MaxROCS] = BaroROC;
-				else
-					if ( BaroROC < Stats[MinROCS] )
-						Stats[MinROCS] = BaroROC;
+				StatsMax(BaroRelAltitude, BaroRelAltitudeS);	
+				StatsMinMax(BaroROC, MinROCS, MaxROCS);
 			}
 		}
 
@@ -495,8 +487,6 @@ int24 BaroToCm(void)
 
 void InitI2CBarometer(void)
 {
-	static int24 Diff, CompBaroPressureP;
-
 	F.NewBaroValue = false;
 	OriginBaroPressure = OriginBaroTemperature = BaroRetries = 0;
 	F.NewBaroValue = false;
@@ -546,7 +536,6 @@ void InitI2CBarometer(void)
 
 void SetFreescaleMCP4725(int16 d)
 {	
-	static int8 r;
 	static i16u dd;
 
 	dd.u16 = d << 4; // left align

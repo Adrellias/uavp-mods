@@ -1,4 +1,10 @@
 
+#define INC_HMC6352			// SLOW 100KHz I2C preferably REPLACE with HMC5883L
+
+//#define FLAT_LISL_ACC		// LISL acc lying flat components up pins forward
+
+// Various control schemes
+
 #define PI_P_ANGLE
 //#define MING_P_RATE
 //#define MING_PI_RATE
@@ -11,23 +17,6 @@
 	#define CONTROLLER	Do_Ming_PI_Rate
 #endif
 
-#define DEG_TO_ANGLE_UNITS		78L	// very approximate - needs measuring
-#define MAX_BANK_ANGLE_DEG		30L
-
-//#define FLAT_LISL_ACC				// LIS3L Acc board lying flat
-
-#define INC_HMC6352
-#ifdef INC_HMC6352
-	#define USE_I2C100KHZ
-#endif // INC_HMC6352
-
-#define INC_MS5611				// FreeIMU etc.
-#define INC_BMA180				// include BMA180 accelerometer code
-#define INC_ADXL345				// include ADXL345 accelerometer code SF6DOF/9DOF
-
-#ifndef VTCOPTER				// Desperate for space!!!!!
-	#define INC_MPU6050				// include MPU6050 accelerometer/gyros
-#endif 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
 // ===============================================================================================
@@ -56,7 +45,7 @@
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
-	//#define QUADROCOPTER
+	#define QUADROCOPTER
 	//#define TRICOPTER
 	//#define Y6COPTER
 	//#define HEXACOPTER
@@ -79,6 +68,35 @@
 	//#define FULL_ACC_TEST
 	//#define FULL_COMPASS_TEST
 #endif // FULL_TEST
+
+#define DEG_TO_ANGLE_UNITS		78L	// very approximate - needs measuring
+#define MAX_BANK_ANGLE_DEG		30L
+
+#ifdef CLOCK_16MHZ
+	#define INC_HMC6352			// must NOT be deselected ONLY device supported at 16MHz
+	#define USE_I2C100KHZ		// uses slow I2C routines because of HMC6352
+	#define FULL_BARO_TEST
+	#define INC_CYCLE_STATS		// tracks actual PID cycle times achieved - view in Setup
+#else
+	#define INC_MS5611			// FreeIMU etc.
+	#define INC_BMA180			// include BMA180 accelerometer code
+	#define INC_ADXL345			// include ADXL345 accelerometer code SF6DOF/9DOF	
+	#define INC_HMC58X3			// preferable Honeywell magnetometer
+
+	#ifdef INC_HMC6352
+		#define USE_I2C100KHZ			// uses slow I2C routines because of HMC6352
+	#else
+		#define INC_CYCLE_STATS	// tracks actual PID cycle times achieved - view in Setup
+	#endif // INC_HMC6352
+
+	// Desperate for space!!!!!
+	#ifndef VTCOPTER		
+		#define INC_MPU6050		// include MPU6050 accelerometer/gyros
+	#endif 
+#endif // CLOCK_16MHZ
+
+#ifdef INC_HMC6352
+#endif // INC_HMC6352
 
 // Airframe
 
@@ -127,19 +145,16 @@
 
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
-#define RESCALE_TO_ACC 			51		// 256/5   36 // (256/7.16)
+#define RESCALE_TO_ACC 				51		// 256/5   36 // (256/7.16)
+
 #define ANGLE_LIMIT_DEG				(DEG_TO_ANGLE_UNITS*60L)	// push out to ~60degrees
 	
-#ifdef CLOCK_16MHZ
-	#define PID_CYCLE_MS			8		// mS main PID loop time now fixed @ 125Hz
-#else
-	#define PID_CYCLE_MS			4 		// MUST BE HALF THAT OF 16HZ	
-#endif // CLOCK_16MHZ
-
-#define MIN_PID_CYCLE_MS			3
-
-#define SERVO_INTERVAL				((SERVO_UPDATE_INTERVAL+PID_CYCLE_MS/2)/PID_CYCLE_MS)	
-
+#define PID_BASE_CYCLE_MS			2		// 500KHz flat chat with I2C ESCs
+// Shifts MUST be <=2
+#define PID_40MHZ_I2CESC_SHIFT		0
+#define PID_40MHZ_SHIFT				1
+#define PID_16MHZ_SHIFT				2
+	
 // DISABLED AS UNSAFE ON BENCH 
 #define ENABLE_STICK_CHANGE_FAILSAFE
 
@@ -456,6 +471,9 @@ typedef struct {
 #define Limit(i,l,u) 	(((i) < l) ? l : (((i) > u) ? u : (i)))
 #define Limit1(i,l) 	(((i) < -(l)) ? -(l) : (((i) > (l)) ? (l) : (i)))
 
+#define StatsMinMax(v, l, u) 	if(v>Stats[u])Stats[u]=v;else if (v<Stats[l])Stats[l]=v
+#define StatsMax(v, u)		if(v>Stats[u])Stats[u]=v
+
 // To speed up NMEA sentence processing 
 // must have a positive argument
 
@@ -494,11 +512,6 @@ typedef struct {
 #else // CLOCK_40MHZ
 	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM 
 #endif // CLOCK_16MHZ
-
-#define _PreScale0		16				// 1 6 TMR0 prescaler 
-#define _PreScale1		8				// 1:8 TMR1 prescaler 
-#define _PreScale2		16
-#define _PostScale2		16
 
 // Parameters for UART port ClockHz/(16*(BaudRate+1))
 #ifdef CLOCK_16MHZ
@@ -641,7 +654,7 @@ typedef union {
 
 enum FlightStates { Starting, Landing, Landed, Shutdown, InFlight};
 extern Flags F;
-extern uint8 near State, NavState, FailState;
+extern int8 near State, NavState, FailState;
 extern boolean near SpareSlotTime;
 
 //______________________________________________________________________________________________
@@ -759,7 +772,7 @@ extern int16 NavSlewLimit;
 #define BARO_SANITY_CHECK_CM	((BARO_SANITY_CHANGE_CMPS*BARO_UPDATE_MS)/1000L)
 #define BARO_SLEW_LIMIT_CM		((BARO_SLEW_LIMIT_CMPS*BARO_UPDATE_MS)/1000L)
 
-#define BARO_INIT_RETRIES		20	// max number of initialisation retries
+#define BARO_INIT_RETRIES		100	// max number of initialisation retries
 
 enum BaroTypes { BaroBMP085, BaroSMD500, BaroMPX4115, BaroMS5611, BaroUnknown };
 
@@ -895,6 +908,10 @@ extern void GainSchedule(void);
 extern void DoControl(void);
 extern void InitControl(void);
 
+extern uint8 PIDCyclemS, PIDCycleShift, ServoInterval;
+extern uint32 LastPIDUpdatemS;
+extern uint32 CycleHist[];
+
 extern AxisStruct A[3];
 	
 extern int16 CameraAngle[3];				
@@ -1013,15 +1030,6 @@ extern int32 AccCorrAv, NoAccCorr;
 
 //______________________________________________________________________________________________
 
-// inertial.c
-
-extern void InitInertial(void);
-extern void DoInertial(void);
-
-
-
-//______________________________________________________________________________________________
-
 // irq.c
 
 #define CONTROLS 			10
@@ -1063,7 +1071,7 @@ extern void InitTimersAndInterrupts(void);
 extern void ReceivingGPSOnly(uint8);
 extern uint24 mSClock(void);
 
-enum { StartTime, GeneralCountdown, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
+enum { StartTime, GeneralCountdown, LastPIDUpdate, UpdateTimeout, RCSignalTimeout, BeeperTimeout, ThrottleIdleTimeout, 
 	FailsafeTimeout, AbortTimeout, NavStateTimeout, DescentUpdate, LastValidRx, LastGPS, AccTimeout, 
 	GPSTimeout, RxFailsafeTimeout, StickChangeUpdate, LEDChaserUpdate, LastBattery, BatteryUpdate, 
   	TelemetryUpdate, NavActiveTime, BeeperUpdate, ArmedTimeout,
@@ -1433,7 +1441,7 @@ extern int16 ThrLow, ThrHigh, ThrNeutral;
 
 // serial.c
 
-extern void TxString(const rom uint8*);
+extern void TxString(const rom uint8 *);
 extern void TxChar(uint8);
 extern void TxValU(uint16);
 extern void TxValS(int16);
@@ -1470,7 +1478,8 @@ extern void ShowStats(void);
 enum Statistics { 
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinROCS, MaxROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
-	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, I2CFailS, MinTempS, MaxTempS, BadS, BadNumS, AccCorrAvS}; // NO MORE THAN 32 or 64 bytes
+	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, 
+	I2CFailS, MinTempS, MaxTempS, BadS, BadNumS, AccCorrAvS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 
@@ -1516,6 +1525,16 @@ extern void GetTemperature(void);
 extern void InitTemperature(void);
 
 extern i16u AmbientTemperature;
+
+//______________________________________________________________________________________________
+
+// tests.c
+
+extern void DoLEDs(void);
+extern void ReceiverTest(void);
+extern void PowerOutput(int8);
+extern void LEDsAndBuzzer(void);
+extern void BatteryTest(void);
 
 //______________________________________________________________________________________________
 

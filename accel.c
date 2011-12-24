@@ -57,7 +57,7 @@ uint8 AccType;
 uint8 BMA180_ID;
 
 const rom char * AccName[AccUnknown+1] = 
-		{"LIS3L","ADXL345","BMA180","MPU6050","Unknown"};
+		{"LIS3L","ADXL345","BMA180","MPU6050","Fail or not supported @ 16MHz"};
 
 void ShowAccType(void)
 {
@@ -174,47 +174,66 @@ void InitAccelerometers(void)
 	A[Yaw].AccADC = GRAVITY;
 
 	AccType = AccUnknown;
+	F.AccelerationsValid = false;
 
 	switch ( P[SensorHint]){
-	#ifdef INC_ADXL345
-	case SFDOF6: // ITG3200
-	case SFDOF9:
-		if ( ADXL345AccActive() )
-		{
-			AccType = ADXL345Acc;
-			InitADXL345Acc();
-		}
-		break;
-	#endif // ADXL345
-	#ifdef INC_BMA180
-	case FreeIMU:
-	case Drotek:
-		if ( BMA180AccActive() )
-		{
-			AccType = BMA180Acc;
-			InitBMA180Acc();
-		}
-		break;
-	#endif // INC_BMA180
-	#ifdef INC_MPU6050
-	case MPU6050:
-		INV_ID = INV_ID_MPU6050;
-		if ( MPU6050AccActive() )
-		{
-			AccType = MPU6050Acc;
-			InitMPU6050Acc();
-		}
-		break;
-	#endif // INC_MPU6050
-	case ITG3200Gyro:
-	default:	
+	#ifdef CLOCK_16MHZ
+		case SFDOF6: // ITG3200
+		case SFDOF9:
+		case FreeIMU:
+		case Drotek:
+		case MPU6050:
+			AccType = AccUnknown;
+			break;
+		case ITG3200Gyro:
+		default:	
 		if ( LISLAccActive() )
 		{
 			AccType = LISLAcc;
 			InitLISLAcc();
 		}
 		break;
-	}
+	#else
+		#ifdef INC_ADXL345
+		case SFDOF6: // ITG3200
+		case SFDOF9:
+			if ( ADXL345AccActive() )
+			{
+				AccType = ADXL345Acc;
+				InitADXL345Acc();
+			}
+			break;
+		#endif // ADXL345
+		#ifdef INC_BMA180
+		case FreeIMU:
+		case Drotek:
+			if ( BMA180AccActive() )
+			{
+				AccType = BMA180Acc;
+				InitBMA180Acc();
+			}
+			break;
+		#endif // INC_BMA_180
+		#ifdef INC_MPU6050
+		case MPU6050:
+			INV_ID = INV_ID_MPU6050;
+			if ( MPU6050AccActive() )
+			{
+				AccType = MPU6050Acc;
+				InitMPU6050Acc();
+			}
+			break;
+		#endif // INC_MPU6050
+		case ITG3200Gyro:
+		default:	
+			if ( LISLAccActive() )
+			{
+				AccType = LISLAcc;
+				InitLISLAcc();
+			}
+			break;
+	#endif // CLOCK_16MHZ
+	} // switch
 
 	if( F.AccelerationsValid )
 		GetNeutralAccelerations();
@@ -229,15 +248,17 @@ void AccelerometerTest(void)
 {
 	static int16 Mag;
 
-	TxString("\r\n");
+	TxString("\r\nAccelerometer test - ");
 	ShowAccType();
-	TxString(" - Accelerometer test:\r\n");
-	TxString("Read once - no averaging (1G ~= 1024)\r\n");
+	TxString("\r\n\r\n");
 
 	if( F.AccelerationsValid )
 	{
+		TxString("Read once - no averaging (1G ~= 1024)\r\n");
+		#ifdef INC_BMA180
 		if ( AccType == BMA180Acc )
 			ShowBMA180State();
+		#endif // INC_BMA180
 	
 		ReadAccelerations();
 	
@@ -265,8 +286,7 @@ void AccelerometerTest(void)
 		TxVal32((int32)Mag, 0, 0);
 		TxNextLine();
 	}
-	else
-		TxString("\r\n(Acc. not present)\r\n");
+
 } // AccelerometerTest
 
 #endif // TESTING
@@ -285,9 +305,6 @@ void ReadADXL345Acc(void)
 } // ReadADXL345Acc
 
 void InitADXL345Acc() {
-
-	static uint8 i;
-	static int16 AccLR, AccDU, AccFB;
 
 	WriteI2CByteAtAddr(ADXL345_ID, 0x2D, 0x08);  // measurement mode
     Delay1mS(5);
@@ -318,8 +335,6 @@ boolean MPU6050AccActive(void);
 
 void ReadMPU6050Acc(void) 
 {
-	static int16 ADC[3];
-
 	if ( !ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, RawAcc, 3, true) ) 
 		AccFailure();
 
@@ -511,7 +526,7 @@ void ShowBMA180State(void)
 
 void SendCommand(int8 c)
 {
-	static int8 s;
+	static uint8 s;
 
 	SPI_IO = WR_SPI;	
 	SPI_CS = SEL_LISL;	
@@ -545,7 +560,7 @@ uint8 ReadLISL(uint8 c)
 
 uint8 ReadLISLNext(void)
 {
-	static int8 s;
+	static uint8 s;
 	static uint8 d;
 
 	for( s = 8; s; s-- )
@@ -563,7 +578,7 @@ uint8 ReadLISLNext(void)
 
 void WriteLISL(uint8 d, uint8 c)
 {
-	static int8 s;
+	static uint8 s;
 
 	SendCommand(c);
 	for( s = 8; s; s-- )

@@ -59,7 +59,7 @@ typedef union {
 		int8 u4;
 		uint16 u5;
 		uint16 u6;
-		uint8 NoOfWPs;
+		int8 NoOfWPs;
 		uint8 ProximityAltitude;
 		uint8 ProximityRadius;
 		int16 OriginAltitude;
@@ -207,7 +207,7 @@ void Navigate(int32 NavLatitude, int32 NavLongitude )
 
 	#ifndef TESTING // not used for testing - make space!
 
-	static int16 NavVel, NavAttitudeLimit, EffNavSensitivity;
+	static int16 NavAttitudeLimit, EffNavSensitivity;
 	static int16 RelHeading;
     static int24 AltE;
 	static int32 MaxDiff, Diff, LongitudeDiff, LatitudeDiff;
@@ -716,7 +716,7 @@ void GetWayPointEE(int8 wp)
 
 void InitNavigation(void)
 {
-	static uint8 wp, a;
+	static uint8 a;
 
 	HoldLatitude = HoldLongitude = WayHeading = 0;
 	for ( a = Roll; a<=(uint8)Pitch; a++ )

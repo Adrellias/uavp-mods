@@ -85,7 +85,7 @@ void OutSignals(void)
 			MOVLW	(MOTOR_MASK | SERVO_MASK)
 			MOVWF	SHADOWB,1
 			_endasm	
-			ServoUpdate = SERVO_INTERVAL;
+			ServoUpdate = ServoInterval;
 		}
 		else
 		{

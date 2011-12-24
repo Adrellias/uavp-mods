@@ -50,11 +50,7 @@ void GetTemperature(void)
 
 	// Top 9 bits 0.5C res. scale to 0.1C
 	AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 7) * 5;	 
-	if ( AmbientTemperature.i16 > Stats[MaxTempS])
-		Stats[MaxTempS] = AmbientTemperature.i16;
-	else
-		if ( AmbientTemperature.i16 < Stats[MinTempS] )
-			Stats[MinTempS] = AmbientTemperature.i16;
+	DoStats( AmbientTemperature.i16, MinTempS, MaxTempS);
 	return;
 
 Terror:

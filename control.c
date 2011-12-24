@@ -35,6 +35,12 @@ void InitControl(void);
 #pragma udata axisvars			
 AxisStruct A[3];
 #pragma udata
+
+uint8 PIDCyclemS, PIDCycleShift;
+
+#pragma udata hist
+uint32 CycleHist[16];
+#pragma udata
 		
 int16 CameraAngle[3];
 
@@ -62,7 +68,6 @@ void DoAltitudeHold(void)
 	static int24 AltE;
 	static int16 ROCE, pROC, iROC, DesiredROC;
 	static int16 NewAltComp;
-	static i24u Temp;
 
 	#ifdef ALT_SCRATCHY_BEEPER
 	if ( (--BeepTick <= 0) && !F.BeeperInUse ) 
@@ -174,11 +179,8 @@ void DoAttitudeAngle(AxisStruct *C)
 	
 	static int16 a;
 
-	#ifdef CLOCK_16MHZ
-		a = C->Angle + C->Rate;
-	#else
-		a = C->Angle + SRS16(C->Rate, 1);
-	#endif // CLOCK_16MHZ
+	a = C->Angle + SRS16(C->Rate, 2 - PIDCycleShift );
+
 	a = Limit1(a, ANGLE_LIMIT_DEG); // turn off comp above this angle?
 	a = Decay1(a);
 	a -= C->AngleCorr;			// last for accelerometer compensation
@@ -209,11 +211,7 @@ void DoYawRate(void)
 		}
 	}
 
-	#ifdef CLOCK_16MHZ
-		A[Yaw].Angle += A[Yaw].Rate;
-	#else
-		A[Yaw].Angle += SRS16(A[Yaw].Rate, 1);
-	#endif // CLOCK_16MHZ
+	A[Yaw].Angle += SRS16(A[Yaw].Rate, 2 - PIDCycleShift);
 	
 	A[Yaw].Angle = Limit1(A[Yaw].Angle, A[Yaw].IntLimit );
 	A[Yaw].Angle = DecayX(A[Yaw].Angle, 2);

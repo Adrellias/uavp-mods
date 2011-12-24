@@ -44,7 +44,7 @@ void DoLEDs(void)
 
 void ReceiverTest(void)
 {
-	static int8 s;
+	static uint8 s;
 	static uint16 v;
 
 	TxString("\r\nRx: ");

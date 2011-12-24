@@ -232,7 +232,7 @@ OS002:
 	EnableInterrupts;
 
 	if ( ServoUpdate <=0 )
-		ServoUpdate = SERVO_INTERVAL;
+		ServoUpdate = ServoInterval;
 	else
 		ServoUpdate--;
 	

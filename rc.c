@@ -200,7 +200,7 @@ void UpdateControls(void)
 	
 	F.Ch5Active = NewCh5Active;
 
-	if ( NoOfControls < 7 )
+	if ( NoOfControls < (uint8)7 )
 	{
 		DesiredCamPitchTrim = RC_NEUTRAL;
 		// NavSensitivity set in ReadParametersEE

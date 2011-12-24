@@ -44,6 +44,7 @@ boolean	FirstPass;
 void LightsAndSirens(void)
 {
 	static int24 Ch5Timeout;
+	static uint8 s;
 
 	LEDYellow_TOG;
 	if ( F.Signal ) LEDGreen_ON; else LEDGreen_OFF;
@@ -109,7 +110,7 @@ void LightsAndSirens(void)
 
 	mS[LastBattery] = mSClock();
 	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
-	PIDUpdate = mSClock() + PID_CYCLE_MS;
+	PIDUpdate = mSClock() + PIDCyclemS;
 	F.LostModel = false;
 	FailState = MonitoringRx;
 
@@ -153,6 +154,11 @@ void InitMisc(void)
 	
 	for ( i = 0; i < (uint8)FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
+
+	#ifdef INC_CYCLE_STATS
+	for (i = 0 ; i <(uint8)16; i++ )
+		CycleHist[i] = 0;
+	#endif // INC_CYCLE_STATS
  
 	F.ParametersValid = F.AcquireNewPosition = F.AllowNavAltitudeHold = true;
 
@@ -190,7 +196,7 @@ void Delay100mSWithOutput(int16 dur)
 	Timeout = mSClock() + dur * 100;
 	while ( mSClock() < Timeout )
 	{
-		Delay1mS(PID_CYCLE_MS - 2);		
+		Delay1mS(PIDCyclemS - 2);		
 		OutSignals(); // 1-3 ms Duration
 	}
 

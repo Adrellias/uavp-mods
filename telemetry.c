@@ -77,7 +77,7 @@ static int8 StatsNavAlternate = 0;
 
 void SendPacketHeader(void) {
 
-	static int8 b;
+	static uint8 b;
 
 	F.TxToBuffer = true;
 
@@ -149,7 +149,7 @@ void SendFlightPacket(void) {
 	TxESCi8((int8)AccAltComp);
 	TxESCi8((int8)AltComp);
 
-	for ( b = 0; b < 6; b++ ) // motor/servo channels
+	for ( b = 0; b < (uint8)6; b++ ) // motor/servo channels
 	 	TxESCu8((uint8)Limit(PWM[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);

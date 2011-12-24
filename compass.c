@@ -32,7 +32,7 @@ void CalibrateCompass(void);
 void InitHeading(void);
 void InitCompass(void);
 
-int16 GetHMC58X3Magentometer(void);
+int16 GetHMC58X3Magnetometer(void);
 void DoTestHMC58X3Magnetometer(void);
 void CalibrateHMC58X3Magnetometer(void);
 void InitHMC58X3Magnetometer(void);
@@ -50,7 +50,7 @@ uint8 	CompassType;
 uint8 	MagRetries;
 
 const rom char * CompassName[CompassUnknown+1] = {
-		"HMC5883L","HMC5843?","HMC6352","None"
+		"HMC5883L","HMC5843?","HMC6352","None/unsupported"
 		};
 
 void ShowCompassType(void)
@@ -60,9 +60,11 @@ void ShowCompassType(void)
 
 int16 GetCompass()
 {
+	#ifdef INC_HMC58X3
 	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) )
 		return (GetHMC58X3Magnetometer());
 	else
+	#endif // INC_HMC58X3
 		#ifdef INC_HMC6352
 		if ( CompassType == HMC6352Compass )
 			return (GetHMC6352Compass());
@@ -152,6 +154,7 @@ void InitHeading(void)
 
 void InitCompass(void)
 {
+	#ifdef INC_HMC58X3
 	if ( HMC58X3MagnetometerActive() )
 	{
 		if ( P[SensorHint] == SFDOF9 )
@@ -161,6 +164,7 @@ void InitCompass(void)
 		InitHMC58X3Magnetometer();
 	}
 	else
+	#endif // INC_HMC58X3
 		#ifdef INC_HMC6352
 		if ( HMC6352CompassActive() )
 		{
@@ -179,9 +183,11 @@ void DoCompassTest(void)
 {
 	TxString("\r\nCompass test - ");
 	
+	#ifdef INC_HMC58X3
 	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) )
 		DoTestHMC58X3Magnetometer();
 	else
+	#endif // INC_HMC58X3
 		#ifdef INC_HMC6352
 		if ( CompassType == HMC6352Compass )
 			DoTestHMC6352Compass();
@@ -192,17 +198,23 @@ void DoCompassTest(void)
 
 void CalibrateCompass(void)
 {
+	#ifdef INC_HMC58X3
 	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) )
 		CalibrateHMC58X3Magnetometer();
-	#ifdef INC_HMC6352
 	else
+	#endif // INC_HMC58X3
+	#ifdef INC_HMC6352
 		if ( CompassType == HMC6352Compass )
 			CalibrateHMC6352Compass();
+	#else
+	{ }
 	#endif // INC_HMC6352
 } // CalibrateCompass
 
 #endif // TESTING
 //________________________________________________________________________________________
+
+#ifdef INC_HMC58X3
 
 // HMC58X3 3 Axis Magnetometer
 
@@ -219,7 +231,7 @@ int16 GetHMC58X3Magnetometer(void) {
 
 	static int16 b[3], Temp;
 	static i32u Temp32u;
-    static uint8 a, r;
+    static uint8 a;
     static int16 xh, yh;
     static int16 MxTheta, MyPhi, CosMxTheta, SinMxTheta, CosMyPhi, SinMyPhi;
 	static int16 CompassVal;
@@ -227,10 +239,10 @@ int16 GetHMC58X3Magnetometer(void) {
 
 	F.CompassValid = ReadI2Ci16v(HMC58X3_ID, HMC58X3_DATA, b, 3, true);
 
-	if( true )//F.CompassValid )//&& !((b[X]==b[Y])&&(b[Y]==b[Z]))) 
+	if( F.CompassValid )//&& !((b[X]==b[Y])&&(b[Y]==b[Z]))) 
 	{
 		if ( CompassType == HMC5883Magnetometer ) 
-		{ // HMC58X3L Honeywell swapped Y and Z and used same ID - rush job!!!!
+		{ // HMC5883L Honeywell swapped Y and Z and used same ID - rush job!!!!
 			Mag[X].G = b[X];
 			Mag[Y].G = b[Z];
 			Mag[Z].G = b[Y];
@@ -300,33 +312,6 @@ int16 GetHMC58X3Magnetometer(void) {
 
 } // GetHMC58X3Magnetometer
 
-void WriteMagCalEE(void)
-{
-	static uint8 a;
-	static MagStruct * M;
-
-	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) ) 
-		for ( a = X; a<=(uint8)Z; a++)
-		{
-			M = &Mag[a];
-			Write16EE(MAG_BIAS_ADDR_EE + (a*4), M->Min);
-			Write16EE(MAG_BIAS_ADDR_EE + (a*4+2), M->Max);
-		}
-} // WriteMagCalEE
-
-void ReadMagCalEE(void)
-{
-	static uint8 a;
-	static MagStruct * M;
-
-	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) ) 
-		for ( a = X; a<=(uint8)Z; a++)
-		{
-			M = &Mag[a];
-			M->Min = Read16EE(MAG_BIAS_ADDR_EE + (a*4));
-			M->Max = Read16EE(MAG_BIAS_ADDR_EE + (a*4+2));
-		}
-} // ReadMagCalEE
 
 #ifdef TESTING
 
@@ -403,7 +388,6 @@ void DoTestHMC58X3Magnetometer(void)
 void InitHMC58X3Magnetometer(void) 
 {
 	static uint8 a;
-	static MagStruct * M;
 	static int16 C[3];
 	static boolean r;
 	
@@ -433,7 +417,7 @@ void InitHMC58X3Magnetometer(void)
 
 	} while ( (++MagRetries < MAG_INIT_RETRIES) && (C[X] == C[Y]) && (C[Y] == C[Z]) );
 
-	F.CompassValid = MagRetries < MAG_INIT_RETRIES;
+	F.CompassValid = MagRetries < (uint8)MAG_INIT_RETRIES;
 
 	mS[CompassUpdate] = mSClock();
 
@@ -454,6 +438,48 @@ boolean HMC58X3MagnetometerActive(void)
 
 	return (F.CompassValid);
 } //  HMC58X3MagnetometerActive
+
+void WriteMagCalEE(void)
+{
+	static uint8 a;
+	static MagStruct * M;
+
+	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) ) 
+		for ( a = X; a<=(uint8)Z; a++)
+		{
+			M = &Mag[a];
+			Write16EE(MAG_BIAS_ADDR_EE + (a*4), M->Min);
+			Write16EE(MAG_BIAS_ADDR_EE + (a*4+2), M->Max);
+		}
+} // WriteMagCalEE
+
+void ReadMagCalEE(void)
+{
+	static uint8 a;
+	static MagStruct * M;
+
+	if ( (CompassType == HMC5883Magnetometer) || (CompassType == HMC5843Magnetometer) ) 
+		for ( a = X; a<=(uint8)Z; a++)
+		{
+			M = &Mag[a];
+			M->Min = Read16EE(MAG_BIAS_ADDR_EE + (a*4));
+			M->Max = Read16EE(MAG_BIAS_ADDR_EE + (a*4+2));
+		}
+} // ReadMagCalEE
+
+#else
+
+void ReadMagCalEE(void)
+{
+} // ReadMagCalEE
+
+void WriteMagCalEE(void)
+{
+} // WriteMagCalEE
+
+#endif // INC_HMC58X3
+
+
 
 //________________________________________________________________________________________
 

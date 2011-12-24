@@ -388,7 +388,6 @@ boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
 {
 	static uint8 b, c;
 	static uint8 S[16];
-	static i16u t;
 
 	I2CStart();
 		if( WriteI2CByte(d) != I2C_ACK ) goto IRSerror;
@@ -500,7 +499,7 @@ void ESCI2CStop(void)
 
 uint8 WriteESCI2CByte(uint8 d)
 { // ~320KHz @ 40MHz
-	static uint8 s, t, dd;
+	static uint8 s, dd;
 
 	dd = d; // a little faster
 	s = 8;
@@ -672,7 +671,7 @@ void ProgramSlaveAddress(uint8 addr)
 
 void ConfigureESCs(void)
 {
-	int8 m;
+	static uint8 m;
 
 	if ( (int8)P[ESCType] == ESCYGEI2C )		
 	{

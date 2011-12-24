@@ -44,7 +44,7 @@ int32 AccCorrAv, NoAccCorr;
 const rom char * GyroName[GyroUnknown+1] ={
 		"MLX90609","ADXRS613/150","IDG300","ST-AY530","ADXRS610/300",
 		"ITG3200","SF-DOF6","SF-9DOF","MPU6050","FreeIMU","Drotek","IR Sensors",
-		"Unknown"
+		"Fail or not supported @ 16MHZ"
 		};
 #pragma idata
 
@@ -236,38 +236,55 @@ void GetGyroValues(void)
 void InitGyros(void)
 {
 	switch ( P[SensorHint]){
-	case ITG3200Gyro:
-		INV_ID = INV_ID_3DOF;
-		INVGyroAddress = INV_GX_H;
-		if (InvenSenseGyroActive())
-		{
-			GyroType = ITG3200Gyro;
-			InitInvenSenseGyro();
-		}
-		break;
-	case SFDOF6: // ITG3200
-	case SFDOF9:
-	case FreeIMU:
-	case Drotek:
-		INV_ID = INV_ID_3DOF;
-		INVGyroAddress = INV_GX_H;
-		if (InvenSenseGyroActive())
-		{
-			GyroType = ITG3200Gyro;
-			InitInvenSenseGyro();
-		}
-		break;
-	#ifdef INC_MPU6050
-	case MPU6050:
-		INV_ID = INV_ID_MPU6050;
-		INVGyroAddress = MPU6050_GYRO_XOUT_H;
-		if (InvenSenseGyroActive())
-		{
-			GyroType = MPU6050;
-			InitInvenSenseGyro();
-		}
-		break;
-	#endif // INC_MPU6050
+	#ifdef CLOCK_16MHZ
+		case ITG3200Gyro:
+		case SFDOF6: // ITG3200
+		case SFDOF9:
+		case FreeIMU:
+		case Drotek:
+		case MPU6050:
+			GyroType = GyroUnknown;
+			break;
+	#else
+		case ITG3200Gyro:
+			INV_ID = INV_ID_3DOF;
+			INVGyroAddress = INV_GX_H;
+			if (InvenSenseGyroActive())
+			{
+				GyroType = ITG3200Gyro;
+				InitInvenSenseGyro();
+			}
+			break;
+		case SFDOF6: // ITG3200
+		case SFDOF9:
+		case FreeIMU:
+		case Drotek:
+			INV_ID = INV_ID_3DOF;
+			INVGyroAddress = INV_GX_H;
+			if (InvenSenseGyroActive())
+			{
+				GyroType = ITG3200Gyro;
+				InitInvenSenseGyro();
+			}
+			break;
+		#ifdef INC_MPU6050
+		case MPU6050:
+			INV_ID = INV_ID_MPU6050;
+			INVGyroAddress = MPU6050_GYRO_XOUT_H;
+			if (InvenSenseGyroActive())
+			{
+				GyroType = MPU6050;
+				InitInvenSenseGyro();
+			}
+			else
+				GyroType = GyroUnknown;
+			break;
+		#else
+		case MPU6050:
+			GyroType = GyroUnknown;
+			break;
+		#endif // INC_MPU6050
+	#endif // CLOCK_16MHZ
 	default:
 		InitAnalogGyros();
 		GyroType = P[SensorHint];
@@ -279,9 +296,9 @@ void InitGyros(void)
 #ifdef TESTING
 void GyroTest(void)
 {
-	TxString("\r\n");
+	TxString("\r\nGyro test - ");
 	ShowGyroType(GyroType);
-	TxString(" - Gyro test:\r\n");
+	TxNextLine();
 
 	GetGyroValues();
 
@@ -291,9 +308,7 @@ void GyroTest(void)
 		TxString("\r\n\tPitch:\t");TxVal32(A[Pitch].GyroADC,0,0);
 		TxString("\r\n\tYaw:  \t");TxVal32(A[Yaw].GyroADC,0,0);
 		TxNextLine();
-	}
-	else
-		TxString("\r\n(Gyro read FAIL)\r\n");	
+	}	
 } // GyroTest
 #endif // TESTING
 

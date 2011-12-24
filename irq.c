@@ -256,7 +256,7 @@ void high_isr_handler(void)
 					break;
 				case WaitTag:
 	            	RxCheckSum ^= RxCh;
-	            	while ( ( RxCh != NMEATags[ss][tt] ) && ( ss < MAX_NMEA_SENTENCES ) ) ss++;
+	            	while ( ( RxCh != (uint8)NMEATags[ss][tt] ) && ( ss < (uint8)MAX_NMEA_SENTENCES ) ) ss++;
 	           		if ( RxCh == NMEATags[ss][tt] )
 	                	if ( tt == (uint8)NMEA_TAG_INDEX ) 
 						{

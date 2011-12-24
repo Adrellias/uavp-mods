@@ -28,8 +28,9 @@
 
 Flags 	F;
 uint8 p;
+uint32 Now, CyclemS;
 #pragma udata access statevars
-uint8 near State, NavState, FailState;
+int8 near State, NavState, FailState;
 boolean near SpareSlotTime;
 #pragma udata
 
@@ -224,17 +225,33 @@ void main(void)
 			CheckAlarms();
 	
 			while ( WaitingForSync ) {};
+
 			DisableInterrupts; // protect 1mS clock
-			WaitingForSync = true;
-			if ( F.NormalFlightMode )		
-				PIDUpdate = MilliSec + PID_CYCLE_MS;
-			else
-				PIDUpdate = MilliSec + MIN_PID_CYCLE_MS;
+				WaitingForSync = true;
+				Now = MilliSec;
+				#ifdef CLOCK_16MHZ
+					PIDUpdate = Now + PIDCyclemS;
+				#else
+					if ( F.NormalFlightMode )		
+						PIDUpdate = Now + PIDCyclemS;
+					else
+						PIDUpdate = Now + 0; // fast as possible but with jitter		
+				#endif // CLOCK_16MHZ
 			EnableInterrupts;
 
 			DoControl();
-			OutSignals();		
+			OutSignals();
 
+			#ifdef INC_CYCLE_STATS
+			if ( State == InFlight )
+			{
+				CyclemS = Now - mS[LastPIDUpdate];
+				mS[LastPIDUpdate] = Now;
+				CyclemS = Limit(CyclemS, 0, 15);
+				CycleHist[CyclemS]++;
+			}
+			#endif // INC_CYCLE_STATS
+		
 		} // flight while armed
 	}
 

@@ -20,23 +20,44 @@
 
 	#pragma idata paramdefaults
 	const int8 DefaultParams[MAX_PARAMETERS][2] = {
-	{-20,0},			// RollKp, 			01
-	{-10,0},	 		// RollKi,			02
-	{50, 0},			// RollKd,			03
-	{2,true},			// NeutralRadius was HorizDampKp,	04
-	{6,0},	 			// RollIntLimit,	05
-
-	{-20,0},	 		// PitchKp,			06
-	{-10,0},	 		// PitchKi,			07
-	{50,0},	 			// PitchKd,			08
-	{5,0},	 			// AltKp,			09 // was 8
-	{6,0},	 			// PitchIntLimit,	10
+	#ifdef CLOCK_16MHZ
+		{-20,0},			// RollKp, 			01
+		{-10,0},	 		// RollKi,			02
+		{50, 0},			// RollKd,			03
+		{2,true},			// NeutralRadius was HorizDampKp,	04
+		{6,0},	 			// RollIntLimit,	05
 	
-	{-25,0},	 		// YawKp, 			11
-	{-4,0},	 			// YawKi,			12 was 35
-	{RESCALE_TO_ACC,true},	// AccTrack was YawKd,		13
-	{20,0},	 			// YawLimit,		14 was 50
-	{2,0},	 			// YawIntLimit,		15
+		{-20,0},	 		// PitchKp,			06
+		{-10,0},	 		// PitchKi,			07
+		{50,0},	 			// PitchKd,			08
+		{5,0},	 			// AltKp,			09 // was 8
+		{6,0},	 			// PitchIntLimit,	10
+		
+		{-25,0},	 		// YawKp, 			11
+		{-4,0},	 			// YawKi,			12 was 35
+		{RESCALE_TO_ACC,true},// AccTrack was YawKd,		13
+		{20,0},	 			// YawLimit,		14 was 50
+		{2,0},	 			// YawIntLimit,		15
+	#else // CLOCK_40MHZ
+		{-20,0},			// RollKp, 			01
+		{-10,0},	 		// RollKi,			02
+		{50, 0},			// RollKd,			03
+		{2,true},			// NeutralRadius was HorizDampKp,	04
+		{6,0},	 			// RollIntLimit,	05
+	
+		{-20,0},	 		// PitchKp,			06
+		{-10,0},	 		// PitchKi,			07
+		{50,0},	 			// PitchKd,			08
+		{5,0},	 			// AltKp,			09 // was 8
+		{6,0},	 			// PitchIntLimit,	10
+		
+		{-25,0},	 		// YawKp, 			11
+		{-4,0},	 			// YawKi,			12 was 35
+		{RESCALE_TO_ACC,true},// AccTrack was YawKd,		13
+		{20,0},	 			// YawLimit,		14 was 50
+		{2,0},	 			// YawIntLimit,		15
+	#endif // CLOCK_40MHZ
+
 	{2,true}, 			// ConfigBits,		16c
 	{1,true},			// RxThrottleCh was TimeSlots,	17
 	{51,true}, 			// LowVoltThres,	18c
@@ -91,9 +112,9 @@
 	{12,true},			// NavYawLimit		58
 	{50,0},				// Balance			59
 	{9,true},			// RxAux4Ch			60
-	{-20,0},				// RollKp2			61
+	{-25,0},			// RollKp2			61
 
-	{-20,0},				// PitchKp2			62
+	{-25,0},			// PitchKp2			62
 	{0,0},	
 	{0,0}						
 	};

@@ -33,7 +33,7 @@ int16 	Stats[MAX_STATS];
 
 void ZeroStats(void)
 {
-	static int8 s;
+	static uint8 s;
 
 	AccCorrAv = NoAccCorr = 0;
 
@@ -53,7 +53,7 @@ void ZeroStats(void)
 
 void ReadStatsEE(void)
 {
-	static int8 s;
+	static uint8 s;
 
 	for (s = 0 ; s < MAX_STATS ; s++ )
 		Stats[s] = Read16EE(STATS_ADDR_EE + s*2);
@@ -61,7 +61,7 @@ void ReadStatsEE(void)
 
 void WriteStatsEE()
 {
-	static int8 s, i;
+	static uint8 s, i;
 	static int16 Temp;
 
 	Stats[AccCorrAvS] = AccCorrAv/NoAccCorr;

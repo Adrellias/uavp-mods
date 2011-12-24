@@ -49,7 +49,7 @@ void OutSignals(void)
 
 	if ( --ServoUpdate <= 0 )
 	{	
-		ServoUpdate = SERVO_INTERVAL;						
+		ServoUpdate = ServoInterval;						
 		// Save TMR0 and reset
 		DisableInterrupts;
 		SaveClockmS = MilliSec;

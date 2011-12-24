@@ -91,7 +91,7 @@ void ShowRxSetup(void)
 } // ShowRxSetup
 
 #pragma idata airframenames
-const rom char * AFName[AFUnknown+1] = {
+const rom uint8 * AFName[AFUnknown+1] = {
 		"QUAD","TRI","VT","Y6","HELI","ELEV","AIL","Hexa","VTOL","Unknown"
 		};
 #pragma idata
@@ -103,52 +103,65 @@ void ShowAFType(void)
 
 void ShowSetup(void)
 {
-	static int8 i, NoOfChannels;
+	static uint8 i;
 
 	TxNextLine();
 	TxString(SerHello);
 
 	#ifdef EXPERIMENTAL
-		TxString("WARNING - EXPERIMENTAL\r\n");
+		TxString("\r\nWARNING - EXPERIMENTAL");
 	#endif // EXPERIMENTAL
 
 	#ifdef CLOCK_16MHZ
-		TxString("Clock: 16MHz\r\n");
+		TxString("\r\nClock: 16MHz");
 	#else // CLOCK_40MHZ
-		TxString("Clock: 40MHz\r\n");
+		TxString("\r\nClock: 40MHz");
 	#endif // CLOCK_16MHZ
 
-	TxString("Aircraft: "); ShowAFType(); TxNextLine();
+	TxString("\r\nAircraft: "); ShowAFType();
 
-	TxString("Compass: ");
+	TxString("\r\nPID Cycle (mS): ");
+	TxVal32(PIDCyclemS,0,' ');
+	// zzz TxVal32(PIDCycleShift,0,0); 
+	TxNextLine();
+	#ifndef TESTING
+		#ifdef INC_CYCLE_STATS
+		for (i = 0 ; i <(uint8)15; i++ )
+			if (CycleHist[i] > 0)
+			{
+				TxChar(HT);
+				TxVal32(i,0,HT);
+				TxVal32(CycleHist[i],0,0);
+				TxNextLine();
+			}
+		#endif // INC_CYCLE_STATS
+	#endif // TESTING
+
+	#ifdef MULTICOPTER
+		TxString("\r\nForward Flight: ");
+		TxVal32((int16)Orientation * 75L, 1, 0);
+		TxString("deg CW from K1 motor(s)");
+	#endif // MULTICOPTER
+
+	TxString("\r\nHint: ");
+	ShowGyroType(P[SensorHint]);
+
+	TxString("\r\nAccs: ");
+	ShowAccType();	
+
+	TxString("\r\nGyros: "); 
+	ShowGyroType(GyroType);
+
+	TxString("\r\nBaro: "); ShowBaroType();
+
+	TxString("\r\nCompass: ");
 	ShowCompassType();
 	if( F.CompassValid )
 	{
 		TxString(" Offset ");
 		TxVal32((int16)P[CompassOffsetQtr] * 90,0,0);
-		TxString("deg.\r\n");
+		TxString("deg.");
 	}
-	else
-		TxNextLine();
-
-	TxString("Baro: "); ShowBaroType(); TxNextLine();
-
-	#ifdef MULTICOPTER
-		TxString("Forward Flight: ");
-		TxVal32((int16)Orientation * 75L, 1, 0);
-		TxString("deg CW from K1 motor(s)\r\n");
-	#endif // MULTICOPTER
-
-	TxString("Hint: ");
-	ShowGyroType(P[SensorHint]);
-	TxString("\r\nAccs: ");
-	ShowAccType();	
-	if ( F.AccelerationsValid )
-		TxString(" OK");
-	else
-		TxString(" Fail");	
-	TxString("\r\nGyros: "); 
-	ShowGyroType(GyroType);
 
 	TxString("\r\nESCs: ");	
 	ShowESCType();
@@ -188,10 +201,10 @@ void ShowSetup(void)
 		TxString("\tAlt Hold Manual CAUTION\r\n");
 
 	TxString("\r\nALARM (if any):\r\n");
-	if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
+	if ( (( NoOfControls&1 ) != (uint8)1 ) && !F.UsingSerialPPM )
 	{
 		TxString("\tODD Ch Inp selected, EVEN number used - reduced to ");
-		TxVal32(NoOfChannels,0,0);
+		TxVal32(NoOfControls,0,0);
 		TxNextLine();
 	}
 	if ( !F.FailsafesEnabled )
@@ -212,11 +225,11 @@ void ShowSetup(void)
 	if ( !F.RangefinderAltitudeValid )
 		TxString("\tRangefinder OFFLINE\r\n");
 
-	if ( F.GyroFailure )
+	if ( ( GyroType == GyroUnknown ) || F.GyroFailure )
 		TxString("\tGyro FAIL\r\n");
 
-	if ( !F.AccelerationsValid )
-		TxString("\tAccs. OFFLINE\r\n");
+	if ( ( AccType == AccUnknown ) || !F.AccelerationsValid )
+		TxString("\tAccs. FAIL\r\n");
 
 	if ( !F.CompassValid )
 		TxString("\tCompass OFFLINE\r\n");
@@ -238,7 +251,8 @@ void ShowSetup(void)
 void ProcessCommand(void)
 {
 	static uint8 ch;
-	static int8 p, d;
+	static uint8 p;
+	static int8 d;
 	static int16 dd;
 
 
@@ -278,7 +292,7 @@ void ProcessCommand(void)
 				// no reprogramming in flight!!!!!!!!!!!!!!!
 				LEDBlue_ON;
 				TxString("\r\nRegister ");
-				p = (uint16)(RxNumU()-1);
+				p = (uint8)(RxNumU()-1);
 				TxString(" = ");
 				dd = RxNumS();
 				d = Limit(dd, -128, 127);

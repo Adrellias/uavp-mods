@@ -59,7 +59,7 @@ uint8 UAVXAirframe;
 
 void ReadParametersEE(void)
 {
-	static int8 i,b;
+	static uint8 i, b;
 	static uint16 a;
 
 	if ( ParametersChanged )
@@ -115,8 +115,20 @@ void ReadParametersEE(void)
 		InitGyros();
 		InitAccelerometers();
 
+		#ifdef CLOCK_16MHZ
+			PIDCycleShift = PID_16MHZ_SHIFT;
+		#else
+			if ( P[ESCType] == ESCPPM )
+				PIDCycleShift = PID_40MHZ_SHIFT; 
+			else
+				PIDCycleShift = PID_40MHZ_I2CESC_SHIFT; 
+		#endif // CLOCK_16MHZ
+		PIDCyclemS = PID_BASE_CYCLE_MS * ((int8)1 << PIDCycleShift);
+
+		ServoInterval = ((SERVO_UPDATE_INTERVAL+PIDCyclemS/2)/PIDCyclemS);
+
 		b = P[ServoSense];
-		for ( i = 0; i < 6; i++ )
+		for ( i = 0; i < (uint8)6; i++ )
 		{
 			if ( b & 1 )
 				PWMSense[i] = -1;
@@ -168,10 +180,10 @@ void ReadParametersEE(void)
 		PIE1bits.CCP1IE = true;
 
 		NoOfControls = P[RxChannels];
-		if ( (( NoOfControls&1 ) != 1 ) && !F.UsingSerialPPM )
+		if ( (( NoOfControls&1 ) != (uint8)1 ) && !F.UsingSerialPPM )
 			NoOfControls--;
 
-		if ( NoOfControls < 7 )
+		if ( NoOfControls < (uint8)7 )
 		{
 			NavSensitivity = FromPercent((int16)P[PercentNavSens6Ch], RC_MAXIMUM);
 			NavSensitivity = Limit(NavSensitivity, 0, RC_MAXIMUM);
@@ -187,7 +199,7 @@ void ReadParametersEE(void)
 		Map[Ch8RC]= P[RxAux3Ch]-1;
 		Map[Ch9RC] = P[RxAux4Ch]-1;
 
-		for ( i = 0; i < NoOfControls; i++) // make reverse map
+		for ( i = 0; i < (uint8)NoOfControls; i++) // make reverse map
 			RMap[Map[i]] = i;
 
 		F.RFInInches = ((P[ConfigBits] & RFInchesMask) != 0);
@@ -210,7 +222,7 @@ void ReadParametersEE(void)
 
 void WriteParametersEE(uint8 s)
 {
-	static int8 p;
+	static uint8 p;
 	static uint16 addr;
 	
 	addr = (s - 1)* MAX_PARAMETERS;
@@ -244,7 +256,7 @@ void UpdateParamSetChoice(void)
 	#define STICK_WINDOW 30
 
 	static uint8 NewParamSet, NewAllowNavAltitudeHold, NewAllowTurnToWP;
-	static int8 Selector;
+	static int16 Selector;
 
 	NewParamSet = ParamSet;
 	NewAllowNavAltitudeHold = F.AllowNavAltitudeHold;
@@ -340,12 +352,12 @@ boolean ParameterSanityCheck(void)
 
 void InitParameters(void)
 {
-	static int8 i;
+	static uint8 i;
 	static int16 A;
 
 	UAVXAirframe = AF_TYPE;
 
-	for (i = 0; i < 48; i++)
+	for (i = 0; i < (uint8)48; i++)
 	{
 		A = (int16)(((int32)i * MILLIPI)/24L);
 		OSin[i] = int16sin(A);

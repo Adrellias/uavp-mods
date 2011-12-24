@@ -200,21 +200,12 @@ void ParseGPGGASentence(void)
     //UpdateField();   // GHeight 
     //UpdateField();   // GHeightUnit 
 
-   	F.GPSValid = (GPSFix >= GPS_MIN_FIX) && ( GPSNoOfSats >= GPS_MIN_SATELLITES );
+   	F.GPSValid = (GPSFix >= (uint8)GPS_MIN_FIX) && ( GPSNoOfSats >= (uint8)GPS_MIN_SATELLITES );
 
 	if ( State == InFlight )
 	{
-		if ( GPSHDilute > Stats[MaxHDiluteS] )
-			Stats[MaxHDiluteS] = GPSHDilute;
-		else 
-			if ( GPSHDilute < Stats[MinHDiluteS] ) 
-				Stats[MinHDiluteS] = GPSHDilute;
-
-		if ( GPSNoOfSats > Stats[GPSMaxSatsS] )
-			Stats[GPSMaxSatsS] = GPSNoOfSats;
-		else
-			if ( GPSNoOfSats < Stats[GPSMinSatsS] )
-				Stats[GPSMinSatsS] = GPSNoOfSats; 
+		StatsMinMax(GPSHDilute, MinHDiluteS, MaxHDiluteS);
+		StatsMinMax(GPSNoOfSats, GPSMinSatsS, GPSMaxSatsS);
 
 		F.GPSFailure = GPSHDilute > 150; 
 	}
@@ -321,7 +312,6 @@ void ParseGPSSentence(void)
 	// 0.94mS @ 16MHz GPGGA
 	// 0.37mS @ 40MHz GPGGA
 
-	static i32u Temp32u;
 	static int24 MaxDiff, LongitudeDiff, LatitudeDiff;
 	static int24 GPSInterval;
 
@@ -423,8 +413,7 @@ void ParseGPSSentence(void)
 			if ( MaxDiff > GPS_OUTLIER_LIMIT )
 			{
 				Stats[BadS]++;
-				if ( MaxDiff > Stats[BadNumS] ) 
-					Stats[BadNumS] = MaxDiff;
+				StatsMax(MaxDiff, BadNumS);
 				GPSLatitude = SlewLimit(GPSLatitudeP, GPSLatitude, GPS_OUTLIER_SLEW_LIMIT );
 				GPSLongitude = SlewLimit(GPSLongitudeP, GPSLongitude, GPS_OUTLIER_SLEW_LIMIT );
 				LatitudeDiff = GPSLatitude - GPSLatitudeP; // do again after slew limit
@@ -439,11 +428,8 @@ void ParseGPSSentence(void)
 
 		if ( State == InFlight )
 		{
-			if ( GPSRelAltitude > Stats[GPSAltitudeS] )
-				Stats[GPSAltitudeS] = GPSRelAltitude;
-
-			if ( GPSVel > Stats[GPSVelS] )
-				Stats[GPSVelS] = GPSVel;
+			StatsMax(GPSRelAltitude, GPSAltitudeS);
+			StatsMax(GPSVel, GPSVelS);
 		}
 	}
 	else

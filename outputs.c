@@ -35,6 +35,7 @@ int16 PWM[6];
 int16 PWMSense[6];
 int16 ESCI2CFail[NO_OF_I2C_ESCS];
 int16 CurrThrottle;
+uint8 ServoInterval;
 
 #pragma udata access motorvars	
 near int16 Rl, Pl, Yl;

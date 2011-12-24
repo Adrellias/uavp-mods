@@ -68,7 +68,7 @@ void SendLEDs(void)
 
 void SendLEDs(void) // 39.3 uS @ 40MHz 
 {
-	static int8	i, s;
+	static uint8	i, s;
 
 	if ( LEDShadow != LEDShadowp )
 	{
