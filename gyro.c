@@ -247,19 +247,10 @@ void InitGyros(void)
 			break;
 	#else
 		case ITG3200Gyro:
-			INV_ID = INV_ID_3DOF;
-			INVGyroAddress = INV_GX_H;
-			if (InvenSenseGyroActive())
-			{
-				GyroType = ITG3200Gyro;
-				InitInvenSenseGyro();
-			}
-			break;
 		case SFDOF6: // ITG3200
 		case SFDOF9:
 		case FreeIMU:
 		case Drotek:
-			INV_ID = INV_ID_3DOF;
 			INVGyroAddress = INV_GX_H;
 			if (InvenSenseGyroActive())
 			{
@@ -269,7 +260,6 @@ void InitGyros(void)
 			break;
 		#ifdef INC_MPU6050
 		case MPU6050:
-			INV_ID = INV_ID_MPU6050;
 			INVGyroAddress = MPU6050_GYRO_XOUT_H;
 			if (InvenSenseGyroActive())
 			{

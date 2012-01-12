@@ -71,7 +71,18 @@ void InitInvenSenseGyro(void)
 
 boolean InvenSenseGyroActive(void) 
 {
+	INV_ID = INV_ID_3DOF;
 	F.GyroFailure = !I2CResponse(INV_ID);
+	if ( F.GyroFailure )
+	{
+		INV_ID = INV_ID_6DOF;
+		F.GyroFailure = !I2CResponse(INV_ID);
+		if ( F.GyroFailure )
+		{	
+			INV_ID = INV_ID_MPU6050;
+			F.GyroFailure = !I2CResponse(INV_ID);
+		}		
+	}
 	return ( !F.GyroFailure );
 } // InvenSenseGyroActive
 

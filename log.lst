@@ -2671,10 +2671,10 @@ C:\Flight\Code\UAVX-GKE\gyro_analog.h:96:Message [3004] comparison of a signed i
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:96:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:53:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:289:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:297:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:298:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:299:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:307:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:308:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:309:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:50:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:54:Warning [2054] suspicious pointer conversion
@@ -3070,10 +3070,10 @@ C:\Flight\Code\UAVX-GKE\gyro_analog.h:96:Message [3004] comparison of a signed i
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:96:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Flight\Code\UAVX-GKE\gyro_analog.h:102:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:53:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:289:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:297:Warning [2054] suspicious pointer conversion
+C:\Flight\Code\UAVX-GKE\gyro.c:298:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\gyro.c:299:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:307:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:308:Warning [2054] suspicious pointer conversion
-C:\Flight\Code\UAVX-GKE\gyro.c:309:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:50:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:52:Warning [2054] suspicious pointer conversion
 C:\Flight\Code\UAVX-GKE\tests.c:54:Warning [2054] suspicious pointer conversion

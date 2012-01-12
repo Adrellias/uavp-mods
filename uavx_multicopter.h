@@ -43,13 +43,13 @@
 		{-10,0},	 		// RollKi,			02
 		{50, 0},			// RollKd,			03
 		{2,true},			// NeutralRadius was HorizDampKp,	04
-		{20,0},	 			// RollIntLimit,	05
+		{30,0},	 			// RollIntLimit,	05
 	
 		{-20,0},	 		// PitchKp,			06
 		{-10,0},	 		// PitchKi,			07
 		{50,0},	 			// PitchKd,			08
 		{5,0},	 			// AltKp,			09 // was 8
-		{20,0},	 			// PitchIntLimit,	10
+		{30,0},	 			// PitchIntLimit,	10
 		
 		{-25,0},	 		// YawKp, 			11
 		{-4,0},	 			// YawKi,			12 was 35
