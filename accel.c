@@ -312,9 +312,9 @@ void InitADXL345Acc() {
     Delay1mS(5);
 	WriteI2CByteAtAddr(ADXL345_ID, 0x2C,
 	    //0x0C);  	// 400Hz
-		0x0b);	// 200Hz 
+		//0x0b);	// 200Hz 
 	  	//0x0a); 	// 100Hz 
-	  	//0x09); 	// 50Hz
+	  	0x09); 	// 50Hz
     Delay1mS(5);
 
 } // InitADXL345Acc
@@ -356,7 +356,7 @@ void InitMPU6050Acc() {
 				//3 << 3 // 16G 
 				//| 1 // 2.5Hz
 				//| 2 // 2.5Hz
-				| 3 // 1.25Hz	
+				| 3 // 1.25Hz	//zzz
 				//| 4 // 0.63Hz
 				//| 7 // 0.63Hz
 				);
@@ -381,7 +381,7 @@ boolean MPU6050AccActive(void)
 // 0 19Hz, 1 20, 2 40, 3 75, 4 150, 5 300, 6 600, 7 1200Hz 
 
 #define BMA180_RANGE	2
-#define BMA180_BW 		4
+#define BMA180_BW 		1 // 4
 
 #define BMA180_Version 0x01
 #define BMA180_ACCXLSB 0x02

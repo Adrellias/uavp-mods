@@ -30,7 +30,6 @@ void ErectGyros(void);
 void GyroTest(void);
 void InitGyros(void);
 
-int16 RawYawRateP;
 uint8 GyroType;
 int16 RawGyro[3];
 int32 AccCorrAv, NoAccCorr;
@@ -109,6 +108,7 @@ void ErectGyros(void)
 {
 	static uint8 i, g;
 	static int32 Av[3];
+	static AxisStruct *C;
 
 	for ( g = Roll; g <=(uint8)Yaw; g++ )	
 		Av[g] = 0;
@@ -126,12 +126,11 @@ void ErectGyros(void)
 	
 	for ( g = Roll; g <= (uint8)Yaw; g++ )
 	{
-		A[g].GyroBias = (int16)SRS32( Av[g], 5); // InvenSense is signed
-		A[g].Rate = A[g].Ratep = A[g].Angle = 0;
+		C = &A[g];
+		C->GyroBias = (int16)SRS32( Av[g], 5); // InvenSense is signed
+		C->Rate = C->Ratep = C->Angle = C->RawAngle = 0;
 	}
 
-	RawYawRateP = 0;
- 
 	LEDRed_OFF;
 
 } // ErectGyros
@@ -141,7 +140,8 @@ void CompensateRollPitchGyros(void)
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
 	#define ANGLE_COMP_STEP 6 //25
 
-	#define AccFilter MediumFilter32
+//	#define AccFilter MediumFilter32
+	#define AccFilter NoFilter // using chip filters
 
 	static int16 NewAcc;
 	static int16 Grav, Dyn;
@@ -154,7 +154,8 @@ void CompensateRollPitchGyros(void)
 	{
 		ReadAccelerations();
 
-		A[Yaw].Acc = A[Yaw].AccADC - A[Yaw].AccOffset; // don't bother filtering vertical acc - not used
+		NewAcc = A[Yaw].AccADC - A[Yaw].AccOffset; 
+		A[Yaw].Acc = AccFilter(A[Yaw].Acc, NewAcc);
 
 		for ( a = Roll; a<(uint8)Yaw; a++ )
 		{
@@ -162,7 +163,7 @@ void CompensateRollPitchGyros(void)
 			NewAcc = C->AccADC - C->AccOffset; 
 			C->Acc = AccFilter(C->Acc, NewAcc);
 
-			Temp.i32 = (int32)C->Angle * P[AccTrack]; // avoid shift  32/256 = 0.125 @ 16MHz
+			Temp.i32 = (int32)C->Angle * P[AccTrack]; 
 			Grav = Temp.i3_1;
 			Dyn = 0; //A[a].Rate;
 	

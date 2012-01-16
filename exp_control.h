@@ -88,7 +88,7 @@ void Do_Ming_PI_Rate(AxisStruct *C)
 
 void Do_PI_P_Angle(AxisStruct *C)
 {
-	static int32 p, i, d, DesRate, AngleE, AngleEp, AngleIntE, RateE;
+	static int32 p, d, DesRate, AngleE, AngleEp, AngleIntE, RateE;
 
 	AngleEp = C->AngleE;
 	AngleIntE = C->AngleIntE;
@@ -98,15 +98,10 @@ void Do_PI_P_Angle(AxisStruct *C)
 
 	p = -SRS32(AngleE * C->Kp, 10);
 
-	AngleIntE += AngleE;
-	AngleIntE = Limit1(AngleIntE, C->IntLimit * DEG_TO_ANGLE_UNITS);
-
-	i = -SRS32(AngleIntE * C->Ki, 11);
-
 	d = SRS32((AngleE - AngleEp) * C->Kd, 9);
 	d = Limit1(d, D_LIMIT);
 
-	DesRate = p + i + d;
+	DesRate = p + d;
 
 	RateE = DesRate - C->Rate; 	
 	C->Out = SRS32(RateE * C->Kp2, 4 + PIDCycleShift);

@@ -40,16 +40,16 @@
 		{2,0},	 			// YawIntLimit,		15
 	#else // CLOCK_40MHZ
 		{-20,0},			// RollKp, 			01
-		{-10,0},	 		// RollKi,			02
+		{-15,0},	 		// RollKi,			02
 		{50, 0},			// RollKd,			03
 		{2,true},			// NeutralRadius was HorizDampKp,	04
-		{30,0},	 			// RollIntLimit,	05
+		{50,0},	 			// RollIntLimit,	05
 	
 		{-20,0},	 		// PitchKp,			06
-		{-10,0},	 		// PitchKi,			07
+		{-15,0},	 		// PitchKi,			07
 		{50,0},	 			// PitchKd,			08
 		{5,0},	 			// AltKp,			09 // was 8
-		{30,0},	 			// PitchIntLimit,	10
+		{50,0},	 			// PitchIntLimit,	10
 		
 		{-25,0},	 		// YawKp, 			11
 		{-4,0},	 			// YawKi,			12 was 35
@@ -112,9 +112,9 @@
 	{12,true},			// NavYawLimit		58
 	{50,0},				// Balance			59
 	{9,true},			// RxAux4Ch			60
-	{-25,0},			// RollKp2			61
+	{-15,0},			// RollKp2			61
 
-	{-25,0},			// PitchKp2			62
+	{-15,0},			// PitchKp2			62
 	{0,0},	
 	{0,0}						
 	};

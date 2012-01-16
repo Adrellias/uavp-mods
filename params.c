@@ -87,7 +87,6 @@ void ReadParametersEE(void)
 		A[Yaw].Ki = P[YawKi];
 		//A[Yaw].Kd = P[YawKd];
 		A[Yaw].Limiter = P[YawLimit];
-		A[Yaw].IntLimit = P[YawIntLimit] * 256;
 		A[Yaw].AccOffset = (int16)P[MiddleDU];
 
 		#ifdef TESTING

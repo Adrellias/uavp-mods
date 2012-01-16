@@ -50,7 +50,6 @@ int24 OSO, OCO;
 int32 AngleE, RateE;
 int16 YawRateIntE;
 int16 HoldYaw;
-int16 YawIntLimit256;
 
 int16 CurrMaxRollPitch;
 
@@ -177,9 +176,15 @@ void DoAttitudeAngle(AxisStruct *C)
 	// Angles and rates are normal aircraft coordinate conventions
 	// X/Forward axis reversed for Acc to simplify compensation
 	
-	static int16 a;
+	static int16 a, Temp;
 
-	a = C->Angle + SRS16(C->Rate, 2 - PIDCycleShift );
+	Temp = SRS16(C->Rate, 2 - PIDCycleShift );
+
+	#ifdef INC_RAW_ANGLES
+	C->RawAngle += Temp; // for Acc comp studies
+	#endif
+
+	a = C->Angle + Temp;
 
 	a = Limit1(a, ANGLE_LIMIT_DEG); // turn off comp above this angle?
 	a = Decay1(a);
@@ -192,18 +197,20 @@ void DoYawRate(void)
 { 	// Yaw gyro compensation using compass
 	static int16 HE;
 
+	A[Yaw].Rate = SRS16(A[Yaw].Rate, 2 - PIDCycleShift);
+
 	if ( F.CompassValid && F.NormalFlightMode )
 	{
 		// + CCW
 		if ( A[Yaw].Hold > COMPASS_MIDDLE ) // acquire new heading
 		{
-			RawYawRateP = A[Yaw].Rate;
 			DesiredHeading = Heading;
+			A[Yaw].Ratep = A[Yaw].Rate;
 		}
 		else
 		{
-			A[Yaw].Rate = YawFilter(RawYawRateP, A[Yaw].Rate);
-			RawYawRateP = A[Yaw].Rate;
+			A[Yaw].Rate = YawFilter(A[Yaw].Ratep, A[Yaw].Rate);
+			A[Yaw].Ratep = A[Yaw].Rate;
 			HE = MinimumTurn(DesiredHeading - Heading);
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
 			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
@@ -211,29 +218,27 @@ void DoYawRate(void)
 		}
 	}
 
-	A[Yaw].Angle += SRS16(A[Yaw].Rate, 2 - PIDCycleShift);
-	
-	A[Yaw].Angle = Limit1(A[Yaw].Angle, A[Yaw].IntLimit );
-	A[Yaw].Angle = DecayX(A[Yaw].Angle, 2);
-
 } // DoYawRate
 
 void YawControl(void)
 {
-	static int16 RateE, Temp;
+	static int16 RateE;
+	static i24u Temp;
 	
 	DoYawRate();
 		
 	RateE = A[Yaw].Rate + ( A[Yaw].Desired + A[Yaw].NavCorr );
-	Temp  = SRS16( RateE * (int16)A[Yaw].Kp + SRS16( A[Yaw].Angle * A[Yaw].Ki, 4), 4);
+	Temp.i24  = (int24)RateE * (int16)A[Yaw].Kp;	
 		
 	#if defined TRICOPTER
-		Temp = SlewLimit(A[Yaw].Outp, Temp, 2);				
-		A[Yaw].Outp = Temp;
-		A[Yaw].Out = Limit1(Temp,(int16)P[YawLimit]);
+		Temp.i2_1 = SlewLimit(A[Yaw].Outp, Temp.i2_1, 2);				
+		A[Yaw].Outp = Temp.i2_1;
+		A[Yaw].Out = Limit1(Temp.i2_1,(int16)P[YawLimit]);
 	#else
-		A[Yaw].Out = Limit1(Temp, (int16)P[YawLimit]);
+		A[Yaw].Out = Limit1(Temp.i2_1, (int16)P[YawLimit]);
 	#endif // TRICOPTER
+
+	A[Yaw].RateEp = RateE;
 
 } // YawControl
 

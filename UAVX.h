@@ -17,6 +17,8 @@
 	#define CONTROLLER	Do_Ming_PI_Rate
 #endif
 
+//#define INC_RAW_ANGLES
+
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
 // ===============================================================================================
@@ -41,7 +43,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
@@ -439,7 +441,7 @@ typedef struct {
 	int16 Trim, Hold; 
 	int16 Desired, FakeDesired;
 	int16 FirstGyroADC, GyroADC, GyroBias;
-	int16 Angle, AngleE, AngleIntE;	
+	int16 RawAngle, Angle, AngleE, AngleIntE;	
 	int16 Rate, Ratep, RateEp, RateIntE;
 	int16 Acc, AccADC, AccBias, AccOffset;
 	int8 AngleCorr;
@@ -920,7 +922,6 @@ extern int16 Ylp;
 
 extern int16 YawRateIntE;
 extern int16 HoldYaw;
-extern int16 YawIntLimit256;
 
 extern int16 ControlRoll, ControlPitch, CurrMaxRollPitch;
 
@@ -1023,7 +1024,6 @@ extern void BlockReadInvensenseGyro(void);
 extern void InitInvenSenseGyro(void);
 extern boolean InvenSenseGyroActive(void);
 
-extern int16 RawYawRateP;
 extern uint8 GyroType;
 extern int16 RawGyro[];
 extern int32 AccCorrAv, NoAccCorr;

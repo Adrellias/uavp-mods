@@ -113,9 +113,19 @@ void ShowAttitude(void) {
 
 	TxESCi16(A[Yaw].Rate);
 
+	#ifdef INC_RAW_ANGLES
+
+	TxESCi16(A[Roll].RawAngle);
+	TxESCi16(A[Pitch].RawAngle);
+
+	#else
+
 	TxESCi16(A[Roll].Angle);
 	TxESCi16(A[Pitch].Angle);
-	TxESCi16(A[Yaw].Angle); // heading error
+
+	#endif // INC_RAW_ANGLES
+
+	TxESCi16(A[Yaw].RateEp); // rate error as analogue for heading arror
 
 	TxESCi16(A[Roll].Acc);
     TxESCi16(A[Pitch].Acc);
