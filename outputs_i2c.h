@@ -39,14 +39,14 @@ void DoI2CESCs(void)
 		ESCI2CStart();
 			r = WriteESCI2CByte(0x10); // one command, 4 data bytes - may not support 6
 			for ( m = 0 ; m < (uint8)NO_OF_I2C_ESCS ; m++ )
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) ); 
+				r += WriteESCI2CByte( I2CESCLimit(PW[m]) ); 
 		ESCI2CStop();
 		ESCI2CFail[0] = r;
 		#endif // QUADROCOPTER | VTCOPTER
 		break;
 	case ESCLRCI2C:
 		#ifdef QUADROCOPTER
-			T580ESCs(I2CESCLimit(PWM[FrontC]), I2CESCLimit(PWM[LeftC]), I2CESCLimit(PWM[RightC]), I2CESCLimit(PWM[BackC]));
+			T580ESCs(I2CESCLimit(PW[FrontC]), I2CESCLimit(PW[LeftC]), I2CESCLimit(PW[RightC]), I2CESCLimit(PW[BackC]));
 		#endif // QUADROCOPTER
 		break;
 	case ESCYGEI2C:
@@ -54,7 +54,7 @@ void DoI2CESCs(void)
 		{
 			ESCI2CStart();
 				r = WriteESCI2CByte(0x62 + ( m*2 ) ); // one cmd, one data byte per motor
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) >> 1 );
+				r += WriteESCI2CByte( I2CESCLimit(PW[m]) >> 1 );
 		  	ESCI2CStop();
 			ESCI2CFail[m] = r;
 		}
@@ -64,7 +64,7 @@ void DoI2CESCs(void)
 		{
 			ESCI2CStart();
 				r = WriteESCI2CByte(0x52 + ( m*2 )); // one command, one data byte per motor
-				r += WriteESCI2CByte( I2CESCLimit(PWM[m]) );
+				r += WriteESCI2CByte( I2CESCLimit(PW[m]) );
 		  	ESCI2CStop();
 			ESCI2CFail[m] = r;
 		}

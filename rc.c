@@ -99,22 +99,24 @@ void CheckSticksHaveChanged(void)
 {
 	#ifndef TESTING
 
+	static uint32 Now;
 	static boolean Change;
 	static uint8 c;
 
 	if ( F.FailsafesEnabled )
 	{
+		Now = mSClock();
 		if ( F.ReturnHome || F.Navigate  )
 		{
 			Change = true;
-			mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;			
+			mS[RxFailsafeTimeout] = Now + RC_NO_CHANGE_TIMEOUT_MS;			
 			F.ForceFailsafe = false;
 		}
 		else
 		{
-			if ( mSClock() > mS[StickChangeUpdate] )
+			if ( Now > mS[StickChangeUpdate] )
 			{
-				mS[StickChangeUpdate] = mSClock() + 500;
+				mS[StickChangeUpdate] = Now + 500;
 		
 				Change = false;
 				for ( c = ThrottleC; c <= (uint8)RTHRC; c++ )
@@ -126,8 +128,8 @@ void CheckSticksHaveChanged(void)
 		
 			if ( Change )
 			{
-				mS[RxFailsafeTimeout] = mSClock() + RC_NO_CHANGE_TIMEOUT_MS;
-				mS[NavStateTimeout] = mSClock();
+				mS[RxFailsafeTimeout] = Now + RC_NO_CHANGE_TIMEOUT_MS;
+				mS[NavStateTimeout] = Now;
 				F.ForceFailsafe = false;
 	
 				if ( FailState == MonitoringRx )
@@ -141,13 +143,13 @@ void CheckSticksHaveChanged(void)
 				}
 			}
 			else
-				if ( mSClock() > mS[RxFailsafeTimeout] )
+				if ( Now > mS[RxFailsafeTimeout] )
 				{
 					if ( !F.ForceFailsafe && ( State == InFlight ) )
 					{
 						//Stats[RCFailsafesS]++;
-						mS[NavStateTimeout] = mSClock() + NAV_RTH_LAND_TIMEOUT_MS;
-						mS[DescentUpdate]  = mSClock() + ALT_DESCENT_UPDATE_MS;
+						mS[NavStateTimeout] = Now + NAV_RTH_LAND_TIMEOUT_MS;
+						mS[DescentUpdate]  = Now + ALT_DESCENT_UPDATE_MS;
 						DescentComp = 1; // for no Baro case
 						F.ForceFailsafe = true;
 					}

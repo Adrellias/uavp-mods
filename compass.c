@@ -50,7 +50,7 @@ uint8 	CompassType;
 uint8 	MagRetries;
 
 const rom char * CompassName[CompassUnknown+1] = {
-		"HMC5883L","HMC5843?","HMC6352","None/unsupported"
+		"HMC5883L","HMC5843?","HMC6352","no compass?"
 		};
 
 void ShowCompassType(void)
@@ -237,7 +237,7 @@ int16 GetHMC58X3Magnetometer(void) {
 	static int16 CompassVal;
 	static MagStruct * M;
 
-	F.CompassValid = ReadI2Ci16v(HMC58X3_ID, HMC58X3_DATA, b, 3, true);
+	F.CompassValid = ReadI2Ci16vAtAddr(HMC58X3_ID, HMC58X3_DATA, b, 3, true);
 
 	if( F.CompassValid )//&& !((b[X]==b[Y])&&(b[Y]==b[Z]))) 
 	{
@@ -402,7 +402,7 @@ void InitHMC58X3Magnetometer(void)
 	
 		Delay1mS(10);
 	
-		r = ReadI2Ci16v(HMC58X3_ID, HMC58X3_DATA, C, 3, true);
+		r = ReadI2Ci16vAtAddr(HMC58X3_ID, HMC58X3_DATA, C, 3, true);
 	
 		for ( a = X; a<=(uint8)Z; a++)
 			Mag[a].Scale = C[a];

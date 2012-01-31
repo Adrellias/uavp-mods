@@ -26,9 +26,11 @@
 void GetTemperature(void);
 void InitTemperature(void);
 
-i16u AmbientTemperature;
+int16 AmbientTemperature;
 
 #ifdef INC_TEMPERATURE
+
+/* NOT IN PIC VERSION
 
 #define TMP100_MAX_ADC 	4095 		// 12 bits
 		
@@ -42,53 +44,35 @@ i16u AmbientTemperature;
 
 void GetTemperature(void)
 {
-	I2CStart();
-		if( WriteI2CByte(TMP100_RD) != I2C_ACK ) goto Terror;
-		AmbientTemperature.b1 = ReadI2CByte(I2C_ACK);
-		AmbientTemperature.b0 = ReadI2CByte(I2C_NACK);
-	I2CStop();
 
-	// Top 9 bits 0.5C res. scale to 0.1C
-	AmbientTemperature.i16 = SRS16(	AmbientTemperature.i16, 7) * 5;	 
-	DoStats( AmbientTemperature.i16, MinTempS, MaxTempS);
-	return;
+  ReadI2Ci16v(TMP100_RD, &AmbientTemperature, 1, true); // b1, b0
 
-Terror:
-	I2CStop();
-	AmbientTemperature.i16 = 0;
+  // Top 9 bits 0.5C res. scale to 0.1C
+  AmbientTemperature = SRS16(AmbientTemperature, 7) * 5;	 
+  if ( AmbientTemperature > Stats[MaxTempS])
+    Stats[MaxTempS] = AmbientTemperature;
+  else
+    if ( AmbientTemperature < Stats[MinTempS] )
+      Stats[MinTempS] = AmbientTemperature;
 
-	return;
 } // GetTemperature
 
 void InitTemperature(void)
 {
-	static uint8 r;
+  WriteI2CAtAddr(TMP100_ID, TMP100_CMD, TMP100_CFG);
+  WriteI2CByte(TMP100_ID, TMP100_TMP);  // Select temperature
 
-	I2CStart();
-	r = WriteI2CByte(TMP100_WR);
-	r = WriteI2CByte(TMP100_CMD);
-	r = WriteI2CByte(TMP100_CFG);
-	I2CStop();
-
-	I2CStart();
-	r = WriteI2CByte(TMP100_WR);	
-	r = WriteI2CByte(TMP100_TMP);  // Select temperature
-	I2CStop();
-
-	GetTemperature();
+  GetTemperature();
 
 } // InitTemperature
 
+*/
+
 #else
-
-void GetTemperature(void)
-{
-
-} // GetTemperature
 
 void InitTemperature(void)
 {
-	AmbientTemperature.i16 = 0;
+	AmbientTemperature = 0;
 } // InitTemperature
 
 #endif // INC_TEMPERATURE

@@ -27,12 +27,13 @@ void GetGyroValues(void);
 void CalculateGyroRates(void);
 void CheckGyroFault(uint8, uint8, uint8);
 void ErectGyros(void);
+
 void GyroTest(void);
 void InitGyros(void);
 
 uint8 GyroType;
 int16 RawGyro[3];
-int32 AccCorrAv, NoAccCorr;
+int32 NoAccCorr;
 
 #include "MPU6050.h"
 
@@ -41,7 +42,7 @@ int32 AccCorrAv, NoAccCorr;
 
 #pragma idata gyronames
 const rom char * GyroName[GyroUnknown+1] ={
-		"MLX90609","ADXRS613/150","IDG300","ST-AY530","ADXRS610/300",
+		"MLX90609","ADXRS613/150","IDG300 UNSUPPORTED","ST-AY530","ADXRS610/300",
 		"ITG3200","SF-DOF6","SF-9DOF","MPU6050","FreeIMU","Drotek","IR Sensors",
 		"Fail or not supported @ 16MHZ"
 		};
@@ -62,9 +63,9 @@ void CalculateGyroRates(void)
 
 	switch ( GyroType ) {
 	case IDG300Gyro:// 500 Deg/Sec 
-		RollT.i24 = (int24)A[Roll].Rate * 422; // reversed roll gyro sense
-		PitchT.i24 = (int24)A[Pitch].Rate * 422;
-		YawT.i24 = (int24)A[Yaw].Rate * 34; // ADXRS150 assumed
+		RollT.i24 = 0;
+		PitchT.i24 = 0;
+		YawT.i24 = 0;
 		break;
  	case LY530Gyro:// REFERENCE generically 300deg/S 3.3V
 		RollT.i24 = (int24)A[Roll].Rate * 256;
@@ -134,58 +135,6 @@ void ErectGyros(void)
 	LEDRed_OFF;
 
 } // ErectGyros
-
-void CompensateRollPitchGyros(void)
-{
-	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
-	#define ANGLE_COMP_STEP 6 //25
-
-//	#define AccFilter MediumFilter32
-	#define AccFilter NoFilter // using chip filters
-
-	static int16 NewAcc;
-	static int16 Grav, Dyn;
-	static i32u Temp;
-	static int16 NewCorr;
-	static uint8 a;
-	static AxisStruct *C;
-
-	if ( F.AccelerationsValid && F.AccelerometersEnabled ) 
-	{
-		ReadAccelerations();
-
-		NewAcc = A[Yaw].AccADC - A[Yaw].AccOffset; 
-		A[Yaw].Acc = AccFilter(A[Yaw].Acc, NewAcc);
-
-		for ( a = Roll; a<(uint8)Yaw; a++ )
-		{
-			C = &A[a];	
-			NewAcc = C->AccADC - C->AccOffset; 
-			C->Acc = AccFilter(C->Acc, NewAcc);
-
-			Temp.i32 = (int32)C->Angle * P[AccTrack]; 
-			Grav = Temp.i3_1;
-			Dyn = 0; //A[a].Rate;
-	
-			NewCorr = SRS32(C->Acc + Grav + Dyn, 3); 
-
-			if ( (State == InFlight) && (Abs(C->Angle > 10 * DEG_TO_ANGLE_UNITS)) )
-			{
-				AccCorrAv += Abs(NewCorr);
-				NoAccCorr++;
-			}
-
-			NewCorr = Limit1(NewCorr, ANGLE_COMP_STEP);
-			C->AngleCorr = MediumFilter(C->AngleCorr,NewCorr); 
-		}
-	}	
-	else
-	{
-		A[Roll].AngleCorr = A[Roll].Acc = A[Pitch].AngleCorr = A[Yaw].Acc = 0;
-		A[Yaw].Acc = GRAVITY;
-	}
-
-} // CompensateRollPitchGyros
 
 void GetGyroValues(void)
 {

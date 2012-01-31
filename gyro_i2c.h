@@ -45,7 +45,7 @@ boolean InvenSenseGyroActive(void);
 
 void BlockReadInvenSenseGyro(void)
 {	// Roll Right +, Pitch Up +, Yaw ACW +
-	F.GyroFailure = !ReadI2Ci16v(INV_ID, INVGyroAddress, RawGyro, 3, true);
+	F.GyroFailure = !ReadI2Ci16vAtAddr(INV_ID, INVGyroAddress, RawGyro, 3, true);
 	if ( F.GyroFailure ) 
 		Stats[GyroFailS]++;
 } // BlockReadInvenSenseGyro

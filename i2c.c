@@ -32,7 +32,8 @@ void ShowI2CDeviceName(uint8);
 uint8 ScanI2CBus(void);
 uint8 ReadI2CByteAtAddr(uint8, uint8);
 void WriteI2CByteAtAddr(uint8, uint8, uint8);
-boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8, boolean);
+boolean ReadI2Ci16vAtAddr(uint8, uint8, int16 *, uint8, boolean);
+boolean ReadI2Ci16v(uint8, int16 *, uint8, boolean);
 boolean I2CResponse(uint8);
 
 #define I2C_IN			1
@@ -384,7 +385,7 @@ IWerror:
 	return;
 } // WriteI2CByteAtAddr
 
-boolean ReadI2Ci16v(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
+boolean ReadI2Ci16vAtAddr(uint8 d, uint8 cmd, int16 *v, uint8 l, boolean h)
 {
 	static uint8 b, c;
 	static uint8 S[16];
@@ -425,7 +426,7 @@ IRSerror:
 
 	return(false);
 
-} // ReadI2Ci16v
+} // ReadI2Ci16vAtAddr
 
 boolean I2CResponse(uint8 d)
 {

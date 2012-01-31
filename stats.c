@@ -35,7 +35,9 @@ void ZeroStats(void)
 {
 	static uint8 s;
 
-	AccCorrAv = NoAccCorr = 0;
+	A[Roll].AccCorrAv = A[Roll].AccCorrMean = 
+	A[Pitch].AccCorrAv = A[Pitch].AccCorrMean = 
+	NoAccCorr = 0;
 
 	for (s = 0 ; s < MAX_STATS; s++ )
 		Stats[s] = 0;
@@ -64,7 +66,11 @@ void WriteStatsEE()
 	static uint8 s, i;
 	static int16 Temp;
 
-	Stats[AccCorrAvS] = AccCorrAv/NoAccCorr;
+	Stats[RollAccCorrAvS] = A[Roll].AccCorrAv/NoAccCorr;
+	Stats[RollAccCorrMeanS] = A[Roll].AccCorrMean/NoAccCorr;
+	Stats[PitchAccCorrAvS] = A[Pitch].AccCorrAv/NoAccCorr;
+	Stats[PitchAccCorrMeanS] = A[Pitch].AccCorrMean/NoAccCorr;
+
 
 	if ( P[ESCType] != ESCPPM )
 		for ( i = 0; i < NO_OF_I2C_ESCS; i++ )
@@ -88,8 +94,15 @@ void ShowStats(void)
 		TxString("Misc(gke):     \t");TxVal32((int32)Stats[BadS],0,' '); TxVal32((int32)Stats[BadNumS],0,' ');TxNextLine();
 	}
 
-	TxString("\r\nAcc Corr Av.:\t");
-	TxVal32(Stats[AccCorrAvS], 0, 0);
+	TxString("\r\nAcc Gyro Correction\r\n");
+	TxString("\t|Corr|\tDrift\tCal. Err.\r\nRoll:\t");
+	TxVal32(Stats[RollAccCorrAvS], 0, HT);
+	TxVal32(Stats[RollAccCorrMeanS], 0, HT);
+	TxVal32(Stats[RollAccCorrAvS] - Abs(Stats[RollAccCorrMeanS]), 0, 0);
+	TxString("\r\nPitch:\t");
+	TxVal32(Stats[PitchAccCorrAvS], 0, HT);
+	TxVal32(Stats[PitchAccCorrMeanS], 0, HT);
+	TxVal32(Stats[PitchAccCorrAvS] - Abs(Stats[PitchAccCorrMeanS]), 0, 0);
 
 	TxString("\r\n\r\nSensor/Rx Fails (Count)\r\n");
 	TxString("I2CBus:\t");TxVal32((int32)Stats[I2CFailS],0,0); TxNextLine();

@@ -29,7 +29,7 @@ void OutSignals(void);
 #endif
 
 void OutSignals(void)
-{	// The PWM pulses are in two parts these being a 1mS preamble followed by a 0-1mS part. 
+{	// The PW pulses are in two parts these being a 1mS preamble followed by a 0-1mS part. 
 	// Interrupts are enabled during the first part which uses TMR0.  TMR0 is monitored until 
 	// there is just sufficient time for one remaining interrupt latency before disabling 
 	// interrupts.  We do this because there appears to be no atomic method of detecting the 
@@ -74,12 +74,12 @@ void OutSignals(void)
 		MixAndLimitMotors();
 		MixAndLimitCam();
 
-		PWM0 = PWMLimit(PWM[K1]);
-		PWM1 = PWMLimit(PWM[K2]);
-		PWM2 = PWMLimit(PWM[K3]);
-		PWM3 = PWMLimit(PWM[K4]);	
-		PWM4 = PWMLimit(PWM[K5]);
-		PWM5 = PWMLimit(PWM[K6]);
+		PW0 = PWLimit(PW[K1]);
+		PW1 = PWLimit(PW[K2]);
+		PW2 = PWLimit(PW[K3]);
+		PW3 = PWLimit(PW[K4]);	
+		PW4 = PWLimit(PW[K5]);
+		PW5 = PWLimit(PW[K6]);
 
 		SyncToTimer0AndDisableInterrupts();
 
@@ -111,22 +111,22 @@ OS005:
 
 		BZ		OS006
 			
-		DECFSZ	PWM0,1,1				
+		DECFSZ	PW0,1,1				
 		GOTO	OS007
 					
 		BCF		SHADOWB,0,1
 OS007:
-		DECFSZ	PWM1,1,1		
+		DECFSZ	PW1,1,1		
 		GOTO	OS008
 					
 		BCF		SHADOWB,1,1
 OS008:
-		DECFSZ	PWM2,1,1
+		DECFSZ	PW2,1,1
 		GOTO	OS009
 					
 		BCF		SHADOWB,2,1
 OS009:
-		DECFSZ	PWM3,1,1	
+		DECFSZ	PW3,1,1	
 		GOTO	OS010
 						
 		BCF		SHADOWB,3,1	
@@ -185,17 +185,17 @@ OS001:
 		
 		BZ		OS002	
 	
-		DECFSZ	PWM4,1,1
+		DECFSZ	PW4,1,1
 		GOTO	OS003
 
 		BCF		SHADOWB,4,1	
 OS003:
-		DECFSZ	PWM5,1,1
+		DECFSZ	PW5,1,1
 		GOTO	OS004
 	
 		BCF		SHADOWB,5,1
 OS004:
-		DECFSZ	PWM3,1,1
+		DECFSZ	PW3,1,1
 		GOTO	OS0011
 	
 		BCF		SHADOWB,3,1

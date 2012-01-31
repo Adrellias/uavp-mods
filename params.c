@@ -130,9 +130,9 @@ void ReadParametersEE(void)
 		for ( i = 0; i < (uint8)6; i++ )
 		{
 			if ( b & 1 )
-				PWMSense[i] = -1;
+				PWSense[i] = -1;
 			else
-				PWMSense[i] = 1;
+				PWSense[i] = 1;
 			b >>=1;
 		}
 

@@ -21,10 +21,7 @@
 #include "uavx.h"
 
 void DoAltitudeHold(void);
-int24 AltitudeCF(int24);
 void AltitudeHold(void);
-void DoAttitudeAngle(AxisStruct *);
-void DoYawRate(void);
 void DoOrientationTransform(void);
 void GainSchedule(void);
 void DoControl(void);
@@ -61,8 +58,7 @@ int32 GS;
 
 int8 BeepTick = 0;
 
-void DoAltitudeHold(void)
-{ 	// Syncronised to baro intervals independant of active altitude source
+void DoAltitudeHold(void) { 	// Syncronised to baro intervals independant of active altitude source
 	
 	static int24 AltE;
 	static int16 ROCE, pROC, iROC, DesiredROC;
@@ -171,79 +167,26 @@ void AltitudeHold()
 	}
 } // AltitudeHold
 
-void DoAttitudeAngle(AxisStruct *C)
-{	
-	// Angles and rates are normal aircraft coordinate conventions
-	// X/Forward axis reversed for Acc to simplify compensation
-	
-	static int16 a, Temp;
-
-	Temp = SRS16(C->Rate, 2 - PIDCycleShift );
-
-	#ifdef INC_RAW_ANGLES
-	C->RawAngle += Temp; // for Acc comp studies
-	#endif
-
-	a = C->Angle + Temp;
-
-	a = Limit1(a, ANGLE_LIMIT_DEG); // turn off comp above this angle?
-	a = Decay1(a);
-	a -= C->AngleCorr;			// last for accelerometer compensation
-	C->Angle = a;
-
-} // DoAttitudeAngle
-
-void DoYawRate(void)
-{ 	// Yaw gyro compensation using compass
-	static int16 HE;
-
-	A[Yaw].Rate = SRS16(A[Yaw].Rate, 2 - PIDCycleShift);
-
-	if ( F.CompassValid && F.NormalFlightMode )
-	{
-		// + CCW
-		if ( A[Yaw].Hold > COMPASS_MIDDLE ) // acquire new heading
-		{
-			DesiredHeading = Heading;
-			A[Yaw].Ratep = A[Yaw].Rate;
-		}
-		else
-		{
-			A[Yaw].Rate = YawFilter(A[Yaw].Ratep, A[Yaw].Rate);
-			A[Yaw].Ratep = A[Yaw].Rate;
-			HE = MinimumTurn(DesiredHeading - Heading);
-			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
-			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
-			A[Yaw].Rate -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
-		}
-	}
-
-} // DoYawRate
-
-void YawControl(void)
-{
+void YawControl(void) {
 	static int16 RateE;
-	static i24u Temp;
-	
-	DoYawRate();
+	static int24 Temp;
 		
 	RateE = A[Yaw].Rate + ( A[Yaw].Desired + A[Yaw].NavCorr );
-	Temp.i24  = (int24)RateE * (int16)A[Yaw].Kp;	
+	Temp  = SRS32((int24)RateE * (int16)A[Yaw].Kp, 4);	
 		
 	#if defined TRICOPTER
-		Temp.i2_1 = SlewLimit(A[Yaw].Outp, Temp.i2_1, 2);				
-		A[Yaw].Outp = Temp.i2_1;
-		A[Yaw].Out = Limit1(Temp.i2_1,(int16)P[YawLimit]);
+		Temp = SlewLimit(A[Yaw].Outp, Temp, 2);				
+		A[Yaw].Outp = Temp;
+		A[Yaw].Out = Limit1(Temp,(int16)P[YawLimit]);
 	#else
-		A[Yaw].Out = Limit1(Temp.i2_1, (int16)P[YawLimit]);
+		A[Yaw].Out = Limit1(Temp, (int16)P[YawLimit]);
 	#endif // TRICOPTER
 
 	A[Yaw].RateEp = RateE;
 
 } // YawControl
 
-void DoOrientationTransform(void)
-{
+void DoOrientationTransform(void) {
 	static i24u Temp;
 
 	OSO = OSin[Orientation];
@@ -264,8 +207,7 @@ void DoOrientationTransform(void)
 
 #ifdef TESTING
 
-void GainSchedule(void)
-{
+void GainSchedule(void) {
 	GS = 256;
 } // GainSchedule
 
@@ -299,21 +241,59 @@ void GainSchedule(void)
 	
 } // GainSchedule
 
-#endif
+#endif // TESTING
 
-#include "exp_control.h"
+void Do_Wolf_Rate(AxisStruct *C) { // Original by Wolfgang Mahringer
+	static i24u Temp24;
+	static int32 Temp, r;
+
+	r =  SRS32((int32)C->Rate * C->Kp - (int32)(C->Rate - C->Ratep) * C->Kd, 5);
+    Temp = SRS32((int32)C->Angle * C->Ki , 9);
+	r += Limit1(Temp, C->IntLimit);
+
+	Temp24.i24 = r * GS;
+	r = Temp24.i2_1;
+
+	C->Out = - ( r + C->Control );
+
+	C->Ratep = C->Rate;
+	
+} // Do_Wolf_Rate
+
+#define D_LIMIT 32*32
+
+void Do_PD_P_Angle(AxisStruct *C)
+{
+	static int32 p, d, DesRate, AngleE, AngleEp, AngleIntE, RateE;
+
+	AngleEp = C->AngleE;
+	AngleIntE = C->AngleIntE;
+
+	AngleE = C->Control * RC_STICK_ANGLE_SCALE - C->Angle;
+	AngleE = Limit1(AngleE, MAX_BANK_ANGLE_DEG * DEG_TO_ANGLE_UNITS); // limit maximum demanded angle
+
+	p = -SRS32(AngleE * C->Kp, 10);
+
+	d = SRS32((AngleE - AngleEp) * C->Kd, 8);
+//	d = Limit1(d, D_LIMIT);
+
+	DesRate = p + d;
+
+	RateE = DesRate - C->Rate; 	
+
+	C->Out = SRS32(RateE * C->Kp2, 5);
+
+	C->AngleE = AngleE;
+	C->AngleIntE = AngleIntE;
+
+} // Do_PD_P_Angle
 
 void DoControl(void)
 {
-	static int16 Temp;
-	static i24u Temp24;
-	static i32u Temp32;
 	static uint8 a;
 	static AxisStruct *C;
 
-	GetGyroValues();
-	CalculateGyroRates();
-	CompensateRollPitchGyros();
+	GetAttitude();
 
 	DoOrientationTransform();
 
@@ -324,7 +304,7 @@ void DoControl(void)
 			C = &A[a];
 			C->Control += C->NavCorr;
 			C->FakeDesired = C->Control;
-			C->Angle = SlewLimit(C->Angle, -C->FakeDesired * 32, 16);
+			C->Angle = SlewLimit(C->Angle, -C->FakeDesired * 32, 16); // zzz
 			C->Out = -C->FakeDesired;
 		}
 
@@ -341,11 +321,10 @@ void DoControl(void)
 		for ( a = Roll; a<=(uint8)Pitch; a++)
 		{
 			C = &A[a];
-			DoAttitudeAngle(C);
 			C->Control += C->NavCorr;
 			
 			if ( F.UsingAltControl )	
-				CONTROLLER(C);
+				Do_PD_P_Angle(C);
 			else
 				Do_Wolf_Rate(C);
 		}			
@@ -356,6 +335,8 @@ void DoControl(void)
 
 	F.NearLevel = Max(Abs(A[Roll].Angle), Abs(A[Pitch].Angle)) < NAV_RTH_LOCKOUT;
 	Rl = A[Roll].Out; Pl = A[Pitch].Out; Yl = A[Yaw].Out;
+
+	OutSignals(); 
 
 } // DoControl
 

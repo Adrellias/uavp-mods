@@ -299,7 +299,7 @@ boolean ADXL345AccActive(void);
 
 void ReadADXL345Acc(void) 
 {
-	if ( !ReadI2Ci16v(ADXL345_ID, 0x32, RawAcc, 3, false) ) 
+	if ( !ReadI2Ci16vAtAddr(ADXL345_ID, 0x32, RawAcc, 3, false) ) 
 		AccFailure();
 
 } // ReadADXL345Acc
@@ -335,7 +335,7 @@ boolean MPU6050AccActive(void);
 
 void ReadMPU6050Acc(void) 
 {
-	if ( !ReadI2Ci16v(MPU6050_ID, MPU6050_ACC_XOUT_H, RawAcc, 3, true) ) 
+	if ( !ReadI2Ci16vAtAddr(MPU6050_ID, MPU6050_ACC_XOUT_H, RawAcc, 3, true) ) 
 		AccFailure();
 
 } // ReadMPU6050Acc
@@ -412,7 +412,7 @@ boolean BMA180AccActive(void);
 
 void ReadBMA180Acc(void) 
 {
-	if ( !ReadI2Ci16v(BMA180_ID, BMA180_ACCXLSB, RawAcc, 3, false) )
+	if ( !ReadI2Ci16vAtAddr(BMA180_ID, BMA180_ACCXLSB, RawAcc, 3, false) )
 		AccFailure();
 
 } // ReadBMA180Acc

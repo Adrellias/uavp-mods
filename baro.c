@@ -161,7 +161,7 @@ int24 AltitudeCF(int24 Alt)
 } // AltitudeCF
 
 const rom char * BaroName[BaroUnknown+1] = {
-		"BMP085","SMD500","MPX4115","MS5611", "None/unsupported"
+		"BMP085","SMD500","MPX4115","MS5611", "no baro?"
 		};		
 
 void ShowBaroType(void)
@@ -244,7 +244,7 @@ void BaroTest(void)
 		
 		#ifdef INC_TEMPERATURE
 		TxString("\r\nAmbient :\t");
-		TxVal32((int32)AmbientTemperature.i16, 1, ' ');
+		TxVal32((int32)AmbientTemperature, 1, ' ');
 		TxString("C\r\n");
 		#endif // INC_TEMPERATURE
 	}
@@ -594,7 +594,7 @@ void ReadFreescaleBaro(void)
 
 	mS[BaroUpdate] = mSClock()+ BARO_UPDATE_MS;
 
-	F.BaroAltitudeValid = ReadI2Ci16v(ADS7823_ID, ADS7823_CMD,  B, 4, true);
+	F.BaroAltitudeValid = ReadI2Ci16vAtAddr(ADS7823_ID, ADS7823_CMD,  B, 4, true);
 	if ( F.BaroAltitudeValid )
 	{	
 		BaroVal.u24 = B[0] + B[1] + B[2] + B[3];

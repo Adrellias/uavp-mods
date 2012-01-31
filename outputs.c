@@ -21,7 +21,7 @@
 #include "uavx.h"
 
 void ShowESCType(void);
-uint8 PWMLimit(int16);
+uint8 PWLimit(int16);
 uint8 I2CESCLimit(int16);
 void DoMulticopterMix(int16);
 void CheckDemand(int16);
@@ -31,15 +31,15 @@ void OutSignals(void);
 void StopMotors(void);
 void InitMotors(void);
 
-int16 PWM[6];
-int16 PWMSense[6];
+int16 PW[6];
+int16 PWSense[6];
 int16 ESCI2CFail[NO_OF_I2C_ESCS];
 int16 CurrThrottle;
 uint8 ServoInterval;
 
 #pragma udata access motorvars	
 near int16 Rl, Pl, Yl;
-near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5;
+near uint8 SHADOWB, PW0, PW1, PW2, PW3, PW4, PW5;
 #pragma udata
 
 int16 ESCMax;
@@ -55,10 +55,10 @@ void ShowESCType(void)
 	TxString(ESCName[P[ESCType]]);
 } // ShowESCType
 
-uint8 PWMLimit(int16 T)
+uint8 PWLimit(int16 T)
 {
 	return((uint8)Limit(T,1,OUT_MAXIMUM));
-} // PWMLimit
+} // PWLimit
 
 uint8 I2CESCLimit(int16 T)
 {
@@ -72,81 +72,81 @@ void DoMulticopterMix(int16 CurrThrottle)
 	static int16 Temp, B;
 
 	#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
-		PWM[K1] = PWM[K2] = PWM[K3] = PWM[K4] = PWM[K5] = PWM[K6] = CurrThrottle;
+		PW[K1] = PW[K2] = PW[K3] = PW[K4] = PW[K5] = PW[K6] = CurrThrottle;
 	#else
-		PWM[FrontC] = PWM[LeftC] = PWM[RightC] = PWM[BackC] = CurrThrottle;
+		PW[FrontC] = PW[LeftC] = PW[RightC] = PW[BackC] = CurrThrottle;
 	#endif
 
 	#if defined TRICOPTER // usually flown K1 motor to the rear - use orientation of 24
 		Temp = SRS16(Pl, 1); 			
-		PWM[FrontC] -= Pl;
-		PWM[LeftC] += (Temp - Rl);
-		PWM[RightC] += (Temp + Rl);
+		PW[FrontC] -= Pl;
+		PW[LeftC] += (Temp - Rl);
+		PW[RightC] += (Temp + Rl);
 	
-		PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+		PW[BackC] = PWSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
 		if ( P[Balance] != 0 )
 		{
 			B = 128 + P[Balance];
-			PWM[FrontC] =  SRS32((int32)PWM[FrontC] * B, 7);
+			PW[FrontC] =  SRS32((int32)PW[FrontC] * B, 7);
 		}
 	#elif defined VTCOPTER 	// usually flown VTail (K1+K4) to the rear - use orientation of 24
 		Temp = SRS16(Pl, 1); 	
 
-		PWM[LeftC] += (Temp - Rl);	// right rear
-		PWM[RightC] += (Temp + Rl); // left rear
+		PW[LeftC] += (Temp - Rl);	// right rear
+		PW[RightC] += (Temp + Rl); // left rear
 	
-		PWM[FrontLeftC] -= Pl + PWMSense[RudderC] * Yl; 
-		PWM[FrontRightC] -= Pl - PWMSense[RudderC] * Yl;
+		PW[FrontLeftC] -= Pl + PWSense[RudderC] * Yl; 
+		PW[FrontRightC] -= Pl - PWSense[RudderC] * Yl;
 		if ( P[Balance] != 0 )
 		{
 			B = 128 + P[Balance];
-			PWM[FrontLeftC] = SRS32((int32)PWM[FrontLeftC] * B, 7);
-			PWM[FrontRightC] = SRS32((int32)PWM[FrontRightC] * B, 7);
+			PW[FrontLeftC] = SRS32((int32)PW[FrontLeftC] * B, 7);
+			PW[FrontRightC] = SRS32((int32)PW[FrontRightC] * B, 7);
 		}
 	#elif defined Y6COPTER
 		Temp = SRS16(Pl, 1); 			
-		PWM[FrontTC] -= Pl;
-		PWM[LeftTC] += (Temp - Rl);
-		PWM[RightTC] += (Temp + Rl);
+		PW[FrontTC] -= Pl;
+		PW[LeftTC] += (Temp - Rl);
+		PW[RightTC] += (Temp + Rl);
 			
-		PWM[FrontBC] = PWM[FrontTC];
-		PWM[LeftBC]  = PWM[LeftTC];
-		PWM[RightBC] = PWM[RightTC];
+		PW[FrontBC] = PW[FrontTC];
+		PW[LeftBC]  = PW[LeftTC];
+		PW[RightBC] = PW[RightTC];
 
-		PWM[FrontTC] += Yl;
-		PWM[LeftTC]  += Yl;
-		PWM[RightTC] += Yl;
+		PW[FrontTC] += Yl;
+		PW[LeftTC]  += Yl;
+		PW[RightTC] += Yl;
 
-		PWM[FrontBC] -= Yl;
-		PWM[LeftBC]  -= Yl; 
-		PWM[RightBC] -= Yl; 
+		PW[FrontBC] -= Yl;
+		PW[LeftBC]  -= Yl; 
+		PW[RightBC] -= Yl; 
 	#elif defined HEXACOPTER
 		Temp = SRS16(Pl, 1); 			
-		PWM[HFrontC] += -Pl + Yl;
-		PWM[HLeftBackC] += (Temp - Rl) + Yl;
-		PWM[HRightBackC] += (Temp + Rl) + Yl; 
+		PW[HFrontC] += -Pl + Yl;
+		PW[HLeftBackC] += (Temp - Rl) + Yl;
+		PW[HRightBackC] += (Temp + Rl) + Yl; 
 						
-		PWM[HBackC] += Pl - Yl;
-		PWM[HLeftFrontC] += (-Temp - Rl) - Yl;
-		PWM[HRightFrontC] += (-Temp + Rl) - Yl; 
+		PW[HBackC] += Pl - Yl;
+		PW[HLeftFrontC] += (-Temp - Rl) - Yl;
+		PW[HRightFrontC] += (-Temp + Rl) - Yl; 
 	
-		PWM[HFrontC] += Yl;
-		PWM[HRightBackC] += Yl;
-		PWM[HLeftBackC] += Yl;
+		PW[HFrontC] += Yl;
+		PW[HRightBackC] += Yl;
+		PW[HLeftBackC] += Yl;
 	
-		PWM[HBackC] -= Yl;
-		PWM[HRightFrontC] -= Yl; 
-		PWM[HLeftFrontC] -= Yl; 
+		PW[HBackC] -= Yl;
+		PW[HRightFrontC] -= Yl; 
+		PW[HLeftFrontC] -= Yl; 
 	#else
-		PWM[LeftC]  += -Rl - Yl;	
-		PWM[RightC] +=  Rl - Yl;
-		PWM[FrontC] += -Pl + Yl;
-		PWM[BackC]  +=  Pl + Yl;
+		PW[LeftC]  += -Rl - Yl;	
+		PW[RightC] +=  Rl - Yl;
+		PW[FrontC] += -Pl + Yl;
+		PW[BackC]  +=  Pl + Yl;
 	#endif
 
 } // DoMulticopterMix
 
-boolean 	MotorDemandRescale;
+boolean MotorDemandRescale;
 
 void CheckDemand(int16 CurrThrottle)
 {
@@ -154,16 +154,16 @@ void CheckDemand(int16 CurrThrottle)
 	static i24u Temp;
 
 	#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
-		MaxMotor = Max(PWM[K1], PWM[K2]);
-		MaxMotor = Max(MaxMotor, PWM[K3]);
-		MaxMotor = Max(MaxMotor, PWM[K4]);
-		MaxMotor = Max(MaxMotor, PWM[K5]);
-		MaxMotor = Max(MaxMotor, PWM[K6]);
+		MaxMotor = Max(PW[K1], PW[K2]);
+		MaxMotor = Max(MaxMotor, PW[K3]);
+		MaxMotor = Max(MaxMotor, PW[K4]);
+		MaxMotor = Max(MaxMotor, PW[K5]);
+		MaxMotor = Max(MaxMotor, PW[K6]);
 	#else
-		MaxMotor = Max(PWM[FrontC], PWM[LeftC]);
-		MaxMotor = Max(MaxMotor, PWM[RightC]);
+		MaxMotor = Max(PW[FrontC], PW[LeftC]);
+		MaxMotor = Max(MaxMotor, PW[RightC]);
 		#ifndef TRICOPTER
-			MaxMotor = Max(MaxMotor, PWM[BackC]);
+			MaxMotor = Max(MaxMotor, PW[BackC]);
 		#endif // TRICOPTER
 	#endif // Y6COPTER | HEXACOPTER
 
@@ -226,34 +226,34 @@ void MixAndLimitMotors(void)
 		{
 			#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
 				for ( m = 0; m < (uint8)6; m++ )
-					PWM[m] = CurrThrottle;
+					PW[m] = CurrThrottle;
 			#else
-				PWM[FrontC] = PWM[LeftC] = PWM[RightC] = CurrThrottle;
+				PW[FrontC] = PW[LeftC] = PW[RightC] = CurrThrottle;
 				#if defined TRICOPTER
-					PWM[BackC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
+					PW[BackC] = PWSense[RudderC] * Yl + OUT_NEUTRAL;	// yaw servo
 				#else
-					PWM[BackC] = CurrThrottle;
+					PW[BackC] = CurrThrottle;
 				#endif // !TRICOPTER
 			#endif // Y6COPTER | HEXACOPTER
 		}
 	#elif ( defined VTOL )
-		PWM[ThrottleC] = CurrThrottle + AltComp;
-		PWM[RollC] = PWMSense[RollC] * Rl + OUT_NEUTRAL;
+		PW[ThrottleC] = CurrThrottle + AltComp;
+		PW[RollC] = PWSense[RollC] * Rl + OUT_NEUTRAL;
 			
-		TempElevator = PWMSense[2] * Pl + OUT_NEUTRAL;
-		PWM[RightPitchYawC] = PWMSense[RightPitchYawC] * (TempElevator + Yl);
-		PWM[LeftPitchYawC] = PWMSense[LeftPitchYawC] * (TempElevator -  Yl);
+		TempElevator = PWSense[2] * Pl + OUT_NEUTRAL;
+		PW[RightPitchYawC] = PWSense[RightPitchYawC] * (TempElevator + Yl);
+		PW[LeftPitchYawC] = PWSense[LeftPitchYawC] * (TempElevator -  Yl);
 	#else	
-		PWM[ThrottleC] = CurrThrottle; //+ AltComp;
-		PWM[RudderC] = PWMSense[RudderC] * Yl + OUT_NEUTRAL;
+		PW[ThrottleC] = CurrThrottle; //+ AltComp;
+		PW[RudderC] = PWSense[RudderC] * Yl + OUT_NEUTRAL;
 			
 		#if ( defined AILERON | defined HELICOPTER )
-			PWM[AileronC] = PWMSense[AileronC] * Rl + OUT_NEUTRAL;
-			PWM[ElevatorC] = PWMSense[ElevatorC] * Pl + OUT_NEUTRAL;
+			PW[AileronC] = PWSense[AileronC] * Rl + OUT_NEUTRAL;
+			PW[ElevatorC] = PWSense[ElevatorC] * Pl + OUT_NEUTRAL;
 		#else // ELEVON
-			TempElevator = PWMSense[2] * Pl + OUT_NEUTRAL;
-			PWM[RightElevonC] = PWMSense[RightElevonC] * (TempElevator + Rl);
-			PWM[LeftElevonC] = PWMSense[LeftElevonC] * (TempElevator -  Rl);		
+			TempElevator = PWSense[2] * Pl + OUT_NEUTRAL;
+			PW[RightElevonC] = PWSense[RightElevonC] * (TempElevator + Rl);
+			PW[LeftElevonC] = PWSense[LeftElevonC] * (TempElevator -  Rl);		
 		#endif
 	#endif
 
@@ -282,17 +282,17 @@ void MixAndLimitCam(void)
 
 	Temp24.i24 = (int24)CameraAngle[Roll] * P[CamRollKp];
 	NewCamRoll = Temp24.i2_1 + (int16)P[CamRollTrim];
-	NewCamRoll = PWMSense[CamRollC] * NewCamRoll + OUT_NEUTRAL;
-	PWM[CamRollC] = SlewLimit( PWM[CamRollC], NewCamRoll, 2);
+	NewCamRoll = PWSense[CamRollC] * NewCamRoll + OUT_NEUTRAL;
+	PW[CamRollC] = SlewLimit( PW[CamRollC], NewCamRoll, 2);
 
 	Temp24.i24 = (int24)CameraAngle[Pitch] * P[CamPitchKp];
 	NewCamPitch = Temp24.i2_1 + SRS16(DesiredCamPitchTrim * 3, 1);
-	NewCamPitch = PWMSense[CamPitchC] * NewCamPitch + OUT_NEUTRAL; 
-	PWM[CamPitchC] = SlewLimit( PWM[CamPitchC], NewCamPitch, 2);
+	NewCamPitch = PWSense[CamPitchC] * NewCamPitch + OUT_NEUTRAL; 
+	PW[CamPitchC] = SlewLimit( PW[CamPitchC], NewCamPitch, 2);
 
 	#else
 
-	PWM[CamPitchC] = PWM[CamRollC] = OUT_NEUTRAL;
+	PW[CamPitchC] = PW[CamRollC] = OUT_NEUTRAL;
 
 	#endif // SIMULATE
 
@@ -314,15 +314,15 @@ void StopMotors(void)
 {
 	#if defined MULTICOPTER
 		#if ( defined Y6COPTER ) | ( defined HEXACOPTER )
-			PWM[K1] = PWM[K2] = PWM[K3] = PWM[K4] = PWM[K5] = PWM[K6] = 0;
+			PW[K1] = PW[K2] = PW[K3] = PW[K4] = PW[K5] = PW[K6] = 0;
 		#else
-			PWM[FrontC] = PWM[LeftC] = PWM[RightC] = 0;
+			PW[FrontC] = PW[LeftC] = PW[RightC] = 0;
 			#ifndef TRICOPTER
-				PWM[BackC] = 0;
+				PW[BackC] = 0;
 			#endif // !TRICOPTER
 		#endif // Y6COPTER | HEXACOPTER	
 	#else
-		PWM[ThrottleC] = 0;
+		PW[ThrottleC] = 0;
 	#endif // MULTICOPTER
 
 	DesiredThrottle = 0;
@@ -336,10 +336,10 @@ void InitMotors(void)
 
 	#ifndef Y6COPTER
 		#ifdef TRICOPTER
-			PWM[BackC] = OUT_NEUTRAL;
+			PW[BackC] = OUT_NEUTRAL;
 		#endif // !TRICOPTER	
-		PWM[CamRollC] = OUT_NEUTRAL;
-		PWM[CamPitchC] = OUT_NEUTRAL;
+		PW[CamRollC] = OUT_NEUTRAL;
+		PW[CamPitchC] = OUT_NEUTRAL;
 	#endif // Y6COPTER
 
 } // InitMotors

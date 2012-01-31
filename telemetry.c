@@ -34,6 +34,7 @@ void SendParamPacket(uint8, uint8);
 void SendParameters(uint8);
 void SendArduStation(void);
 void SendCustom(void);
+void ShowAttitude(void);
 
 uint8 UAVXCurrPacketTag;
 
@@ -160,7 +161,7 @@ void SendFlightPacket(void) {
 	TxESCi8((int8)AltComp);
 
 	for ( b = 0; b < (uint8)6; b++ ) // motor/servo channels
-	 	TxESCu8((uint8)Limit(PWM[b],0,255));
+	 	TxESCu8((uint8)Limit(PW[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 
@@ -182,7 +183,7 @@ void SendControlPacket(void){
 	TxESCu8(UAVXAirframe);
 
 	for ( b = 0; b < (uint8)6; b++ ) // motor/servo channels
-		TxESCu8((uint8)Limit(PWM[b],0,255));
+		TxESCu8((uint8)Limit(PW[b],0,255));
 
 	TxESCi24(mSClock() - mS[StartTime]);
 
@@ -227,7 +228,7 @@ void SendNavPacket(void){
 	
 	TxESCi24(mS[NavStateTimeout] - mSClock());	// mS
 	
-	TxESCi16(AmbientTemperature.i16);			// 0.1C
+	TxESCi16(AmbientTemperature);			// 0.1C
 	TxESCi32(GPSMissionTime);
 
 	TxESCu8(NavSensitivity);
@@ -356,7 +357,15 @@ void SendCustom(void) {
 	// -> 
 
 	// add user specific code
-
+	TxVal32(mSClock(),0,',');
+	TxVal32(aaa,0,',');
+	TxVal32(bbb,0,',');
+	TxVal32(ccc,0,',');
+	TxVal32(ddd,0,',');
+	TxVal32(eee,0,',');
+	TxVal32(fff,0,',');
+	TxVal32(ggg,0,',');
+	TxVal32(hhh,0,',');
 	// <-
 
 	TxChar(CR);

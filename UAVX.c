@@ -34,6 +34,9 @@ int8 near State, NavState, FailState;
 boolean near SpareSlotTime;
 #pragma udata
 
+// general debugging variables printed to a terminal emulator by selecting Custom Telemetry
+int32 aaa,bbb,ccc,ddd, eee, fff, ggg, hhh;
+
 void main(void)
 {
 	DisableInterrupts;
@@ -217,7 +220,7 @@ void main(void)
 				GetHeading();
 	
 			#ifndef TESTING
-				if ( F.AccelerometersEnabled )
+		if ( F.AccelerometersEnabled )
 			#endif // !TESTING
 					CheckTelemetry();
 
@@ -240,7 +243,6 @@ void main(void)
 			EnableInterrupts;
 
 			DoControl();
-			OutSignals();
 
 			#ifdef INC_CYCLE_STATS
 			if ( State == InFlight )

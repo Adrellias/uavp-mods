@@ -3,21 +3,7 @@
 
 //#define FLAT_LISL_ACC		// LISL acc lying flat components up pins forward
 
-// Various control schemes
-
-#define PI_P_ANGLE
-//#define MING_P_RATE
-//#define MING_PI_RATE
-
-#ifdef PI_P_ANGLE
-	#define CONTROLLER	Do_PI_P_Angle
-#elif MING_P_RATE
-	#define CONTROLLER	Do_Ming_P_Rate
-#else
-	#define CONTROLLER	Do_Ming_PI_Rate
-#endif
-
-//#define INC_RAW_ANGLES
+#define INC_RAW_ANGLES
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -71,8 +57,13 @@
 	//#define FULL_COMPASS_TEST
 #endif // FULL_TEST
 
+#ifdef CLOCK_16MHZ
 #define DEG_TO_ANGLE_UNITS		78L	// very approximate - needs measuring
-#define MAX_BANK_ANGLE_DEG		30L
+#else
+#define DEG_TO_ANGLE_UNITS		156L
+#endif // CLOCK_16MHZ
+
+#define MAX_BANK_ANGLE_DEG		45L
 
 #ifdef CLOCK_16MHZ
 	#define INC_HMC6352			// must NOT be deselected ONLY device supported at 16MHz
@@ -147,9 +138,13 @@
 
 // Rescale angle to accelerometer units 
 // MAGIC numbers assume 5mS for 40MHz and 8mS for 16MHz
-#define RESCALE_TO_ACC 				51		// 256/5   36 // (256/7.16)
+#ifdef CLOCK_16MHZ
+	#define RESCALE_TO_ACC				51		// 256/5   36 // (256/7.16)
+#else
+	#define RESCALE_TO_ACC				26
+#endif // CLOCK_16MHZ
 
-#define ANGLE_LIMIT_DEG				(DEG_TO_ANGLE_UNITS*60L)	// push out to ~60degrees
+#define ANGLE_LIMIT					28000	// make large otherwise angle estimate latches up!!
 	
 #define PID_BASE_CYCLE_MS			2		// 500KHz flat chat with I2C ESCs
 // Shifts MUST be <=2
@@ -170,7 +165,7 @@
 #define ALT_DESCENT_STEP			5		// Stick units
 
 #define RC_STICK_MOVEMENT			4L		// minimum to be recognised as a stick input change without triggering failsafe
-#define RC_STICK_ANGLE_SCALE		32L		// convert stick to desired "angle"
+#define RC_STICK_ANGLE_SCALE		48L		// convert stick to desired "angle"
 
 #define THROTTLE_LOW_DELAY_MS		1000L	// mS. that motor runs at idle after the throttle is closed
 #define THROTTLE_UPDATE_MS			3000L	// mS. constant throttle time for altitude hold
@@ -182,7 +177,7 @@
 #define UAVX_MIN_TEL_INTERVAL_MS	500L	// mS. emit minimum data packet for example to FrSky
 #define ARDU_TEL_INTERVAL_MS		200L	// mS. alternating 1:5
 #define UAVX_CONTROL_TEL_INTERVAL_MS 100L	// mS. flight control only
-#define CUSTOM_TEL_INTERVAL_MS		250L	// mS.
+#define CUSTOM_TEL_INTERVAL_MS		50L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
 
@@ -436,7 +431,7 @@ typedef struct { // GPS
 typedef struct {
 	// from Parameter Sets
 	int16 IntLimit, Limiter;
-	int8 Kp, Ki, Kd, Kp2;
+	int32 Kp, Ki, Kd, Kp2;
 	// run time
 	int16 Trim, Hold; 
 	int16 Desired, FakeDesired;
@@ -445,6 +440,7 @@ typedef struct {
 	int16 Rate, Ratep, RateEp, RateIntE;
 	int16 Acc, AccADC, AccBias, AccOffset;
 	int8 AngleCorr;
+	int32 AccCorrAv, AccCorrMean;
 	int16 Control;
 	int16 NavCorr, NavIntE;
 	int32 NavPosE, NavVel;
@@ -512,7 +508,7 @@ typedef struct {
 #ifdef CLOCK_16MHZ
 	#define	TMR0_1MS		0
 #else // CLOCK_40MHZ
-	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PWM 
+	#define	TMR0_1MS		(65536-640) // actually 1.0248mS to clear PW 
 #endif // CLOCK_16MHZ
 
 // Parameters for UART port ClockHz/(16*(BaudRate+1))
@@ -574,6 +570,8 @@ typedef struct {
 #define NAV_MAX_WAYPOINTS	((256 - 24 - 1)/WAYPOINT_REC_SIZE)
 	 
 //______________________________________________________________________________________________
+
+extern int32 aaa,bbb,ccc,ddd, eee, fff, ggg, hhh;
 
 // main.c
 
@@ -713,10 +711,8 @@ extern int16 RawAcc[];
 
 #define ADCPORTCONFIG 		0b00001010 // AAAAA
 #define ADCBattVoltsChan 	0 
-#define NonIDGADCRollChan 	1
-#define NonIDGADCPitchChan 	2
-#define IDGADCRollChan 		2
-#define IDGADCPitchChan 	1
+#define ADCRollChan 		1
+#define ADCPitchChan 		2
 #define ADCAltChan 			3 	// Altitude
 #define ADCYawChan			4
 #define TopADCChannel		4
@@ -1003,9 +999,7 @@ extern int32 FakeGPSLongitude, FakeGPSLatitude;
 enum GyroTypes { MLX90609Gyro, ADXRS150Gyro, IDG300Gyro, LY530Gyro, ADXRS300Gyro, 
 		ITG3200Gyro, SFDOF6, SFDOF9, MPU6050, FreeIMU, Drotek, IRSensors, GyroUnknown }; 
 
-extern void AdaptiveYawFilterA(void);
 extern void ShowGyroType(uint8);
-extern void CompensateRollPitchGyros(void);
 extern void GetGyroValues(void);
 extern void CalculateGyroRates(void);
 extern void CheckGyroFault(uint8, uint8, uint8);
@@ -1026,7 +1020,7 @@ extern boolean InvenSenseGyroActive(void);
 
 extern uint8 GyroType;
 extern int16 RawGyro[];
-extern int32 AccCorrAv, NoAccCorr;
+extern int32 NoAccCorr;
 
 //______________________________________________________________________________________________
 
@@ -1099,6 +1093,15 @@ extern uint16 RCGlitches;
 
 //______________________________________________________________________________________________
 
+// inertial.c
+
+extern void CompensateRollPitchGyros(void);
+extern void CompensateYawGyro(void);
+extern void DoAttitudeAngles(void);
+extern void GetAttitude(void);
+
+//______________________________________________________________________________________________
+
 // i2c.c
 
 #define	I2C_ACK			((uint8)(0))
@@ -1122,7 +1125,8 @@ extern uint8 WriteI2CByte(uint8);
 extern uint8 ReadI2CByte(uint8);
 extern uint8 ReadI2CByteAtAddr(uint8, uint8);
 extern void WriteI2CByteAtAddr(uint8, uint8, uint8);
-extern boolean ReadI2Ci16v(uint8, uint8, int16 *, uint8, boolean);
+extern boolean ReadI2Ci16vAtAddr(uint8, uint8, int16 *, uint8, boolean);
+extern boolean ReadI2Ci16v(uint8, int16 *, uint8, boolean);
 extern void ShowI2CDeviceName(uint8);
 extern uint8 ScanI2CBus(void);
 extern boolean I2CResponse(uint8);
@@ -1225,7 +1229,7 @@ extern const rom uint8 RxChMnem[];
 
 // outputs.c
 
-// The minimum value for PWM width is 1 for the pulse generators
+// The minimum value for PW width is 1 for the pulse generators
 #define OUT_MAXIMUM			208	//210 222	//  to reduce Rx capture and servo pulse output interaction
 #define OUT_NEUTRAL			111			//  1.503mS @ 105 16MHz
 
@@ -1235,7 +1239,7 @@ extern const rom uint8 RxChMnem[];
 #define OUT_LRC_MAXIMUM		200
 
 extern void ShowESCType(void);
-extern uint8 PWMLimit(int16);
+extern uint8 PWLimit(int16);
 extern uint8 I2CESCLimit(int16);
 extern void DoMulticopterMix(int16 CurrThrottle);
 extern void CheckDemand(int16 CurrThrottle);
@@ -1250,14 +1254,14 @@ extern void WriteT580ESC(uint8, uint8, uint8);
 extern void WriteT580ESCs(int8,  uint8, uint8, uint8, uint8);
 extern void T580ESCs(uint8, uint8, uint8, uint8);
 
-enum PWMTagsQuad {FrontC=0, LeftC, RightC, BackC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
-enum PWMTagsVT {FrontLeftC=0, FrontRightC};
-enum PWMTagsY6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
-enum PWMTagsHexa {HFrontC=0, HLeftFrontC, HRightFrontC, HLeftBackC, HRightBackC, HBackC }; 
-enum PWMTagsAileron {ThrottleC=0, AileronC, ElevatorC, RudderC};
-enum PWMTagsElevon {RightElevonC=1, LeftElevonC=2};
-enum PWMTagsVTOL { RightPitchYawC=1, LeftPitchYawC=2, RollC=3 };
-enum PWMTags {K1=0, K2, K3, K4, K5, K6};
+enum PWTagsQuad {FrontC=0, LeftC, RightC, BackC, CamRollC, CamPitchC}; // order is important for X3D & Holger ESCs
+enum PWTagsVT {FrontLeftC=0, FrontRightC};
+enum PWTagsY6 {FrontTC=0, LeftTC, RightTC, FrontBC, LeftBC, RightBC };
+enum PWTagsHexa {HFrontC=0, HLeftFrontC, HRightFrontC, HLeftBackC, HRightBackC, HBackC }; 
+enum PWTagsAileron {ThrottleC=0, AileronC, ElevatorC, RudderC};
+enum PWTagsElevon {RightElevonC=1, LeftElevonC=2};
+enum PWTagsVTOL { RightPitchYawC=1, LeftPitchYawC=2, RollC=3 };
+enum PWTags {K1=0, K2, K3, K4, K5, K6};
 
 #if ( defined Y6COPTER ) | ( defined HEXACOPTER )
 	#define NO_OF_I2C_ESCS 	6
@@ -1269,12 +1273,12 @@ enum PWMTags {K1=0, K2, K3, K4, K5, K6};
 	#endif
 #endif
 
-extern int16 PWM[6];
-extern int16 PWMSense[6];
+extern int16 PW[6];
+extern int16 PWSense[6];
 extern int16 ESCI2CFail[NO_OF_I2C_ESCS];
 extern int16 CurrThrottle;
 
-extern near uint8 SHADOWB, PWM0, PWM1, PWM2, PWM4, PWM5;
+extern near uint8 SHADOWB, PW0, PW1, PW2, PW4, PW5;
 extern near int16 Rl, Pl, Yl;
 
 extern int16 ESCMax;
@@ -1479,7 +1483,7 @@ enum Statistics {
 	GPSAltitudeS, BaroRelAltitudeS, ESCI2CFailS, GPSMinSatsS, MinROCS, MaxROCS, GPSVelS,  
 	AccFailS, CompassFailS, BaroFailS, GPSInvalidS, GPSMaxSatsS, NavValidS, 
 	MinHDiluteS, MaxHDiluteS, RCGlitchesS, GPSBaroScaleS, GyroFailS, RCFailsafesS, 
-	I2CFailS, MinTempS, MaxTempS, BadS, BadNumS, AccCorrAvS}; // NO MORE THAN 32 or 64 bytes
+	I2CFailS, MinTempS, MaxTempS, BadS, BadNumS, RollAccCorrAvS, RollAccCorrMeanS, PitchAccCorrAvS, PitchAccCorrMeanS}; // NO MORE THAN 32 or 64 bytes
 
 extern int16 Stats[];
 
@@ -1524,7 +1528,7 @@ enum TelemetryTypes { NoTelemetry, GPSTelemetry, UAVXTelemetry, UAVXControlTelem
 extern void GetTemperature(void);
 extern void InitTemperature(void);
 
-extern i16u AmbientTemperature;
+extern int16 AmbientTemperature;
 
 //______________________________________________________________________________________________
 

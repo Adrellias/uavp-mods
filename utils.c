@@ -43,6 +43,7 @@ boolean	FirstPass;
 
 void LightsAndSirens(void)
 {
+	static uint32 NowmS;
 	static int24 Ch5Timeout;
 	static uint8 s;
 
@@ -108,9 +109,10 @@ void LightsAndSirens(void)
 	else
 		LEDYellow_OFF;
 
-	mS[LastBattery] = mSClock();
-	mS[FailsafeTimeout] = mSClock() + FAILSAFE_TIMEOUT_MS;
-	PIDUpdate = mSClock() + PIDCyclemS;
+	NowmS = mSClock();
+	mS[LastBattery] = NowmS;
+	mS[FailsafeTimeout] = NowmS + FAILSAFE_TIMEOUT_MS;
+	PIDUpdate = NowmS + PIDCyclemS;
 	F.LostModel = false;
 	FailState = MonitoringRx;
 

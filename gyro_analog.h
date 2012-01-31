@@ -23,17 +23,8 @@
 void GetAnalogGyroValues(void)
 {
 	// change of sign to get to normal aircraft sense 
-	if ( GyroType == IDG300Gyro ) // 500 Deg/Sec
-	{
-		A[Roll].GyroADC = ADC(IDGADCRollChan);
-		A[Pitch].GyroADC = -ADC(IDGADCPitchChan);
-	}
-	else
-	{
-		A[Roll].GyroADC = -ADC(NonIDGADCRollChan);
-		A[Pitch].GyroADC = -ADC(NonIDGADCPitchChan);
-	}
-
+	A[Roll].GyroADC = -ADC(ADCRollChan);
+	A[Pitch].GyroADC = -ADC(ADCPitchChan);
 	A[Yaw].GyroADC = ADC(ADCYawChan);
 
 } // GetAnalogGyroValues
@@ -69,31 +60,25 @@ void GyroAnalogTest(void)
 	TxString("\r\n");
 	ShowGyroType(GyroType);
 	TxString(" - Gyro Test\r\n");
-	if ( (GyroType == IDG300Gyro ) || (GyroType == LY530Gyro ) ) // 3V gyros
+	if (GyroType == LY530Gyro )  // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
 		{ lv = 20; hv = 30;}
 
 	// Roll
-	if ( GyroType == IDG300Gyro )
-		v = A[IDGADCRollChan];
-	else
-		v = A[NonIDGADCRollChan];
+	v = A[ADCRollChan];
 
 	TxString("Roll: \t"); 
 	CheckGyroFault(v, lv, hv);
 
 	// Pitch
-	if ( GyroType == IDG300Gyro )
-		v = A[IDGADCPitchChan]; 
-	else 
-		v = A[NonIDGADCPitchChan]; 
+	v = A[ADCPitchChan]; 
 
 	TxString("Pitch:\t");		
 	CheckGyroFault(v, lv, hv);	
 
 	// Yaw
-	if ( (GyroType == IDG300Gyro ) || ( GyroType == LY530Gyro ) ) // 3V gyros
+	if ( GyroType == LY530Gyro ) // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
 		{ lv = 20; hv = 30;}
