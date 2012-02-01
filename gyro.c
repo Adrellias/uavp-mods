@@ -185,6 +185,7 @@ void GetGyroValues(void)
 
 void InitGyros(void)
 {
+F.UsingAnalogGyros = false;
 	switch ( P[SensorHint]){
 	#ifdef CLOCK_16MHZ
 		case ITG3200Gyro:
@@ -228,6 +229,7 @@ void InitGyros(void)
 	default:
 		InitAnalogGyros();
 		GyroType = P[SensorHint];
+F.UsingAnalogGyros = true;
 		break;
 	} // switch
 
@@ -240,14 +242,20 @@ void GyroTest(void)
 	ShowGyroType(GyroType);
 	TxNextLine();
 
-	GetGyroValues();
-
-	if ( !F.GyroFailure )
+	if ( F.UsingAnalogGyros )
+		GyroAnalogTest();
+	else
 	{
-		TxString("\tRoll:     \t");TxVal32(A[Roll].GyroADC,0,0);
-		TxString("\r\n\tPitch:\t");TxVal32(A[Pitch].GyroADC,0,0);
-		TxString("\r\n\tYaw:  \t");TxVal32(A[Yaw].GyroADC,0,0);
-		TxNextLine();
+
+		GetGyroValues();
+	
+		if ( !F.GyroFailure )
+		{
+			TxString("\tRoll:     \t");TxVal32(A[Roll].GyroADC,0,0);
+			TxString("\r\n\tPitch:\t");TxVal32(A[Pitch].GyroADC,0,0);
+			TxString("\r\n\tYaw:  \t");TxVal32(A[Yaw].GyroADC,0,0);
+			TxNextLine();
+		}
 	}	
 } // GyroTest
 #endif // TESTING

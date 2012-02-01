@@ -78,6 +78,8 @@ void CompensateRollPitchGyros(void)
 	}	
 	else
 	{
+		A[Roll].Angle = Decay1(A[Roll].Angle);
+		A[Pitch].Angle = Decay1(A[Pitch].Angle);
 		A[Roll].AngleCorr = A[Roll].Acc = A[Pitch].AngleCorr = A[Pitch].Acc = 0;
 		A[Yaw].Acc = GRAVITY;
 	}
@@ -103,7 +105,6 @@ void DoAttitudeAngles(void)
 	
 		Temp = C->Angle + C->Rate;	
 		Temp = Limit1(Temp, ANGLE_LIMIT); // turn off comp above this angle?
-		Temp = Decay1(Temp);
 		Temp -= C->AngleCorr;			// last for accelerometer compensation
 		C->Angle = Temp;
 	}

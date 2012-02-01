@@ -57,13 +57,10 @@ void GyroAnalogTest(void)
 	for ( c = 1; c <= 5; c++ )
 		A[c] = ((int24)ADC(c) * 50L + 512L)/1024L;
 
-	TxString("\r\n");
-	ShowGyroType(GyroType);
-	TxString(" - Gyro Test\r\n");
-	if (GyroType == LY530Gyro )  // 3V gyros
+	if (GyroType == LY530Gyro)  // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
-		{ lv = 20; hv = 30;}
+		{ lv = 15; hv = 35;}
 
 	// Roll
 	v = A[ADCRollChan];
@@ -78,10 +75,10 @@ void GyroAnalogTest(void)
 	CheckGyroFault(v, lv, hv);	
 
 	// Yaw
-	if ( GyroType == LY530Gyro ) // 3V gyros
+	if (GyroType == LY530Gyro) // 3V gyros
 		{ lv = 10; hv = 20;}
 	else
-		{ lv = 20; hv = 30;}
+		{ lv = 15; hv = 35;}
 	
 	v = A[ADCYawChan];
 	TxString("Yaw:  \t");

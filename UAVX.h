@@ -3,7 +3,7 @@
 
 //#define FLAT_LISL_ACC		// LISL acc lying flat components up pins forward
 
-#define INC_RAW_ANGLES
+//#define INC_RAW_ANGLES
 
 //#define HAVE_CUTOFF_SW		// Pin11 (RC0) short to ground when landed otherwise 10K pullup.
 
@@ -29,7 +29,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	//#define TESTING
+	#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
@@ -648,7 +648,8 @@ typedef union {
 		HaveGPRMC:1,
 
 		NormalFlightMode:1,
-		MPU6050Initialised:1;	
+		MPU6050Initialised:1,
+		UsingAnalogGyros:1;	
 		};
 } Flags;
 
