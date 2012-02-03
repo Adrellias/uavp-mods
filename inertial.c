@@ -27,6 +27,8 @@ void CompensateYawGyro(void);
 void GetAttitude(void);
 void DoAttitudeAngles(void);
 
+int16 HEp;
+
 void CompensateRollPitchGyros(void)
 {
 	// RESCALE_TO_ACC is dependent on cycle time and is defined in uavx.h
@@ -121,15 +123,18 @@ void CompensateYawGyro(void)
 		if ( A[Yaw].Hold > COMPASS_MIDDLE ) // acquire new heading
 		{
 			DesiredHeading = Heading;
+			HEp = 0;
 			A[Yaw].Ratep = A[Yaw].Rate;
 		}
 		else
 		{
-			A[Yaw].Rate = YawFilter(A[Yaw].Ratep, A[Yaw].Rate);
+		    A[Yaw].Rate = YawFilter(A[Yaw].Ratep, A[Yaw].Rate);
 			A[Yaw].Ratep = A[Yaw].Rate;
 			HE = MinimumTurn(DesiredHeading - Heading);
+			HE = HardFilter(HEp, HE);
+			HEp = HE;
 			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
-			HE = SRS32((int24)HE * (int24)P[CompassKp], 12); 
+			HE = SRS32((int24)HE * (int24)P[CompassKp], 1); 
 			A[Yaw].Rate -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
 		}
 	}
