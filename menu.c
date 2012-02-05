@@ -108,9 +108,7 @@ void ShowSetup(void)
 	TxNextLine();
 	TxString(SerHello);
 
-	#ifdef EXPERIMENTAL
-		TxString("\r\nWARNING - EXPERIMENTAL");
-	#endif // EXPERIMENTAL
+	#ifndef MAKE_SPACE
 
 	#ifdef CLOCK_16MHZ
 		TxString("\r\nClock: 16MHz");
@@ -181,6 +179,8 @@ void ShowSetup(void)
 		TxString("Tx Mode 2");
 	else
 		TxString("Tx Mode 1");
+
+	#endif 	// MAKE_SPACE
 
 	TxString("\r\nParam set: "); // must be exactly this string as UAVPSet expects it
 	TxChar('0' + ParamSet);	

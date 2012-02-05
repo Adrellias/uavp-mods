@@ -33,6 +33,8 @@ int32 ProcLimit(int32, int32, int32);
 int16 DecayX(int16, int16);
 void LPFilter16(int16*, i32u*, int16);
 void LPFilter24(int24* i, i32u* iF, int16 FilterA);
+void InitSmooth16x816(int16x16Q * F);
+int16 Smooth16x16(int16x16Q *, int16);
 
 int8 BatteryVolts;
 int16 BatteryVoltsADC, BatteryCurrentADC, BatteryVoltsLimitADC, BatteryCurrentADCEstimated, BatteryChargeUsedmAH;
@@ -157,12 +159,12 @@ void InitMisc(void)
 	for ( i = 0; i < (uint8)FLAG_BYTES ; i++ )
 		F.AllFlags[i] = false;
 
-	#ifdef INC_CYCLE_STATS
-	for (i = 0 ; i <(uint8)16; i++ )
-		CycleHist[i] = 0;
-	#endif // INC_CYCLE_STATS
- 
 	F.ParametersValid = F.AcquireNewPosition = F.AllowNavAltitudeHold = true;
+
+        #ifdef INC_CYCLE_STATS
+        for (i = 0 ; i <(uint8)16; i++ )
+                CycleHist[i] = 0;
+        #endif // INC_CYCLE_STATS
 
 	#ifdef SIMULATE
 	F.Simulation = true;
@@ -360,8 +362,44 @@ void LPFilter24(int24* i, i32u* iF, int16 FilterA)
 LPFilter16(&Heading, &HeadingValF, HeadingFilterA);
 
 */
-int32 Abs(int32 n)
+
+int32 Abs(int32 n)
 {
 	return(n<0 ? -n : n);
-} // Abs
+} // Abs
+
+void InitSmooth16x16(int16x16Q * F) {
+	F->Prime = true;
+} // InitSmooth16x16
+
+int16 Smooth16x16(int16x16Q * F, int16 v) {
+	static uint8 i;
+	static uint8 p;
+
+	if ( F->Prime )
+	{
+		for ( i = 0; i < (uint8)16; i++ )
+			F->B[i] = v;
+
+		F->Head = 0;
+		F->Tail = 15;
+
+		F->S = (int32)v * 16;
+		F->Prime = false;
+	}
+	else
+	{
+		p = F->Head;
+		F->S -= F->B[p];
+		F->Head = (p + 1) & 15;
+		p = F->Tail;
+		p = (p + 1) & 15;
+		F->B[p] = v;
+		F->Tail = p;
+		F->S += v;
+	}
+
+	return ( (int16)(SRS32(F->S, 4))); 
+
+} // Smooth16x16
 

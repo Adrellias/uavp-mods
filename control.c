@@ -33,11 +33,11 @@ void InitControl(void);
 AxisStruct A[3];
 #pragma udata
 
-uint8 PIDCyclemS, PIDCycleShift;
-
 #pragma udata hist
 uint32 CycleHist[16];
 #pragma udata
+
+uint8 PIDCyclemS, PIDCycleShift;
 		
 int16 CameraAngle[3];
 
@@ -167,25 +167,6 @@ void AltitudeHold()
 	}
 } // AltitudeHold
 
-void YawControl(void) {
-	static int16 RateE;
-	static int24 Temp;
-		
-	RateE = A[Yaw].Rate + ( A[Yaw].Desired + A[Yaw].NavCorr );
-	Temp  = SRS32((int24)RateE * (int16)A[Yaw].Kp, 4);	
-		
-	#if defined TRICOPTER
-		Temp = SlewLimit(A[Yaw].Outp, Temp, 2);				
-		A[Yaw].Outp = Temp;
-		A[Yaw].Out = Limit1(Temp,(int16)P[YawLimit]);
-	#else
-		A[Yaw].Out = Limit1(Temp, (int16)P[YawLimit]);
-	#endif // TRICOPTER
-
-	A[Yaw].RateEp = RateE;
-
-} // YawControl
-
 void DoOrientationTransform(void) {
 	static i24u Temp;
 
@@ -287,6 +268,26 @@ void Do_PD_P_Angle(AxisStruct *C)
 	C->AngleIntE = AngleIntE;
 
 } // Do_PD_P_Angle
+
+
+void YawControl(void) {
+	static int16 YawControl, RateE;
+	static int24 Temp;
+
+	RateE = Smooth16x16(&YawF, A[Yaw].Rate);
+	
+	Temp  = -SRS32((int24)RateE * (int16)A[Yaw].Kp, 4);
+			
+	Temp = SlewLimit(A[Yaw].Outp, Temp, 1);	
+	A[Yaw].Outp = Temp;
+	A[Yaw].Out = Limit1(Temp, (int16)P[YawLimit]);
+
+	YawControl = (A[Yaw].Desired + A[Yaw].NavCorr);
+	if ( Abs(YawControl) > 5 )
+		A[Yaw].Out += YawControl;
+
+} // YawControl
+
 
 void DoControl(void)
 {

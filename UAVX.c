@@ -131,6 +131,7 @@ void main(void)
 				case Landed:
 					DesiredThrottle = 0;
 					GetBaroAltitude();
+					InitHeading();
 					if ( mSClock() > mS[ArmedTimeout] )
 						DoShutdown();
 					else	
@@ -220,7 +221,7 @@ void main(void)
 				GetHeading();
 	
 			#ifndef TESTING
-		if ( F.AccelerometersEnabled )
+			if ( F.AccelerometersEnabled )
 			#endif // !TESTING
 					CheckTelemetry();
 
@@ -253,7 +254,7 @@ void main(void)
 				CycleHist[CyclemS]++;
 			}
 			#endif // INC_CYCLE_STATS
-		
+	
 		} // flight while armed
 	}
 

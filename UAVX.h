@@ -1,3 +1,4 @@
+//#define MAKE_SPACE // zzz
 
 #define INC_HMC6352			// SLOW 100KHz I2C preferably REPLACE with HMC5883L
 
@@ -29,7 +30,7 @@
 
 #ifndef BATCHMODE
 	//#define EXPERIMENTAL
-	#define TESTING
+	//#define TESTING
 	//#define FULL_TEST			// extended compass test etc.
 	//#define FORCE_NAV					
 	//#define SIMULATE
@@ -65,6 +66,8 @@
 
 #define MAX_BANK_ANGLE_DEG		45L
 
+//#define INC_CYCLE_STATS
+
 #ifdef CLOCK_16MHZ
 	#define INC_HMC6352			// must NOT be deselected ONLY device supported at 16MHz
 	#define USE_I2C100KHZ		// uses slow I2C routines because of HMC6352
@@ -75,17 +78,12 @@
 	#define INC_BMA180			// include BMA180 accelerometer code
 	#define INC_ADXL345			// include ADXL345 accelerometer code SF6DOF/9DOF	
 	#define INC_HMC58X3			// preferable Honeywell magnetometer
+	//#define INC_MPU6050		// include MPU6050 accelerometer/gyros
 
 	#ifdef INC_HMC6352
 		#define USE_I2C100KHZ			// uses slow I2C routines because of HMC6352
-	#else
-		#define INC_CYCLE_STATS	// tracks actual PID cycle times achieved - view in Setup
 	#endif // INC_HMC6352
 
-	// Desperate for space!!!!!
-	#ifndef VTCOPTER		
-		#define INC_MPU6050		// include MPU6050 accelerometer/gyros
-	#endif 
 #endif // CLOCK_16MHZ
 
 #ifdef INC_HMC6352
@@ -177,7 +175,7 @@
 #define UAVX_MIN_TEL_INTERVAL_MS	500L	// mS. emit minimum data packet for example to FrSky
 #define ARDU_TEL_INTERVAL_MS		200L	// mS. alternating 1:5
 #define UAVX_CONTROL_TEL_INTERVAL_MS 100L	// mS. flight control only
-#define CUSTOM_TEL_INTERVAL_MS		50L	// mS.
+#define CUSTOM_TEL_INTERVAL_MS		100L	// mS.
 
 #define GPS_TIMEOUT_MS				2000L	// mS.
 
@@ -398,13 +396,6 @@ typedef union {
 	};
 } i32u;
 
-typedef struct {
-	i32u v;
-	int16 a;
-	int16 f;
-	uint8 dt;
-	} SensorStruct;
-
 typedef struct { // Tx
 	uint8 Head, Tail;
 	uint8 B[128];
@@ -415,10 +406,18 @@ typedef struct { // PPM
 	int16 B[4][8];
 	} int16x8x4Q;	
 
-typedef struct { // Baro
+typedef struct { 
+	int32 S;
 	uint8 Head, Tail;
-	int24 B[8];
-	} int24x8Q;	
+	int32 B[8];
+	} int32x8Q;
+
+typedef struct { 
+	int32 S;
+	uint8 Head, Tail;
+	int16 B[16];
+	boolean Prime;
+	} int16x16Q;	
 
 #define NAVQ_MASK 3
 #define NAVQ_SHIFT 2
@@ -439,7 +438,7 @@ typedef struct {
 	int16 RawAngle, Angle, AngleE, AngleIntE;	
 	int16 Rate, Ratep, RateEp, RateIntE;
 	int16 Acc, AccADC, AccBias, AccOffset;
-	int8 AngleCorr;
+	int8 DriftCorr;
 	int32 AccCorrAv, AccCorrMean;
 	int16 Control;
 	int16 NavCorr, NavIntE;
@@ -649,7 +648,8 @@ typedef union {
 
 		NormalFlightMode:1,
 		MPU6050Initialised:1,
-		UsingAnalogGyros:1;	
+		UsingAnalogGyros:1,
+		NewCompassValue:1;	
 		};
 } Flags;
 
@@ -835,12 +835,12 @@ extern int24 FakeBaroRelAltitude;
 
 // compass.c
 
-#define COMPASS_MAXDEV		30			// maximum yaw compensation of compass heading 
 #define COMPASS_MIDDLE		10			// yaw stick neutral dead zone
 #define COMPASS_TIME_MS		50			// 20Hz
 #define COMPASS_UPDATE_HZ	(1000/COMPASS_TIME_MS)
 
-#define COMPASS_MAX_SLEW	(12L*COMPASS_TIME_MS) //((TW0MILLIPI * COMPASS_TIME_MS)/500)
+#define COMPASS_MAX_SLEW	SIXTHMILLIPI
+#define YAW_COMP_LIMIT		30			// maximum yaw compensation of compass heading 
 
 #define MAG_INIT_RETRIES	10
 
@@ -1022,6 +1022,7 @@ extern boolean InvenSenseGyroActive(void);
 extern uint8 GyroType;
 extern int16 RawGyro[];
 extern int32 NoAccCorr;
+extern int16x16Q YawF;
 
 //______________________________________________________________________________________________
 
@@ -1100,8 +1101,6 @@ extern void CompensateRollPitchGyros(void);
 extern void CompensateYawGyro(void);
 extern void DoAttitudeAngles(void);
 extern void GetAttitude(void);
-
-extern int16 HEp;
 
 //______________________________________________________________________________________________
 
@@ -1562,6 +1561,8 @@ extern int32 ProcLimit(int32, int32, int32);
 extern int16 DecayX(int16, int16);
 //extern void LPFilter16(int16*, i32u*, int16);
 //extern void LPFilter24(int24* i, i32u* iF, int16 FilterA);
+void InitSmooth16x16(int16x16Q *);
+int16 Smooth16x16(int16x16Q *, int16);
 extern void CheckBatteries(void);
 extern void CheckAlarms(void);
 extern int32 Abs(int32);

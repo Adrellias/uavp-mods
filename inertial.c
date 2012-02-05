@@ -27,7 +27,7 @@ void CompensateYawGyro(void);
 void GetAttitude(void);
 void DoAttitudeAngles(void);
 
-int16 HEp;
+int16 YawCorr;
 
 void CompensateRollPitchGyros(void)
 {
@@ -71,10 +71,10 @@ void CompensateRollPitchGyros(void)
 				}
 	
 				NewCorr = Limit1(NewCorr, ANGLE_COMP_STEP);
-				C->AngleCorr = MediumFilter(C->AngleCorr, NewCorr);
+				C->DriftCorr = MediumFilter(C->DriftCorr, NewCorr);
 			}
 			else
-				C->AngleCorr = 0;
+				C->DriftCorr = 0;
 				
 		}
 	}	
@@ -82,7 +82,7 @@ void CompensateRollPitchGyros(void)
 	{
 		A[Roll].Angle = Decay1(A[Roll].Angle);
 		A[Pitch].Angle = Decay1(A[Pitch].Angle);
-		A[Roll].AngleCorr = A[Roll].Acc = A[Pitch].AngleCorr = A[Pitch].Acc = 0;
+		A[Roll].DriftCorr = A[Roll].Acc = A[Pitch].DriftCorr = A[Pitch].Acc = 0;
 		A[Yaw].Acc = GRAVITY;
 	}
 
@@ -107,7 +107,7 @@ void DoAttitudeAngles(void)
 	
 		Temp = C->Angle + C->Rate;	
 		Temp = Limit1(Temp, ANGLE_LIMIT); // turn off comp above this angle?
-		Temp -= C->AngleCorr;			// last for accelerometer compensation
+		Temp -= C->DriftCorr;			// last for accelerometer compensation
 		C->Angle = Temp;
 	}
 
@@ -123,21 +123,20 @@ void CompensateYawGyro(void)
 		if ( A[Yaw].Hold > COMPASS_MIDDLE ) // acquire new heading
 		{
 			DesiredHeading = Heading;
-			HEp = 0;
 			A[Yaw].Ratep = A[Yaw].Rate;
 		}
 		else
-		{
-		    A[Yaw].Rate = YawFilter(A[Yaw].Ratep, A[Yaw].Rate);
-			A[Yaw].Ratep = A[Yaw].Rate;
-			HE = MinimumTurn(DesiredHeading - Heading);
-			HE = HardFilter(HEp, HE);
-			HEp = HE;
-			HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
-			HE = SRS32((int24)HE * (int24)P[CompassKp], 1); 
-			A[Yaw].Rate -= Limit1(HE, COMPASS_MAXDEV); // yaw gyro drift compensation
-		}
+			if ( F.NewCompassValue )
+			{
+				F.NewCompassValue = false;
+				HE = MinimumTurn(DesiredHeading - Heading);
+				HE = Limit1(HE, SIXTHMILLIPI); // 30 deg limit
+				A[Yaw].DriftCorr = SRS32((int24)HE * (int24)P[CompassKp], 7);
+				A[Yaw].DriftCorr = Limit1(A[Yaw].DriftCorr, YAW_COMP_LIMIT); // yaw gyro drift compensation
+			}		
 	}
+
+	A[Yaw].Rate -= A[Yaw].DriftCorr;
 
 } // CompensateYawGyro
 
