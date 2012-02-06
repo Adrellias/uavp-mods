@@ -276,7 +276,7 @@ void YawControl(void) {
 
 	RateE = Smooth16x16(&YawF, A[Yaw].Rate);
 	
-	Temp  = -SRS32((int24)RateE * (int16)A[Yaw].Kp, 4);
+	Temp  = SRS32((int24)RateE * (int16)A[Yaw].Kp, 4);
 			
 	Temp = SlewLimit(A[Yaw].Outp, Temp, 1);	
 	A[Yaw].Outp = Temp;
