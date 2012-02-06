@@ -1339,12 +1339,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -1480,155 +1480,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:519:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\gyro.c:54:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:184:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:188:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\gps.c:208:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\gps.c:208:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\autonomous.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs.c:55:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs_i2c.h:53:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs_i2c.h:63:Message [3004] comparison of a signed integer to an unsigned integer detected
-MPLINK 4.37, Linker
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-MP2HEX 4.37, COFF to HEX File Converter
-Copyright (c) 1998-2010 Microchip Technology Inc.
-Errors    : 0
-
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:42:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:60:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:76:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:79:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:90:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:94:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:97:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:98:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:102:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:107:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:108:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:109:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:110:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:111:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:112:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:113:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:118:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:119:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:121:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:122:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:125:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:126:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:136:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:139:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:140:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:140:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:147:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:153:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:160:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:111:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:230:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:250:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:251:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\accel.c:64:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:87:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:90:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:116:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:119:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:121:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:138:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:140:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:143:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:146:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:149:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:152:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:154:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:158:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:160:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:163:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:167:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:168:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:170:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:172:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:173:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:176:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:179:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:181:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:185:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:188:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:190:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:192:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:195:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:197:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:200:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:202:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:205:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:210:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:217:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:220:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:222:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:225:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:227:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:228:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:230:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:231:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:234:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:237:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:239:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:242:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:245:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:263:Warning [2058] call of function without prototype
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:264:Warning [2058] call of function without prototype
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:278:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:281:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:283:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:285:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:293:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:295:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:299:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:301:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:322:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:325:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:328:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:334:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:346:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:347:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:348:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:349:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:350:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:351:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:352:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:353:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:354:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:355:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -1766,12 +1623,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -1909,12 +1766,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -2052,12 +1909,155 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:519:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\gyro.c:54:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:184:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:188:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\tests.c:190:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\gps.c:208:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\gps.c:208:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\autonomous.c:431:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs.c:55:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs_i2c.h:53:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\outputs_i2c.h:63:Message [3004] comparison of a signed integer to an unsigned integer detected
+MPLINK 4.37, Linker
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+MP2HEX 4.37, COFF to HEX File Converter
+Copyright (c) 1998-2010 Microchip Technology Inc.
+Errors    : 0
+
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:42:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:60:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:76:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:79:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:90:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:94:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:97:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:98:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:102:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:107:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:108:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:109:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:110:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:111:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:112:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:113:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:116:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:118:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:119:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:121:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:122:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:122:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:125:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:126:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:136:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:139:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:140:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:140:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:147:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:153:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:158:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\stats.c:160:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:111:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:230:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:250:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\params.c:251:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\accel.c:64:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:76:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:83:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:85:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:87:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:90:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:116:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:119:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:121:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:138:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:140:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:143:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:146:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:149:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:152:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:154:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:158:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:160:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:163:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:167:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:168:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:170:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:172:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:173:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:176:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:179:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:181:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:185:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:188:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:190:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:192:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:195:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:197:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:200:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:202:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:205:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:210:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:217:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:220:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:222:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:225:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:227:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:228:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:230:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:231:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:234:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:237:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:239:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:242:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:245:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:263:Warning [2058] call of function without prototype
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:264:Warning [2058] call of function without prototype
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:278:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:281:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:283:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:285:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:293:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:295:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:299:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:301:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:322:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:325:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:328:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:334:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:346:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:347:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:348:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:349:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:350:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:351:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:352:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:353:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:354:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:355:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -2193,12 +2193,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -2334,12 +2334,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -2475,12 +2475,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected
@@ -2640,16 +2640,16 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:422:Warning [2054] suspicious
 C:\Users\gke\Desktop\Google SVN\Google UAVX\menu.c:423:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:177:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:185:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:200:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:565:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:642:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:179:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:187:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:191:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:202:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:567:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:644:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:651:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:658:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:662:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:646:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:653:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:660:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:664:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:176:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:180:Warning [2054] suspicious pointer conversion
@@ -3019,35 +3019,35 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:177:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:180:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:180:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:185:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:189:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:195:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:195:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:200:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:318:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:179:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:182:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:182:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:187:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:191:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:197:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:197:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:202:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:320:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:349:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:322:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:351:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:354:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:360:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:370:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:353:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:356:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:362:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:372:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:375:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:565:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:642:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:374:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:377:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:567:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:644:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:651:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:658:Warning [2054] suspicious pointer conversion
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:662:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:646:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:653:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:660:Warning [2054] suspicious pointer conversion
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:664:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:176:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:180:Warning [2054] suspicious pointer conversion
@@ -3249,12 +3249,12 @@ C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:58:Warning [2054] suspicio
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:64:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:69:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:237:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:411:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:440:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
-C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:454:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:239:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:413:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:442:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
+C:\Users\gke\Desktop\Google SVN\Google UAVX\compass.c:456:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:169:Warning [2054] suspicious pointer conversion
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:382:Message [3004] comparison of a signed integer to an unsigned integer detected
 C:\Users\gke\Desktop\Google SVN\Google UAVX\baro.c:399:Message [3004] comparison of a signed integer to an unsigned integer detected

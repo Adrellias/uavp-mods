@@ -284,7 +284,7 @@ void YawControl(void) {
 
 	YawControl = (A[Yaw].Desired + A[Yaw].NavCorr);
 	if ( Abs(YawControl) > 5 )
-		A[Yaw].Out += YawControl;
+		A[Yaw].Out -= YawControl;
 
 } // YawControl
 
