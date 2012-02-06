@@ -116,6 +116,8 @@ void GetHeading(void)
 		HeadingChange = Abs( Heading - HeadingP );
 		if (( HeadingChange < MILLIPI ) && ( HeadingChange > COMPASS_MAX_SLEW ))  
 			Stats[CompassFailS]++;
+
+		HeadingP = Heading;
 	}	
 
 } // GetHeading
